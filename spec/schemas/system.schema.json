@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mines-of-morja/UnitcellMD/blob/main/spec/schemas/system.schema.json",
+  "title": "UnitcellMD system package: system.json (spec 0.1)",
+  "description": "Normative prose: spec/system-package.md. Semantic rules (indices, counts, cell form, charges, arrays) are checked by validators, not by this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format",
+    "spec_version",
+    "name",
+    "units",
+    "periodicity",
+    "cell_nm",
+    "molecule_types",
+    "components",
+    "atom_count",
+    "provenance"
+  ],
+  "properties": {
+    "format": { "const": "ucmd-system" },
+    "spec_version": { "$ref": "#/$defs/semver" },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "units": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["length", "time", "mass", "energy", "charge", "temperature", "angle"],
+      "properties": {
+        "length": { "const": "nm" },
+        "time": { "const": "ps" },
+        "mass": { "const": "amu" },
+        "energy": { "const": "kJ/mol" },
+        "charge": { "const": "e" },
+        "temperature": { "const": "K" },
+        "angle": { "const": "deg" }
+      }
+    },
+    "periodicity": {
+      "type": "array",
+      "items": { "type": "boolean" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "cell_nm": { "oneOf": [{ "type": "null" }, { "$ref": "#/$defs/mat3" }] },
+    "molecule_types": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "$ref": "#/$defs/type_name" },
+      "additionalProperties": { "$ref": "#/$defs/molecule_type" }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["molecule_type", "count"],
+        "properties": {
+          "molecule_type": { "$ref": "#/$defs/type_name" },
+          "count": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "atom_count": { "type": "integer", "minimum": 1 },
+    "forcefield": { "$ref": "#/$defs/forcefield" },
+    "provenance": {
+      "type": "object",
+      "required": ["created_by", "created_utc"],
+      "properties": {
+        "created_by": { "type": "string", "minLength": 1 },
+        "created_utc": { "type": "string", "format": "date-time" },
+        "seed": { "type": "integer" },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["what", "citation"],
+            "properties": {
+              "what": { "type": "string" },
+              "citation": { "type": "string" },
+              "doi": { "type": "string" },
+              "url": { "type": "string" }
+            }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "semver": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "type_name": { "type": "string", "pattern": "^[A-Za-z0-9_.+-]+$" },
+    "index": { "type": "integer", "minimum": 0 },
+    "vec3": { "type": "array", "items": { "type": "number" }, "minItems": 3, "maxItems": 3 },
+    "mat3": { "type": "array", "items": { "$ref": "#/$defs/vec3" }, "minItems": 3, "maxItems": 3 },
+    "idx2": { "type": "array", "items": { "$ref": "#/$defs/index" }, "minItems": 2, "maxItems": 2 },
+    "idx3": { "type": "array", "items": { "$ref": "#/$defs/index" }, "minItems": 3, "maxItems": 3 },
+    "idx4": { "type": "array", "items": { "$ref": "#/$defs/index" }, "minItems": 4, "maxItems": 4 },
+
+    "molecule_type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["formal_charge_e", "atoms", "bonds"],
+      "properties": {
+        "description": { "type": "string" },
+        "formal_charge_e": { "type": "integer" },
+        "atoms": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/atom" } },
+        "bonds": { "type": "array", "items": { "$ref": "#/$defs/bond" } },
+        "angles": { "type": "array", "items": { "$ref": "#/$defs/angle" } },
+        "dihedrals": { "type": "array", "items": { "$ref": "#/$defs/dihedral" } },
+        "impropers": { "type": "array", "items": { "$ref": "#/$defs/improper" } },
+        "constraints": { "type": "array", "items": { "$ref": "#/$defs/constraint" } }
+      }
+    },
+    "atom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "element", "mass_amu"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "element": {
+          "oneOf": [{ "type": "null" }, { "type": "string", "pattern": "^[A-Z][a-z]?$" }]
+        },
+        "mass_amu": { "type": "number", "exclusiveMinimum": 0 },
+        "charge_e": { "type": "number" },
+        "type": { "$ref": "#/$defs/type_name" }
+      }
+    },
+    "constraint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["atoms", "length_nm"],
+      "properties": {
+        "atoms": { "$ref": "#/$defs/idx2" },
+        "length_nm": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+
+    "bond": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["atoms"],
+      "dependentRequired": { "form": ["params"], "params": ["form"] },
+      "properties": {
+        "atoms": { "$ref": "#/$defs/idx2" },
+        "form": { "enum": ["harmonic"] },
+        "params": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["form"], "properties": { "form": { "const": "harmonic" } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/p_bond_harmonic" } } }
+        }
+      ]
+    },
+    "angle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["atoms"],
+      "dependentRequired": { "form": ["params"], "params": ["form"] },
+      "properties": {
+        "atoms": { "$ref": "#/$defs/idx3" },
+        "form": { "enum": ["harmonic"] },
+        "params": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["form"], "properties": { "form": { "const": "harmonic" } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/p_angle_harmonic" } } }
+        }
+      ]
+    },
+    "dihedral": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["atoms"],
+      "dependentRequired": { "form": ["params"], "params": ["form"] },
+      "properties": {
+        "atoms": { "$ref": "#/$defs/idx4" },
+        "form": { "enum": ["periodic", "opls-fourier", "ryckaert-bellemans"] },
+        "params": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["form"], "properties": { "form": { "const": "periodic" } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/p_periodic" } } }
+        },
+        {
+          "if": { "required": ["form"], "properties": { "form": { "const": "opls-fourier" } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/p_opls_fourier" } } }
+        },
+        {
+          "if": {
+            "required": ["form"],
+            "properties": { "form": { "const": "ryckaert-bellemans" } }
+          },
+          "then": { "properties": { "params": { "$ref": "#/$defs/p_ryckaert_bellemans" } } }
+        }
+      ]
+    },
+    "improper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["atoms"],
+      "dependentRequired": { "form": ["params"], "params": ["form"] },
+      "properties": {
+        "atoms": { "$ref": "#/$defs/idx4" },
+        "form": { "enum": ["periodic", "harmonic"] },
+        "params": { "type": "object" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["form"], "properties": { "form": { "const": "periodic" } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/p_periodic" } } }
+        },
+        {
+          "if": { "required": ["form"], "properties": { "form": { "const": "harmonic" } } },
+          "then": { "properties": { "params": { "$ref": "#/$defs/p_improper_harmonic" } } }
+        }
+      ]
+    },
+
+    "p_bond_harmonic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["r0_nm", "k_kjmol_nm2"],
+      "properties": {
+        "r0_nm": { "type": "number", "exclusiveMinimum": 0 },
+        "k_kjmol_nm2": { "type": "number", "minimum": 0 }
+      }
+    },
+    "p_angle_harmonic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["theta0_deg", "k_kjmol_rad2"],
+      "properties": {
+        "theta0_deg": { "type": "number", "minimum": 0, "maximum": 180 },
+        "k_kjmol_rad2": { "type": "number", "minimum": 0 }
+      }
+    },
+    "p_periodic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["k_kjmol", "n", "phi0_deg"],
+      "properties": {
+        "k_kjmol": { "type": "number" },
+        "n": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "phi0_deg": { "type": "number", "minimum": -360, "maximum": 360 }
+      }
+    },
+    "p_opls_fourier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["v1_kjmol", "v2_kjmol", "v3_kjmol", "v4_kjmol"],
+      "properties": {
+        "v1_kjmol": { "type": "number" },
+        "v2_kjmol": { "type": "number" },
+        "v3_kjmol": { "type": "number" },
+        "v4_kjmol": { "type": "number" }
+      }
+    },
+    "p_ryckaert_bellemans": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["c0_kjmol", "c1_kjmol", "c2_kjmol", "c3_kjmol", "c4_kjmol", "c5_kjmol"],
+      "properties": {
+        "c0_kjmol": { "type": "number" },
+        "c1_kjmol": { "type": "number" },
+        "c2_kjmol": { "type": "number" },
+        "c3_kjmol": { "type": "number" },
+        "c4_kjmol": { "type": "number" },
+        "c5_kjmol": { "type": "number" }
+      }
+    },
+    "p_improper_harmonic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["xi0_deg", "k_kjmol_rad2"],
+      "properties": {
+        "xi0_deg": { "type": "number", "minimum": -180, "maximum": 180 },
+        "k_kjmol_rad2": { "type": "number", "minimum": 0 }
+      }
+    },
+
+    "forcefield": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "combination_rule",
+        "scale_14_lj",
+        "scale_14_coulomb",
+        "atom_types"
+      ],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "combination_rule": { "enum": ["geometric", "lorentz-berthelot"] },
+        "scale_14_lj": { "type": "number", "minimum": 0, "maximum": 1 },
+        "scale_14_coulomb": { "type": "number", "minimum": 0, "maximum": 1 },
+        "atom_types": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/type_name" },
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sigma_nm", "epsilon_kjmol"],
+            "properties": {
+              "sigma_nm": { "type": "number", "minimum": 0 },
+              "epsilon_kjmol": { "type": "number", "minimum": 0 },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
