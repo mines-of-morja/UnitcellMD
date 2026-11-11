@@ -1,0 +1,13 @@
+# Component repositories are separate git repos checked out inside this workspace
+/ucmd-*/
+
+# Read-only reference clones (NeNePo_builder)
+/_reference/
+
+# Environments and build artefacts
+**/.venv/
+**/target/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
