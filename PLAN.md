@@ -19,8 +19,8 @@ Verlet with Gaussian/ORCA adapters). What exists there, and what to learn from i
 **First scientific target:** reproduce the MD part of Lehnert et al. 2025, J. Electrochem. Soc. 172,
 050523 (`../Lit/`): LiPF₆ in EC:EMC (3:7 w:w), OPLS-AA with scaled ion charges (ζ), Nosé–Hoover
 thermostat, conductivity κ and transference number t⁺ from Onsager coefficients computed in the
-centre-of-mass frame. The simulation parameters are in the paper's supplementary information,
-which is **not yet in `../Lit/`**.
+centre-of-mass frame. The simulation parameters are in the paper's supplementary information
+(`../Lit/…_SI.pdf`), summarized in [docs/lehnert2025-si-notes.md](docs/lehnert2025-si-notes.md).
 
 **Not in v1** (the design must not block them): matching GROMACS/OpenMM speed for classical MD;
 GPU kernels inside the engine; MPI/distributed runs; general automatic atom typing; slab/interface
@@ -544,7 +544,9 @@ spike ADRs and the E1 design.
   - Assignment by graph-isomorphism match to a template. ζ is applied per species at build time
     and recorded in provenance.
   - **Values come from sources the author names** (the Lehnert SI and its references). Never
-    fill gaps by guessing.
+    fill gaps by guessing. Per the SI: the solvents come from Schrödinger Maestro OPLS
+    (commercial; the source decision is pending, §10.6), Li⁺ from Jensen & Jorgensen 2006,
+    PF₆⁻ from CL&P 2004; ζ = 0.75 for EC:EMC.
   - ✓ Tests reproduce each source table after unit conversion. Molecular net charges are as
     published (×ζ for ions).
 - **B1.4 Composition calculator.**
@@ -636,8 +638,9 @@ touching files, and both pass `ucmd check`.
 
 ### A2 Lehnert 2025 reproduction
 
-- **A2.1** The author provides the Lehnert SI: box sizes, run lengths, cutoffs, ζ, temperatures,
-  force-field sources. Freeze them in `validation/lehnert2025/PARAMS.md`.
+- **A2.1** The Lehnert SI is in `../Lit`, and its protocol is summarized in
+  `docs/lehnert2025-si-notes.md`: box sizes, run lengths, cutoffs, ζ, temperatures, force-field
+  sources. Freeze the values actually used in `validation/lehnert2025/PARAMS.md`.
 - **A2.2 Campaign tool `ucmd-launch`** (D13; generalizes the thesis `builder.py` +
   `dynstart.bash`): N replicas with different seeds, run directories, executors `local` and
   `slurm` (array template), resumable from checkpoints, status overview. Cluster specifics
@@ -683,6 +686,7 @@ than the oracle's.
 | Agent drift over many sessions | STATUS.md, ADRs, design docs, one task per session, gates |
 | QC programs not installed locally | parser tests on recorded thesis outputs; a mock executable for failure injection; real runs on the cluster |
 | Statistical noise in Onsager cross terms | replicas and error bars (A1.6); run lengths taken from the paper |
+| Production cost: Lehnert uses 3 replicas × up to 170 ns at 1 fs per state point (≈ 5×10⁸ steps, 7k atoms, PME) | agree a performance target in E2.8; OpenMM-as-provider on the GPU (E3.7) as the production fallback |
 
 ---
 
@@ -698,8 +702,10 @@ than the oracle's.
    viewer or a Rust front end may be added later on top of the same builder library.
 5. **Benchmark:** 1 M LiPF₆ in EC:EMC 3:7 w:w at 20 °C (the system Lehnert validated with eNMR),
    plus the paper's SI.
-6. **Force-field sources** for the templates: the files or papers from the Lehnert SI
-   (e.g. fftool force-field files).
+6. **Force-field sources** for the templates. The SI names Schrödinger Maestro OPLS (commercial)
+   for the solvents; Li⁺ and PF₆⁻ are openly published. Options for the solvents:
+   (a) Maestro parameters via a licence; (b) Ringsby et al. 2021, if their SI has the
+   parameters; (c) an open OPLS-AA parameterization (e.g. LigParGen), accepting a deviation.
 7. **Installs:** `libhdf5-dev` (needs sudo), `uv`, OpenMM, Packmol.
 8. **Agent setup:** Claude Code reads `CLAUDE.md`; for another agent, copy or symlink it to
    `AGENTS.md`. One agent sequentially, or two in parallel (§3).

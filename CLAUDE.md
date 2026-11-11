@@ -152,9 +152,9 @@ components.
 
 ## Reference material
 
-- `../Lit/Lehnert_2025_J._Electrochem._Soc._172_050523.pdf` — the target benchmark (OPLS-AA,
-  scaled ion charges, Onsager coefficients). Its supplementary information holds the simulation
-  parameters and is **not** in `../Lit` yet; ask for it.
+- `../Lit/Lehnert_2025_J._Electrochem._Soc._172_050523.pdf` and `…_SI.pdf` — the target
+  benchmark (OPLS-AA, scaled ion charges, Onsager coefficients). The SI's MD protocol and
+  particle numbers are summarized in `docs/lehnert2025-si-notes.md`.
 - `../Lit/Landesfeind_2019_…pdf`, `../Lit/Logan_2018_…pdf` — experimental transport and density
   data.
 - NeNePo_builder: https://github.com/PyProgMo/NeNePo_builder (commit fd7f1e2 audited), cloned to
