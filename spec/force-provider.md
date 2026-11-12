@@ -92,8 +92,18 @@ The engine is the i-PI **server**; the provider process is the **client**, e.g.
      extra string.
   5. The server sends `EXIT` at the end.
 - **Extra string:** a JSON object carrying `observables` (and optionally `energy_terms`).
-- **Matrix orientation and virial sign on the wire:** fixed by spike S4
-  ([ADR 0007](../docs/decisions/0007-ipi-wire-conventions.md)).
+- **Matrix orientation and virial on the wire**
+  ([ADR 0007](../docs/decisions/0007-ipi-wire-conventions.md), verified against ASE 3.29):
+  - In POSDATA the cell is sent as h = cellᵀ (lattice vectors as columns), row-major, in
+    bohr, followed by inverse(cell) in bohr⁻¹ (clients ignore it).
+  - In FORCEREADY the nine virial values are Wᵀ row-major, in hartree; transpose them on
+    receipt. The virial is W = −V·σ = −∂E/∂ε (units.md §4).
+- **Extras:** an empty extra field, or a single zero byte (ASE always sends one), means "no
+  extras".
+- **Constants:** clients we control (`ucmd-bridge`) use the constants of units.md §2. ASE must
+  be switched to CODATA 2018, with `Bohr` and `Hartree` pinned to the tabulated values, which
+  makes the transport exact to round-off. Third-party clients may use other CODATA versions;
+  compare their results at 10⁻⁷ relative.
 - **Limitation:** the protocol carries no point charges. Electrostatic-embedding QM/MM needs a
   protocol extension (PLAN.md E3.8).
 
