@@ -64,3 +64,46 @@ def test_dispersion_correction_matches_openmm(argon) -> None:
 
     correction = nonbonded(True) - nonbonded(False)
     assert correction == pytest.approx(oracle.lj_dispersion_correction(argon, 0.85), rel=1e-9)
+
+
+# ---------------------------------------------------------------------------------------------
+# Version 1: molecular packages
+
+K_E = 138.93545764438196  # e²N_A/(4πε₀) in kJ mol⁻¹ nm e⁻², spec/units.md §2
+
+
+def test_water_terms_equal_a_numpy_hand_calculation() -> None:
+    top = oracle.load_topology(FIXTURES / "water-2")
+    assert top.excluded == [(0, 1), (0, 2), (1, 2), (3, 4), (3, 5), (4, 5)] and top.pairs14 == []
+    terms = oracle.energy_terms(oracle.molecular_system(top), top.positions_nm)
+    x = top.positions_nm
+    bond = sum(0.5 * k * (np.linalg.norm(x[i] - x[j]) - r0) ** 2 for i, j, r0, k in top.bonds)
+    angle = 0.0
+    for i, j, k, theta0, kk in top.angles:
+        u, v = x[i] - x[j], x[k] - x[j]
+        theta = np.arccos(u @ v / np.linalg.norm(u) / np.linalg.norm(v))
+        angle += 0.5 * kk * (theta - theta0) ** 2
+    coulomb = lj = 0.0
+    for i in range(3):
+        for j in range(3, 6):
+            r = np.linalg.norm(x[i] - x[j])
+            coulomb += K_E * top.charges_e[i] * top.charges_e[j] / r
+            sigma = 0.5 * (top.sigma_nm[i] + top.sigma_nm[j])  # Lorentz–Berthelot
+            eps = np.sqrt(top.epsilon_kjmol[i] * top.epsilon_kjmol[j])
+            lj += 4 * eps * ((sigma / r) ** 12 - (sigma / r) ** 6)
+    assert terms["bond"] == pytest.approx(bond, rel=1e-10)
+    assert terms["angle"] == pytest.approx(angle, rel=1e-10)
+    assert terms["coulomb"] == pytest.approx(coulomb, rel=1e-10)
+    assert terms["lj"] == pytest.approx(lj, rel=1e-10)
+    assert terms["total"] == pytest.approx(bond + angle + coulomb + lj, rel=1e-10)
+
+
+def test_nacl_pme_energy_gives_the_madelung_constant() -> None:
+    top = oracle.load_topology(FIXTURES / "nacl-crystal")
+    a = top.cell_nm[0, 0] / 2  # two conventional cells per edge
+    r0 = a / 2  # nearest-neighbour distance
+    system = oracle.molecular_system(top, cutoff_nm=0.55, ewald_tolerance=1e-10)
+    terms = oracle.energy_terms(system, top.positions_nm, top.cell_nm)
+    pairs = top.n_atoms // 2
+    madelung = -terms["coulomb"] * r0 / (pairs * K_E)
+    assert madelung == pytest.approx(1.747565, abs=2e-6)  # NaCl, referred to r0 (PLAN.md E2.3)
