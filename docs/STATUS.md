@@ -10,19 +10,27 @@ Last update: 2026-11-12.
   - code: branch `e1` of `ucmd-engine`.
 - **B1 design approved** ([design/B1.md](design/B1.md)); working horse in
   [ADR 0009](decisions/0009-working-horse-force-field.md).
-- **B1a is in implementation** on branch `b1` of ucmd-builder.
+- **B1a is complete and awaits Gate B1a** ([gates/gate-b1a.md](gates/gate-b1a.md)).
+  - The builder makes Lehnert's 1 M LiPF₆ EC:EMC box (7036 atoms) from a recipe; OpenMM runs
+    it.
+  - EC and EMC agree with OpenMM's reading of the LigParGen originals to 10⁻¹².
+  - Branches: `b1` of ucmd-builder, `b1a` of this repo (oracle v1).
 
 ## Current
 
 - **Repos:** all four are public in the organization `mines-of-morja`, with CI green.
   - `main` holds what the author has seen or decided.
-  - Review branches: `e1` (ucmd-engine, Gate E1) and `b1` (ucmd-builder, B1a).
+  - Review branches: `e1` (ucmd-engine, Gate E1), `b1` (ucmd-builder, Gate B1a) and `b1a`
+    (this repo: oracle v1, Gate B1a report).
 - **Engine CI** tests every branch against the umbrella at tag `spec-v0.1.0`. A spec change moves
   this pin in the same coordinated update.
 - **Waiting for the author:**
-  1. Feedback from the hands-on E1 tests ([testing.md](testing.md)), then Gate E1.
+  1. Hands-on tests of E1 and the builder ([testing.md](testing.md) §1–7), then Gates E1 and
+     B1a.
   2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
      densities are marked placeholders.
+  3. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
+     wheel.
 
 ## Decisions by the author
 
@@ -54,6 +62,14 @@ Last update: 2026-11-12.
   Gate E1.
 
 ## Done
+
+- 2026-11-12 — **B1a (branch `b1` of ucmd-builder)**:
+  - recipe, molecules (RDKit), pluggable force-field sources (`library`, `gromacs-top`, test
+    kit);
+  - working-horse data (ADR 0009);
+  - composition, packing (Packmol wheel, insertion), deterministic packages, CLI, XYZ export.
+
+  Plus oracle v1 (branch `b1a`). Evidence: [gates/gate-b1a.md](gates/gate-b1a.md).
 
 - 2026-11-12 — **B1 design approved**; ADR 0009.
   - Parameters obtained: LigParGen 3.0.1 run for EC and EMC; JJ06 Li⁺ checked against two
@@ -92,9 +108,10 @@ Last update: 2026-11-12.
 
 ## Open questions for the author
 
-1. Gate E1, after the hands-on tests ([testing.md](testing.md)).
+1. Gates E1 and B1a, after the hands-on tests ([testing.md](testing.md)).
 2. The Landesfeind 2019 SI for the densities.
-3. PLAN.md §10:
+3. The validator packaging fix (gate-b1a.md §4.1).
+4. PLAN.md §10:
    - item 5: benchmark 1 M LiPF₆ in EC:EMC 3:7 at 20 °C;
    - item 8: agent setup.
 
@@ -103,6 +120,9 @@ Last update: 2026-11-12.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+- 2026-11-12 — B1a — builder B1.1–B1.5, B1.8, XYZ export; oracle v1 — evidence: 83 tests, CI
+  green; EC/EMC vs OpenMM-GROMACS to 1.5e-12; LP57 box runs in OpenMM — next: Gate B1a; E2
+  design
 - 2026-11-12 — B1 design approved — ADR 0009; testing guide — next: B1.1
 - 2026-11-12 — B1 design — `docs/design/B1.md`:
   - force-field sources with registry, `library` and `gromacs-top`, and a source test kit;

@@ -1,7 +1,7 @@
 # Hands-on testing
 
 What you can try yourself now, with the expected results. Every command and number below
-was checked on the workstation on 2026-11-12 (engine branch `e1`).
+was checked on the workstation on 2026-11-12 (engine branch `e1`, builder branch `b1`).
 
 **When something looks wrong**, report it in chat or as a GitHub issue in the repo concerned.
 Include:
@@ -120,8 +120,43 @@ pressure, g(r), diffusion and drift. **Expected: PASS 8/8**, with numbers close 
 `validation/argon/REPORT.md`. Exact values differ from the report (different random start),
 but every check must pass.
 
+## 7. The builder: an electrolyte box from a recipe (branch `b1` of ucmd-builder)
+
+```sh
+cd ucmd-builder
+git switch b1
+python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'   # once; includes RDKit and Packmol
+.venv/bin/pytest -q                                          # expected: 83 passed, about 25 s
+```
+
+What to try:
+
+| Command | Expected result |
+|---|---|
+| `.venv/bin/ucmd-build library` | three data sets: `argon-rahman1964`, `opls-aa-carbonates` (EC, EMC, Li, PF6), `water-spcfw` |
+| `.venv/bin/ucmd-build compose examples/lp57-1M.toml` | 47 Li, 47 PF6, 168 EC, 332 EMC; box 4.276 nm; 0.998 M |
+| `.venv/bin/ucmd-build build examples/lp57-1M.toml -o /tmp/lp57.ucsys` | about 20 s; `wrote /tmp/lp57.ucsys: 7036 atoms …, closest intermolecular pair 0.220 nm`, and a note that the density is a placeholder |
+| `../ucmd-engine/target/release/ucmd check /tmp/lp57.ucsys` | `OK`: the engine reads the builder's package. It cannot run it yet; molecular force fields arrive with E2 |
+| `.venv/bin/ucmd-build xyz /tmp/lp57.ucsys -o /tmp/lp57.xyz` | open it in OVITO, VMD or `ase gui`: a periodic 4.3 nm box of whole molecules |
+
+Things to try or break:
+- Change `molarity_mol_L` or `solvent` in a copy of the recipe and watch `compose`.
+- Set `charge_scale = 1.0`, and see `provenance.transforms` in `system.json` change.
+- Add a typo to a key: you get an error that names it.
+- Add a component with `molecule = { smiles = "CCO" }` (ethanol): `no template … matches`,
+  because the library has no ethanol. A new molecule needs a cited source: a library template,
+  or a GROMACS topology through `gromacs-top`.
+
+**Validation against OpenMM** (needs `tools/oracle/.venv`):
+
+```sh
+python3 validation/b1-openmm/fetch_ligpargen.py /tmp/lpg && validation/b1-openmm/run.sh /tmp/lpg
+```
+
+Expected: `PASS` for EC and EMC, then finite PME energies for the full box. See
+`validation/b1-openmm/REPORT.md`.
+
 ## Coming next
 
-- **The builder (B1):** `ucmd-build build build.toml` creates an electrolyte box. This section
-  grows as B1 lands.
-- **The GUI preview (B2a):** after milestone M2a.
+- **E2:** the engine runs molecular systems (bonded terms, PME), then milestone M2a.
+- **The GUI preview (B2a):** after M2a.

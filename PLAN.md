@@ -1,8 +1,8 @@
 # UnitcellMD — implementation plan
 
-Version 1.4 · 2026-11-12 · Status: Gate 0 approved (spec v0.1.0). E1 is complete; the author
-is testing it hands-on before Gate E1 (docs/testing.md). The B1 design is approved and B1a is
-in implementation.
+Version 1.4 · 2026-11-12 · Status: Gate 0 approved (spec v0.1.0). E1 and B1a are complete;
+the author tests them hands-on before Gates E1 and B1a (docs/testing.md,
+docs/gates/gate-b1a.md). Next: the E2 design.
 Executed by: a coding agent following [CLAUDE.md](CLAUDE.md). Approved by: the author, at every gate.
 Task IDs (P0.3, E1.5, …) are stable. Reference them in commits, `docs/STATUS.md` and ADRs.
 
