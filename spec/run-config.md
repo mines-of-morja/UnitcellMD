@@ -171,6 +171,7 @@ If no profile exists, defaults apply.
 spec_version = "0.1.0"
 threads = 16                      # default: all logical cores
 scratch_dir = "/tmp/ucmd"         # default: system temp directory
+author_name = "Jane Doe"          # written to H5MD /h5md/author; default "anonymous"
 
 [executables]                     # absolute paths, probed when a provider starts
 packmol = "/opt/packmol/packmol"

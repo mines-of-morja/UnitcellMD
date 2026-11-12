@@ -55,8 +55,7 @@ def system_doc(
     notes: str | None = None,
 ) -> dict[str, Any]:
     atom_count = sum(
-        c["count"] * len(molecule_types[c["molecule_type"]]["atoms"])
-        for c in components
+        c["count"] * len(molecule_types[c["molecule_type"]]["atoms"]) for c in components
     )
     provenance: dict[str, Any] = {"created_by": GENERATOR, "created_utc": CREATED}
     if sources:
@@ -98,9 +97,7 @@ def write_package(
     if velocities is not None:
         np.save(path / "velocities.npy", velocities)
     if expected is not None:
-        (path / "expected.json").write_text(
-            json.dumps({"code": expected}) + "\n", encoding="utf-8"
-        )
+        (path / "expected.json").write_text(json.dumps({"code": expected}) + "\n", encoding="utf-8")
 
 
 def f8(values: Any) -> np.ndarray:
@@ -158,9 +155,7 @@ def argon_864() -> tuple[dict[str, Any], np.ndarray]:
     )  # rounded: pow is not correctly rounded
     a = box / 6
     basis = np.array([[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5]])
-    cells = np.array(
-        [[i, j, k] for i in range(6) for j in range(6) for k in range(6)], dtype=float
-    )
+    cells = np.array([[i, j, k] for i in range(6) for j in range(6) for k in range(6)], dtype=float)
     lattice = ((cells[:, None, :] + basis[None, :, :]).reshape(-1, 3)) * a
     positions = f8(lattice + uniform_noise(1964, lattice.shape, 0.005))
     mtypes = {
@@ -213,9 +208,7 @@ def argon_864() -> tuple[dict[str, Any], np.ndarray]:
 
 def spcfw_type() -> tuple[dict[str, Any], dict[str, Any]]:
     """SPC/Fw molecule type and atom types (Wu, Tepper, Voth 2006, Table I)."""
-    k_bond = round(
-        1059.162 * KCAL_KJ / ANGSTROM_NM**2, 6
-    )  # kcal mol-1 Å-2 -> kJ mol-1 nm-2
+    k_bond = round(1059.162 * KCAL_KJ / ANGSTROM_NM**2, 6)  # kcal mol-1 Å-2 -> kJ mol-1 nm-2
     k_angle = round(75.90 * KCAL_KJ, 6)  # kcal mol-1 rad-2 -> kJ mol-1 rad-2
     mtype = {
         "description": "SPC/Fw flexible water",
@@ -338,9 +331,7 @@ def water_2() -> tuple[dict[str, Any], np.ndarray]:
 def nacl_crystal() -> tuple[dict[str, Any], np.ndarray]:
     a = 0.5640  # nm; a test value: the Madelung energy scales as 1/a
     fcc = np.array([[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5]])
-    cells = np.array(
-        [[i, j, k] for i in range(2) for j in range(2) for k in range(2)], dtype=float
-    )
+    cells = np.array([[i, j, k] for i in range(2) for j in range(2) for k in range(2)], dtype=float)
     na = ((cells[:, None, :] + fcc[None, :, :]).reshape(-1, 3)) * a
     cl = na + np.array([0.5 * a, 0.0, 0.0])
     mtypes = {
@@ -399,9 +390,7 @@ def nacl_crystal() -> tuple[dict[str, Any], np.ndarray]:
 # --------------------------------------------------------------------------- invalid packages
 
 
-def invalid_packages(
-    root: Path, valid: dict[str, tuple[dict[str, Any], np.ndarray]]
-) -> None:
+def invalid_packages(root: Path, valid: dict[str, tuple[dict[str, Any], np.ndarray]]) -> None:
     out = root / "invalid"
     if out.exists():
         shutil.rmtree(out)
@@ -445,9 +434,7 @@ def invalid_packages(
             "E_SCHEMA",
             mutate(
                 water_doc,
-                lambda d: d["molecule_types"]["SPCFw"]["bonds"][0]["params"].update(
-                    r0=0.1012
-                ),
+                lambda d: d["molecule_types"]["SPCFw"]["bonds"][0]["params"].update(r0=0.1012),
             ),
             water_pos,
         ),
@@ -463,6 +450,14 @@ def invalid_packages(
             mutate(
                 water_doc,
                 lambda d: d["molecule_types"]["SPCFw"]["atoms"][1].update(type="HX"),
+            ),
+            water_pos,
+        ),
+        (
+            "unknown-element",
+            "E_SCHEMA",
+            mutate(
+                water_doc, lambda d: d["molecule_types"]["SPCFw"]["atoms"][0].update(element="Xx")
             ),
             water_pos,
         ),
@@ -523,9 +518,7 @@ def invalid_packages(
 
     nan_positions = argon_pos.copy()
     nan_positions[17, 1] = np.nan
-    write_package(
-        out / "nan-coordinate", argon_doc, nan_positions, expected="E_NONFINITE"
-    )
+    write_package(out / "nan-coordinate", argon_doc, nan_positions, expected="E_NONFINITE")
 
     # A periodic water box whose second hydrogen sits across the boundary: molecule not whole.
     box = 1.0
@@ -538,9 +531,7 @@ def invalid_packages(
     )
     split_pos = water_pos + 0.4
     split_pos[2, 0] += box  # image-shifted hydrogen
-    write_package(
-        out / "molecule-split", split, f8(split_pos), expected="E_MOLECULE_SPLIT"
-    )
+    write_package(out / "molecule-split", split, f8(split_pos), expected="E_MOLECULE_SPLIT")
 
 
 # --------------------------------------------------------------------------- run configurations
