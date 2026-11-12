@@ -1,7 +1,7 @@
 # 0007 — i-PI wire conventions; ASE as the universal out-of-process provider
 
-- **Status:** accepted 2026-11-12 by the agent, based on spike S4 (`spikes/s4-ipi-handshake/`).
-  To be reviewed at Gate 0.
+- **Status:** accepted by the author at Gate 0 (2026-11-12). Originally accepted 2026-11-12 by the
+  agent, based on spike S4 (`spikes/s4-ipi-handshake/`).
 - **Context:**
   - PLAN.md D7 makes the i-PI socket protocol the transport for every out-of-process force
     provider. The Rust engine is the server; e.g. an ASE calculator is the client.

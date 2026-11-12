@@ -61,15 +61,12 @@
   was rejected for now: it cannot append to N-dimensional datasets.
 - **P0.4:** fixtures are generated reproducibly from the raw PCG64 bit stream, and CI checks
   them byte for byte. That is more than PLAN.md asked for.
-- **Partly done:** GitHub. The author pushed `phase-0` of this repo (private); everything else
-  is still local (STATUS.md).
+- **GitHub:** done by the author on 2026-11-12. All four repos are public in the organization
+  `mines-of-morja`, with every branch pushed; CI is green everywhere.
 
 ## 5. Needed from the author
 
-1. GitHub: choose the owner (organization or personal account) and create the three missing
-   repos, either empty in the web UI or with `gh auth login`. Then `tools/publish-github.sh
-   --owner <owner>` pushes everything over SSH (`--dry-run` shows what it will do; `--prs`
-   opens the review PRs and needs gh). New repos are private.
+1. **Done (author, 2026-11-12):** GitHub. The repos live in `mines-of-morja` and are public.
 2. **Force-field source** for the solvents (PLAN.md §10.6). The Lehnert SI uses Schrödinger
    Maestro OPLS, which is commercial. Options: (a) a licence, (b) Ringsby 2021 SI files,
    (c) an open OPLS-AA parameterization.
@@ -81,3 +78,29 @@
   so it can be reviewed or discarded independently of Gate 0.
 - **B1** (headless builder) can then run in parallel. It is the next item that needs the
   force-field source decision (§5.2).
+
+## 7. Decision (author, 2026-11-12)
+
+**Gate 0 is approved.**
+
+- **§1–§2:** accepted.
+- **§3:** every recommendation is accepted.
+  - #10: the E1 design questions are settled as implemented. The step is double-buffered,
+    Maxwell–Boltzmann velocities are rescaled to the exact target temperature, and
+    `harmonic-tether` stays in the provider registry.
+  - #11: the commit identity morja@mailbox.org and the NOTICE "The UnitcellMD Authors" stay.
+- **§5.2, force-field source:** the author chose an open, pluggable approach instead of a single
+  source.
+  - Parameter sources and force (gradient) sources are plug-ins behind the spec'd interfaces.
+  - The working horse should be an open-source force field. If no open force field is good
+    enough, we develop our own.
+  - Recorded in [ADR 0008](../decisions/0008-pluggable-force-field-sources.md). The concrete
+    parameter set is chosen in the B1 design.
+- **§6:** continue as proposed (E1, then B1). New request: a frontend for trying things out as
+  soon as the core stands. Placement: PLAN.md §3.
+
+**Consequences:**
+
+- `phase-0` is merged into `main`.
+- The spec is tagged `spec-v0.1.0`; changes to it now need the author's approval.
+- ADRs 0003–0007 are accepted.

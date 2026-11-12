@@ -1,7 +1,7 @@
 # UnitcellMD — implementation plan
 
-Version 1.2 · 2026-11-12 · Status: Phase 0 complete (awaiting Gate 0); E1 complete,
-provisionally (docs/gates/gate-e1.md). Gate 0 decisions are partly made (§10).
+Version 1.3 · 2026-11-12 · Status: Gate 0 approved (spec v0.1.0); E1 complete and awaiting
+Gate E1 (docs/gates/gate-e1.md); B1 in design.
 Executed by: a coding agent following [CLAUDE.md](CLAUDE.md). Approved by: the author, at every gate.
 Task IDs (P0.3, E1.5, …) are stable. Reference them in commits, `docs/STATUS.md` and ADRs.
 
@@ -258,7 +258,8 @@ never on any `ucmd-providers-*` crate. Only `ucmd-cli` knows the concrete provid
 | E1 | engine | NVE/NVT engine, LJ, PBC, H5MD, checkpoints, CLI | argon matches OpenMM; restart is bitwise identical | P0 |
 | B1 | builder | headless builder + CLI + force-field template library | recipe → valid package → OpenMM runs it | P0 |
 | E2 | engine | bonded terms, PME, constraints, NHC/Langevin, barostat, minimizer, performance | electrolyte box matches OpenMM (energies, density, RDF) | E1, B1 |
-| B2 | builder | PySide6 GUI over the builder library | author builds electrolyte + crystal in the GUI only | B1 |
+| B2a | builder | frontend preview: build, view, short local runs | author builds and runs a small electrolyte box in the GUI only | B1, E2 core |
+| B2b | builder | complete PySide6 GUI over the builder library | author builds electrolyte + crystal in the GUI only | B2a |
 | A1 | analysis | RDF, MSD, Onsager L_ij, κ, t⁺, error bars | synthetic tests + OpenMM-trajectory cross-checks | P0 (B1 for real systems) |
 | E3 | engine | i-PI providers, ported NeNePo adapters, ML providers | one package runs with three provider kinds; thesis Ag₄ regression | E1 |
 | A2 | analysis | Lehnert 2025 reproduction | κ and t⁺ within uncertainty of the paper | E2, A1, B1 |
@@ -266,15 +267,21 @@ never on any `ucmd-providers-*` crate. Only `ucmd-cli` knows the concrete provid
 **Milestones.**
 
 - **M1 "first light"** (after E1): spec fixture → engine → H5MD → MDAnalysis RDF.
+- **M2a "core stands"** (after B1 + E2 core): a builder-made LiPF₆/EC:EMC package runs NVT with
+  PME in our engine, and its single-point energies and forces match OpenMM.
 - **M2 "electrolyte box"** (after B1 + E2): a builder-made LiPF₆/EC:EMC package gives the same
   density and RDFs in our engine and in OpenMM.
 - **M3 "any force"** (after E3): the same package runs with classical, socket-LJ and ML providers
   by editing `run.toml` only.
 - **M4 "paper"** (after A2).
 
-**Order with one agent:** P0 → E1 → B1 → E2 → then B2, A1, E3 in any order → A2.
-E2 is the largest block. B2 can start right after B1 if you want the GUI sooner; the price is
-GUI rework while the spec still moves during E2.
+**Order with one agent:** P0 → E1 → B1 → E2 core (E2.0–E2.4, E2.6) → **B2a frontend
+preview** → rest of E2 → A1, E3 and B2b in any order → A2.
+
+- E2 is the largest block.
+- **The frontend comes early, at the author's request (2026-11-12).** As soon as the core stands
+  (M2a), B2a gives the author a GUI to build systems, look at them, start short local runs and
+  watch the results, so that feedback arrives early. The rest of the GUI (B2b) follows later.
 
 **With two agents:** run one engine agent (E1 → E2 → E3) and one builder+analysis agent
 (B1 → A1 → B2 → A2). They meet only through `spec/`, which is the point of the design.
@@ -444,7 +451,9 @@ spike ADRs and the E1 design.
   - ✓ Test kit per term.
   - ✓ Single molecules (EC, EMC, PF₆⁻) vs OpenMM: each energy term to 1e-8 relative.
 - **E2.2 Exclusions and 1-4 pairs.** Exclusions come from the bond graph per the spec. 1-4 LJ and
-  Coulomb are scaled (OPLS: 0.5/0.5, **geometric** combination for both σ and ε).
+  Coulomb are scaled by the package's factors (OPLS: 0.5/0.5). Both combination rules of the
+  spec are supported: **geometric** for σ and ε (OPLS) and Lorentz–Berthelot (AMBER, OpenFF),
+  so that every parameter source of ADR 0008 runs.
   - ✓ EC/EMC energy decomposition matches OpenMM term by term.
 - **E2.3 Electrostatics reference:** plain Coulomb (non-periodic) and classic Ewald summation,
   with excluded-pair and self corrections and a neutrality check.
@@ -538,17 +547,32 @@ spike ADRs and the E1 design.
   - XYZ/MOL/SDF/PDB via RDKit (bond perception, SMILES); ASE for XYZ, CIF and other formats.
   - Angles and dihedrals generated from the bond graph. Canonical atom order = template order.
   - ✓ Round-trip tests. EC, EMC and PF₆⁻ graphs are correct.
-- **B1.3 Force-field template library** (data files in `ucmd_builder/forcefields/`).
-  - OPLS-AA templates for EC, EMC, DMC, PC, MP, Li⁺ and PF₆⁻, plus SPC/E, SPC/Fw and argon.
-  - Values converted to spec units, with a source citation for each parameter set.
-  - Assignment by graph-isomorphism match to a template. ζ is applied per species at build time
-    and recorded in provenance.
-  - **Values come from sources the author names** (the Lehnert SI and its references). Never
-    fill gaps by guessing. Per the SI: the solvents come from Schrödinger Maestro OPLS
-    (commercial; the source decision is pending, §10.6), Li⁺ from Jensen & Jorgensen 2006,
-    PF₆⁻ from CL&P 2004; ζ = 0.75 for EC:EMC.
-  - ✓ Tests reproduce each source table after unit conversion. Molecular net charges are as
-    published (×ζ for ions).
+- **B1.3 Force-field sources** ([ADR 0008](docs/decisions/0008-pluggable-force-field-sources.md)).
+  - **Interface:** a `ForceFieldSource` takes a molecule graph (canonical atom order, formal
+    charge, optional coordinates). It returns explicit parameters in spec units, the
+    conventions (combination rule, 1-4 scales) and citations.
+  - **Plug-ins** register through the entry-point group `ucmd_builder.forcefield_sources`. The
+    built-in sources use the same mechanism.
+  - **Built in:**
+    - `library`: curated, cited parameter sets as data files in `ucmd_builder/forcefields/`,
+      assigned by graph-isomorphism match;
+    - `gromacs-top`: an importer for GROMACS `.top`/`.itp` files, e.g. LigParGen output.
+  - **Transforms after parameterization** are recorded in provenance, e.g. the ion charge
+    scaling ζ per species. The builder refuses to mix sources whose conventions differ in one
+    package.
+  - **Library content for B1:**
+    - argon (Rahman 1964) and SPC/Fw water (pre-approved);
+    - the electrolyte working horse, once the author confirms its sources (B1 design).
+      Candidates: Li⁺ (Jensen & Jorgensen 2006), PF₆⁻ (CL&P 2004), EC and EMC (later DMC, PC,
+      MP); ζ = 0.75 for EC:EMC as in Lehnert 2025.
+  - **Values come from sources the author approves.** Never fill gaps by guessing.
+  - ✓ A test kit for every source checks:
+    - net charge = formal charge (× ζ for ions);
+    - every interaction is parameterized;
+    - units are converted and the canonical order is preserved;
+    - provenance is complete.
+  - ✓ Tests reproduce each source table after unit conversion.
+  - ✓ The same parameters reach the same package through `library` and through `gromacs-top`.
 - **B1.4 Composition calculator.**
   - Inputs: salt and concentration (molarity or molality); solvent ratio (w:w or v:v); size
     target (ion pairs, atoms, or box length); density.
@@ -587,6 +611,14 @@ spike ADRs and the E1 design.
 
 ### B2 GUI (PySide6, thin layer over B1)
 
+The GUI comes in two steps (the author's request, 2026-11-12):
+
+- **B2a, frontend preview**, right after M2a: B2.1, B2.2, the liquid part of B2.3 with library
+  molecules, the export part of B2.5, and B2.6. The goal is that the author tries the tools and
+  gives feedback early.
+- **B2b, complete GUI:** everything else (SMILES and file input, crystals, validator
+  highlighting, …).
+
 - **B2.1 App shell.** Left panel: components and counts. Centre: 3D view. Right panel:
   properties of the selection. Bottom panel: validation and log.
   - The recipe model is the single source of truth. Every edit is a recipe change through
@@ -602,6 +634,17 @@ spike ADRs and the E1 design.
   substitution and vacancies.
 - **B2.5 Validate and export:** validator messages in the bottom panel (click → highlight
   atoms); export package + recipe; open an existing package read-only.
+- **B2.6 Run preview.**
+  - Starts a short local run of the exported package. The GUI calls the `ucmd` binary as an
+    external program; its path comes from the machine profile, and `run.toml` from a template.
+  - Shows temperature and energies live from the thermo file and plays the H5MD trajectory
+    in the 3D view.
+  - Talks to the engine only through its CLI and the spec'd files (invariant 2). The builder
+    library itself still never runs MD.
+  - ✓ pytest-qt test with a fake `ucmd` executable: start, progress, cancel, error display.
+
+**Gate B2a:** the author builds a small LiPF₆/EC:EMC box in the GUI, runs it for a few
+picoseconds and watches temperature, energy and the trajectory, without touching files.
 
 **Gate B2:** the author builds 1 M LiPF₆ in EC:EMC and a LiF supercell in the GUI without
 touching files, and both pass `ucmd check`.
@@ -682,7 +725,7 @@ than the oracle's.
 | HDF5 build friction (locally and on the cluster) | spike S1 with a documented fallback |
 | Unit and sign errors hidden by modular boundaries | one unit system; finite-difference force and virial tests for every provider; oracle comparisons |
 | Spec churn across repos | contract tests on fixtures; semver; a spec change = ADR + one coordinated update |
-| Unsourced or wrong force-field parameters | template library with citations; the author supplies sources; tests compare with source tables |
+| Unsourced or wrong force-field parameters | pluggable parameter sources (ADR 0008) with citations in provenance; the author approves every source; a test kit for sources; tests against source tables |
 | Agent drift over many sessions | STATUS.md, ADRs, design docs, one task per session, gates |
 | QC programs not installed locally | parser tests on recorded thesis outputs; a mock executable for failure injection; real runs on the cluster |
 | Statistical noise in Onsager cross terms | replicas and error bars (A1.6); run lengths taken from the paper |
@@ -693,25 +736,29 @@ than the oracle's.
 ## 10. Decisions for the author (confirm at Gate 0)
 
 1. **Units:** ✅ decided 2026-11-11: nm/ps/amu/kJ mol⁻¹ ([ADR 0001](docs/decisions/0001-units.md)).
-2. **Repos:** ✅ on GitHub with the names proposed in D1, **private at first and public once
-   there is enough progress** (decided 2026-11-12). Licence ✅ Apache-2.0 for all repos. Commits
-   use the organization email (repo-local git config). Open: the owner, either the organization
-   [`mines-of-morja`](https://github.com/mines-of-morja) (all links assume it) or the personal
-   account the umbrella repo was first pushed to. Decided 2026-11-11/12.
+2. **Repos:** ✅ public on GitHub in the organization
+   [`mines-of-morja`](https://github.com/mines-of-morja), with the names proposed in D1.
+   Licence ✅ Apache-2.0 for all repos. Commits use the organization email (repo-local git
+   config). Decided 2026-11-11/12.
 3. **Formats:** JSON + NPY package, TOML configs, H5MD trajectories (D4).
 4. **GUI stack:** ✅ decided 2026-11-11: PySide6 + pyvistaqt, pending spike S3. A web-based
    viewer or a Rust front end may be added later on top of the same builder library.
 5. **Benchmark:** 1 M LiPF₆ in EC:EMC 3:7 w:w at 20 °C (the system Lehnert validated with eNMR),
    plus the paper's SI.
-6. **Force-field sources** for the templates. The SI names Schrödinger Maestro OPLS (commercial)
-   for the solvents; Li⁺ and PF₆⁻ are openly published. Options for the solvents:
-   (a) Maestro parameters via a licence; (b) Ringsby et al. 2021, if their SI has the
-   parameters; (c) an open OPLS-AA parameterization (e.g. LigParGen), accepting a deviation.
+6. **Force-field sources:** ✅ direction decided 2026-11-12. Sources are open and pluggable
+   ([ADR 0008](docs/decisions/0008-pluggable-force-field-sources.md)), with an open-source
+   working horse and our own force field as a fallback.
+   - The concrete working-horse parameter set is proposed in the B1 design and needs the
+     author's confirmation.
+   - Ringsby 2021 is no alternative: it used Maestro/MacroModel parameters as well.
 7. **Installs:** `libhdf5-dev` (needs sudo), `uv`, OpenMM, Packmol.
 8. **Agent setup:** Claude Code reads `CLAUDE.md`; for another agent, copy or symlink it to
    `AGENTS.md`. One agent sequentially, or two in parallel (§3).
 9. **Cluster:** ⏸ deferred to A2.2. The constraint that applies now: everything stays
    local-first and cluster-capable (D13, ADR 0002).
+10. **Early frontend** (the author's idea, 2026-11-12): B2a after M2a (§3), with the run
+    preview B2.6, in which the GUI starts `ucmd` as an external program. To confirm with the
+    B1 design.
 
 ---
 

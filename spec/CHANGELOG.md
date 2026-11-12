@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0 — draft (2026-11-12)
+## 0.1.0 — 2026-11-12
 
-Initial version, pending author review at Gate 0. Contents:
+Initial version, approved at Gate 0 (git tag `spec-v0.1.0`). Contents:
 
 - units and conventions;
 - the system package (`system.json` + NPY arrays);

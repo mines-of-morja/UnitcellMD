@@ -2,11 +2,11 @@
 # Push the four UnitcellMD workspace repositories to GitHub: all local branches and tags, over
 # SSH (git@github.com:OWNER/NAME.git). Idempotent, so it is also the command for later pushes.
 #
-#   tools/publish-github.sh [--owner NAME] [--public] [--prs] [--dry-run]
+#   tools/publish-github.sh [--owner NAME] [--private] [--prs] [--dry-run]
 #
 #   --owner NAME  GitHub organization or user that hosts the repos (default: mines-of-morja)
-#   --public      create missing repos as public. Default: private. The visibility of existing
-#                 repos is never changed; publish a repo in its GitHub settings.
+#   --private     create missing repos as private. Default: public, like the existing repos.
+#                 The visibility of existing repos is never changed.
 #   --prs         open a pull request into main for every other branch that has none (needs gh)
 #   --dry-run     check everything, print what would be created and pushed, change nothing
 #
@@ -15,13 +15,13 @@
 set -euo pipefail
 
 OWNER=mines-of-morja
-VISIBILITY=--private
+VISIBILITY=--public
 PRS=0
 DRY=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --owner) OWNER=${2:?--owner needs a name}; shift 2 ;;
-    --public) VISIBILITY=--public; shift ;;
+    --private) VISIBILITY=--private; shift ;;
     --prs) PRS=1; shift ;;
     --dry-run) DRY=1; shift ;;
     -h | --help) sed -n '2,15p' "$0"; exit 0 ;;

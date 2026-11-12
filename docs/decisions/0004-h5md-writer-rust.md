@@ -1,7 +1,7 @@
 # 0004 — H5MD trajectories from Rust: `hdf5-metno` with bundled static HDF5
 
-- **Status:** accepted 2026-11-12 by the agent, based on spike S1 (`spikes/s1-h5md-rust/`).
-  To be reviewed at Gate 0.
+- **Status:** accepted by the author at Gate 0 (2026-11-12). Originally accepted 2026-11-12 by the
+  agent, based on spike S1 (`spikes/s1-h5md-rust/`).
 - **Context:**
   - The engine must write H5MD trajectories (spec/trajectory-h5md.md) that h5py and MDAnalysis
     read.

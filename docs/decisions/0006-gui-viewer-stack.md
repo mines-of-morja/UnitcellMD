@@ -1,7 +1,8 @@
 # 0006 — GUI viewer: PySide6 + pyvistaqt confirmed
 
-- **Status:** accepted 2026-11-12 by the agent, based on spike S3 (`spikes/s3-gui-viewer/`).
-  It confirms the author's choice of 2026-11-11. To be reviewed at Gate 0.
+- **Status:** accepted by the author at Gate 0 (2026-11-12). Originally accepted 2026-11-12 by the
+  agent, based on spike S3 (`spikes/s3-gui-viewer/`). It confirms the author's choice of
+  2026-11-11.
 - **Context:**
   - PLAN.md B2 needs a 3D view inside a PySide6 window that stays interactive for 10k–50k
     atoms, supports picking, and can be screenshotted, so the agent can check GUI changes as

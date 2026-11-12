@@ -1,7 +1,7 @@
 # 0005 — OpenMM as the validation oracle, installed from PyPI
 
-- **Status:** accepted 2026-11-12 by the agent, based on spike S2 (`tools/oracle/`). To be
-  reviewed at Gate 0.
+- **Status:** accepted by the author at Gate 0 (2026-11-12). Originally accepted 2026-11-12 by the
+  agent, based on spike S2 (`tools/oracle/`).
 - **Context:**
   - PLAN.md D10 makes OpenMM the reference for every classical term.
   - The question was whether it installs cleanly for Python 3.13, which is the system Python
