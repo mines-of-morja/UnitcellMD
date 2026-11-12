@@ -10,6 +10,10 @@ Last update: 2026-11-12.
   - code: branch `e1` of `ucmd-engine`.
 - **B1 design approved** ([design/B1.md](design/B1.md)); working horse in
   [ADR 0009](decisions/0009-working-horse-force-field.md).
+- **The E2 design is ready for review:** [design/E2.md](design/E2.md), on branch `e2` of this
+  repo.
+  - It covers the engine core for molecules, up to milestone M2a.
+  - The GUI preview B2a comes right after M2a (the author's order, 2026-11-12).
 - **B1a is complete and awaits Gate B1a** ([gates/gate-b1a.md](gates/gate-b1a.md)).
   - The builder makes Lehnert's 1 M LiPF₆ EC:EMC box (7036 atoms) from a recipe; OpenMM runs
     it.
@@ -31,6 +35,7 @@ Last update: 2026-11-12.
      densities are marked placeholders.
   3. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
      wheel.
+  4. Approval of the E2 design ([design/E2.md](design/E2.md) §13).
 
 ## Decisions by the author
 
@@ -120,6 +125,9 @@ Last update: 2026-11-12.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+- 2026-11-12 — E2 design — `docs/design/E2.md` (E2 core → M2a; no spec change; FIRE as
+  `ucmd minimize`; NHC, BAOAB; deterministic threads proposed) — next: author approval, then
+  E2 core, M2a, B2a
 - 2026-11-12 — B1a — builder B1.1–B1.5, B1.8, XYZ export; oracle v1 — evidence: 83 tests, CI
   green; EC/EMC vs OpenMM-GROMACS to 1.5e-12; LP57 box runs in OpenMM — next: Gate B1a; E2
   design
