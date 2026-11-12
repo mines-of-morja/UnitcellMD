@@ -6,7 +6,8 @@ Last update: 2026-11-12.
   `main` ([gates/gate-0.md §7](gates/gate-0.md)).
 - **E1 is complete and awaits Gate E1** ([gates/gate-e1.md](gates/gate-e1.md)): branch `e1` of
   `ucmd-engine`, 48 tests, argon validated against OpenMM.
-- **B1 (builder) is next.** Its design starts on branch `b1` of this repo.
+- **The B1 (builder) design is ready for review:** [design/B1.md](design/B1.md) on branch `b1`
+  of this repo. Its questions are in §14.
 
 ## Current
 
@@ -17,7 +18,11 @@ Last update: 2026-11-12.
   this pin in the same coordinated update.
 - **Waiting for the author:**
   1. Gate E1 ([gates/gate-e1.md](gates/gate-e1.md)). After approval, `e1` is merged into `main`.
-  2. The B1 design, once it is ready.
+  2. The B1 design ([design/B1.md](design/B1.md) §14), in particular:
+     - the working-horse force field (§5);
+     - LigParGen;
+     - densities;
+     - the B1a/B1b split that brings the frontend sooner.
 
 ## Decisions by the author
 
@@ -87,6 +92,14 @@ Last update: 2026-11-12.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+- 2026-11-12 — B1 design — `docs/design/B1.md`:
+  - force-field sources with registry, `library` and `gromacs-top`, and a source test kit;
+  - working-horse proposal;
+  - composition, packing with the Packmol PyPI wheel, export;
+  - B1a/B1b split.
+
+  Evidence: research notes in ADR 0008. Next: author approval, then B1a.
 
 - 2026-11-12 — Gate 0 — approved; `phase-0` merged; `spec-v0.1.0` tagged; ADR 0008; PLAN v1.3
   — evidence: gate-0.md §7; CI green in all four repos — next: B1 design; Gate E1
