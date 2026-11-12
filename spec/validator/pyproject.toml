@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ucmd-spec"
+dynamic = ["version"]
+description = "Reference validator for the UnitcellMD spec (system packages, run configurations, trajectories)"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+dependencies = ["jsonschema>=4.18", "numpy>=1.26"]
+
+[project.optional-dependencies]
+trajectory = ["h5py>=3.10"]
+dev = ["pytest>=8", "ruff>=0.6", "h5py>=3.10"]
+
+[project.scripts]
+ucmd-spec = "ucmd_spec.cli:main"
+
+[tool.hatch.version]
+path = "src/ucmd_spec/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ucmd_spec"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "NPY", "RUF"]

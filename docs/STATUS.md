@@ -1,67 +1,104 @@
 # Status
 
-Last update: 2026-11-12. P0.1 and P0.2 are done; P0.3 onward is in progress on branch `phase-0`.
+Last update: 2026-11-12.
+
+- **Gate 0 is approved.** Spec v0.1.0 is tagged `spec-v0.1.0`, and `phase-0` is merged into
+  `main` ([gates/gate-0.md §7](gates/gate-0.md)).
+- **E1 is complete and awaits Gate E1** ([gates/gate-e1.md](gates/gate-e1.md)): branch `e1` of
+  `ucmd-engine`, 48 tests, argon validated against OpenMM.
+- **B1 (builder) is next.** Its design starts on branch `b1` of this repo.
 
 ## Current
 
-- Phase: **P0**. Done: P0.1, P0.2. In progress: P0.3–P0.6 on branch `phase-0` (umbrella repo).
-  `main` holds only what the author has already seen or decided.
-- The author is away until 2026-11-12 and asked the agent to "make the best decisions for the
-  project" meanwhile. Every decision taken on the author's behalf is listed in "Decisions taken
-  by the agent", to be reviewed.
-- **Not yet on GitHub:** `gh` is installed but not logged in, and there is no SSH key or
-  credential helper. Everything is committed locally. To publish:
-  `gh auth login`, then `gh auth setup-git`, then `tools/publish-github.sh --prs`.
+- **Repos:** all four are public in the organization `mines-of-morja`, with CI green.
+  - `main` holds what the author has seen or decided.
+  - Review branches: `e1` (ucmd-engine, Gate E1) and `b1` (this repo, B1 design).
+- **Engine CI** tests every branch against the umbrella at tag `spec-v0.1.0`. A spec change moves
+  this pin in the same coordinated update.
+- **Waiting for the author:**
+  1. Gate E1 ([gates/gate-e1.md](gates/gate-e1.md)). After approval, `e1` is merged into `main`.
+  2. The B1 design, once it is ready.
 
 ## Decisions by the author
 
-- 2026-11-11: units nm/ps/amu/kJ mol⁻¹ (ADR 0001); public GitHub hosting; GUI stack PySide6 +
-  pyvistaqt, pending spike S3; cluster deferred, with the rule "local-first, cluster-capable"
-  (ADR 0002).
-- 2026-11-12: GitHub organization `mines-of-morja` (email morja@mailbox.org); licence
-  Apache-2.0; add the Lehnert 2025 SI to `../Lit`; the agent continues autonomously until the
-  author returns.
+- **2026-11-11:**
+  - units nm/ps/amu/kJ mol⁻¹ (ADR 0001);
+  - GitHub hosting;
+  - GUI stack PySide6 + pyvistaqt;
+  - cluster deferred, with the rule "local-first, cluster-capable" (ADR 0002).
+- **2026-11-12:**
+  - organization `mines-of-morja` (commit email morja@mailbox.org) and licence Apache-2.0;
+  - the Lehnert 2025 SI goes to `../Lit`.
+- **2026-11-12, Gate 0** (gate-0.md §7):
+  - every recommendation is accepted (ADRs 0003–0007, the E1 design, the commit identity,
+    review branches);
+  - the repos are public in `mines-of-morja`;
+  - **force-field parameters and forces come from pluggable sources**, with an open-source
+    working horse and our own force field as the fallback
+    ([ADR 0008](decisions/0008-pluggable-force-field-sources.md));
+  - **a frontend early**, once the core stands (PLAN.md §3: M2a, then B2a).
 
 ## Decisions taken by the agent (to review)
 
-1. **Commit identity:** `Moritz Limbacher <morja@mailbox.org>`, set as repo-local `user.email`
-   in all four repos. The five unpublished commits were re-authored, so the personal address
-   never reaches GitHub. The global git config is untouched.
-2. **Licence files:** canonical Apache-2.0 text from `/usr/share/common-licenses`, plus a
-   `NOTICE` file reading "Copyright 2026 The UnitcellMD Authors". This is the usual Apache
-   convention for multi-contributor projects; replace it with your name if you prefer.
-3. **Review via branches:** new work goes on branches (`phase-0`, later per phase or track). The
-   publish script can open them as pull requests, so a gate review is a PR review with CI.
-   CI now runs on pushes to every branch.
+- The E1 implementation choices are in [gate-e1.md §5](gates/gate-e1.md), for review with
+  Gate E1.
 
 ## Done
 
-- 2026-11-12 — housekeeping on `main` in all repos: Apache-2.0 + NOTICE, CI on all branches,
-  links to `mines-of-morja`, `tools/publish-github.sh`.
-- 2026-11-11 — **P0.2** — audit reviewed against `_reference/NeNePo_builder` @ `fd7f1e2`:
-  - all 46 file:line references verified by script;
-  - added: the geometry-optimization step; the sampler's plugin-by-name and TOML input modes
-    (only the Gaussian reader exists); post-run `None` filtering as evidence for issue 4;
-    issue 13 (directory name vs. actual level of theory); a scripted fixture inventory (§6).
-- 2026-11-11 — **P0.1** — workspace bootstrapped: umbrella repo; `ucmd-engine` (7-crate Cargo
-  workspace, lints, dependency guard, CI); `ucmd-builder` and `ucmd-analysis` (Python skeletons
-  with import-boundary tests, CI); NeNePo_builder cloned read-only to `_reference/`.
+- 2026-11-12 — **Gate 0** — approved by the author.
+  - `phase-0` merged into `main`; spec tagged `spec-v0.1.0`; ADRs 0003–0007 accepted.
+  - ADR 0008 (pluggable sources).
+  - PLAN.md v1.3: B1.3 force-field sources, B2a frontend preview, milestone M2a, E2.2 with both
+    combination rules.
+- 2026-11-12 — **hosting** — repos public in `mines-of-morja`.
+  - `tools/publish-github.sh`: SSH remotes, `--owner`, `--dry-run`.
+  - Engine CI reads the umbrella at `spec-v0.1.0`.
+- 2026-11-12 — **E1 (branch `e1`)** — the minimal engine, E1.1–E1.12:
+  - core types, the provider contract with test kit, harmonic and Lennard-Jones providers,
+    neighbour list;
+  - velocity Verlet with CSVR;
+  - readers with the contract test;
+  - thermo/XYZ/H5MD writers;
+  - checkpoints with bitwise restarts;
+  - `ucmd check|run|singlepoint|export|rerun`;
+  - argon validation PASS 8/8 against OpenMM.
+
+  Evidence: [gates/gate-e1.md](gates/gate-e1.md).
+- 2026-11-12 — **P0.6** — E1 design (`docs/design/E1.md`).
+- 2026-11-12 — **P0.5** — spikes S1–S4 with ADRs 0004–0007 (gate-0.md §2).
+- 2026-11-12 — **P0.4** — `ucmd-spec` validator, fixtures, generator, spec CI; 53 tests.
+- 2026-11-12 — **P0.3** — spec v0.1 documents and JSON Schemas; ADR 0003.
+- 2026-11-12 — Lehnert 2025 SI downloaded to `../Lit`; protocol summarized in
+  `docs/lehnert2025-si-notes.md`.
+- 2026-11-12 — housekeeping on `main` in all repos: Apache-2.0 + NOTICE, CI on all branches.
+- 2026-11-11 — **P0.2** — audit reviewed and extended.
+- 2026-11-11 — **P0.1** — workspace and component skeletons.
 
 ## Open questions for the author
 
-1. Log in to GitHub (see "Current"), so the repos can be published and CI can run.
-2. PLAN.md §10 items still open: 3 (formats; P0.3 proposes the details), 5 (benchmark),
-   6 (force-field sources), 7 (installs), 8 (agent setup).
+1. Gate E1 ([gates/gate-e1.md](gates/gate-e1.md)).
+2. PLAN.md §10:
+   - item 5: benchmark 1 M LiPF₆ in EC:EMC 3:7 at 20 °C;
+   - item 7: installs. `libhdf5-dev` is no longer needed; Packmol is still to decide;
+   - item 8: agent setup;
+   - item 10: placement of the early frontend.
 
 ## Log
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+- 2026-11-12 — Gate 0 — approved; `phase-0` merged; `spec-v0.1.0` tagged; ADR 0008; PLAN v1.3
+  — evidence: gate-0.md §7; CI green in all four repos — next: B1 design; Gate E1
+- 2026-11-12 — E1 — engine E1.1–E1.12 on branch `e1` — evidence: gates/gate-e1.md
+  (48 tests; LJ vs OpenMM to 1e-15; bitwise restart; argon 8/8) — next: Gate E1
+- 2026-11-12 — P0.6 — E1 design — next: Gate 0 (E1 provisionally on branch `e1`)
+- 2026-11-12 — P0.5 — four spikes — evidence: ADRs 0004–0007 with measured numbers — next: P0.6
+- 2026-11-12 — P0.4 — validator + fixtures — evidence: 53 tests green, all 15 error codes
+  covered, fixtures reproducible byte for byte — next: P0.5
+- 2026-11-12 — P0.3 — spec v0.1 — evidence: ADR 0003; schemas valid Draft 2020-12 — next: P0.4
 - 2026-11-12 — housekeeping — licence, CI triggers, URLs, commit identity, publish script —
-  evidence: all checks re-run green in the three component repos — next: P0.3
-- 2026-11-11 — P0.2 — audit confirmed and amended — evidence: reference-check script 46/46;
-  fixture-inventory script; md5 duplicate scan — next: P0.3
-- 2026-11-11 — P0.1 — workspace and three component skeletons — evidence: ucmd-engine fmt,
-  clippy, test (1 passed) and dependency check (7 crates) green, guard rejects both injected
-  violation types; ucmd-builder/ucmd-analysis ruff OK, pytest 3 passed each — next: P0.2
+  evidence: all checks re-run green — next: P0.3
+- 2026-11-11 — P0.2 — audit confirmed and amended — evidence: reference-check 46/46 — next: P0.3
+- 2026-11-11 — P0.1 — workspace and component skeletons — evidence: all checks green; guard
+  rejects injected violations — next: P0.2

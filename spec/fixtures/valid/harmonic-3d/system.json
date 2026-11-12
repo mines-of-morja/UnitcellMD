@@ -1,0 +1,57 @@
+{
+  "format": "ucmd-system",
+  "spec_version": "0.1.0",
+  "name": "harmonic-3d",
+  "description": "Three particles for analytic integrator tests; the harmonic tethers come from run.toml. Not periodic, no force field.",
+  "units": {
+    "length": "nm",
+    "time": "ps",
+    "mass": "amu",
+    "energy": "kJ/mol",
+    "charge": "e",
+    "temperature": "K",
+    "angle": "deg"
+  },
+  "periodicity": [
+    false,
+    false,
+    false
+  ],
+  "cell_nm": null,
+  "molecule_types": {
+    "triplet": {
+      "description": "three unbonded pseudo-particles of different mass",
+      "formal_charge_e": 0,
+      "atoms": [
+        {
+          "name": "P1",
+          "element": null,
+          "mass_amu": 1.0
+        },
+        {
+          "name": "P2",
+          "element": null,
+          "mass_amu": 2.0
+        },
+        {
+          "name": "P3",
+          "element": null,
+          "mass_amu": 3.0
+        }
+      ],
+      "bonds": []
+    }
+  },
+  "components": [
+    {
+      "molecule_type": "triplet",
+      "count": 1
+    }
+  ],
+  "atom_count": 3,
+  "provenance": {
+    "created_by": "spec/fixtures/_generators/generate.py",
+    "created_utc": "2026-11-12T00:00:00Z",
+    "notes": "Smallest valid package (system-package.md \u00a78)."
+  }
+}

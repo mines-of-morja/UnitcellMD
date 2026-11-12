@@ -1,0 +1,83 @@
+{
+  "format": "ucmd-system",
+  "spec_version": "0.1.0",
+  "name": "argon-864",
+  "description": "864 argon atoms on a perturbed FCC lattice (6x6x6 cells) at the Rahman 1964 state point (1.374 g/cm^3). A uniform random displacement of up to 0.005 nm makes forces non-zero.",
+  "units": {
+    "length": "nm",
+    "time": "ps",
+    "mass": "amu",
+    "energy": "kJ/mol",
+    "charge": "e",
+    "temperature": "K",
+    "angle": "deg"
+  },
+  "periodicity": [
+    true,
+    true,
+    true
+  ],
+  "cell_nm": [
+    [
+      3.46809,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      3.46809,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      3.46809
+    ]
+  ],
+  "molecule_types": {
+    "Ar": {
+      "formal_charge_e": 0,
+      "atoms": [
+        {
+          "name": "Ar",
+          "element": "Ar",
+          "mass_amu": 39.948,
+          "charge_e": 0.0,
+          "type": "Ar"
+        }
+      ],
+      "bonds": []
+    }
+  },
+  "components": [
+    {
+      "molecule_type": "Ar",
+      "count": 864
+    }
+  ],
+  "atom_count": 864,
+  "forcefield": {
+    "name": "Lennard-Jones argon (Rahman 1964)",
+    "combination_rule": "geometric",
+    "scale_14_lj": 1.0,
+    "scale_14_coulomb": 1.0,
+    "atom_types": {
+      "Ar": {
+        "sigma_nm": 0.34,
+        "epsilon_kjmol": 0.9977355141783888
+      }
+    }
+  },
+  "provenance": {
+    "created_by": "spec/fixtures/_generators/generate.py",
+    "created_utc": "2026-11-12T00:00:00Z",
+    "sources": [
+      {
+        "what": "Lennard-Jones parameters and state point",
+        "citation": "A. Rahman, Phys. Rev. 136, A405 (1964)",
+        "doi": "10.1103/PhysRev.136.A405"
+      }
+    ],
+    "notes": "Box edge 3.468090 nm from 1.374 g/cm^3 and m = 39.948 g/mol; seed 1964."
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "absolute-path.toml": "E_PATH",
+  "bad-version.toml": "E_VERSION",
+  "langevin-with-vv.toml": "E_INCOMPATIBLE",
+  "no-providers.toml": "E_SCHEMA",
+  "not-toml.toml": "E_TOML"
+}

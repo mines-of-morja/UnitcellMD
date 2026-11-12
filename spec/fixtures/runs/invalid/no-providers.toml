@@ -1,0 +1,10 @@
+spec_version = "0.1.0"
+system = "../valid/harmonic-3d"
+title = "Three particles on harmonic tethers to the origin, NVE"
+
+[run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 1000
+seed = 1
+

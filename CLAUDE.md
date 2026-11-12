@@ -87,7 +87,7 @@ Changing any of these needs an ADR approved by the author.
 - From NeNePo_builder, port behaviour, not code. Reimplement from the equations, with tests. Do
   not copy files with third-party author headers (audit §7).
 - Make small commits per task: `<area>: <what>`, with the why in the body.
-- **The repos are public on GitHub.**
+- **The repos are public on GitHub, in the organization `mines-of-morja`.**
   - Push only when the author asks or after an approved gate.
   - Never force-push or rewrite published history.
   - Never commit secrets, the PDFs in `../Lit` or other copyrighted material, large binary
@@ -141,8 +141,9 @@ Run these inside the repo concerned, and keep this table current.
 
 | Repo | Setup / build | Test | Lint / format / checks |
 |---|---|---|---|
-| spec (validator) | arrives in P0.4 | | |
-| ucmd-engine | `cargo build --workspace` | `cargo test --workspace` | `cargo fmt --all --check`; `cargo clippy --workspace --all-targets -- -D warnings`; `scripts/check-architecture.sh` |
+| spec (validator) | `cd spec/validator && python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; fixtures: `spec/fixtures/_generators/generate.py` |
+| tools/oracle | `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` | `.venv/bin/python -m pytest test_oracle.py` | — |
+| ucmd-engine | `cargo build --workspace` | `UCMD_REQUIRE_SPEC=1 cargo test --workspace` | `cargo fmt --all --check`; `cargo clippy --workspace --all-targets -- -D warnings`; `scripts/check-architecture.sh`; `cargo build --workspace --no-default-features`; physics: `validation/argon/run.sh` |
 | ucmd-builder | `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; `.venv/bin/ruff format --check .` |
 | ucmd-analysis | same as ucmd-builder | `.venv/bin/pytest` | same as ucmd-builder |
 
@@ -152,9 +153,9 @@ components.
 
 ## Reference material
 
-- `../Lit/Lehnert_2025_J._Electrochem._Soc._172_050523.pdf` — the target benchmark (OPLS-AA,
-  scaled ion charges, Onsager coefficients). Its supplementary information holds the simulation
-  parameters and is **not** in `../Lit` yet; ask for it.
+- `../Lit/Lehnert_2025_J._Electrochem._Soc._172_050523.pdf` and `…_SI.pdf` — the target
+  benchmark (OPLS-AA, scaled ion charges, Onsager coefficients). The SI's MD protocol and
+  particle numbers are summarized in `docs/lehnert2025-si-notes.md`.
 - `../Lit/Landesfeind_2019_…pdf`, `../Lit/Logan_2018_…pdf` — experimental transport and density
   data.
 - NeNePo_builder: https://github.com/PyProgMo/NeNePo_builder (commit fd7f1e2 audited), cloned to
