@@ -4,20 +4,25 @@ Last update: 2026-11-12.
 
 - **Gate 0 is approved.** Spec v0.1.0 is tagged `spec-v0.1.0`, and `phase-0` is merged into
   `main` ([gates/gate-0.md §7](gates/gate-0.md)).
-- **E1 is complete and awaits Gate E1** ([gates/gate-e1.md](gates/gate-e1.md)): branch `e1` of
-  `ucmd-engine`, 48 tests, argon validated against OpenMM.
-- **B1 (builder) is next.** Its design starts on branch `b1` of this repo.
+- **E1 is complete. The author is testing it hands-on before Gate E1:**
+  - guide: [testing.md](testing.md);
+  - evidence: [gates/gate-e1.md](gates/gate-e1.md);
+  - code: branch `e1` of `ucmd-engine`.
+- **B1 design approved** ([design/B1.md](design/B1.md)); working horse in
+  [ADR 0009](decisions/0009-working-horse-force-field.md).
+- **B1a is in implementation** on branch `b1` of ucmd-builder.
 
 ## Current
 
 - **Repos:** all four are public in the organization `mines-of-morja`, with CI green.
   - `main` holds what the author has seen or decided.
-  - Review branches: `e1` (ucmd-engine, Gate E1) and `b1` (this repo, B1 design).
+  - Review branches: `e1` (ucmd-engine, Gate E1) and `b1` (ucmd-builder, B1a).
 - **Engine CI** tests every branch against the umbrella at tag `spec-v0.1.0`. A spec change moves
   this pin in the same coordinated update.
 - **Waiting for the author:**
-  1. Gate E1 ([gates/gate-e1.md](gates/gate-e1.md)). After approval, `e1` is merged into `main`.
-  2. The B1 design, once it is ready.
+  1. Feedback from the hands-on E1 tests ([testing.md](testing.md)), then Gate E1.
+  2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
+     densities are marked placeholders.
 
 ## Decisions by the author
 
@@ -37,6 +42,11 @@ Last update: 2026-11-12.
     working horse and our own force field as the fallback
     ([ADR 0008](decisions/0008-pluggable-force-field-sources.md));
   - **a frontend early**, once the core stands (PLAN.md §3: M2a, then B2a).
+- **2026-11-12, B1 design:**
+  - the working horse is accepted: OPLS-AA with LigParGen EC/EMC, JJ06 Li⁺, CL&P PF₆⁻ and
+    ζ = 0.75 (ADR 0009);
+  - every other recommendation of §14 is accepted;
+  - the author tests hands-on first ("let me run first tests").
 
 ## Decisions taken by the agent (to review)
 
@@ -44,6 +54,12 @@ Last update: 2026-11-12.
   Gate E1.
 
 ## Done
+
+- 2026-11-12 — **B1 design approved**; ADR 0009.
+  - Parameters obtained: LigParGen 3.0.1 run for EC and EMC; JJ06 Li⁺ checked against two
+    copies; CL&P `il.ff` 2026/10/09 for PF₆⁻.
+  - Hands-on guide `docs/testing.md` and the engine example `examples/argon-quickstart`, both
+    checked by running them.
 
 - 2026-11-12 — **Gate 0** — approved by the author.
   - `phase-0` merged into `main`; spec tagged `spec-v0.1.0`; ADRs 0003–0007 accepted.
@@ -76,17 +92,25 @@ Last update: 2026-11-12.
 
 ## Open questions for the author
 
-1. Gate E1 ([gates/gate-e1.md](gates/gate-e1.md)).
-2. PLAN.md §10:
+1. Gate E1, after the hands-on tests ([testing.md](testing.md)).
+2. The Landesfeind 2019 SI for the densities.
+3. PLAN.md §10:
    - item 5: benchmark 1 M LiPF₆ in EC:EMC 3:7 at 20 °C;
-   - item 7: installs. `libhdf5-dev` is no longer needed; Packmol is still to decide;
-   - item 8: agent setup;
-   - item 10: placement of the early frontend.
+   - item 8: agent setup.
 
 ## Log
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+- 2026-11-12 — B1 design approved — ADR 0009; testing guide — next: B1.1
+- 2026-11-12 — B1 design — `docs/design/B1.md`:
+  - force-field sources with registry, `library` and `gromacs-top`, and a source test kit;
+  - working-horse proposal;
+  - composition, packing with the Packmol PyPI wheel, export;
+  - B1a/B1b split.
+
+  Evidence: research notes in ADR 0008. Next: author approval, then B1a.
 
 - 2026-11-12 — Gate 0 — approved; `phase-0` merged; `spec-v0.1.0` tagged; ADR 0008; PLAN v1.3
   — evidence: gate-0.md §7; CI green in all four repos — next: B1 design; Gate E1

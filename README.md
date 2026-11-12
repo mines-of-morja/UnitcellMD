@@ -24,7 +24,8 @@ programs) to cluster campaigns with external QM or ML force providers (see
 
 Phase 0 (foundations, spec v0.1.0) is complete; the minimal engine (E1) is in review and the
 builder (B1) is in design. [PLAN.md](PLAN.md) has the roadmap with acceptance criteria;
-[docs/STATUS.md](docs/STATUS.md) has the progress.
+[docs/STATUS.md](docs/STATUS.md) has the progress, and [docs/testing.md](docs/testing.md) explains
+how to try the tools yourself.
 
 ## Workspace layout
 
