@@ -1,0 +1,30 @@
+{
+  "package": "spec/fixtures/valid/argon-864",
+  "provider": {
+    "kind": "lennard-jones",
+    "cutoff_nm": 0.85,
+    "cutoff_mode": "potential-shift",
+    "dispersion_correction": false
+  },
+  "energy_kjmol": -5218.991947505782,
+  "forces_file": "lj-potential-shift-rc0.85-forces.npy",
+  "virial_kjmol": [
+    [
+      -6575.144500491127,
+      0.30540843734482975,
+      -0.45321692592480206
+    ],
+    [
+      0.30540843734483697,
+      -6573.789260592917,
+      0.13037555103818826
+    ],
+    [
+      -0.45321692592480783,
+      0.1303755510381826,
+      -6574.274924677266
+    ]
+  ],
+  "dispersion_correction_energy_kjmol": -375.7628199763677,
+  "generated_by": "tools/oracle/make_references.py, OpenMM 8.6.1 Reference platform"
+}

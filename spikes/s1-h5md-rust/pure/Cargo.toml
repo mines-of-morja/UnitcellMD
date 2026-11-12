@@ -1,0 +1,8 @@
+[package]
+name = "s1-h5md-pure"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+hdf5-pure = "0.48.0"
