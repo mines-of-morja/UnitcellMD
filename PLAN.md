@@ -693,10 +693,11 @@ than the oracle's.
 ## 10. Decisions for the author (confirm at Gate 0)
 
 1. **Units:** ✅ decided 2026-11-11: nm/ps/amu/kJ mol⁻¹ ([ADR 0001](docs/decisions/0001-units.md)).
-2. **Repos:** ✅ public on GitHub in the organization
-   [`mines-of-morja`](https://github.com/mines-of-morja), with the names proposed in D1.
-   Licence ✅ Apache-2.0 for all repos. Commits use the organization email (repo-local git
-   config). Decided 2026-11-11/12.
+2. **Repos:** ✅ on GitHub with the names proposed in D1, **private at first and public once
+   there is enough progress** (decided 2026-11-12). Licence ✅ Apache-2.0 for all repos. Commits
+   use the organization email (repo-local git config). Open: the owner, either the organization
+   [`mines-of-morja`](https://github.com/mines-of-morja) (all links assume it) or the personal
+   account the umbrella repo was first pushed to. Decided 2026-11-11/12.
 3. **Formats:** JSON + NPY package, TOML configs, H5MD trajectories (D4).
 4. **GUI stack:** ✅ decided 2026-11-11: PySide6 + pyvistaqt, pending spike S3. A web-based
    viewer or a Rust front end may be added later on top of the same builder library.

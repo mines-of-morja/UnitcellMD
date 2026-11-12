@@ -61,12 +61,15 @@
   was rejected for now: it cannot append to N-dimensional datasets.
 - **P0.4:** fixtures are generated reproducibly from the raw PCG64 bit stream, and CI checks
   them byte for byte. That is more than PLAN.md asked for.
-- **Not done:** pushing to GitHub. The machine has no GitHub login yet (STATUS.md).
+- **Partly done:** GitHub. The author pushed `phase-0` of this repo (private); everything else
+  is still local (STATUS.md).
 
 ## 5. Needed from the author
 
-1. `gh auth login` and `gh auth setup-git`, then `tools/publish-github.sh --prs`, or tell the
-   agent to run it. That creates the four public repos and the review PRs, and starts CI.
+1. GitHub: choose the owner (organization or personal account) and create the three missing
+   repos, either empty in the web UI or with `gh auth login`. Then `tools/publish-github.sh
+   --owner <owner>` pushes everything over SSH (`--dry-run` shows what it will do; `--prs`
+   opens the review PRs and needs gh). New repos are private.
 2. **Force-field source** for the solvents (PLAN.md §10.6). The Lehnert SI uses Schrödinger
    Maestro OPLS, which is commercial. Options: (a) a licence, (b) Ringsby 2021 SI files,
    (c) an open OPLS-AA parameterization.

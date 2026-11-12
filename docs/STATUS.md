@@ -9,11 +9,17 @@ Last update: 2026-11-12. **Phase 0 is complete and awaiting Gate 0**
 - **Branches:**
   - `main` holds only what the author has already seen or decided.
   - `phase-0` (umbrella repo) holds P0.3–P0.6 and is pending Gate 0.
-  - `e1` (ucmd-engine, 12 commits) holds the complete E1 engine, pending review together with Gate 0.
+  - `e1` (ucmd-engine, 14 commits) holds the complete E1 engine, pending review together with Gate 0.
 - **The author's answers** to gate-0.md §3 and §5 are needed. Silence on an item means "keep".
-- **Not yet on GitHub:** `gh` is installed but not logged in, and there is no SSH key or
-  credential helper. Everything is committed locally. To publish: `gh auth login`, then
-  `gh auth setup-git`, then `tools/publish-github.sh --prs`.
+- **GitHub (private for now):**
+  - SSH access works as `PyProgMo`.
+  - The author pushed branch `phase-0` of this repo to `PyProgMo/UnitcellMD`. On GitHub it is
+    the default branch, and `main` is missing.
+  - `ucmd-engine`, `ucmd-builder` and `ucmd-analysis` are local only.
+  - Next: choose the owner, create the three repos, run `tools/publish-github.sh --owner
+    <owner>`, set `main` as default branch.
+  - Engine CI reads the private umbrella repo only with a `UMBRELLA_TOKEN` secret; without it,
+    the contract and reference tests are skipped with a warning.
 
 ## Decisions by the author
 
@@ -23,6 +29,8 @@ Last update: 2026-11-12. **Phase 0 is complete and awaiting Gate 0**
 - 2026-11-12: GitHub organization `mines-of-morja` (email morja@mailbox.org); licence
   Apache-2.0; add the Lehnert 2025 SI to `../Lit`; the agent continues autonomously until the
   author returns.
+- 2026-11-12: repos private at first, public once there is enough progress; SSH key for
+  GitHub.
 
 ## Decisions taken by the agent (to review)
 
@@ -67,7 +75,8 @@ All of these are listed in [gate-0.md §3](gates/gate-0.md). In short:
 ## Open questions for the author
 
 1. The decisions and requests in [gate-0.md](gates/gate-0.md) §3 and §5. Most important: the
-   GitHub login, and the force-field source for the solvents.
+   GitHub owner (organization or personal account), and the force-field source for the
+   solvents.
 2. PLAN.md §10 items 5 (benchmark), 7 (installs: `libhdf5-dev` is no longer needed; uv
    optional) and 8 (agent setup).
 

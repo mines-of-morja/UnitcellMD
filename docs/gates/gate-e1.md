@@ -1,7 +1,7 @@
 # Gate E1 report — minimal engine (provisional)
 
 - **Date:** 2026-11-12. Prepared by the agent while the author was away.
-- **Where:** branch `e1` of `ucmd-engine` (12 commits), built on spec v0.1 of branch `phase-0`
+- **Where:** branch `e1` of `ucmd-engine` (14 commits), built on spec v0.1 of branch `phase-0`
   of the umbrella repo.
 - **Status:** E1 was started **provisionally, before Gate 0**, so that review and merge can
   happen together. If Gate 0 changes the spec, E1 adapts (the contract test shows exactly

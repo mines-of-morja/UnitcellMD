@@ -87,7 +87,9 @@ Changing any of these needs an ADR approved by the author.
 - From NeNePo_builder, port behaviour, not code. Reimplement from the equations, with tests. Do
   not copy files with third-party author headers (audit §7).
 - Make small commits per task: `<area>: <what>`, with the why in the body.
-- **The repos are public on GitHub.**
+- **The repos are on GitHub: private for now, public once the author decides there is enough
+  progress.** Write everything as if it were already public; making a repo public exposes its
+  whole history.
   - Push only when the author asks or after an approved gate.
   - Never force-push or rewrite published history.
   - Never commit secrets, the PDFs in `../Lit` or other copyrighted material, large binary
