@@ -1,0 +1,2253 @@
+{
+ "format": "ucmd-system",
+ "spec_version": "0.1.0",
+ "name": "lipf6-ec-emc-1M",
+ "description": "1 M LiPF6 in EC:EMC 3:7 (w:w), 500 solvent molecules as in Lehnert 2025 Table S1",
+ "units": {
+  "length": "nm",
+  "time": "ps",
+  "mass": "amu",
+  "energy": "kJ/mol",
+  "charge": "e",
+  "temperature": "K",
+  "angle": "deg"
+ },
+ "periodicity": [
+  true,
+  true,
+  true
+ ],
+ "cell_nm": [
+  [
+   4.275927711838623,
+   0.0,
+   0.0
+  ],
+  [
+   0.0,
+   4.275927711838623,
+   0.0
+  ],
+  [
+   0.0,
+   0.0,
+   4.275927711838623
+  ]
+ ],
+ "molecule_types": {
+  "Li": {
+   "description": "lithium cation",
+   "formal_charge_e": 1,
+   "atoms": [
+    {
+     "name": "Li",
+     "element": "Li",
+     "mass_amu": 6.941,
+     "charge_e": 0.75,
+     "type": "Li.Li"
+    }
+   ],
+   "bonds": []
+  },
+  "PF6": {
+   "description": "hexafluorophosphate anion",
+   "formal_charge_e": -1,
+   "atoms": [
+    {
+     "name": "F1",
+     "element": "F",
+     "mass_amu": 18.998,
+     "charge_e": -0.2925,
+     "type": "PF6.FP"
+    },
+    {
+     "name": "P",
+     "element": "P",
+     "mass_amu": 30.974,
+     "charge_e": 1.0050000000000001,
+     "type": "PF6.P"
+    },
+    {
+     "name": "F2",
+     "element": "F",
+     "mass_amu": 18.998,
+     "charge_e": -0.2925,
+     "type": "PF6.FP"
+    },
+    {
+     "name": "F3",
+     "element": "F",
+     "mass_amu": 18.998,
+     "charge_e": -0.2925,
+     "type": "PF6.FP"
+    },
+    {
+     "name": "F4",
+     "element": "F",
+     "mass_amu": 18.998,
+     "charge_e": -0.2925,
+     "type": "PF6.FP"
+    },
+    {
+     "name": "F5",
+     "element": "F",
+     "mass_amu": 18.998,
+     "charge_e": -0.2925,
+     "type": "PF6.FP"
+    },
+    {
+     "name": "F6",
+     "element": "F",
+     "mass_amu": 18.998,
+     "charge_e": -0.2925,
+     "type": "PF6.FP"
+    }
+   ],
+   "bonds": [
+    {
+     "atoms": [
+      1,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1606,
+      "k_kjmol_nm2": 310000.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1606,
+      "k_kjmol_nm2": 310000.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1606,
+      "k_kjmol_nm2": 310000.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1606,
+      "k_kjmol_nm2": 310000.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1606,
+      "k_kjmol_nm2": 310000.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1606,
+      "k_kjmol_nm2": 310000.0
+     }
+    }
+   ],
+   "angles": [
+    {
+     "atoms": [
+      0,
+      1,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      1,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      1,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      1,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      3,
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      3,
+      1,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      4,
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    },
+    {
+     "atoms": [
+      4,
+      1,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 90.0,
+      "k_kjmol_rad2": 1165.0
+     }
+    }
+   ]
+  },
+  "EC": {
+   "description": "ethylene carbonate (1,3-dioxolan-2-one)",
+   "formal_charge_e": 0,
+   "atoms": [
+    {
+     "name": "C00",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": 0.578745,
+     "type": "EC.opls_800"
+    },
+    {
+     "name": "O01",
+     "element": "O",
+     "mass_amu": 15.999,
+     "charge_e": -0.39258,
+     "type": "EC.opls_801"
+    },
+    {
+     "name": "O02",
+     "element": "O",
+     "mass_amu": 15.999,
+     "charge_e": -0.329334,
+     "type": "EC.opls_802"
+    },
+    {
+     "name": "C03",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": -0.031493,
+     "type": "EC.opls_803"
+    },
+    {
+     "name": "C04",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": -0.031501,
+     "type": "EC.opls_804"
+    },
+    {
+     "name": "O05",
+     "element": "O",
+     "mass_amu": 15.999,
+     "charge_e": -0.329328,
+     "type": "EC.opls_805"
+    },
+    {
+     "name": "H06",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.133872,
+     "type": "EC.opls_806"
+    },
+    {
+     "name": "H07",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.133872,
+     "type": "EC.opls_807"
+    },
+    {
+     "name": "H08",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.133873,
+     "type": "EC.opls_808"
+    },
+    {
+     "name": "H09",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.133874,
+     "type": "EC.opls_809"
+    }
+   ],
+   "bonds": [
+    {
+     "atoms": [
+      1,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1229,
+      "k_kjmol_nm2": 476976.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1327,
+      "k_kjmol_nm2": 179075.2
+     }
+    },
+    {
+     "atoms": [
+      3,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.141,
+      "k_kjmol_nm2": 267776.0
+     }
+    },
+    {
+     "atoms": [
+      4,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1529,
+      "k_kjmol_nm2": 224262.4
+     }
+    },
+    {
+     "atoms": [
+      5,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.141,
+      "k_kjmol_nm2": 267776.0
+     }
+    },
+    {
+     "atoms": [
+      6,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      7,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      8,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      9,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      5,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1327,
+      "k_kjmol_nm2": 179075.2
+     }
+    }
+   ],
+   "angles": [
+    {
+     "atoms": [
+      2,
+      0,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 123.4,
+      "k_kjmol_rad2": 694.544
+     }
+    },
+    {
+     "atoms": [
+      3,
+      2,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 116.9,
+      "k_kjmol_rad2": 694.544
+     }
+    },
+    {
+     "atoms": [
+      4,
+      3,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 418.4
+     }
+    },
+    {
+     "atoms": [
+      5,
+      4,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 418.4
+     }
+    },
+    {
+     "atoms": [
+      6,
+      3,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      7,
+      3,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      8,
+      4,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      9,
+      4,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      5,
+      0,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 123.4,
+      "k_kjmol_rad2": 694.544
+     }
+    },
+    {
+     "atoms": [
+      5,
+      0,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 117.45,
+      "k_kjmol_rad2": 586.848
+     }
+    },
+    {
+     "atoms": [
+      6,
+      3,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      7,
+      3,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      8,
+      4,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      9,
+      4,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      7,
+      3,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      9,
+      4,
+      8
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      4,
+      5,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 116.9,
+      "k_kjmol_rad2": 694.544
+     }
+    }
+   ],
+   "dihedrals": [
+    {
+     "atoms": [
+      3,
+      2,
+      0,
+      1
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 21.43882,
+      "c1_kjmol": 0.0,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      4,
+      3,
+      2,
+      0
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": -2.1966,
+      "c1_kjmol": 5.20071,
+      "c2_kjmol": 0.52718,
+      "c3_kjmol": -3.5313,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      5,
+      4,
+      3,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": -1.1506,
+      "c1_kjmol": 1.1506,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      6,
+      3,
+      2,
+      0
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      7,
+      3,
+      2,
+      0
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      8,
+      4,
+      3,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      9,
+      4,
+      3,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      4,
+      5,
+      0,
+      1
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 21.43882,
+      "c1_kjmol": 0.0,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      4,
+      5,
+      0,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 31.20636,
+      "c1_kjmol": -9.76755,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      5,
+      0,
+      2,
+      3
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 31.20636,
+      "c1_kjmol": -9.76755,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      6,
+      3,
+      4,
+      5
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      7,
+      3,
+      4,
+      5
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      8,
+      4,
+      3,
+      6
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      9,
+      4,
+      3,
+      6
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      8,
+      4,
+      3,
+      7
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      9,
+      4,
+      3,
+      7
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      5,
+      4,
+      8
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      5,
+      4,
+      9
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      3,
+      4,
+      5,
+      0
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": -2.1966,
+      "c1_kjmol": 5.20071,
+      "c2_kjmol": 0.52718,
+      "c3_kjmol": -3.5313,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    }
+   ],
+   "impropers": [
+    {
+     "atoms": [
+      1,
+      0,
+      2,
+      5
+     ],
+     "form": "periodic",
+     "params": {
+      "k_kjmol": 43.932,
+      "n": 2,
+      "phi0_deg": 180.0
+     }
+    }
+   ]
+  },
+  "EMC": {
+   "description": "ethyl methyl carbonate",
+   "formal_charge_e": 0,
+   "atoms": [
+    {
+     "name": "C06",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": -0.280381,
+     "type": "EMC.opls_806"
+    },
+    {
+     "name": "C05",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": 0.043527,
+     "type": "EMC.opls_805"
+    },
+    {
+     "name": "O01",
+     "element": "O",
+     "mass_amu": 15.999,
+     "charge_e": -0.334983,
+     "type": "EMC.opls_801"
+    },
+    {
+     "name": "C00",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": 0.588387,
+     "type": "EMC.opls_800"
+    },
+    {
+     "name": "O02",
+     "element": "O",
+     "mass_amu": 15.999,
+     "charge_e": -0.530852,
+     "type": "EMC.opls_802"
+    },
+    {
+     "name": "O03",
+     "element": "O",
+     "mass_amu": 15.999,
+     "charge_e": -0.32865,
+     "type": "EMC.opls_803"
+    },
+    {
+     "name": "C04",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": -0.01942,
+     "type": "EMC.opls_804"
+    },
+    {
+     "name": "H07",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.101799,
+     "type": "EMC.opls_807"
+    },
+    {
+     "name": "H08",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.101799,
+     "type": "EMC.opls_808"
+    },
+    {
+     "name": "H09",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.101799,
+     "type": "EMC.opls_809"
+    },
+    {
+     "name": "H0A",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.119856,
+     "type": "EMC.opls_810"
+    },
+    {
+     "name": "H0B",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.119856,
+     "type": "EMC.opls_811"
+    },
+    {
+     "name": "H0C",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.105754,
+     "type": "EMC.opls_812"
+    },
+    {
+     "name": "H0D",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.105754,
+     "type": "EMC.opls_813"
+    },
+    {
+     "name": "H0E",
+     "element": "H",
+     "mass_amu": 1.008,
+     "charge_e": 0.105755,
+     "type": "EMC.opls_814"
+    }
+   ],
+   "bonds": [
+    {
+     "atoms": [
+      2,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1327,
+      "k_kjmol_nm2": 179075.2
+     }
+    },
+    {
+     "atoms": [
+      4,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1229,
+      "k_kjmol_nm2": 476976.0
+     }
+    },
+    {
+     "atoms": [
+      5,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1327,
+      "k_kjmol_nm2": 179075.2
+     }
+    },
+    {
+     "atoms": [
+      6,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.141,
+      "k_kjmol_nm2": 267776.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.141,
+      "k_kjmol_nm2": 267776.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.1529,
+      "k_kjmol_nm2": 224262.4
+     }
+    },
+    {
+     "atoms": [
+      7,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      8,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      9,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      10,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      12,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      13,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    },
+    {
+     "atoms": [
+      14,
+      6
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 284512.0
+     }
+    }
+   ],
+   "angles": [
+    {
+     "atoms": [
+      4,
+      3,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 123.4,
+      "k_kjmol_rad2": 694.544
+     }
+    },
+    {
+     "atoms": [
+      5,
+      3,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 117.45,
+      "k_kjmol_rad2": 586.848
+     }
+    },
+    {
+     "atoms": [
+      6,
+      5,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 116.9,
+      "k_kjmol_rad2": 694.544
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 116.9,
+      "k_kjmol_rad2": 694.544
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 418.4
+     }
+    },
+    {
+     "atoms": [
+      7,
+      0,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      8,
+      0,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      9,
+      0,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      10,
+      1,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      12,
+      6,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      13,
+      6,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      14,
+      6,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 292.88
+     }
+    },
+    {
+     "atoms": [
+      5,
+      3,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 123.4,
+      "k_kjmol_rad2": 694.544
+     }
+    },
+    {
+     "atoms": [
+      10,
+      1,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.7,
+      "k_kjmol_rad2": 313.8
+     }
+    },
+    {
+     "atoms": [
+      8,
+      0,
+      7
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      9,
+      0,
+      7
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      9,
+      0,
+      8
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1,
+      10
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      13,
+      6,
+      12
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      14,
+      6,
+      12
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    },
+    {
+     "atoms": [
+      14,
+      6,
+      13
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 107.8,
+      "k_kjmol_rad2": 276.144
+     }
+    }
+   ],
+   "dihedrals": [
+    {
+     "atoms": [
+      6,
+      5,
+      3,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 31.20636,
+      "c1_kjmol": -9.76755,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2,
+      3,
+      4
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 21.43882,
+      "c1_kjmol": 0.0,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": -2.1966,
+      "c1_kjmol": 5.20071,
+      "c2_kjmol": 0.52718,
+      "c3_kjmol": -3.5313,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      7,
+      0,
+      1,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      8,
+      0,
+      1,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      9,
+      0,
+      1,
+      2
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      10,
+      1,
+      2,
+      3
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1,
+      2,
+      3
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      12,
+      6,
+      5,
+      3
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      13,
+      6,
+      5,
+      3
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      14,
+      6,
+      5,
+      3
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.41422,
+      "c1_kjmol": 1.24265,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -1.65686,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      6,
+      5,
+      3,
+      4
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 21.43882,
+      "c1_kjmol": 0.0,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2,
+      3,
+      5
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 31.20636,
+      "c1_kjmol": -9.76755,
+      "c2_kjmol": -21.43882,
+      "c3_kjmol": 0.0,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      10,
+      1,
+      0,
+      7
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1,
+      0,
+      7
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      10,
+      1,
+      0,
+      8
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1,
+      0,
+      8
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      10,
+      1,
+      0,
+      9
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    },
+    {
+     "atoms": [
+      11,
+      1,
+      0,
+      9
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 0.6276,
+      "c1_kjmol": 1.8828,
+      "c2_kjmol": 0.0,
+      "c3_kjmol": -2.5104,
+      "c4_kjmol": 0.0,
+      "c5_kjmol": 0.0
+     }
+    }
+   ],
+   "impropers": [
+    {
+     "atoms": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "form": "periodic",
+     "params": {
+      "k_kjmol": 43.932,
+      "n": 2,
+      "phi0_deg": 180.0
+     }
+    }
+   ]
+  }
+ },
+ "components": [
+  {
+   "molecule_type": "Li",
+   "count": 47
+  },
+  {
+   "molecule_type": "PF6",
+   "count": 47
+  },
+  {
+   "molecule_type": "EC",
+   "count": 168
+  },
+  {
+   "molecule_type": "EMC",
+   "count": 332
+  }
+ ],
+ "atom_count": 7036,
+ "forcefield": {
+  "name": "OPLS-AA (library:opls-aa-carbonates)",
+  "combination_rule": "geometric",
+  "scale_14_lj": 0.5,
+  "scale_14_coulomb": 0.5,
+  "atom_types": {
+   "Li.Li": {
+    "sigma_nm": 0.287,
+    "epsilon_kjmol": 0.002092
+   },
+   "PF6.FP": {
+    "sigma_nm": 0.312,
+    "epsilon_kjmol": 0.2552
+   },
+   "PF6.P": {
+    "sigma_nm": 0.374,
+    "epsilon_kjmol": 0.8368
+   },
+   "EC.opls_800": {
+    "sigma_nm": 0.355,
+    "epsilon_kjmol": 0.29288
+   },
+   "EC.opls_801": {
+    "sigma_nm": 0.296,
+    "epsilon_kjmol": 0.87864
+   },
+   "EC.opls_802": {
+    "sigma_nm": 0.29,
+    "epsilon_kjmol": 0.58576
+   },
+   "EC.opls_803": {
+    "sigma_nm": 0.35,
+    "epsilon_kjmol": 0.276144
+   },
+   "EC.opls_804": {
+    "sigma_nm": 0.35,
+    "epsilon_kjmol": 0.276144
+   },
+   "EC.opls_805": {
+    "sigma_nm": 0.29,
+    "epsilon_kjmol": 0.58576
+   },
+   "EC.opls_806": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EC.opls_807": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EC.opls_808": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EC.opls_809": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_806": {
+    "sigma_nm": 0.35,
+    "epsilon_kjmol": 0.276144
+   },
+   "EMC.opls_805": {
+    "sigma_nm": 0.35,
+    "epsilon_kjmol": 0.276144
+   },
+   "EMC.opls_801": {
+    "sigma_nm": 0.29,
+    "epsilon_kjmol": 0.58576
+   },
+   "EMC.opls_800": {
+    "sigma_nm": 0.355,
+    "epsilon_kjmol": 0.29288
+   },
+   "EMC.opls_802": {
+    "sigma_nm": 0.296,
+    "epsilon_kjmol": 0.87864
+   },
+   "EMC.opls_803": {
+    "sigma_nm": 0.29,
+    "epsilon_kjmol": 0.58576
+   },
+   "EMC.opls_804": {
+    "sigma_nm": 0.35,
+    "epsilon_kjmol": 0.276144
+   },
+   "EMC.opls_807": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_808": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_809": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_810": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_811": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_812": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_813": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   },
+   "EMC.opls_814": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.12552
+   }
+  }
+ },
+ "provenance": {
+  "created_by": "ucmd-builder 0.1.0.dev0 (git 82faf53b93f0)",
+  "created_utc": "2026-11-12T19:05:02Z",
+  "recipe": "# 1 M LiPF6 in EC:EMC 3:7 (w:w) with 500 solvent molecules: Lehnert 2025, SI Table S1.\n# Force field: the working horse of ADR 0009 (OPLS-AA, LigParGen solvents, JJ06 Li+, CL&P PF6-),\n# ion charges scaled by zeta = 0.75 (Lehnert SI Table S3).\n# The density is a placeholder until the Landesfeind 2019 SI is available; see the note in the\n# package provenance. Build:  ucmd-build build examples/lp57-1M.toml -o lp57-1M.ucsys\nformat = \"ucmd-build\"\nversion = \"0.1\"\nname = \"lipf6-ec-emc-1M\"\ndescription = \"1 M LiPF6 in EC:EMC 3:7 (w:w), 500 solvent molecules as in Lehnert 2025 Table S1\"\nseed = 20261112\n\n[forcefield]\nsource = \"library\"\nset = \"opls-aa-carbonates\"\n\n[composition]\nsalt = [\"Li\", \"PF6\"]\nsolvent = { EC = 0.3, EMC = 0.7 }\nbasis = \"mass\"\nmolarity_mol_L = 1.0\nsolvent_molecules = 500\ndensity_g_cm3 = { value = 1.2, source = \"placeholder (PLAN.md B1.4) until the Landesfeind 2019 SI is available\" }\n\n[[component]]\nname = \"Li\"\nmolecule = { smiles = \"[Li+]\" }\ncharge_scale = 0.75\n\n[[component]]\nname = \"PF6\"\nmolecule = { smiles = \"F[P-](F)(F)(F)(F)F\" }\ncharge_scale = 0.75\n\n[[component]]\nname = \"EC\"\nmolecule = { library = \"EC\" }\n\n[[component]]\nname = \"EMC\"\nmolecule = { smiles = \"CCOC(=O)OC\" }\n\n[packing]\nmethod = \"packmol\"\ntolerance_nm = 0.2\n",
+  "seed": 20261112,
+  "sources": [
+   {
+    "what": "OPLS-AA force field: functional forms, geometric combination rule, 1-4 scaling 0.5/0.5",
+    "citation": "W. L. Jorgensen, D. S. Maxwell, J. Tirado-Rives, J. Am. Chem. Soc. 118, 11225 (1996)"
+   },
+   {
+    "what": "Li+ Lennard-Jones parameters (OPLS-AA, geometric combination rule, fitted with TIP4P water)",
+    "citation": "K. P. Jensen, W. L. Jorgensen, J. Chem. Theory Comput. 2, 1499 (2006)"
+   },
+   {
+    "what": "Li+ values and mass checked against two distributed copies: BOSS 5.1 via LigParGen 3.0.1 (type opls_406: sigma 0.287 nm, epsilon 0.002092 kJ/mol, mass 6.941; run 2026-11-12) and mdgo (ion_lj_params.json, entry jensen_jorgensen, TIP4P)",
+    "citation": "LigParGen 3.0.1; mdgo, github.com/HouGroup/mdgo",
+    "url": "https://jorgensenresearch.com/ligpargen/"
+   },
+   {
+    "what": "PF6- charges, Lennard-Jones, bond and angle parameters (CL&P database il.ff, version 2026/10/09, MIT licence)",
+    "citation": "J. N. Canongia Lopes, A. A. H. Padua, CL&P force field for ionic liquids, il.ff",
+    "url": "https://github.com/paduagroup/clandp"
+   },
+   {
+    "what": "PF6- parameters, origin as cited in il.ff (hexafluorophosphate)",
+    "citation": "G. A. Kaminski, W. L. Jorgensen, J. Chem. Soc., Perkin Trans. 2, 2365 (1999)"
+   },
+   {
+    "what": "PF6- source as cited by the Lehnert 2025 benchmark (SI)",
+    "citation": "J. N. Canongia Lopes, A. A. H. Padua, J. Phys. Chem. B 108, 16893 (2004)"
+   },
+   {
+    "what": "EC parameters: OPLS-AA atom types, Lennard-Jones and bonded terms, 1.14*CM1A-LBCC charges, generated with LigParGen",
+    "citation": "L. S. Dodda, I. Cabeza de Vaca, J. Tirado-Rives, W. L. Jorgensen, Nucleic Acids Res. 45, W331 (2017)",
+    "doi": "10.1093/nar/gkx312",
+    "url": "https://jorgensenresearch.com/ligpargen/"
+   },
+   {
+    "what": "EC partial charges: the 1.14*CM1A-LBCC charge model",
+    "citation": "L. S. Dodda, J. Z. Vilseck, J. Tirado-Rives, W. L. Jorgensen, J. Phys. Chem. B 121, 3864 (2017)"
+   },
+   {
+    "what": "EC parameter assignment with BOSS",
+    "citation": "W. L. Jorgensen, J. Tirado-Rives, J. Comput. Chem. 26, 1689 (2005)"
+   },
+   {
+    "what": "EMC parameters: OPLS-AA atom types, Lennard-Jones and bonded terms, 1.14*CM1A-LBCC charges, generated with LigParGen",
+    "citation": "L. S. Dodda, I. Cabeza de Vaca, J. Tirado-Rives, W. L. Jorgensen, Nucleic Acids Res. 45, W331 (2017)",
+    "doi": "10.1093/nar/gkx312",
+    "url": "https://jorgensenresearch.com/ligpargen/"
+   },
+   {
+    "what": "EMC partial charges: the 1.14*CM1A-LBCC charge model",
+    "citation": "L. S. Dodda, J. Z. Vilseck, J. Tirado-Rives, W. L. Jorgensen, J. Phys. Chem. B 121, 3864 (2017)"
+   },
+   {
+    "what": "EMC parameter assignment with BOSS",
+    "citation": "W. L. Jorgensen, J. Tirado-Rives, J. Comput. Chem. 26, 1689 (2005)"
+   },
+   {
+    "what": "solution density for the box size",
+    "citation": "placeholder (PLAN.md B1.4) until the Landesfeind 2019 SI is available"
+   }
+  ],
+  "forcefield_sources": [
+   {
+    "component": "Li",
+    "source": "library",
+    "source_version": "1",
+    "distribution": "ucmd-builder",
+    "source_id": "library:opls-aa-carbonates/Li@1",
+    "set": "opls-aa-carbonates",
+    "set_version": 1,
+    "template": "Li",
+    "units_as_printed": "energy kcal/mol, length angstrom"
+   },
+   {
+    "component": "PF6",
+    "source": "library",
+    "source_version": "1",
+    "distribution": "ucmd-builder",
+    "source_id": "library:opls-aa-carbonates/PF6@1",
+    "set": "opls-aa-carbonates",
+    "set_version": 1,
+    "template": "PF6",
+    "units_as_printed": "energy kJ/mol, harmonic k/2, length angstrom"
+   },
+   {
+    "component": "EC",
+    "source": "library",
+    "source_version": "1",
+    "distribution": "ucmd-builder",
+    "source_id": "library:opls-aa-carbonates/EC@1",
+    "set": "opls-aa-carbonates",
+    "set_version": 1,
+    "template": "EC",
+    "units_as_printed": "energy kJ/mol, harmonic k/2, length nm",
+    "generation": {
+     "tool": "LigParGen 3.0.1 (BOSS 5.1, RDKit 2023.03.3), https://jorgensenresearch.com/ligpargen/",
+     "input": "SMILES O=C1OCCO1; charge model 1.14*CM1A-LBCC; net charge 0; optimization rounds 0",
+     "date": "2026-11-12",
+     "topology_sha256": "fca932e47daa97b51b4efc363469f811bb9b278ff87957a6a3ebb7f1c5fb7a06"
+    }
+   },
+   {
+    "component": "EMC",
+    "source": "library",
+    "source_version": "1",
+    "distribution": "ucmd-builder",
+    "source_id": "library:opls-aa-carbonates/EMC@1",
+    "set": "opls-aa-carbonates",
+    "set_version": 1,
+    "template": "EMC",
+    "units_as_printed": "energy kJ/mol, harmonic k/2, length nm",
+    "generation": {
+     "tool": "LigParGen 3.0.1 (BOSS 5.1, RDKit 2023.03.3), https://jorgensenresearch.com/ligpargen/",
+     "input": "SMILES CCOC(=O)OC; charge model 1.14*CM1A-LBCC; net charge 0; optimization rounds 0",
+     "date": "2026-11-12",
+     "topology_sha256": "7d46f231a8f9ed420ccc5e818113878c9424073a8919193b8bd728c73f9bd214"
+    }
+   }
+  ],
+  "transforms": [
+   {
+    "kind": "charge_scale",
+    "component": "Li",
+    "factor": 0.75,
+    "net_charge_e": 0.75
+   },
+   {
+    "kind": "charge_scale",
+    "component": "PF6",
+    "factor": 0.75,
+    "net_charge_e": -0.75
+   }
+  ],
+  "box": {
+   "from": "composition",
+   "density_g_cm3": 1.2,
+   "density_source": "placeholder (PLAN.md B1.4) until the Landesfeind 2019 SI is available",
+   "length_nm": 4.275927711838623
+  },
+  "packing": {
+   "method": "packmol",
+   "program": "Packmol 21.2.3",
+   "seed": 146236509,
+   "tolerance_nm": 0.2,
+   "min_intermolecular_distance_nm": 0.21973071780099396
+  },
+  "composition": {
+   "counts": {
+    "Li": 47,
+    "PF6": 47,
+    "EC": 168,
+    "EMC": 332
+   },
+   "total_mass_amu": 56496.717,
+   "box_length_nm": 4.275927711838623,
+   "achieved_molarity_mol_L": 0.9982880952179929,
+   "achieved_molality_mol_kg": 0.9522405571976865,
+   "achieved_solvent_fractions": {
+    "EC": 0.2997413390479653,
+    "EMC": 0.7002586609520347
+   },
+   "notes": [
+    "ion pairs rounded from 47.0923 to 47"
+   ]
+  },
+  "notes": "the density is a placeholder (placeholder (PLAN.md B1.4) until the Landesfeind 2019 SI is available); not for production"
+ }
+}
