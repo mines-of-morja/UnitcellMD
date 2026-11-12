@@ -1,7 +1,8 @@
 # UnitcellMD — implementation plan
 
-Version 1.3 · 2026-11-12 · Status: Gate 0 approved (spec v0.1.0); E1 complete and awaiting
-Gate E1 (docs/gates/gate-e1.md); B1 in design.
+Version 1.4 · 2026-11-12 · Status: Gate 0 approved (spec v0.1.0). E1 is complete; the author
+is testing it hands-on before Gate E1 (docs/testing.md). The B1 design is approved and B1a is
+in implementation.
 Executed by: a coding agent following [CLAUDE.md](CLAUDE.md). Approved by: the author, at every gate.
 Task IDs (P0.3, E1.5, …) are stable. Reference them in commits, `docs/STATUS.md` and ADRs.
 
@@ -256,7 +257,8 @@ never on any `ucmd-providers-*` crate. Only `ucmd-cli` knows the concrete provid
 |---|---|---|---|---|
 | P0 | all | spec v0.1, fixtures, validator, repo skeletons, four spikes, E1 design | author approves (Gate 0) | — |
 | E1 | engine | NVE/NVT engine, LJ, PBC, H5MD, checkpoints, CLI | argon matches OpenMM; restart is bitwise identical | P0 |
-| B1 | builder | headless builder + CLI + force-field template library | recipe → valid package → OpenMM runs it | P0 |
+| B1a | builder | headless builder + CLI + force-field sources, composition, packing | recipe → valid package → OpenMM runs it | P0 |
+| B1b | builder | crystals, Wigner sampling, LAMMPS/XYZ exporters | per-task criteria (§6) | B1a |
 | E2 | engine | bonded terms, PME, constraints, NHC/Langevin, barostat, minimizer, performance | electrolyte box matches OpenMM (energies, density, RDF) | E1, B1 |
 | B2a | builder | frontend preview: build, view, short local runs | author builds and runs a small electrolyte box in the GUI only | B1, E2 core |
 | B2b | builder | complete PySide6 GUI over the builder library | author builds electrolyte + crystal in the GUI only | B2a |
@@ -275,8 +277,11 @@ never on any `ucmd-providers-*` crate. Only `ucmd-cli` knows the concrete provid
   by editing `run.toml` only.
 - **M4 "paper"** (after A2).
 
-**Order with one agent:** P0 → E1 → B1 → E2 core (E2.0–E2.4, E2.6) → **B2a frontend
-preview** → rest of E2 → A1, E3 and B2b in any order → A2.
+**Order with one agent:** P0 → E1 → B1a → E2 core (E2.0–E2.4, E2.6) → **B2a frontend
+preview** → rest of E2 → B1b, A1, E3 and B2b in any order → A2.
+
+- B1a is B1.1–B1.5, B1.8 and the OpenMM converter. B1b is B1.6, B1.7 and B1.9 (design/B1.md
+  §13; approved 2026-11-12).
 
 - E2 is the largest block.
 - **The frontend comes early, at the author's request (2026-11-12).** As soon as the core stands
@@ -562,9 +567,10 @@ spike ADRs and the E1 design.
     package.
   - **Library content for B1:**
     - argon (Rahman 1964) and SPC/Fw water (pre-approved);
-    - the electrolyte working horse, once the author confirms its sources (B1 design).
-      Candidates: Li⁺ (Jensen & Jorgensen 2006), PF₆⁻ (CL&P 2004), EC and EMC (later DMC, PC,
-      MP); ζ = 0.75 for EC:EMC as in Lehnert 2025.
+    - the electrolyte working horse `opls-aa-carbonates`
+      ([ADR 0009](docs/decisions/0009-working-horse-force-field.md)): Li⁺ (Jensen & Jorgensen
+      2006), PF₆⁻ (CL&P), EC and EMC (LigParGen, 1.14·CM1A-LBCC); later DMC, PC, MP;
+      ζ = 0.75 for EC:EMC as in Lehnert 2025.
   - **Values come from sources the author approves.** Never fill gaps by guessing.
   - ✓ A test kit for every source checks:
     - net charge = formal charge (× ζ for ions);
@@ -751,14 +757,17 @@ than the oracle's.
    - The concrete working-horse parameter set is proposed in the B1 design and needs the
      author's confirmation.
    - Ringsby 2021 is no alternative: it used Maestro/MacroModel parameters as well.
-7. **Installs:** `libhdf5-dev` (needs sudo), `uv`, OpenMM, Packmol.
+7. **Installs:** ✅ nothing needs sudo.
+   - `libhdf5-dev` is not needed (bundled HDF5, ADR 0004).
+   - OpenMM comes from PyPI for the oracle.
+   - Packmol comes from its official PyPI wheel (extra `ucmd-builder[packmol]`).
+   - `uv` is optional.
 8. **Agent setup:** Claude Code reads `CLAUDE.md`; for another agent, copy or symlink it to
    `AGENTS.md`. One agent sequentially, or two in parallel (§3).
 9. **Cluster:** ⏸ deferred to A2.2. The constraint that applies now: everything stays
    local-first and cluster-capable (D13, ADR 0002).
-10. **Early frontend** (the author's idea, 2026-11-12): B2a after M2a (§3), with the run
-    preview B2.6, in which the GUI starts `ucmd` as an external program. To confirm with the
-    B1 design.
+10. **Early frontend:** ✅ confirmed 2026-11-12. B2a comes after M2a (§3), with the run
+    preview B2.6, in which the GUI starts `ucmd` as an external program.
 
 ---
 
