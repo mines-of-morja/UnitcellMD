@@ -81,11 +81,16 @@ Derived values, for checking implementations:
 
 - **Forces:** F_i = −∂E/∂r_i.
 - **Virial tensor** (kJ/mol): W_ab = −∂E/∂ε_ab at ε = 0, for the affine deformation
-  r → (1+ε)·r, h → (1+ε)·h, where ε is a small 3×3 strain.
-  - For pair potentials this is W = Σ_{i<j} r_ij ⊗ F_ij, with r_ij = r_i − r_j and F_ij the
-    force on i due to j.
-  - For an isolated system it equals Σ_i r_i ⊗ F_i.
-  - It is symmetric for central forces.
+  r_b → r_b + Σ_a ε_ab r_a. This is the row-vector form r → r·(1+ε) (ASE's convention). It is
+  applied to positions and lattice vectors alike; ε is a small 3×3 strain.
+  - In general W_ab = Σ_i r_{i,a} F_{i,b}, i.e. W = Σ_i r_i ⊗ F_i. With periodic boundaries the
+    pair form is used: W = Σ_{i<j} r_ij ⊗ F_ij, with r_ij = r_i − r_j and F_ij the force on i
+    due to j.
+  - W is symmetric for rotation-invariant potentials. External fields can make it asymmetric,
+    and only then does the strain convention matter. (Found by the E1.3 test kit: the column
+    form (1+ε)·r gives Wᵀ.)
+  - Finite-difference checks probe the diagonal and the lower components (1,0), (2,0), (2,1).
+    Those keep a lower-triangular cell lower-triangular.
 - **Pressure tensor:** P = (Σ_i m_i v_i ⊗ v_i + W)/V. The scalar pressure is p = tr(P)/3.
 - **Kinetic energy:** K = Σ_i ½ m_i |v_i|².
 - **Temperature:** T = 2K/(N_dof·k_B), with N_dof = 3N − N_constraints − N_removed.
