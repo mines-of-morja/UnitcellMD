@@ -1,7 +1,7 @@
 # UnitcellMD — implementation plan
 
-Version 1.1 · 2026-11-11 · Status: Phase 0 in progress (P0.1–P0.2 done). Gate 0 decisions are
-partly made (§10).
+Version 1.2 · 2026-11-12 · Status: Phase 0 complete (awaiting Gate 0); E1 complete,
+provisionally (docs/gates/gate-e1.md). Gate 0 decisions are partly made (§10).
 Executed by: a coding agent following [CLAUDE.md](CLAUDE.md). Approved by: the author, at every gate.
 Task IDs (P0.3, E1.5, …) are stable. Reference them in commits, `docs/STATUS.md` and ADRs.
 

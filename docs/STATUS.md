@@ -1,15 +1,15 @@
 # Status
 
 Last update: 2026-11-12. **Phase 0 is complete and awaiting Gate 0**
-([docs/gates/gate-0.md](gates/gate-0.md)). E1 is started provisionally on branch `e1` of
-`ucmd-engine`.
+([gates/gate-0.md](gates/gate-0.md)). **E1 is complete, provisionally**, on branch `e1` of
+`ucmd-engine` ([gates/gate-e1.md](gates/gate-e1.md)): 48 tests, argon validated against OpenMM.
 
 ## Current
 
 - **Branches:**
   - `main` holds only what the author has already seen or decided.
   - `phase-0` (umbrella repo) holds P0.3–P0.6 and is pending Gate 0.
-  - `e1` (ucmd-engine) holds the provisional E1 work.
+  - `e1` (ucmd-engine, 12 commits) holds the complete E1 engine, pending review together with Gate 0.
 - **The author's answers** to gate-0.md §3 and §5 are needed. Silence on an item means "keep".
 - **Not yet on GitHub:** `gh` is installed but not logged in, and there is no SSH key or
   credential helper. Everything is committed locally. To publish: `gh auth login`, then
@@ -41,6 +41,18 @@ All of these are listed in [gate-0.md §3](gates/gate-0.md). In short:
 
 ## Done
 
+- 2026-11-12 — **E1 (provisional, branch `e1`)** — the minimal engine, E1.1–E1.12:
+  - core types, the provider contract with test kit, harmonic and Lennard-Jones providers,
+    neighbour list;
+  - velocity Verlet with CSVR;
+  - readers with the contract test;
+  - thermo/XYZ/H5MD writers;
+  - checkpoints with bitwise restarts;
+  - `ucmd check|run|singlepoint|export|rerun`;
+  - argon validation PASS 8/8 against OpenMM.
+
+  Evidence: [gates/gate-e1.md](gates/gate-e1.md). Spec corrections found along the way (virial
+  strain convention, element enum, E_TOML, author_name) are on `phase-0`.
 - 2026-11-12 — **P0.6** — E1 design (`docs/design/E1.md`).
 - 2026-11-12 — **P0.5** — spikes S1–S4 with ADRs 0004–0007 (gate-0.md §2).
 - 2026-11-12 — **P0.4** — `ucmd-spec` validator, fixtures, generator, spec CI; 53 tests.
@@ -63,6 +75,10 @@ All of these are listed in [gate-0.md §3](gates/gate-0.md). In short:
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+- 2026-11-12 — E1 (provisional) — engine E1.1–E1.12 on branch `e1` — evidence: gates/gate-e1.md
+  (48 tests; LJ vs OpenMM to 1e-15; bitwise restart; argon 8/8) — next: author review of
+  Gate 0 + E1, then E2 or B1
 
 - 2026-11-12 — P0.6 — E1 design — next: Gate 0 (E1 provisionally on branch `e1`)
 - 2026-11-12 — P0.5 — four spikes — evidence: ADRs 0004–0007 with measured numbers — next: P0.6
