@@ -8,10 +8,10 @@ Last update: 2026-11-12.
   `main` of ucmd-engine ([gates/gate-e1.md §7](gates/gate-e1.md)).
 - **B1 design approved** ([design/B1.md](design/B1.md)); working horse in
   [ADR 0009](decisions/0009-working-horse-force-field.md).
-- **The E2 design is ready for review:** [design/E2.md](design/E2.md), on branch `e2` of this
-  repo.
-  - It covers the engine core for molecules, up to milestone M2a.
-  - The GUI preview B2a comes right after M2a (the author's order, 2026-11-12).
+- **E2 core is in implementation** (design approved 2026-11-12): branch `e2` of ucmd-engine.
+  - It ends with M2a; the GUI preview B2a follows.
+  - New requirement: [ADR 0010](decisions/0010-swappable-hardware.md), the same results on
+    any hardware.
 - **B1a is complete and awaits Gate B1a** ([gates/gate-b1a.md](gates/gate-b1a.md)).
   - The builder makes Lehnert's 1 M LiPF₆ EC:EMC box (7036 atoms) from a recipe; OpenMM runs
     it.
@@ -32,7 +32,8 @@ Last update: 2026-11-12.
      densities are marked placeholders.
   3. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
      wheel.
-  4. Approval of the E2 design ([design/E2.md](design/E2.md) §13).
+  4. The Landesfeind 2019 SI is also the density reference for the transport study (PLAN.md
+     §10.12).
 
 ## Decisions by the author
 
@@ -65,6 +66,8 @@ Last update: 2026-11-12.
 
 ## Done
 
+- 2026-11-12 — **E2 design approved**; ADR 0010 (swappable hardware); study scope (PLAN.md
+  §10.12).
 - 2026-11-12 — **Gate E1 approved**; `e1` merged into `main` of ucmd-engine.
 
 - 2026-11-12 — **B1a (branch `b1` of ucmd-builder)**:

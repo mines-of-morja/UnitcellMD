@@ -526,9 +526,13 @@ spike ADRs and the E1 design.
   trajectory become `ucmd rerun` with a second provider.
 - **E3.6 ML potentials** through ASE calculators; the author picks the model.
   - ✓ The LiPF₆/EC:EMC package runs with only `run.toml` changed (= M3).
-- **E3.7 (optional) OpenMM as a provider** through the bridge. Its OpenCL platform runs on the
-  AMD GPUs, giving fast classical forces through the same interface; it is also a production
-  fallback.
+- **E3.7 OpenMM as an alternative backend for the same model** (ADR 0010), through the
+  bridge.
+  - Its OpenCL platform runs on the AMD GPUs.
+  - The machine profile selects it; `run.toml` stays unchanged.
+  - A start-up conformance single point against the CPU reference backend guards the model's
+    identity.
+  - It is the production path for the transport grid.
 - **E3.8 (optional, last) QM/MM.**
   - Mechanical embedding: `Composite` + region selection + link atoms.
   - Electrostatic embedding needs point charges on the wire → protocol-extension ADR.
@@ -687,6 +691,8 @@ touching files, and both pass `ucmd check`.
 
 ### A2 Lehnert 2025 reproduction
 
+- **Scope (author, 2026-11-12):** the T and c dependence of κ and t⁺ as in Landesfeind 2019,
+  staged as in §10.12. The first state point is 1 M LiPF₆ in EC:EMC 3:7 at 20 °C.
 - **A2.1** The Lehnert SI is in `../Lit`, and its protocol is summarized in
   `docs/lehnert2025-si-notes.md`: box sizes, run lengths, cutoffs, ζ, temperatures, force-field
   sources. Freeze the values actually used in `validation/lehnert2025/PARAMS.md`.
@@ -768,6 +774,17 @@ than the oracle's.
    local-first and cluster-capable (D13, ADR 0002).
 10. **Early frontend:** ✅ confirmed 2026-11-12. B2a comes after M2a (§3), with the run
     preview B2.6, in which the GUI starts `ucmd` as an external program.
+11. **Hardware is swappable** ✅ (2026-11-12, [ADR 0010](docs/decisions/0010-swappable-hardware.md)).
+    - The same program gives the same results on any hardware: bit-identical on the CPU
+      reference backend for any machine and thread count.
+    - Other backends (GPU) must agree numerically at start-up and statistically in their
+      results.
+12. **Transport study** ✅ (2026-11-12): the T and c dependence of κ and t⁺ as in Landesfeind
+    2019 (A2).
+    - LiPF₆ in EC:EMC 3:7 first.
+    - One state point end to end first (1 M, 20 °C), then a grid subset (0.5, 1, 2 M at
+      −10, 20, 50 °C), then the full grid (0.1–3 M, −10…50 °C) as compute allows.
+    - D± uses Landesfeind's measured thermodynamic factor.
 
 ---
 
