@@ -13,7 +13,7 @@ Include:
 
 ```sh
 cd ucmd-engine                       # inside the UnitcellMD workspace
-git switch e1                        # the engine under review (Gate E1)
+git switch main                      # E1 is approved and merged
 . "$HOME/.cargo/env"                 # only if `cargo` is not found
 cargo build --release                # ~2 min the first time (it also builds HDF5)
 alias ucmd="$PWD/target/release/ucmd"
@@ -40,6 +40,11 @@ ucmd run   examples/argon-quickstart/run.toml
 - `OK` from the check;
 - `done: 5000 steps in ~10 s (~180 ns/day), final T = 88.94 K`. The final T is exactly this
   value: same seed, same result.
+- **From E2 on**, the same run prints `final T = 95.88 K` and a `hardware:` line.
+  - E2 switched to machine-independent random samplers
+    ([ADR 0010](decisions/0010-swappable-hardware.md)).
+  - The value is the same on every computer and for any thread count, and a CI test proves it
+    on GitHub's machines.
 
 The outputs land in `examples/argon-quickstart/out/` (ignored by git).
 
