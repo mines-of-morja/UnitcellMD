@@ -142,9 +142,14 @@ Every provider documents its keys, with unit suffixes.
 
 ## 3. Validation
 
-- **`E_SCHEMA`:** schema violations.
-- **`E_PATH`:** an absolute path, or a path starting with `~`.
+Checks run in this order and stop at the first error:
+
+- **`E_TOML`:** the file is missing or is not valid TOML.
 - **`E_VERSION`:** unsupported `spec_version`.
+- **`E_PATH`:** an absolute path, or a path starting with `~`.
+- **`E_SCHEMA`:** schema violations.
+- **`E_INCOMPATIBLE`:** settings that contradict each other, e.g. the `langevin` thermostat
+  without the `langevin-baoab` integrator.
 
 Cross-checks against the package happen when the engine starts:
 

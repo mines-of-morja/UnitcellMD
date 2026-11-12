@@ -1,0 +1,122 @@
+{
+  "format": "ucmd-system",
+  "spec_version": "0.1.0",
+  "name": "water-2",
+  "description": "Two flexible SPC/Fw water molecules in vacuum, slightly distorted from equilibrium so that bonded and non-bonded forces are non-zero. Not periodic.",
+  "units": {
+    "length": "nm",
+    "time": "ps",
+    "mass": "amu",
+    "energy": "kJ/mol",
+    "charge": "e",
+    "temperature": "K",
+    "angle": "deg"
+  },
+  "periodicity": [
+    false,
+    false,
+    false
+  ],
+  "cell_nm": null,
+  "molecule_types": {
+    "SPCFw": {
+      "description": "SPC/Fw flexible water",
+      "formal_charge_e": 0,
+      "atoms": [
+        {
+          "name": "OW",
+          "element": "O",
+          "mass_amu": 15.9994,
+          "charge_e": -0.82
+        },
+        {
+          "name": "HW1",
+          "element": "H",
+          "mass_amu": 1.008,
+          "charge_e": 0.41,
+          "type": "HW"
+        },
+        {
+          "name": "HW2",
+          "element": "H",
+          "mass_amu": 1.008,
+          "charge_e": 0.41,
+          "type": "HW"
+        }
+      ],
+      "bonds": [
+        {
+          "atoms": [
+            0,
+            1
+          ],
+          "form": "harmonic",
+          "params": {
+            "r0_nm": 0.1012,
+            "k_kjmol_nm2": 443153.3808
+          }
+        },
+        {
+          "atoms": [
+            0,
+            2
+          ],
+          "form": "harmonic",
+          "params": {
+            "r0_nm": 0.1012,
+            "k_kjmol_nm2": 443153.3808
+          }
+        }
+      ],
+      "angles": [
+        {
+          "atoms": [
+            1,
+            0,
+            2
+          ],
+          "form": "harmonic",
+          "params": {
+            "theta0_deg": 113.24,
+            "k_kjmol_rad2": 317.5656
+          }
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "molecule_type": "SPCFw",
+      "count": 2
+    }
+  ],
+  "atom_count": 6,
+  "forcefield": {
+    "name": "SPC/Fw (Wu, Tepper, Voth 2006)",
+    "combination_rule": "lorentz-berthelot",
+    "scale_14_lj": 0.5,
+    "scale_14_coulomb": 0.5,
+    "atom_types": {
+      "OW": {
+        "sigma_nm": 0.3165492,
+        "epsilon_kjmol": 0.6502994552
+      },
+      "HW": {
+        "sigma_nm": 0.0,
+        "epsilon_kjmol": 0.0
+      }
+    }
+  },
+  "provenance": {
+    "created_by": "spec/fixtures/_generators/generate.py",
+    "created_utc": "2026-11-12T00:00:00Z",
+    "sources": [
+      {
+        "what": "SPC/Fw parameters (transcribed from Table I; verify before production use)",
+        "citation": "Y. Wu, H. L. Tepper, G. A. Voth, J. Chem. Phys. 124, 024503 (2006)",
+        "doi": "10.1063/1.2136877"
+      }
+    ],
+    "notes": "Bond and angle force constants converted from (k/2)(x - x0)^2 in kcal/mol units; seed 2006. No 1-4 pairs exist in water, so the scale factors have no effect."
+  }
+}

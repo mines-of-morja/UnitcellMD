@@ -1,0 +1,97 @@
+{
+  "format": "ucmd-system",
+  "spec_version": "0.1.0",
+  "name": "nacl-crystal",
+  "description": "Rock-salt crystal, 2x2x2 conventional cells (32 Na+, 32 Cl-), point charges +-1 e and no Lennard-Jones: the Coulomb energy is -32 * 1.747565 * k_e / (a/2) (Madelung constant).",
+  "units": {
+    "length": "nm",
+    "time": "ps",
+    "mass": "amu",
+    "energy": "kJ/mol",
+    "charge": "e",
+    "temperature": "K",
+    "angle": "deg"
+  },
+  "periodicity": [
+    true,
+    true,
+    true
+  ],
+  "cell_nm": [
+    [
+      1.128,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.128,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.128
+    ]
+  ],
+  "molecule_types": {
+    "Na+": {
+      "formal_charge_e": 1,
+      "atoms": [
+        {
+          "name": "Na",
+          "element": "Na",
+          "mass_amu": 22.98977,
+          "charge_e": 1.1,
+          "type": "Na"
+        }
+      ],
+      "bonds": []
+    },
+    "Cl-": {
+      "formal_charge_e": -1,
+      "atoms": [
+        {
+          "name": "Cl",
+          "element": "Cl",
+          "mass_amu": 35.453,
+          "charge_e": -1.0,
+          "type": "Cl"
+        }
+      ],
+      "bonds": []
+    }
+  },
+  "components": [
+    {
+      "molecule_type": "Na+",
+      "count": 32
+    },
+    {
+      "molecule_type": "Cl-",
+      "count": 32
+    }
+  ],
+  "atom_count": 64,
+  "forcefield": {
+    "name": "point charges only (Madelung test)",
+    "combination_rule": "geometric",
+    "scale_14_lj": 1.0,
+    "scale_14_coulomb": 1.0,
+    "atom_types": {
+      "Na": {
+        "sigma_nm": 0.0,
+        "epsilon_kjmol": 0.0
+      },
+      "Cl": {
+        "sigma_nm": 0.0,
+        "epsilon_kjmol": 0.0
+      }
+    }
+  },
+  "provenance": {
+    "created_by": "spec/fixtures/_generators/generate.py",
+    "created_utc": "2026-11-12T00:00:00Z",
+    "notes": "Lattice constant 0.5640 nm is a test value (close to experiment); canonical order is all Na, then all Cl."
+  }
+}

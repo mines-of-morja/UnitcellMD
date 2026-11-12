@@ -184,9 +184,14 @@ warnings: the package is valid, but suspicious.
 | `E_MOLECULE_SPLIT` | periodic package where two bonded or constrained atoms are farther apart than half the smallest perpendicular cell height (the molecule is not whole) |
 | `W_FORMAL_CHARGE` | periodic package whose formal charges do not sum to 0 |
 
-Checks run in this order; the first error stops validation:
-E_JSON → E_FORMAT → E_VERSION → E_UNITS → E_SCHEMA → semantic checks → arrays.
-Warnings are collected.
+Checks run in this order, and the first error stops validation, so every reader reports the
+same code:
+
+E_JSON → E_FORMAT → E_VERSION → E_UNITS → E_SCHEMA → E_REFERENCE → E_INDEX → E_ATOM_COUNT →
+E_CELL → E_PARAMETERS → E_NET_CHARGE → positions.npy (E_ARRAY_MISSING, E_ARRAY_FORMAT,
+E_NONFINITE) → velocities.npy (E_ARRAY_FORMAT, E_NONFINITE) → E_MOLECULE_SPLIT.
+
+Warnings are collected along the way.
 
 ## 8. Example
 
