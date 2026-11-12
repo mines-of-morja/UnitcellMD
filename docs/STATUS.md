@@ -4,10 +4,8 @@ Last update: 2026-11-12.
 
 - **Gate 0 is approved.** Spec v0.1.0 is tagged `spec-v0.1.0`, and `phase-0` is merged into
   `main` ([gates/gate-0.md §7](gates/gate-0.md)).
-- **E1 is complete. The author is testing it hands-on before Gate E1:**
-  - guide: [testing.md](testing.md);
-  - evidence: [gates/gate-e1.md](gates/gate-e1.md);
-  - code: branch `e1` of `ucmd-engine`.
+- **Gate E1 is approved** (2026-11-12, after the author's hands-on tests). `e1` is merged into
+  `main` of ucmd-engine ([gates/gate-e1.md §7](gates/gate-e1.md)).
 - **B1 design approved** ([design/B1.md](design/B1.md)); working horse in
   [ADR 0009](decisions/0009-working-horse-force-field.md).
 - **The E2 design is ready for review:** [design/E2.md](design/E2.md), on branch `e2` of this
@@ -24,13 +22,12 @@ Last update: 2026-11-12.
 
 - **Repos:** all four are public in the organization `mines-of-morja`, with CI green.
   - `main` holds what the author has seen or decided.
-  - Review branches: `e1` (ucmd-engine, Gate E1), `b1` (ucmd-builder, Gate B1a) and `b1a`
-    (this repo: oracle v1, Gate B1a report).
+  - Review branches: `b1` (ucmd-builder, Gate B1a), and in this repo `b1a` (oracle v1, Gate
+    B1a report) and `e2` (E2 design).
 - **Engine CI** tests every branch against the umbrella at tag `spec-v0.1.0`. A spec change moves
   this pin in the same coordinated update.
 - **Waiting for the author:**
-  1. Hands-on tests of E1 and the builder ([testing.md](testing.md) §1–7), then Gates E1 and
-     B1a.
+  1. Hands-on tests of the builder ([testing.md](testing.md) §7), then Gate B1a.
   2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
      densities are marked placeholders.
   3. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
@@ -67,6 +64,8 @@ Last update: 2026-11-12.
   Gate E1.
 
 ## Done
+
+- 2026-11-12 — **Gate E1 approved**; `e1` merged into `main` of ucmd-engine.
 
 - 2026-11-12 — **B1a (branch `b1` of ucmd-builder)**:
   - recipe, molecules (RDKit), pluggable force-field sources (`library`, `gromacs-top`, test
@@ -113,7 +112,7 @@ Last update: 2026-11-12.
 
 ## Open questions for the author
 
-1. Gates E1 and B1a, after the hands-on tests ([testing.md](testing.md)).
+1. Gate B1a, after the hands-on tests of the builder ([testing.md](testing.md) §7).
 2. The Landesfeind 2019 SI for the densities.
 3. The validator packaging fix (gate-b1a.md §4.1).
 4. PLAN.md §10:
