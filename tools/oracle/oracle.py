@@ -397,3 +397,16 @@ def energy_terms(system: mm.System, positions_nm: np.ndarray, cell_nm: np.ndarra
         context.getState(getEnergy=True).getPotentialEnergy().value_in_unit(unit.kilojoule_per_mole)
     )
     return out
+
+
+def term_forces(system: mm.System, positions_nm: np.ndarray, cell_nm: np.ndarray | None = None) -> dict[str, np.ndarray]:
+    """Forces (kJ mol⁻¹ nm⁻¹) per term of `TERMS`, on the Reference platform."""
+    context = mm.Context(system, mm.VerletIntegrator(0.001), mm.Platform.getPlatformByName("Reference"))
+    if cell_nm is not None:
+        context.setPeriodicBoxVectors(*(mm.Vec3(*row) for row in cell_nm))
+    context.setPositions(positions_nm)
+    out = {}
+    for group, name in TERMS.items():
+        state = context.getState(getForces=True, groups={group})
+        out[name] = np.asarray(state.getForces(asNumpy=True).value_in_unit(unit.kilojoule_per_mole / unit.nanometer))
+    return out
