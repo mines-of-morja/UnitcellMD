@@ -15,9 +15,10 @@ Last update: 2026-11-13.
     Nosé–Hoover chains; single points match OpenMM to 10⁻¹³ (`validation/m2a/REPORT.md`).
   - [ADR 0010](decisions/0010-swappable-hardware.md): bitwise identical on every machine and
     for any thread count.
-- **B2a, the GUI preview, is in implementation** (design approved 2026-11-13,
-  [design/B2a.md](design/B2a.md)): branch `b2a` of ucmd-builder (from `b1`) and of
-  ucmd-engine (graceful stop).
+- **B2a, the GUI preview, is complete and awaits its gate** ([gates/gate-b2a.md](gates/gate-b2a.md)):
+  branches `b2a` of ucmd-builder (from `b1`), ucmd-engine (graceful stop) and this repo.
+  - `ucmd-build gui`: build a box, look at it, run it with the engine, watch T and E live,
+    play the trajectory. Hands-on: [testing.md](testing.md) §9.
 - **After B2a** (PLAN.md §3): the barostat E2.7, then OpenMM on the GPU (E3.7), A1, and the
   first state point.
 - **B1a is complete and awaits Gate B1a** ([gates/gate-b1a.md](gates/gate-b1a.md)).
@@ -30,14 +31,14 @@ Last update: 2026-11-13.
 
 - **Repos:** all four are public in the organization `mines-of-morja`, with CI green.
   - `main` holds what the author has seen or decided.
-  - Review branches: `b1` (ucmd-builder, Gate B1a); `b2a` (ucmd-builder and ucmd-engine, the
-    GUI preview).
+  - Review branches: `b1` (ucmd-builder, Gate B1a); `b2a` (ucmd-builder, ucmd-engine and this
+    repo, Gate B2a).
 - **Engine CI** tests every branch against the umbrella at a pinned commit (`UMBRELLA_REF` in
   its workflow, now `da27ef7`, which holds the oracle references). New references move this
   pin in the same coordinated update.
 - **Waiting for the author:**
-  1. Hands-on tests: E2 ([testing.md](testing.md) §8, §8a) and the builder (§7), then Gate
-     B1a.
+  1. Hands-on tests of the GUI ([testing.md](testing.md) §9), then Gates B2a and B1a together
+     (`b2a` contains `b1`). E2 hands-on: §8, §8a.
   2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
      densities are marked placeholders. It is also the density reference for the transport
      study (PLAN.md §10.12).
@@ -81,6 +82,10 @@ Last update: 2026-11-13.
 
 ## Done
 
+- 2026-11-13 — **B2a, the GUI preview** (branches `b2a`): app shell with undoable recipe edits,
+  3D view, components and composition, background build, export, run preview with live plots,
+  playback and a graceful stop; engine: graceful stop on SIGINT/SIGTERM, every restart in the
+  H5MD provenance. Evidence: [gates/gate-b2a.md](gates/gate-b2a.md).
 - 2026-11-13 — **E2 core (branch `e2` of ucmd-engine)**:
   - E2.R machine-independent arithmetic and the golden-hash test;
   - E2.1 bonded terms with the pair topology; E2.2 LJ with exclusions and 1-4 pairs; E2.3
@@ -140,7 +145,8 @@ Last update: 2026-11-13.
 
 ## Open questions for the author
 
-1. Gate B1a, after the hands-on tests of the builder ([testing.md](testing.md) §7).
+1. Gates B2a and B1a, after the hands-on tests ([testing.md](testing.md) §9 and §7), and
+   [gate-b2a.md §5](gates/gate-b2a.md): spec v0.1.1 for the new engine behaviour, live frames.
 2. The Landesfeind 2019 SI for the densities.
 3. The validator packaging fix (gate-b1a.md §4.1).
 4. PLAN.md §10:
@@ -152,6 +158,10 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+- 2026-11-13 — B2a — GUI preview (B2.1, B2.2, liquid B2.3, export B2.5, B2.6) and the engine's
+  graceful stop and restart records — evidence: builder 110 tests (GUI job under Xvfb), engine
+  91 tests, real-engine runs through the GUI code, screenshots checked; found and fixed a locale
+  bug that zeroed RDKit XYZ coordinates under Qt — next: Gate B2a (hands-on), then E2.7
 - 2026-11-13 — Gate E2 core — approved; engine `e2` merged (`cbe5f8c`); PLAN v1.5 (priorities
   after B2a) — next: B2a
 - 2026-11-13 — M2a — `validation/m2a` (build → single points vs OpenMM → minimize → 10 ps NHC

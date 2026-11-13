@@ -144,7 +144,7 @@ Run these inside the repo concerned, and keep this table current.
 | spec (validator) | `cd spec/validator && python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; fixtures: `spec/fixtures/_generators/generate.py` |
 | tools/oracle | `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` | `.venv/bin/python -m pytest test_oracle.py` | — |
 | ucmd-engine | `cargo build --workspace` | `UCMD_REQUIRE_SPEC=1 cargo test --workspace` | `cargo fmt --all --check`; `cargo clippy --workspace --all-targets -- -D warnings`; `scripts/check-architecture.sh`; `cargo build --workspace --no-default-features`; physics: `validation/argon/run.sh` |
-| ucmd-builder | `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; `.venv/bin/ruff format --check .` |
+| ucmd-builder | `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'`; GUI: `'.[dev,gui-test]'` | `.venv/bin/pytest` (GUI tests run headless; skipped without the GUI extras) | `.venv/bin/ruff check .`; `.venv/bin/ruff format --check .`; GUI screenshots: `QT_QPA_PLATFORM=offscreen .venv/bin/python validation/b2a/screenshots.py` |
 | ucmd-analysis | same as ucmd-builder | `.venv/bin/pytest` | same as ucmd-builder |
 
 Each component repo has a CI workflow in `.github/workflows/ci.yml` that runs the same checks.
