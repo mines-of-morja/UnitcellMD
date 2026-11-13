@@ -1,8 +1,8 @@
 # UnitcellMD — implementation plan
 
-Version 1.4 · 2026-11-12 · Status: Gate 0 approved (spec v0.1.0). E1 and B1a are complete;
-the author tests them hands-on before Gates E1 and B1a (docs/testing.md,
-docs/gates/gate-b1a.md). Next: the E2 design.
+Version 1.5 · 2026-11-13 · Status: Gates 0, E1 and E2 core approved (spec v0.1.0). B1a is
+complete and awaits its gate (docs/gates/gate-b1a.md). Next: B2a, the GUI preview
+(docs/design/B2a.md, approved).
 Executed by: a coding agent following [CLAUDE.md](CLAUDE.md). Approved by: the author, at every gate.
 Task IDs (P0.3, E1.5, …) are stable. Reference them in commits, `docs/STATUS.md` and ADRs.
 
@@ -279,6 +279,14 @@ never on any `ucmd-providers-*` crate. Only `ucmd-cli` knows the concrete provid
 
 **Order with one agent:** P0 → E1 → B1a → E2 core (E2.0–E2.4, E2.6) → **B2a frontend
 preview** → rest of E2 → B1b, A1, E3 and B2b in any order → A2.
+
+- **Priorities after B2a** (Gate E2 core, 2026-11-13; §10 item 13):
+  1. E2.7 barostat, so that the density comes from NPT as in Lehnert's protocol;
+  2. E3.7 OpenMM as an alternative backend on the GPU, for production throughput, with the
+     reference backend as the check (ADR 0010);
+  3. A1 analysis, then the first state point (1 M, 20 °C).
+
+  E2.8 (speed of the reference backend) comes later.
 
 - B1a is B1.1–B1.5, B1.8 and the OpenMM converter. B1b is B1.6, B1.7 and B1.9 (design/B1.md
   §13; approved 2026-11-12).
@@ -785,6 +793,10 @@ than the oracle's.
     - One state point end to end first (1 M, 20 °C), then a grid subset (0.5, 1, 2 M at
       −10, 20, 50 °C), then the full grid (0.1–3 M, −10…50 °C) as compute allows.
     - D± uses Landesfeind's measured thermodynamic factor.
+13. **Compute for production** ✅ (2026-11-13, Gate E2 core): the CPU reference backend gives
+    about 1.25 ns/day for the 7036-atom box on the workstation. Production runs use OpenMM on
+    the GPU as an alternative backend (E3.7), checked against the reference backend; E2.8
+    follows later. The barostat (E2.7) comes first, for the density.
 
 ---
 

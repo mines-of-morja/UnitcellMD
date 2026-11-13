@@ -158,3 +158,18 @@
 5. **B2a design:** questions 1–5 in [design/B2a.md](../design/B2a.md) §11.
 6. **Still open from before:** Gate B1a; the Landesfeind 2019 SI for densities; the validator
    packaging fix.
+
+## 7. Decision
+
+**Approved by the author on 2026-11-13: "take the recommendations".** There was no hands-on test
+of E2 before the decision; the guide is [testing.md](../testing.md) §8.
+
+1. **Gate E2 core** is approved. `e2` is merged into `main` of ucmd-engine (`cbe5f8c`), and
+   this repo's `e2` into its `main`.
+2. **Compute:** OpenMM on the GPU as an alternative backend (E3.7) for production throughput,
+   checked against the reference backend; E2.8 later. PLAN.md §3 and §10 item 13.
+3. **Forced restarts** are recorded in the H5MD provenance as `/parameters/ucmd/restarts`.
+4. **The barostat (E2.7)** comes first after B2a, so that the density comes from NPT.
+5. **B2a design** is approved with every recommendation of its §11, including the graceful stop
+   of `ucmd run` on SIGINT/SIGTERM.
+6. Gate B1a, the Landesfeind 2019 SI and the validator packaging fix stay open.

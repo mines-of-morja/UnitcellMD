@@ -1,7 +1,8 @@
 # B2a design — GUI preview: build, view, short local runs
 
-- **Status:** proposal, for the author's approval. Implementation starts after approval, on
-  branch `b2a` of ucmd-builder, started from `b1` (Gate B1a is still open).
+- **Status:** approved by the author on 2026-11-13 ("take the recommendations"): every §11
+  recommendation is taken. Implementation on branch `b2a` of ucmd-builder, started from `b1`
+  (Gate B1a is still open), and on branch `b2a` of ucmd-engine for the graceful stop.
 - **Scope:** PLAN.md §6, B2a = B2.1 app shell, B2.2 3D view, the liquid part of B2.3 with
   library molecules, the export part of B2.5, and B2.6 run preview.
   - Everything else is B2b: SMILES and file input, crystals, validator highlighting, editing

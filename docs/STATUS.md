@@ -8,14 +8,18 @@ Last update: 2026-11-13.
   `main` of ucmd-engine ([gates/gate-e1.md §7](gates/gate-e1.md)).
 - **B1 design approved** ([design/B1.md](design/B1.md)); working horse in
   [ADR 0009](decisions/0009-working-horse-force-field.md).
-- **E2 core is complete and awaits its gate** ([gates/gate-e2-core.md](gates/gate-e2-core.md)):
-  branch `e2` of ucmd-engine and of this repo.
+- **Gate E2 core is approved** (2026-11-13, "take the recommendations";
+  [gates/gate-e2-core.md §7](gates/gate-e2-core.md)). `e2` is merged into `main` of
+  ucmd-engine and of this repo.
   - Milestone M2a: the builder's 1 M LiPF₆ EC:EMC box is minimized and runs NVT with PME and
     Nosé–Hoover chains; single points match OpenMM to 10⁻¹³ (`validation/m2a/REPORT.md`).
   - [ADR 0010](decisions/0010-swappable-hardware.md): bitwise identical on every machine and
     for any thread count.
-- **The GUI preview B2a is designed** ([design/B2a.md](design/B2a.md)) and waits for approval.
-  It is the next task.
+- **B2a, the GUI preview, is in implementation** (design approved 2026-11-13,
+  [design/B2a.md](design/B2a.md)): branch `b2a` of ucmd-builder (from `b1`) and of
+  ucmd-engine (graceful stop).
+- **After B2a** (PLAN.md §3): the barostat E2.7, then OpenMM on the GPU (E3.7), A1, and the
+  first state point.
 - **B1a is complete and awaits Gate B1a** ([gates/gate-b1a.md](gates/gate-b1a.md)).
   - The builder makes Lehnert's 1 M LiPF₆ EC:EMC box (7036 atoms) from a recipe; OpenMM runs
     it.
@@ -26,21 +30,19 @@ Last update: 2026-11-13.
 
 - **Repos:** all four are public in the organization `mines-of-morja`, with CI green.
   - `main` holds what the author has seen or decided.
-  - Review branches: `b1` (ucmd-builder, Gate B1a), `e2` (ucmd-engine, Gate E2 core), and in
-    this repo `b1a` (oracle v1, Gate B1a report) and `e2` (E2 references and reports, B2a
-    design).
-- **Engine CI** tests every branch against the umbrella at tag `spec-v0.1.0`. A spec change moves
-  this pin in the same coordinated update.
+  - Review branches: `b1` (ucmd-builder, Gate B1a); `b2a` (ucmd-builder and ucmd-engine, the
+    GUI preview).
+- **Engine CI** tests every branch against the umbrella at a pinned commit (`UMBRELLA_REF` in
+  its workflow, now `da27ef7`, which holds the oracle references). New references move this
+  pin in the same coordinated update.
 - **Waiting for the author:**
-  1. Gate E2 core and the B2a design (hands-on: [testing.md](testing.md) §8).
-  2. Hands-on tests of the builder ([testing.md](testing.md) §7), then Gate B1a.
-  3. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
+  1. Hands-on tests: E2 ([testing.md](testing.md) §8, §8a) and the builder (§7), then Gate
+     B1a.
+  2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
      densities are marked placeholders. It is also the density reference for the transport
      study (PLAN.md §10.12).
-  4. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
+  3. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
      wheel.
-  5. Compute for production runs (gate-e2-core.md §5): the CPU reference backend gives
-     1.2 ns/day for the 7036-atom box.
 
 ## Decisions by the author
 
@@ -65,6 +67,12 @@ Last update: 2026-11-13.
     ζ = 0.75 (ADR 0009);
   - every other recommendation of §14 is accepted;
   - the author tests hands-on first ("let me run first tests").
+
+- **2026-11-13, Gate E2 core** (gate-e2-core.md §7): approved, "take the recommendations":
+  - production throughput from OpenMM on the GPU (E3.7), checked against the reference
+    backend; E2.8 later (PLAN.md §10 item 13);
+  - the barostat E2.7 first after B2a; forced restarts recorded in the H5MD provenance;
+  - the B2a design with every recommendation, including a graceful stop of `ucmd run`.
 
 ## Decisions taken by the agent (to review)
 
@@ -132,13 +140,10 @@ Last update: 2026-11-13.
 
 ## Open questions for the author
 
-1. Gate E2 core and its questions ([gate-e2-core.md §6](gates/gate-e2-core.md)): compute for
-   production, the record of forced restarts.
-2. The B2a design and its questions ([design/B2a.md §11](design/B2a.md)).
-3. Gate B1a, after the hands-on tests of the builder ([testing.md](testing.md) §7).
-4. The Landesfeind 2019 SI for the densities.
-5. The validator packaging fix (gate-b1a.md §4.1).
-6. PLAN.md §10:
+1. Gate B1a, after the hands-on tests of the builder ([testing.md](testing.md) §7).
+2. The Landesfeind 2019 SI for the densities.
+3. The validator packaging fix (gate-b1a.md §4.1).
+4. PLAN.md §10:
    - item 5: benchmark 1 M LiPF₆ in EC:EMC 3:7 at 20 °C;
    - item 8: agent setup.
 
@@ -147,6 +152,8 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+- 2026-11-13 — Gate E2 core — approved; engine `e2` merged (`cbe5f8c`); PLAN v1.5 (priorities
+  after B2a) — next: B2a
 - 2026-11-13 — M2a — `validation/m2a` (build → single points vs OpenMM → minimize → 10 ps NHC
   → restart → threads → NVE check) — evidence: REPORT.md PASS, engine `6106ba7` — next: Gate
   E2 core, B2a
