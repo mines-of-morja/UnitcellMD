@@ -1,6 +1,6 @@
 # Status
 
-Last update: 2026-11-12.
+Last update: 2026-11-13.
 
 - **Gate 0 is approved.** Spec v0.1.0 is tagged `spec-v0.1.0`, and `phase-0` is merged into
   `main` ([gates/gate-0.md §7](gates/gate-0.md)).
@@ -8,10 +8,14 @@ Last update: 2026-11-12.
   `main` of ucmd-engine ([gates/gate-e1.md §7](gates/gate-e1.md)).
 - **B1 design approved** ([design/B1.md](design/B1.md)); working horse in
   [ADR 0009](decisions/0009-working-horse-force-field.md).
-- **E2 core is in implementation** (design approved 2026-11-12): branch `e2` of ucmd-engine.
-  - It ends with M2a; the GUI preview B2a follows.
-  - New requirement: [ADR 0010](decisions/0010-swappable-hardware.md), the same results on
-    any hardware.
+- **E2 core is complete and awaits its gate** ([gates/gate-e2-core.md](gates/gate-e2-core.md)):
+  branch `e2` of ucmd-engine and of this repo.
+  - Milestone M2a: the builder's 1 M LiPF₆ EC:EMC box is minimized and runs NVT with PME and
+    Nosé–Hoover chains; single points match OpenMM to 10⁻¹³ (`validation/m2a/REPORT.md`).
+  - [ADR 0010](decisions/0010-swappable-hardware.md): bitwise identical on every machine and
+    for any thread count.
+- **The GUI preview B2a is designed** ([design/B2a.md](design/B2a.md)) and waits for approval.
+  It is the next task.
 - **B1a is complete and awaits Gate B1a** ([gates/gate-b1a.md](gates/gate-b1a.md)).
   - The builder makes Lehnert's 1 M LiPF₆ EC:EMC box (7036 atoms) from a recipe; OpenMM runs
     it.
@@ -22,18 +26,21 @@ Last update: 2026-11-12.
 
 - **Repos:** all four are public in the organization `mines-of-morja`, with CI green.
   - `main` holds what the author has seen or decided.
-  - Review branches: `b1` (ucmd-builder, Gate B1a), and in this repo `b1a` (oracle v1, Gate
-    B1a report) and `e2` (E2 design).
+  - Review branches: `b1` (ucmd-builder, Gate B1a), `e2` (ucmd-engine, Gate E2 core), and in
+    this repo `b1a` (oracle v1, Gate B1a report) and `e2` (E2 references and reports, B2a
+    design).
 - **Engine CI** tests every branch against the umbrella at tag `spec-v0.1.0`. A spec change moves
   this pin in the same coordinated update.
 - **Waiting for the author:**
-  1. Hands-on tests of the builder ([testing.md](testing.md) §7), then Gate B1a.
-  2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
-     densities are marked placeholders.
-  3. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
+  1. Gate E2 core and the B2a design (hands-on: [testing.md](testing.md) §8).
+  2. Hands-on tests of the builder ([testing.md](testing.md) §7), then Gate B1a.
+  3. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
+     densities are marked placeholders. It is also the density reference for the transport
+     study (PLAN.md §10.12).
+  4. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
      wheel.
-  4. The Landesfeind 2019 SI is also the density reference for the transport study (PLAN.md
-     §10.12).
+  5. Compute for production runs (gate-e2-core.md §5): the CPU reference backend gives
+     1.2 ns/day for the 7036-atom box.
 
 ## Decisions by the author
 
@@ -61,11 +68,21 @@ Last update: 2026-11-12.
 
 ## Decisions taken by the agent (to review)
 
-- The E1 implementation choices are in [gate-e1.md §5](gates/gate-e1.md), for review with
-  Gate E1.
+- The E2 core implementation choices are in [gate-e2-core.md §4](gates/gate-e2-core.md).
+- The thermo column `conserved_kjmol` is renamed to the spec's `conserved_energy_kjmol`.
 
 ## Done
 
+- 2026-11-13 — **E2 core (branch `e2` of ucmd-engine)**:
+  - E2.R machine-independent arithmetic and the golden-hash test;
+  - E2.1 bonded terms with the pair topology; E2.2 LJ with exclusions and 1-4 pairs; E2.3
+    Ewald; E2.4 smooth PME;
+  - E2.0 `force-field` provider, FIRE and `ucmd minimize`;
+  - E2.6 Nosé–Hoover chains, Langevin BAOAB, checkpoint format v2;
+  - deterministic threads (design §9); the electrolyte example; milestone M2a.
+
+  Evidence: [gates/gate-e2-core.md](gates/gate-e2-core.md), `validation/m2a/REPORT.md`.
+- 2026-11-13 — **B2a design** ([design/B2a.md](design/B2a.md)), for approval.
 - 2026-11-12 — **E2 design approved**; ADR 0010 (swappable hardware); study scope (PLAN.md
   §10.12).
 - 2026-11-12 — **Gate E1 approved**; `e1` merged into `main` of ucmd-engine.
@@ -115,10 +132,13 @@ Last update: 2026-11-12.
 
 ## Open questions for the author
 
-1. Gate B1a, after the hands-on tests of the builder ([testing.md](testing.md) §7).
-2. The Landesfeind 2019 SI for the densities.
-3. The validator packaging fix (gate-b1a.md §4.1).
-4. PLAN.md §10:
+1. Gate E2 core and its questions ([gate-e2-core.md §6](gates/gate-e2-core.md)): compute for
+   production, the record of forced restarts.
+2. The B2a design and its questions ([design/B2a.md §11](design/B2a.md)).
+3. Gate B1a, after the hands-on tests of the builder ([testing.md](testing.md) §7).
+4. The Landesfeind 2019 SI for the densities.
+5. The validator packaging fix (gate-b1a.md §4.1).
+6. PLAN.md §10:
    - item 5: benchmark 1 M LiPF₆ in EC:EMC 3:7 at 20 °C;
    - item 8: agent setup.
 
@@ -127,6 +147,24 @@ Last update: 2026-11-12.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+- 2026-11-13 — M2a — `validation/m2a` (build → single points vs OpenMM → minimize → 10 ps NHC
+  → restart → threads → NVE check) — evidence: REPORT.md PASS, engine `6106ba7` — next: Gate
+  E2 core, B2a
+- 2026-11-13 — fixes found by M2a — pair chunks from the atom count (bitwise restarts),
+  exact float parsing of JSON (`float_roundtrip`), XYZ frames flushed; the thermo column
+  `conserved_energy_kjmol` — evidence: new tests fail without each fix — next: M2a rerun
+- 2026-11-13 — threads — rayon with fixed chunks and fixed-order sums; PME by planes — evidence:
+  1/4/16 threads bitwise identical (unit test; LP57 box, 100 NHC steps); 7.5× on 16 threads —
+  next: M2a
+- 2026-11-13 — E2.6 — Nosé–Hoover chains, Langevin BAOAB, checkpoint v2 — evidence: canonical
+  moments within statistics (1 ns; 10 ns `--ignored`), BAOAB harmonic positions exact, bitwise
+  CLI restarts — next: threads
+- 2026-11-12 — E2.0 — `force-field` provider, FIRE, `ucmd minimize` — evidence: LJ₇/LJ₁₃
+  minima; 424-atom box minimized — next: E2.6
+- 2026-11-12 — E2.1–E2.4 — bonded terms, nonbonded with exclusions, Ewald, PME — evidence:
+  molecules vs OpenMM ≤ 3×10⁻¹⁴, Madelung 9×10⁻¹⁶, LP57 PME box 1.6×10⁻¹³ — next: E2.0
+- 2026-11-12 — E2.R — libm, own samplers, scalar FFT, golden hash — evidence: CI reproduces the
+  workstation hash — next: E2.1
 - 2026-11-12 — E2 design — `docs/design/E2.md` (E2 core → M2a; no spec change; FIRE as
   `ucmd minimize`; NHC, BAOAB; deterministic threads proposed) — next: author approval, then
   E2 core, M2a, B2a
