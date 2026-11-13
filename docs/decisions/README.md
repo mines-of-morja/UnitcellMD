@@ -14,6 +14,7 @@ A superseded ADR stays in place; its replacement says which ADR it supersedes.
 | [0007](0007-ipi-wire-conventions.md) | i-PI wire conventions; ASE as universal provider | accepted (agent, spike S4); accepted at Gate 0, 2026-11-12 |
 | [0008](0008-pluggable-force-field-sources.md) | Force-field parameters and forces come from pluggable sources | accepted 2026-11-12 (author) |
 | [0009](0009-working-horse-force-field.md) | Working horse for carbonate electrolytes: OPLS-AA from open sources | accepted 2026-11-12 (author) |
+| [0010](0010-swappable-hardware.md) | Swappable hardware, reproducible results | accepted 2026-11-12 (author) |
 
 ## Template
 

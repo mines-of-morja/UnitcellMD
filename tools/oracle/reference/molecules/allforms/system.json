@@ -1,0 +1,312 @@
+{
+ "format": "ucmd-system",
+ "spec_version": "0.1.0",
+ "name": "allforms",
+ "description": "Synthetic molecule pinning the engine's bonded conventions to OpenMM's.",
+ "units": {
+  "length": "nm",
+  "time": "ps",
+  "mass": "amu",
+  "energy": "kJ/mol",
+  "charge": "e",
+  "temperature": "K",
+  "angle": "deg"
+ },
+ "periodicity": [
+  false,
+  false,
+  false
+ ],
+ "cell_nm": null,
+ "molecule_types": {
+  "allforms": {
+   "description": "synthetic: every bonded form with asymmetric phases (test numbers, not a force field)",
+   "formal_charge_e": 0,
+   "atoms": [
+    {
+     "name": "X0",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": 0.3,
+     "type": "A"
+    },
+    {
+     "name": "X1",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": -0.25,
+     "type": "B"
+    },
+    {
+     "name": "X2",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": 0.15,
+     "type": "A"
+    },
+    {
+     "name": "X3",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": -0.4,
+     "type": "B"
+    },
+    {
+     "name": "X4",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": 0.1,
+     "type": "A"
+    },
+    {
+     "name": "X5",
+     "element": "C",
+     "mass_amu": 12.011,
+     "charge_e": 0.1,
+     "type": "C"
+    }
+   ],
+   "bonds": [
+    {
+     "atoms": [
+      0,
+      1
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.153,
+      "k_kjmol_nm2": 220000.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.141,
+      "k_kjmol_nm2": 270000.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.123,
+      "k_kjmol_nm2": 480000.0
+     }
+    },
+    {
+     "atoms": [
+      3,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.109,
+      "k_kjmol_nm2": 280000.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "r0_nm": 0.15,
+      "k_kjmol_nm2": 310000.0
+     }
+    }
+   ],
+   "angles": [
+    {
+     "atoms": [
+      0,
+      1,
+      2
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 110.0,
+      "k_kjmol_rad2": 400.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 108.5,
+      "k_kjmol_rad2": 350.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      1,
+      5
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 120.0,
+      "k_kjmol_rad2": 500.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2,
+      3
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 116.9,
+      "k_kjmol_rad2": 690.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      3,
+      4
+     ],
+     "form": "harmonic",
+     "params": {
+      "theta0_deg": 109.5,
+      "k_kjmol_rad2": 290.0
+     }
+    }
+   ],
+   "dihedrals": [
+    {
+     "atoms": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "form": "periodic",
+     "params": {
+      "k_kjmol": 2.5,
+      "n": 1,
+      "phi0_deg": 30.0
+     }
+    },
+    {
+     "atoms": [
+      0,
+      1,
+      2,
+      3
+     ],
+     "form": "periodic",
+     "params": {
+      "k_kjmol": 1.2,
+      "n": 3,
+      "phi0_deg": 0.0
+     }
+    },
+    {
+     "atoms": [
+      1,
+      2,
+      3,
+      4
+     ],
+     "form": "ryckaert-bellemans",
+     "params": {
+      "c0_kjmol": 9.28,
+      "c1_kjmol": 12.16,
+      "c2_kjmol": -13.12,
+      "c3_kjmol": -3.06,
+      "c4_kjmol": 26.24,
+      "c5_kjmol": -31.5
+     }
+    },
+    {
+     "atoms": [
+      5,
+      1,
+      2,
+      3
+     ],
+     "form": "opls-fourier",
+     "params": {
+      "v1_kjmol": 3.0,
+      "v2_kjmol": -1.5,
+      "v3_kjmol": 0.8,
+      "v4_kjmol": 0.4
+     }
+    }
+   ],
+   "impropers": [
+    {
+     "atoms": [
+      0,
+      1,
+      2,
+      5
+     ],
+     "form": "periodic",
+     "params": {
+      "k_kjmol": 43.9,
+      "n": 2,
+      "phi0_deg": 160.0
+     }
+    },
+    {
+     "atoms": [
+      2,
+      1,
+      5,
+      0
+     ],
+     "form": "harmonic",
+     "params": {
+      "xi0_deg": 25.0,
+      "k_kjmol_rad2": 80.0
+     }
+    }
+   ]
+  }
+ },
+ "components": [
+  {
+   "molecule_type": "allforms",
+   "count": 1
+  }
+ ],
+ "atom_count": 6,
+ "forcefield": {
+  "name": "synthetic test parameters",
+  "combination_rule": "geometric",
+  "scale_14_lj": 0.5,
+  "scale_14_coulomb": 0.8333,
+  "atom_types": {
+   "A": {
+    "sigma_nm": 0.35,
+    "epsilon_kjmol": 0.276
+   },
+   "B": {
+    "sigma_nm": 0.296,
+    "epsilon_kjmol": 0.879
+   },
+   "C": {
+    "sigma_nm": 0.25,
+    "epsilon_kjmol": 0.126
+   }
+  }
+ },
+ "provenance": {
+  "created_by": "tools/oracle/make_molecule_references.py",
+  "created_utc": "2026-11-12T00:00:00Z"
+ }
+}

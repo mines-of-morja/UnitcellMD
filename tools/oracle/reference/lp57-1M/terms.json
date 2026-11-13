@@ -1,0 +1,24 @@
+{
+ "openmm": "8.6.1",
+ "platform": "Reference",
+ "cutoff_nm": 1.4,
+ "ewald_tolerance": 1e-05,
+ "ewald_alpha_per_nm": 2.349530813389446,
+ "pme_grid": [
+  70,
+  70,
+  70
+ ],
+ "pme_order": 5,
+ "lj": "truncate, no tail correction",
+ "terms_kjmol": {
+  "bond": 6618.030015780281,
+  "angle": 13713.218533636866,
+  "dihedral": 8461.71113678002,
+  "improper": 0.005981410804193079,
+  "coulomb": -27720.3794003919,
+  "lj": 57777.11076694206,
+  "lj14": 4744.352543182381,
+  "total": 63594.04957734051
+ }
+}

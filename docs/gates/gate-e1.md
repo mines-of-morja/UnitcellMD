@@ -86,3 +86,12 @@ same 100 ps took 46 s in ucmd and 259 s on OpenMM's double-precision Reference p
      `nacl-crystal` (Madelung).
    - **B1** (headless builder) needs the solvent force-field source decision first
      (PLAN.md §10.6).
+
+## 7. Decision (author, 2026-11-12)
+
+**Gate E1 is approved.**
+- The author tested the engine hands-on with docs/testing.md: "testing done. The setup and
+  testing looked fine for the Argon startup."
+- §3 (deviations) and §5 (design decisions) stand.
+- `e1` is merged into `main` of ucmd-engine.
+
