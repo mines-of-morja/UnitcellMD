@@ -244,10 +244,11 @@ Set up once (no sudo; PySide6, PyVista, VTK and h5py come from PyPI, about 1.5 G
 ```sh
 cd ucmd-engine && git switch b2a && cargo build --release && cd ..   # with the graceful stop
 cd ucmd-builder && git switch b2a
-.venv/bin/pip install -e '.[dev,gui-test]'
-.venv/bin/pytest -q          # expected: 110 passed, 1 skipped (that window test needs Xvfb)
-.venv/bin/ucmd-build gui examples/lp57-1M.toml
+./start-gui.sh examples/lp57-1M.toml   # first start: creates .venv and installs the GUI
 ```
+
+For the tests: `.venv/bin/pip install -e '.[dev,gui-test]'` and `.venv/bin/pytest -q`; expected
+110 passed, 1 skipped (that window test needs Xvfb).
 
 | Step | What to do | Expected |
 |---|---|---|
