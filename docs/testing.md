@@ -261,7 +261,9 @@ For the tests: `.venv/bin/pip install -e '.[dev,gui-test]'` and `.venv/bin/pytes
 | 7 | **Run** | minimization in about 3 s, then 2 ps in about 20 s on 16 threads. On the right, T falls to about 130 K within 0.03 ps and is back near 298 K by 0.3 ps; the conserved energy stays flat |
 | 8 | **Play**, or drag the slider | the trajectory plays in the 3D view (21 frames) |
 | 9 | Run again with *Length* 100 ps and press **Stop run** | the log says `stopped by SIGTERM after step …`; the frames so far can be played |
-| 10 | Quit, then `./start-gui.sh ~/ucmd-runs/small.ucsys.runs/<date-time>` (or **Run → Open run…**) | the run opens again: its starting package in 3D, the full T and energy plots, and the trajectory to play |
+| 10 | Quit, then `./start-gui.sh ~/ucmd-runs/small.ucsys.runs` (or **Run → Open run…** and pick that folder, a dated run folder in it, or the package) | the newest run with outputs opens: its starting package in 3D, the full T and energy plots, and the trajectory to play |
+| 10a | Run with *Trajectory* "XYZ: watch frames during the run" (the default) | frames appear during the run, about one per second for 1400 atoms; the view stays on the newest frame unless you move the slider back |
+| 10b | While a study runs: **Open run…** on `studies/<study>/runs/<system>/<T>` | the plots grow while you watch; study runs write H5MD, so their frames appear when the run ends |
 | 11 | **Open run…** on a run started from the shell, e.g. `ucmd-engine/examples/electrolyte` after `ucmd run run.toml` there | the same; the GUI takes the output names from that `run.toml` |
 
 - The run directory sits next to the package: `small.ucsys.runs/<date-time>/` with

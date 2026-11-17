@@ -106,14 +106,28 @@ The author asked to start dynamics from the builder and to look at them afterwar
   minimization 41 s, 0.3 ps in 19 s; the run reopened in a new window with 31 thermo rows and
   16 frames.
 
+### Second round (2026-11-17, afternoon)
+
+- **Frames during a run:** GUI runs write the engine's extended-XYZ trajectory by default (H5MD
+  stays selectable for analysis). The GUI reads each complete frame as the engine flushes it.
+  Checked with the real engine: 5886 atoms, a new frame every 1.2 s, 16 frames in 20 s.
+- **Open run** accepts a run folder, a folder of runs (`<package>.runs`) or a package, and opens
+  the newest run with outputs. A run that has not reached its last step (one running in a study,
+  say) is followed: plots and XYZ frames keep growing.
+- XYZ is engine behaviour that spec v0.1.0 does not describe; added to question 3 below.
+- Tests: `test_xyz_tail_reads_only_complete_frames`, `test_find_run_accepts_run_folders_…`,
+  `test_xyz_frames_play_while_the_run_goes`, `test_h5md_frames_come_after_the_run`,
+  `test_a_run_that_is_still_going_is_followed`.
+
 ## 6. Questions for the author
 
 1. **Gate B2a:** please run [testing.md](../testing.md) §9 and tell me what to change in the
    look and the workflow. That feedback is the point of B2a.
 2. **Merging:** `b2a` of ucmd-builder contains `b1`, which still waits for Gate B1a. Decide both
    gates together, then merge `b1` and `b2a`?
-3. **Spec v0.1.1 (a spec change, so your call):** document the graceful-stop exit codes and the
-   `/parameters/ucmd/restarts` record, both now engine behaviour. Together with the validator
+3. **Spec v0.1.1 (a spec change, so your call):** document the graceful-stop exit codes, the
+   `/parameters/ucmd/restarts` record and the extended-XYZ trajectory (`.xyz`, Å, flushed per
+   frame), all now engine behaviour. Together with the validator
    packaging fix (gate-b1a.md §4.1)?
 4. **Live frames during a run:** they need either an append-only trajectory format in the spec or
    HDF5's single-writer/multiple-reader mode. Later, after the barostat and the GPU backend?
