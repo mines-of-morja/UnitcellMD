@@ -38,6 +38,8 @@ from pathlib import Path
 WORKSPACE = Path(__file__).resolve().parents[2]  # UnitcellMD/
 STUDIES = WORKSPACE / "studies"
 ZERO_CELSIUS_K = 273.15  # definition of the Celsius scale
+GRAM_PER_AMU = 1.66053906660e-24  # CODATA 2018 atomic mass constant
+CM3_PER_NM3 = 1e-21
 STOPPED = (130, 143)  # the engine stopped gracefully on SIGINT / SIGTERM
 
 
@@ -86,11 +88,12 @@ def load_study(study_dir: Path) -> Study:
     with (study_dir / "study.toml").open("rb") as fh:
         doc = tomllib.load(fh)
     study = Study(study_dir, doc)
-    pattern = doc["systems"]["recipes"]
+    patterns = doc["systems"]["recipes"]
+    patterns = [patterns] if isinstance(patterns, str) else patterns
     label = re.compile(doc["systems"].get("label", r"^(?P<system>.+)$"))
-    paths = sorted(Path(p) for p in glob.glob(str(study_dir / pattern)))
+    paths = sorted({Path(p) for pat in patterns for p in glob.glob(str(study_dir / pat))})
     if not paths:
-        raise SystemExit(f"{study_dir}: no recipes match {pattern!r}")
+        raise SystemExit(f"{study_dir}: no recipes match {patterns!r}")
     for path in paths:
         m = label.match(path.stem)
         if m is None:
@@ -240,7 +243,7 @@ def summarize(path: Path, from_fraction: float = 0.5) -> dict:
     start = t[-1] * from_fraction
     window = [r for r in rows if r[names.index("time_ps")] >= start]
     out = {"last_time_ps": t[-1], "window_ps": [start, t[-1]], "rows": len(window)}
-    for col in ("temperature_K", "pressure_bar", "potential_kjmol", "total_kjmol"):
+    for col in ("temperature_K", "pressure_bar", "potential_kjmol", "total_kjmol", "volume_nm3"):
         if col in names:
             xs = [r[names.index(col)] for r in window]
             mean = sum(xs) / len(xs)
@@ -284,6 +287,18 @@ def find_executables(ucmd: str | None) -> tuple[Path, Path]:
     if not version.startswith("ucmd "):
         raise SystemExit(f"{engine} is not the UnitcellMD engine (--version: {version!r})")
     return engine, builder
+
+
+def system_mass_amu(system_json: dict) -> float | None:
+    """Total mass of a package from its molecule types and component counts (amu)."""
+    try:
+        types = system_json["molecule_types"]
+        return sum(
+            c["count"] * sum(a["mass_amu"] for a in types[c["molecule_type"]]["atoms"])
+            for c in system_json["components"]
+        )
+    except (KeyError, TypeError):
+        return None
 
 
 def version_of(program: Path) -> str:
@@ -362,6 +377,7 @@ class Driver:
             status.update(build_s=round(time.time() - t0, 1), builder=version_of(self.builder))
         system_json = read_json(d / "built.ucsys" / "system.json")
         status["atoms"] = system_json.get("atom_count") or status.get("atoms")
+        status["mass_amu"] = system_mass_amu(system_json) or status.get("mass_amu")
         (d / "minimize.toml").write_text(minimize_toml(self.study, system))
         if (d / "minimized.ucsys").exists():
             shutil.rmtree(d / "minimized.ucsys")  # a partial one from an interrupted minimization
@@ -494,6 +510,7 @@ def collect(study: Study) -> list[dict]:
             "T": task.T,
             "state": state,
             "atoms": system.get("atoms"),
+            "mass_amu": system.get("mass_amu"),
             "folder": os.path.relpath(d, study.dir),
         }
         if state == "running":
@@ -503,6 +520,9 @@ def collect(study: Study) -> list[dict]:
         for key in ("wall_s", "reason", "engine", "seed", "finished"):
             if key in status:
                 record[key] = status[key]
+        v = record["summary"].get("volume_nm3")
+        if v and record["mass_amu"]:
+            record["density_g_cm3"] = record["mass_amu"] * GRAM_PER_AMU / (v["mean"] * CM3_PER_NM3)
         records.append(record)
     return records
 
@@ -568,6 +588,8 @@ def write_index(study: Study) -> dict:
     write_json(study.dir / "index.json", index)
 
     temperatures = study.doc["scan"]["temperature_C"]
+    grid = study.doc.get("index", {}).get("grid", "pressure")
+    grid_title = "⟨ρ⟩ in g/cm³" if grid == "density" else "⟨P⟩ in bar"
     group_key = study.doc.get("index", {}).get("group_by", "system")
     row_key = study.doc.get("index", {}).get("row_by", "system")
     lines = [
@@ -604,9 +626,9 @@ def write_index(study: Study) -> dict:
         "",
         f"Open a run in the GUI: `ucmd-builder/start-gui.sh studies/{study.name}/runs/<system>/<T>`.",
         "",
-        "## ⟨P⟩ in bar over the second half of each run",
+        f"## {grid_title} over the second half of each run",
         "",
-        "Cells show the mean virial pressure when a run is done, else its state.",
+        "Cells show the value when a run is done, else its state.",
         "",
     ]
     groups: dict[str, list[dict]] = {}
@@ -628,7 +650,11 @@ def write_index(study: Study) -> dict:
                 r = by_t.get(float(t))
                 if r is None:
                     cells.append("")
-                elif r["state"] == "done" and r["summary"].get("pressure_bar"):
+                elif r["state"] == "done" and grid == "density" and r.get("density_g_cm3"):
+                    cells.append(f"{r['density_g_cm3']:.4f}")
+                elif (
+                    r["state"] == "done" and grid != "density" and r["summary"].get("pressure_bar")
+                ):
                     cells.append(f"{r['summary']['pressure_bar']['mean']:.0f}")
                 else:
                     cells.append(r["state"])
@@ -639,17 +665,22 @@ def write_index(study: Study) -> dict:
         "",
         "Means ± standard deviations over the second half of the run (bookkeeping, not analysis).",
         "",
-        "| run | atoms | state | wall | ⟨T⟩ (K) | ⟨P⟩ (bar) | ⟨E_pot⟩ (kJ/mol) | drift of H (kJ/mol/ps) |",
-        "|---|---|---|---|---|---|---|---|",
+        (
+            "| run | atoms | state | wall | ⟨T⟩ (K) | ⟨P⟩ (bar) | ⟨ρ⟩ (g/cm³) | ⟨E_pot⟩ (kJ/mol) |"
+            " drift of H (kJ/mol/ps) |"
+        ),
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for r in records:
         s = r["summary"]
         wall = f"{r['wall_s'] / 60:.0f} min" if r.get("wall_s") else ""
         drift = s.get("conserved_drift_kjmol_per_ps")
         state = r["state"] + (f" ({r['reason']})" if r.get("reason") else "")
+        density = r.get("density_g_cm3")
+        density_text = "" if density is None else f"{density:.4f}"
         lines.append(
             f"| [{r['id']}]({r['folder']}) | {r['atoms'] or ''} | {state} | {wall} | "
-            f"{fmt(s, 'temperature_K', 1)} | {fmt(s, 'pressure_bar')} | "
+            f"{fmt(s, 'temperature_K', 1)} | {fmt(s, 'pressure_bar')} | {density_text} | "
             f"{fmt(s, 'potential_kjmol')} | {'' if drift is None else f'{drift:.1f}'} |"
         )
     (study.dir / "INDEX.md").write_text("\n".join(lines) + "\n")

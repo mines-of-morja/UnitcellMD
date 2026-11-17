@@ -158,6 +158,12 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-17 — E2.7 (at the author's request) — C-rescale barostat, isotropic, on engine branch
+`e27-barostat` (design/E2.7.md, decisions open for review); NPT study
+`studies/2026-11-17_ec-npt-first-look` running (5 mixtures at 1.0 M × −10/20/50 °C, 20 ps) —
+evidence: argon density vs OpenMM MonteCarloBarostat −0.15 % (1.0 σ), ideal-gas ⟨V⟩ and Var V,
+bitwise NPT restart; engine 97 tests — next: the NPT study's densities; water validation.
+
 2026-11-17 — B1.3 + B2.6 (Gate B2a feedback) — force-field templates DMC, PC, MP, FEC
 (LigParGen 3.0.1, as EC/EMC; ADR 0009 amendment, approved by the author); all 35 test boxes in
 ucmd-builder `examples/EC` build (8–49 s), pass `ucmd check` and give finite single points.

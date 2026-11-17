@@ -180,3 +180,15 @@ def test_a_second_driver_is_refused(study: Path) -> None:
     (study / "driver.pid").write_text(f"{os.getpid()}\n")
     with pytest.raises(SystemExit, match="already running"):
         us.main(["run", str(study), "--nice", "0"])
+
+
+def test_system_mass_from_molecule_types_and_counts() -> None:
+    doc = {
+        "molecule_types": {
+            "Li": {"atoms": [{"mass_amu": 6.941}]},
+            "W": {"atoms": [{"mass_amu": 15.999}, {"mass_amu": 1.008}, {"mass_amu": 1.008}]},
+        },
+        "components": [{"molecule_type": "Li", "count": 2}, {"molecule_type": "W", "count": 10}],
+    }
+    assert us.system_mass_amu(doc) == pytest.approx(2 * 6.941 + 10 * 18.015)
+    assert us.system_mass_amu({"atom_count": 3}) is None
