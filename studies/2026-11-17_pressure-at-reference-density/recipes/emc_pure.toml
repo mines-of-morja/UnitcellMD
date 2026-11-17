@@ -1,0 +1,22 @@
+# Pure EMC, 500 molecules (7500 atoms), at the manufacturer density used by Lehnert 2025
+# (SI Table S2: EMC 1.006 g/ml). Box edge from that density and the template mass
+# (500 × 104.105 amu): V = 85.920 nm³, L = 4.4126 nm.
+format = "ucmd-build"
+version = "0.1"
+name = "emc_pure"
+description = "pure EMC at 1.006 g/cm3 (Lehnert 2025 SI Table S2)"
+seed = 20261117
+component = [
+    { name = "EMC", molecule = { library = "EMC" }, count = 500 },
+]
+
+[forcefield]
+source = "library"
+set = "opls-aa-carbonates"
+
+[box]
+length_nm = 4.4126
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2
