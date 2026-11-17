@@ -546,10 +546,12 @@ def write_index(study: Study) -> dict:
     for r in records:
         counts[r["state"]] = counts.get(r["state"], 0) + 1
     done = [r for r in records if r["state"] == "done" and r.get("wall_s")]
-    remaining_atoms = sum(r["atoms"] or 0 for r in records if r["state"] != "done")
+    known = [r["atoms"] for r in records if r["atoms"]]
+    typical = sum(known) / len(known) if known else 0  # for systems not built yet
+    remaining_atoms = sum(r["atoms"] or typical for r in records if r["state"] != "done")
     if done:
         s_per_atom = sum(r["wall_s"] for r in done) / sum(r["atoms"] for r in done)
-        eta = f"about {remaining_atoms * s_per_atom / 3600:.1f} h left at the measured speed"
+        eta = f"about {remaining_atoms * s_per_atom / 3600:.0f} h left at the measured speed"
     else:
         eta = "no finished run yet to measure the speed"
     size = folder_size(study.dir)
@@ -593,8 +595,9 @@ def write_index(study: Study) -> dict:
         "│                       out/ thermo.tsv, trajectory.h5, checkpoint.ucchk",
         "├── views/              symbolic links only: the same runs sorted differently",
     ]
-    for name, template in study.doc.get("views", {}).items():
-        lines.append(f"│   └── {name}/{template}")
+    views = list(study.doc.get("views", {}).items())
+    for k, (name, template) in enumerate(views):
+        lines.append(f"│   {'└──' if k == len(views) - 1 else '├──'} {name}/{template}")
     lines += [
         "└── logs/driver.log     what the driver did, with times",
         "```",
