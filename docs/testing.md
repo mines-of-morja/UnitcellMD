@@ -257,7 +257,7 @@ For the tests: `.venv/bin/pip install -e '.[dev,gui-test]'` and `.venv/bin/pytes
 | 3 | Right-click an atom; click a row of the components table | the properties show element, type, charge, σ and ε; the component's molecules light up |
 | 4 | **View → Periodic images** (Ctrl+I) | the 26 neighbouring cells appear faded around the box |
 | 5 | **Run…** (Ctrl+R) | it first asks where to export the package, e.g. `~/ucmd-runs/small.ucsys`; the log says `exported …`, and the recipe is saved next to it as `small.recipe.toml`. (**Export package…**, Ctrl+E, does the same without running) |
-| 6 | In the run dialog, the first time: **Locate ucmd…** → `ucmd-engine/target/release/ucmd`, and confirm | this writes `[executables] ucmd` into `~/.config/ucmd/machine.toml`. The dialog shows the cutoff warning (1.00 nm for this small box) and the files it will write |
+| 6 | In the run dialog, the first time: **Locate ucmd…** → the program file `ucmd-engine/target/release/ucmd` (not a README or folder; details in ucmd-builder `docs/engine-for-the-gui.md`), and confirm | this writes `[executables] ucmd` into `~/.config/ucmd/machine.toml`. The dialog shows the cutoff warning (1.00 nm for this small box) and the files it will write |
 | 7 | **Run** | minimization in about 3 s, then 2 ps in about 20 s on 16 threads. On the right, T falls to about 130 K within 0.03 ps and is back near 298 K by 0.3 ps; the conserved energy stays flat |
 | 8 | **Play**, or drag the slider | the trajectory plays in the 3D view (21 frames) |
 | 9 | Run again with *Length* 100 ps and press **Stop run** | the log says `stopped by SIGTERM after step …`; the frames so far can be played |
