@@ -11,3 +11,13 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+
+# Study data (studies/README.md): the plans are committed, the runs stay local
+/studies/*/systems/
+/studies/*/runs/
+/studies/*/views/
+/studies/*/logs/
+/studies/*/INDEX.md
+/studies/*/index.json
+/studies/*/driver.pid
+/studies/CATALOG.md

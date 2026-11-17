@@ -21,6 +21,8 @@ UnitcellMD/            this git repo: plan, spec, fixtures, cross-repo tools
 ├── docs/              STATUS.md, nenepo-audit.md, decisions/ (ADRs), design/ (one per phase)
 ├── spec/              formats, units, provider contract, JSON Schemas, fixtures, validator
 ├── tools/oracle/      OpenMM reference calculations (validation only)
+├── tools/study/       study driver: scans of many runs (ADR 0011)
+├── studies/          one folder per study; plans in git, data local (studies/README.md)
 ├── _reference/        read-only clone of NeNePo_builder (gitignored)
 ├── ucmd-engine/       own git repo: Rust Cargo workspace, binary `ucmd`, Python bridge
 ├── ucmd-builder/      own git repo: Python library, CLI `ucmd-build`, PySide6 GUI
@@ -143,6 +145,7 @@ Run these inside the repo concerned, and keep this table current.
 |---|---|---|---|
 | spec (validator) | `cd spec/validator && python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; fixtures: `spec/fixtures/_generators/generate.py` |
 | tools/oracle | `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` | `.venv/bin/python -m pytest test_oracle.py` | — |
+| tools/study | stdlib only (Python ≥ 3.11) | `ucmd-builder/.venv/bin/pytest tools/study` | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/study`; run a study: `python3 tools/study/ucmd_study.py run studies/<study>` |
 | ucmd-engine | `cargo build --workspace` | `UCMD_REQUIRE_SPEC=1 cargo test --workspace` | `cargo fmt --all --check`; `cargo clippy --workspace --all-targets -- -D warnings`; `scripts/check-architecture.sh`; `cargo build --workspace --no-default-features`; physics: `validation/argon/run.sh` |
 | ucmd-builder | `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'`; GUI: `'.[dev,gui-test]'` | `.venv/bin/pytest` (GUI tests run headless; skipped without the GUI extras) | `.venv/bin/ruff check .`; `.venv/bin/ruff format --check .`; GUI screenshots: `QT_QPA_PLATFORM=offscreen .venv/bin/python validation/b2a/screenshots.py` |
 | ucmd-analysis | same as ucmd-builder | `.venv/bin/pytest` | same as ucmd-builder |
