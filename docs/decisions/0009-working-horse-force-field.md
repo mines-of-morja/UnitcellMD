@@ -18,6 +18,16 @@
 | PF₆⁻ | P: q +1.34, σ 3.74 Å, ε 0.83680 kJ/mol; F: q −0.39, σ 3.12 Å, ε 0.25520 kJ/mol; P–F 1.606 Å, k 3100 kJ mol⁻¹ Å⁻²; F–P–F 90.0°, k 1165 kJ mol⁻¹ rad⁻² (½k forms) | CL&P database `il.ff`, version 2026/10/09 (github.com/paduagroup/clandp, MIT). The file cites Kaminski & Jorgensen, J. Chem. Soc., Perkin Trans. 2 (1999) 2365; the Lehnert SI cites CL&P |
 | ζ | 0.75 for Li⁺ and PF₆⁻ in EC:EMC | Lehnert 2025 SI, Table S3; applied as a recorded transform (ADR 0008 §4) |
 
+- **Amendment 2026-11-17 (author): LJ tail correction ON.**
+  - OPLS-AA was parametrized with the analytic long-range dispersion correction for energy and
+    pressure, so our protocols set `dispersion_correction = true`.
+  - The engine default stays `false`, as in the spec; run.toml files say it explicitly.
+  - The earlier assumption "plain cutoff, no tail correction, as in Lehnert" is not supported by
+    the SI.
+  - **Direction of the effect:** the correction adds the attraction beyond the cutoff. It lowers
+    the pressure (−158 bar for a 1 M EC:EMC frame at 1.4 nm), so NPT densities rise by roughly
+    1 %. Pure EMC without it is already 2.2 % denser than the manufacturer value (1.028 vs 1.006
+    g/cm³ at 25 °C), so with it the deviation grows to about 3 %.
 - **Details:**
   - **PF₆⁻ trans angles.** CL&P's tool `fftool` generates all 15 F–P–F angles. It then removes
     those more than 15° from the force-field value, i.e. the three trans angles at 180°. The
