@@ -119,6 +119,18 @@ The author asked to start dynamics from the builder and to look at them afterwar
   `test_xyz_frames_play_while_the_run_goes`, `test_h5md_frames_come_after_the_run`,
   `test_a_run_that_is_still_going_is_followed`.
 
+### Third round (2026-11-17): open any engine run
+
+- **Open run on any folder** (`examples/EC/runs`, a study, `<package>.runs`) lists every run
+  below it in a browser: path, title, steps done, state (complete, stopped, running?, no output),
+  trajectory format and time, with a filter. One run opens directly. Symbolic links (study
+  views) are not followed, so no run appears twice. The 9 runs of the EC study list in 12 ms.
+- **Plots:** temperature on top; tabs for energies (potential, kinetic, total, conserved),
+  conservation (H − H₀) and pressure; a summary line with means over the second half and the
+  drift of H (least-squares slope).
+- Tests: `test_scan_runs_finds_every_run_below_any_folder`, `test_summary_of_the_thermo_table`,
+  `test_a_folder_with_several_runs_offers_a_choice`, `test_a_folder_without_runs_is_reported`.
+
 ## 6. Questions for the author
 
 1. **Gate B2a:** please run [testing.md](../testing.md) §9 and tell me what to change in the
