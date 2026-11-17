@@ -71,6 +71,19 @@
 6. **Then the grid:** first the c-dependence at 20 °C for the three Lehnert blends, then T.
    Landesfeind's EC:DMC and EMC:FEC need their own ζ fits.
 
+## 4a. Progress
+
+- **2026-11-17, step 4 pulled forward (E3.7):** OpenMM on the Radeon VII, double precision,
+  22–34 ns/day for the 7036-atom box, about 25× the CPU. Validation:
+  - conformance 1e-8;
+  - identical NVE trajectory for 0.5 ps;
+  - same temperature in NVT.
+  Details in `ucmd-engine/validation/e37-openmm/REPORT.md`.
+- **Step 1, running:**
+  - `studies/2026-11-17_pure-solvent-densities`: 5 solvents × 25/40 °C, NPT on the GPU;
+  - `studies/2026-11-17_pressure-at-reference-density`: 1 M EC:EMC at Lehnert's density, CPU.
+    After 77 ps: about 555 bar and still falling.
+
 ## 5. Decisions for the author
 
 - **D1 Solvent parameters.** Lehnert's Maestro OPLS parameters are not open. Options:

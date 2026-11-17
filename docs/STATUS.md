@@ -158,6 +158,12 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-17 — E3.7 (research plan, GPU first) — OpenMM backend on the Radeon VII through the
+machine profile (`ucmd-engine/bridge`, branch `e37-openmm`; design/E3.7.md) — evidence:
+conformance 1.3e-8 / 8.7e-8; same-state NVE identical for 0.5 ps; NVT T = 293.0 K after
+replacing OpenMM's half-step integrators by the engine's; 22–34 ns/day; bridge tests in CI —
+next: pure-solvent densities on the GPU (running), A1 analysis.
+
 2026-11-17 — E2.7 (at the author's request) — C-rescale barostat, isotropic, on engine branch
 `e27-barostat` (design/E2.7.md, decisions open for review); NPT study
 `studies/2026-11-17_ec-npt-first-look` running (5 mixtures at 1.0 M × −10/20/50 °C, 20 ps) —
