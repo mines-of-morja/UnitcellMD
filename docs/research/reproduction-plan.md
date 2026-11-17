@@ -84,6 +84,17 @@
   - `studies/2026-11-17_pressure-at-reference-density`: 1 M EC:EMC at Lehnert's density, CPU.
     After 77 ps: about 555 bar and still falling.
 
+- **Step 3, A1 core** (`ucmd-analysis`, branch `a1`): readers, centres of mass, FFT MSD, Onsager
+  L_ij → κ and t₊ (COM), RDF and coordination numbers, block errors. Validated on synthetic data
+  with known answers.
+  - First real use, 1 M EC:EMC after 20 ps from packing:
+    - Li–O(carbonyl) at 0.20–0.21 nm;
+    - first-shell coordination number 3.3 (EC 1.0, EMC 1.9, F 0.3), no EC preference yet;
+    - the solvation shells are still forming.
+  - Transport from 10 ps is meaningless (not diffusive), as expected.
+- Open in A1: VOL-frame transform, Green–Kubo cross-check, Yeh–Hummer, ion association
+  (FI/NTI/PTI), MDAnalysis comparison.
+
 ## 5. Decisions for the author
 
 - **D1 Solvent parameters.** Lehnert's Maestro OPLS parameters are not open. Options:
