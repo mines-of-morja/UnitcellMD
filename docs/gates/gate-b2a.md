@@ -89,7 +89,24 @@
   - the graceful stop: status 130/143, a checkpoint, closed outputs;
   - every restart is recorded in the H5MD provenance, not only forced ones.
 
-## 5. Questions for the author
+## 5. After the author's first hands-on test (2026-11-17)
+
+The author asked to start dynamics from the builder and to look at them afterwards.
+- **Run…** is available as soon as a system is built. It asks where to export the package, then
+  shows the run settings. Before, Run needed an explicit Export first.
+- **Open run…** (File and Run menus, toolbar) and `./start-gui.sh PATH` open a finished run:
+  its starting package in 3D, the whole thermo table as plots, and the trajectory to play.
+  - The output paths come from the run's `run.toml` (spec/run-config.md), so runs started with
+    `ucmd run` on the command line open too.
+  - A trajectory whose atom count differs from the package is refused.
+- Tests: `test_run_right_after_build_exports_first`, `test_a_finished_run_opens_again`,
+  `test_a_command_line_run_opens`, `test_opening_a_run_without_its_package_is_refused`,
+  `test_run_outputs_follow_the_run_toml`.
+- Checked with the real engine (headless, GUI code): the EC:DMC:PC 0.5 M box (5886 atoms),
+  minimization 41 s, 0.3 ps in 19 s; the run reopened in a new window with 31 thermo rows and
+  16 frames.
+
+## 6. Questions for the author
 
 1. **Gate B2a:** please run [testing.md](../testing.md) §9 and tell me what to change in the
    look and the workflow. That feedback is the point of B2a.

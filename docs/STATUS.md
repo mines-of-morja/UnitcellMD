@@ -158,6 +158,15 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-17 — B1.3 + B2.6 (Gate B2a feedback) — force-field templates DMC, PC, MP, FEC
+(LigParGen 3.0.1, as EC/EMC; ADR 0009 amendment, approved by the author); all 35 test boxes in
+ucmd-builder `examples/EC` build (8–49 s), pass `ucmd check` and give finite single points.
+GUI: **Run…** right after Build (asks where to export the package); **Open run…** and
+`start-gui.sh RUN` show any finished run again (plots, playback), also runs from `ucmd run`,
+with the output paths taken from its run.toml. — evidence: builder 171 passed, 1 skipped;
+headless real-engine check on the 5886-atom EC:DMC:PC 0.5 M box (minimize 41 s, 0.3 ps in 19 s,
+reopened run plays 16 frames) — next: the author's hands-on test, testing.md §9 steps 5, 10, 11.
+
 - 2026-11-13 — B2a — GUI preview (B2.1, B2.2, liquid B2.3, export B2.5, B2.6) and the engine's
   graceful stop and restart records — evidence: builder 110 tests (GUI job under Xvfb), engine
   91 tests, real-engine runs through the GUI code, screenshots checked; found and fixed a locale
