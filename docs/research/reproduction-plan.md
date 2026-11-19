@@ -95,6 +95,39 @@
 - Open in A1: VOL-frame transform, Green–Kubo cross-check, Yeh–Hummer, ion association
   (FI/NTI/PTI), MDAnalysis comparison.
 
+- **2026-11-19, 1 M EC:EMC NPT at 20 °C, 1 atm, tail correction on**
+  (`studies/2026-11-17_electrolyte-npt-{cpu,gpu}`): CPU 600 ps; GPU 1877 ps, then a GPU hang
+  (below). Li⁺ first shell from per-frame counts within the first minimum of g(r) over the
+  second half: EC carbonyl O 0.27–0.28 nm, EMC carbonyl O 0.29 nm, PF₆ F 0.26 nm.
+
+  | window | ρ CPU | ρ GPU | EC O=C | EMC O=C | PF₆ F | Li⁺ without anion contact |
+  |---|---|---|---|---|---|---|
+  | 0–10 ps | 1.094 | 1.136 | 0.9 | 1.4 | 1.0 | 0.38 |
+  | 100–200 ps | 1.188 | 1.181 | 0.9 | 2.6 | 0.8 | 0.50 |
+  | 450–600 ps | 1.187 | 1.184 | 0.6–0.7 | 3.1–3.2 | 0.5–0.6 | 0.62–0.68 |
+  | 1500–1875 ps (GPU) | – | 1.185 | 0.43 | 3.65 | 0.26 | 0.81 |
+
+  - **The density settles within about 100 ps** at 1.185–1.187 g/cm³, 1.6 % below Lehnert's
+    1.205. It does not follow the solvation shells, which keep changing for about 2 ns.
+  - **CPU and GPU agree** over the shared 600 ps (density and solvation trend).
+  - **EC is pushed out of the Li⁺ shell.** EC is 34 % of the solvent molecules but gives
+    about 10 % of the carbonyl O at the end, still falling. The common picture for
+    EC/linear-carbonate electrolytes is the opposite (to be checked against a cited source).
+  - **Cause, a parameter artefact:** LigParGen charges each molecule on its own, so the two
+    carbonyl O differ. EC: O −0.393 e, C +0.579 e. EMC: O −0.531 e, C +0.588 e. Li⁺ at 0.21 nm
+    binds the more negative EMC oxygen, although EC's dipole is far larger (6.0 D vs 0.9 D in
+    the liquid, from the fixed charges). The engine is not involved: it evaluates these
+    parameters exactly (M2a, B1a).
+  - **Consequence for D1:** option (a) is ruled out for transport, because the shell sets t₊
+    and κ. Next: published OPLS-AA carbonate parameters (b), carbonyl charges first.
+  - **Protocol:** the shells need several ns, so equilibration is ns-long, as with
+    Lehnert's 10 ns.
+- **2026-11-18, GPU hang:** both GPU jobs (this run and `solvent-densities-tail-on` EC 40 °C)
+  stopped writing at 02:04 local time within a minute of each other. They sat idle until the
+  shutdown at 23:39. Speed before the hang: about 50 ns/day for 7036 atoms (mixed precision).
+  The study driver now has a watchdog (`--stall-minutes`, default 30), and `--retry-failed`
+  continues from the checkpoint.
+
 ## 5. Decisions for the author
 
 - **D1 Solvent parameters.** Lehnert's Maestro OPLS parameters are not open. Options:
