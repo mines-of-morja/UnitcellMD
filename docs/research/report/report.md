@@ -90,6 +90,9 @@ what the present model gets right and wrong.
 - **Densities:** block averages over the second half of each run.
 - **Pressure:** the virial pressure (atomic on the CPU, molecular on the GPU; equal means).
 - **Li⁺ shells:** per-frame counts of carbonyl O and PF₆ F within the first minimum of g(r).
+- **Ion association:** Li⁺–PF₆⁻ clusters are the connected components of the contact graph
+  (Li–P within the first minimum of g(r)). Each frame's composition is recorded, with block
+  errors.
 - **Transport (pending):** Onsager coefficients from collective mean squared displacements in the
   barycentric frame (Fong et al. 2020), κ, t₊ (COM frame), Nernst–Einstein κ and ionicity, with
   block errors.
@@ -151,8 +154,8 @@ what the present model gets right and wrong.
 
 **Under NPT at 1 atm:**
 - the box first expands (the pressure overshoot) and then settles within about 100 ps;
-- the density is 1.1862 ± 0.0016 g/cm³ (CPU, to 600 ps) and 1.1852 ± 0.0007 g/cm³ (GPU, to
-  1.83 ns);
+- the density is 1.1862 ± 0.0016 g/cm³ (CPU, 0.3–0.6 ns) and 1.1850 ± 0.0008 g/cm³ (GPU,
+  1.5–3 ns);
 - that is **1.4 % below Lehnert's model**;
 - the two backends agree.
 
@@ -168,8 +171,19 @@ replaces both EC carbonyl O and PF₆⁻ F.
 
 | run | t | EC O=C | EMC O=C | PF₆⁻ F |
 |---|---|---|---|---|
-| CPU | 0.6 ns | 0.55 | 3.26 | 0.51 |
-| GPU | 1.83 ns | 0.38 | 3.64 | 0.21 |
+| CPU | 0.6 ns (last frame) | 0.55 | 3.26 | 0.51 |
+| GPU | 3 ns (last frame) | 0.32 | 3.72 | 0.26 |
+
+**Averaged over 1.5–3 ns (GPU, 300 frames; contacts within the first minimum of each g(r)):**
+
+| per Li⁺ | EC O=C | EMC O=C | PF₆⁻ (P within 0.33 nm) |
+|---|---|---|---|
+| mean contacts | 0.38 | 3.69 | 0.07 |
+
+- The most common shells are four EMC (49 %), four EMC plus one EC (17 %), and three EMC (8 %).
+- **Free ions dominate:** 93.5 ± 0.6 % of Li⁺ have no PF₆⁻ in contact. Contact pairs hold 6.2 ±
+  0.5 %, and larger clusters well under 1 %. (Over 0.3–0.6 ns in the CPU run, with a cutoff of
+  0.38 nm, it was 70 % free.)
 
 **Two observations:**
 1. **The shell needs nanoseconds,** two orders of magnitude longer than the density. Short
@@ -181,7 +195,12 @@ replaces both EC carbonyl O and PF₆⁻ F.
 
 **The likely cause is in the parameters.** LigParGen charges each molecule separately:
 - EC's carbonyl O gets −0.393 e, EMC's −0.531 e (the carbonyl C +0.579 and +0.588 e);
-- a Li⁺ at 0.21 nm responds mostly to that one charge, not to EC's much larger molecular dipole.
+- a Li⁺ at 0.21 nm responds mostly to that one charge, not to the molecular dipole. In these
+  templates' conformers, EC's dipole is 5.81 D and EMC's 0.58 D (point charges).
+- The open OPLS-AA atom-type set for EC (Caleman et al. 2012) gives a smaller dipole (5.28 D) on
+  the same geometry. Its carbonyl O is stronger (−0.50 e), because it puts positive charge on the
+  carbonyl C instead of the hydrogens
+  ([forcefield-survey.md](../forcefield-survey.md)).
 
 Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
 

@@ -17,7 +17,7 @@
 | ID | Calculation | Tests | Cost | Status |
 |---|---|---|---|---|
 | A1 | Pure EC, EMC, DMC, PC, MP: NPT 1 atm, 25 and 40 °C, 0.5 ns, tail correction on | density against Lehnert SI Table S2 (±2 %) | 10 × 0.2 h | ⏳ 3/10 done; EC 40 °C, DMC, PC, MP queued |
-| A2 | 1 M EC:EMC, NPT 1 atm, 20 °C, 3 ns (GPU) plus 0.6 ns (CPU twin) | electrolyte density against Lehnert's model; equilibration time; backend agreement | GPU 1.3 h; CPU twin about 14 h | ⏳ CPU done, GPU at 1.8/3 ns |
+| A2 | 1 M EC:EMC, NPT 1 atm, 20 °C, 3 ns (GPU) plus 0.6 ns (CPU twin) | electrolyte density against Lehnert's model; equilibration time; backend agreement | GPU 1.3 h; CPU twin about 14 h | ✅ ρ = 1.1850 ± 0.0008 g/cm³ (−1.4 %); shell 1.5–3 ns in report §3.4 |
 | A3 | Transport pilot: A2's end state, 20 ns NVT at 20 °C | whole transport chain on real data; noise of L₊₋; κ, t₊, D with the current model | about 9 h at 55 ns/day | ⏳ queued tonight |
 | A4 | Li⁺ preference: one Li⁺PF₆⁻ pair in pure EC and in pure EMC, plus 1 Li⁺ in EC:EMC 1:1 (dilute), 5 ns each | which carbonyl Li⁺ binds, without salt crowding; isolates the charge effect | 3 × ≤ 2 h | ⬜ |
 | A5 | Enthalpy of vaporization of each solvent: liquid run (A1) plus a single molecule in vacuum (non-periodic, 10 ns) | ΔH_vap against experiment: cohesion, independent of density | 5 × 2 h CPU | ❓ experimental ΔH_vap source needed |
