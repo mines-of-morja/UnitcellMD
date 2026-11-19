@@ -1,0 +1,89 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-19"
+question = "Transport pilot: does the whole chain (20 ns NVT on the GPU, Onsager analysis) give kappa, t+ and D with usable error bars for 1 M EC:EMC at 20 °C, with the current (LigParGen) force field?"
+requested_by = "the author, 2026-11-19 (pilot overnight, 1 fs)"
+
+[systems]
+# The end of the 3 ns NPT run (studies/2026-11-17_electrolyte-npt-gpu), scaled to the mean
+# volume of its last 500 ps (Lehnert 2025 SI S1.1), made by tools/study/package_from_run.py.
+packages = "packages/*.ucsys"
+
+[scan]
+temperature_C = [20]
+
+[protocol]
+seed = 20261119
+
+[estimate]
+seconds_per_atom_per_run = 2.3
+
+[index]
+group_by = "T"
+row_by = "system"
+
+[views]
+by-temperature = "{T}/{system}"
+
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+# 20 ns NVT production on the GPU backend (mixed precision, ADR 0012), Lehnert 2025 settings:
+# 1 fs, no constraints, Nosé–Hoover τ = 0.1 ps, 1.4 nm cutoff, PME to 1e-5, LJ tail correction.
+# A frame every 2 ps for the collective MSDs (Fong et al. 2020).
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 20000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 1000
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 2000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 500000

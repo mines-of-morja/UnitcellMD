@@ -51,9 +51,10 @@ KILL_GRACE_S = 60.0  # after SIGTERM, how long a stalled engine gets to exit bef
 
 @dataclass(frozen=True)
 class System:
-    name: str  # recipe stem, e.g. "ec-emc_3-7w_1.0M"
-    recipe: Path
+    name: str  # recipe or package stem, e.g. "ec-emc_3-7w_1.0M"
+    recipe: Path  # the recipe, or for a ready package (`[systems] packages`) the package
     labels: dict[str, str]  # from [systems] label, e.g. mixture, concentration_M
+    ready: bool = False  # a ready package: no build, no minimization
 
 
 @dataclass(frozen=True)
@@ -91,17 +92,20 @@ def load_study(study_dir: Path) -> Study:
     with (study_dir / "study.toml").open("rb") as fh:
         doc = tomllib.load(fh)
     study = Study(study_dir, doc)
-    patterns = doc["systems"]["recipes"]
+    # systems from recipes (built and minimized here) or ready packages (e.g. the end of an
+    # equilibration, made with tools/study/package_from_run.py)
+    ready = "packages" in doc["systems"]
+    patterns = doc["systems"]["packages" if ready else "recipes"]
     patterns = [patterns] if isinstance(patterns, str) else patterns
     label = re.compile(doc["systems"].get("label", r"^(?P<system>.+)$"))
     paths = sorted({Path(p) for pat in patterns for p in glob.glob(str(study_dir / pat))})
     if not paths:
-        raise SystemExit(f"{study_dir}: no recipes match {patterns!r}")
+        raise SystemExit(f"{study_dir}: no systems match {patterns!r}")
     for path in paths:
         m = label.match(path.stem)
         if m is None:
             raise SystemExit(f"{path.name}: does not match [systems] label {label.pattern!r}")
-        study.systems.append(System(path.stem, path, m.groupdict()))
+        study.systems.append(System(path.stem, path, m.groupdict(), ready))
     temperatures = doc["scan"]["temperature_C"]
     tasks = [Task(s, float(t)) for s in study.systems for t in temperatures]
     priority = doc["scan"].get("priority", {})
@@ -408,6 +412,23 @@ class Driver:
         if status.get("state") == "failed":
             return False
         status.update(system=system.name, labels=system.labels)
+        if system.ready:
+            # a ready package: copied once as the run's start, without build or minimization
+            target = d / "minimized.ucsys"
+            if target.exists():
+                shutil.rmtree(target)
+            shutil.copytree(system.recipe, target)
+            system_json = read_json(target / "system.json")
+            status.update(
+                state="minimized",
+                package=os.path.relpath(system.recipe, self.study.dir),
+                package_sha256=sha256(target / "system.json"),
+                atoms=system_json.get("atom_count"),
+                mass_amu=system_mass_amu(system_json),
+            )
+            write_json(status_path, status)
+            self.log(f"{system.name}: ready package {status['package']}")
+            return True
         if not (d / "built.ucsys").is_dir():
             shutil.copyfile(system.recipe, d / "recipe.toml")
             status.update(state="building", recipe=os.path.relpath(system.recipe, self.study.dir))

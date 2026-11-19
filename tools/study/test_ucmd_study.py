@@ -273,3 +273,20 @@ def test_system_mass_from_molecule_types_and_counts() -> None:
     }
     assert us.system_mass_amu(doc) == pytest.approx(2 * 6.941 + 10 * 18.015)
     assert us.system_mass_amu({"atom_count": 3}) is None
+
+
+def test_a_study_from_ready_packages_skips_build_and_minimization(study: Path) -> None:
+    pkgs = study / "packages"
+    (pkgs / "box_1.0M.ucsys").mkdir(parents=True)
+    (pkgs / "box_1.0M.ucsys" / "system.json").write_text(json.dumps({"atom_count": 12}))
+    toml = study / "study.toml"
+    text = toml.read_text().replace(
+        'recipes = "../../recipes/*.toml"', 'packages = "packages/*.ucsys"'
+    )
+    toml.write_text(text)
+    assert us.main(["run", str(study), "--nice", "0"]) == 0
+    calls = (study.parents[1] / "calls.log").read_text()
+    assert "ucmd-build build" not in calls and "minimize" not in calls
+    status = json.loads((study / "systems/box_1.0M/status.json").read_text())
+    assert status["state"] == "minimized" and status["package"] == "packages/box_1.0M.ucsys"
+    assert json.loads((study / "runs/box_1.0M/T-10C/status.json").read_text())["state"] == "done"
