@@ -1,0 +1,261 @@
+# A verified open MD engine for Li-ion battery electrolytes, and what an open OPLS-AA model does and does not reproduce
+
+*Working draft, 2026-11-19. Results marked **pending** follow from runs in progress. Numbers come
+from `data.json` (written by `figures.py` from the study data) and from the validation reports
+cited. Not peer reviewed.*
+
+## Abstract
+
+- **Goal:** reproduce the transport data of LiPF₆ in carbonate solvents with our own simulation
+  stack, and explain the measured trends from the molecular dynamics: Landesfeind & Gasteiger
+  2019 (experiment) and Lehnert et al. 2025 (MD combined with experiment).
+- **The stack:**
+  - **UnitcellMD:** a modular engine with a bitwise-reproducible CPU reference backend and an
+    OpenMM GPU backend that must reproduce it;
+  - **ucmd-builder** for the systems;
+  - **ucmd-analysis** for structure and Onsager transport.
+- **The engine is verified independently of any force field:**
+  - forces and energies agree with OpenMM to 10⁻¹³;
+  - densities under pressure control agree with OpenMM within one standard error;
+  - the GPU backend reproduces the CPU trajectory from an identical state;
+  - mixed and double precision are statistically indistinguishable.
+- **The open force field (LigParGen OPLS-AA for the solvents) fails in a characteristic way:**
+  - pure EMC is 2.9 % too dense, EC about 2 % too light;
+  - the 1 M EC:EMC electrolyte comes out 1.4 % lighter than with Lehnert's model;
+  - the Li⁺ first shell excludes EC almost completely. We trace this to an asymmetry of the
+    fitted carbonyl charges.
+- **Consequence:** the model cannot yet be used to explain Li⁺ transport. The report states what
+  the model explains, what it does not, and the calculations that decide how to improve it.
+
+## 1. Introduction
+
+**Transport parameters.** Newman-type battery models need the conductivity κ, the salt diffusion
+coefficient D±, the transference number t₊ and the thermodynamic factor.
+- Landesfeind & Gasteiger measured all four over 0.1–3 M and −10 to 50 °C for LiPF₆ in EC:DMC,
+  EC:EMC and EMC:FEC.
+- Lehnert et al. combined MD with experiment for EC:EMC, EC:DMC:PC and EC:EMC:MP. They fitted the
+  ion-charge scaling ζ to κ at 1 M.
+
+**The open dispute.** The two studies disagree on t₊:
+- Landesfeind reports t₊ falling with c and turning negative below about 10 °C;
+- Lehnert (MD and eNMR) finds it roughly constant near 0.37.
+
+**What MD can add, beyond reproducing κ at the point where ζ was fitted:**
+- *why* κ has a maximum and why the maximum shifts in the EC-free electrolyte;
+- how much of κ's temperature dependence is viscosity and how much is ion association;
+- how Li⁺ moves (with its shell or by exchange);
+- whether charged ion clusters exist that could make t₊ negative.
+
+All of this requires a model that is right where it matters, so this report first establishes
+what the present model gets right and wrong.
+
+## 2. Methods
+
+### 2.1 Engine
+
+- **UnitcellMD's CPU reference backend** (Rust):
+  - velocity Verlet as an operator splitting;
+  - Nosé–Hoover chains, CSVR, Langevin BAOAB;
+  - an isotropic stochastic cell-rescaling barostat (Bernetti & Bussi 2020);
+  - PME;
+  - bitwise-reproducible results for any thread count and across checkpoint restarts.
+- **The GPU backend** runs the same model in OpenMM 8.3 (OpenCL on an AMD Radeon VII):
+  - it uses the engine's own operator splittings as custom integrators;
+  - before every run it must reproduce a reference single point from the CPU backend (energy
+    10⁻⁶, forces 10⁻⁵ in double precision, 2·10⁻⁴ in mixed).
+- **Mixed precision** is admitted for thermostatted production by a statistical comparison with
+  double precision (ADR 0012).
+
+### 2.2 Model
+
+- **Force-field family:** OPLS-AA conventions (geometric mixing, 1-4 scaling 0.5/0.5).
+- **Solvents:** EC, EMC, DMC, PC, MP, FEC from LigParGen 3.0.1 with 1.14·CM1A-LBCC charges (each
+  molecule parameterized on its own).
+- **Ions:** Li⁺ from Jensen & Jorgensen 2006; PF₆⁻ from CL&P.
+- **ζ = 0.75**, Lehnert's value for his model.
+- **Nonbonded interactions:**
+  - Lennard-Jones cut at 1.4 nm, with the analytic tail correction (as OPLS-AA was parametrized);
+  - Coulomb by PME (real-space cutoff 1.4 nm, relative accuracy 10⁻⁵).
+- **Sources of every parameter:** ADR 0009 and its amendments.
+
+### 2.3 Protocol
+
+- **Run settings,** as Lehnert's SI: 1 fs time step without constraints; Nosé–Hoover thermostat
+  τ = 0.1 ps; barostat τ_p = 1 ps; 1 atm.
+- **Systems:** packed with Packmol at the target density and minimized.
+- **Studies:** each one is a reproducible study folder (plan, runs, provenance).
+
+### 2.4 Analysis
+
+- **Densities:** block averages over the second half of each run.
+- **Pressure:** the virial pressure (atomic on the CPU, molecular on the GPU; equal means).
+- **Li⁺ shells:** per-frame counts of carbonyl O and PF₆ F within the first minimum of g(r).
+- **Transport (pending):** Onsager coefficients from collective mean squared displacements in the
+  barycentric frame (Fong et al. 2020), κ, t₊ (COM frame), Nernst–Einstein κ and ionicity, with
+  block errors.
+
+## 3. Results
+
+### 3.1 The engine is verified independently of the force field
+
+| test | result | source |
+|---|---|---|
+| energies and forces against OpenMM, 7036-atom electrolyte | 1.6·10⁻¹³ (energy), 10⁻¹³ (forces) | `ucmd-engine/validation/m2a` |
+| virial against a finite-difference strain derivative | 10⁻⁶ | m2a |
+| NVE time-step scaling of the energy error (velocity Verlet: 4) | 4.2 | m2a |
+| argon density, C-rescale against OpenMM's Monte Carlo barostat | −0.15 % (1.0 σ); volume fluctuations within 2 % | `validation/npt-argon` |
+| ideal-gas volume ⟨V⟩ = (N+1)kT/P₀ | 8.705 ± 0.043 vs 8.698 nm³ | unit test |
+| bitwise reproducibility (threads, restarts, rerun after a crash) | identical | m2a; the 59.2 ps rerun of 2026-11-18 |
+| GPU backend against CPU, same state, NVE | ΔU < 0.008 kJ/mol over 0.5 ps; ΔE_tot < 0.006 kJ/mol over 1 ps | `validation/e37-openmm` |
+| GPU mixed against double precision, pure EMC NPT 1 ns | all averages within 1.6 σ; drift of H 0.014 kJ/mol/ps | `validation/e37-precision` |
+
+**Throughput, 7000 atoms:**
+- CPU, 16 threads: about 1 ns/day;
+- GPU, double precision: 34 ns/day;
+- GPU, mixed precision: about 55 ns/day.
+
+### 3.2 Pure solvents: EMC too dense, EC too light
+
+![Pure-solvent densities](figures/fig2_solvent_densities.png)
+
+| solvent | T | ρ_sim (g/cm³), tail correction on | Table S2 | deviation |
+|---|---|---|---|---|
+| EMC | 25 °C | 1.0347 ± 0.0003 | 1.006 | **+2.9 %** |
+| EMC | 40 °C | 1.0180 ± 0.0008 | 1.006 (25 °C) | – |
+| EC (supercooled) | 25 °C | 1.2975 ± 0.0003 | 1.321 (liquid) | **−1.8 %** (more at equal T) |
+| EC | 40 °C | pending | 1.321 | – |
+| DMC, PC, MP | 25/40 °C | pending | 1.069, 1.204, 0.915 | – |
+
+- Without the tail correction, EMC is 1.0278 g/cm³ (+2.2 %). The correction adds the dispersion
+  attraction beyond the cutoff and raises the density, as expected.
+- The pressure test at fixed density agrees: pure EMC held at 1.006 g/cm³ shows
+  −435 ± 21 bar (tail correction off; Figure 1).
+- **The errors have opposite signs** for the cyclic carbonate (too light) and the linear one (too
+  dense). That points to the parameters of individual molecules rather than to a common
+  convention. Whether LJ parameters or charges are responsible is open; A5 (ΔH_vap) and B3 decide
+  it.
+
+### 3.3 The electrolyte: density settles fast, structure slowly
+
+![Pressure at fixed reference density](figures/fig1_pressure_reference_density.png)
+
+**At fixed volume,** the pressure of a freshly packed and minimized box starts near 8000 bar:
+- **First 0.05 ps:** about half of this disappears. With all bonds at their rest length, the
+  kinetic pressure of about +3600 bar has no bond tension to balance it yet, and equipartition
+  halves the temperature at the same time.
+- **Afterwards:** the remainder relaxes over 100 ps and more.
+- **At Lehnert's density** (1.202 g/cm³ from 47 ion pairs at 1.0 M), our electrolyte still shows
+  +546 ± 47 bar over 50–100 ps, still falling (tail correction off; about +390 bar with it).
+
+![Electrolyte density under NPT](figures/fig3_electrolyte_density.png)
+
+**Under NPT at 1 atm:**
+- the box first expands (the pressure overshoot) and then settles within about 100 ps;
+- the density is 1.1862 ± 0.0016 g/cm³ (CPU, to 600 ps) and 1.1852 ± 0.0007 g/cm³ (GPU, to
+  1.83 ns);
+- that is **1.4 % below Lehnert's model**;
+- the two backends agree.
+
+The electrolyte error is small because the solvent errors of §3.2 partly cancel; it is not
+evidence that the model is right.
+
+### 3.4 The Li⁺ shell excludes EC
+
+![Li+ first shell](figures/fig4_li_shell.png)
+
+**After packing,** each Li⁺ has about one neighbour of each kind. Over 2 ns, EMC carbonyl O
+replaces both EC carbonyl O and PF₆⁻ F.
+
+| run | t | EC O=C | EMC O=C | PF₆⁻ F |
+|---|---|---|---|---|
+| CPU | 0.6 ns | 0.55 | 3.26 | 0.51 |
+| GPU | 1.83 ns | 0.38 | 3.64 | 0.21 |
+
+**Two observations:**
+1. **The shell needs nanoseconds,** two orders of magnitude longer than the density. Short
+   equilibrations would report unconverged structure, and any transport run must start after it.
+2. **EC is strongly under-represented.** It is 34 % of the solvent molecules but only about 9 %
+   of the carbonyl O at Li⁺, and still falling. Mixed-carbonate electrolytes are usually
+   described with EC enriched in the Li⁺ shell (a literature source for the quantitative
+   expectation is still to be added).
+
+**The likely cause is in the parameters.** LigParGen charges each molecule separately:
+- EC's carbonyl O gets −0.393 e, EMC's −0.531 e (the carbonyl C +0.579 and +0.588 e);
+- a Li⁺ at 0.21 nm responds mostly to that one charge, not to EC's much larger molecular dipole.
+
+Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
+
+### 3.5 Transport (pending)
+
+- **Run:** the pilot (20 ns NVT at 20 °C from the equilibrated state of §3.3) runs tonight.
+- **It will report:**
+  - D of every species;
+  - L₊₊, L₋₋ and L₊₋;
+  - κ, t₊ (COM frame) and the ionicity κ/κ_NE, with block errors;
+  - above all, the noise of the cross term L₊₋ after 20 ns, which sets the length and number
+    of replicas of the campaign.
+- **Interpretation:** its κ and t₊ inherit the shell error of §3.4 and a ζ fitted to a
+  different model. They are a test of the method, not of the physics.
+
+## 4. Discussion: what the model explains, and what it does not
+
+**Explained or reproduced:**
+- the equilibration time scales: density about 0.1 ns, solvation shells about 2 ns or more;
+- the physical origin of the large initial pressures (a minimization and equipartition artefact,
+  not a property of the force field);
+- the electrolyte density, within 1.4 % of Lehnert's model, but for partly cancelling reasons.
+
+**Not reproduced, with a probable cause:**
+- pure-solvent densities to 2 %: EMC +2.9 %, EC −1.8 % or more;
+- the Li⁺ shell composition (EC excluded), plausibly from the carbonyl charge asymmetry.
+
+**Not yet tested (pending or needing tools):** the plan's table lists each with its ID.
+- κ, t₊, D (A3, then C);
+- viscosity (A6);
+- dielectric constant (A7);
+- ΔH_vap (A5);
+- the temperature dependence (A8, C3).
+
+**Out of reach by construction:**
+- freezing (MD stays a supercooled liquid);
+- electronic polarization beyond a constant ζ, which already fails at 3 M in Lehnert's work;
+- interphase effects behind the t₊ dispute.
+
+**How to improve:**
+- **Solvent charges and LJ parameters** (decision D1): a published, cited OPLS-AA carbonate set,
+  or charges from one consistent quantum-chemical method. Either is checked against densities,
+  ΔH_vap and the Li⁺ preference test.
+- **Then:** fit ζ once, and test everything else against data that were not fitted.
+
+## 5. Outlook
+
+[calculation-plan.md](../calculation-plan.md) lists every calculation with its purpose, cost and
+status:
+- a corrected model;
+- a ζ fit;
+- concentration and temperature series of 1 M EC:EMC (about 1 µs of GPU time);
+- decompositions that turn measured totals into mechanisms: correlations behind the κ maximum,
+  viscosity against association in κ(T), cluster contributions to t₊.
+
+## Data and provenance
+
+| content | study folder (`studies/`) |
+|---|---|
+| figures 1, 3, 4 | `2026-11-17_pressure-at-reference-density`, `2026-11-17_electrolyte-npt-{cpu,gpu}` |
+| figure 2 | `2026-11-17_pure-solvent-densities` (tail off), `2026-11-17_solvent-densities-tail-on` |
+
+- **Provenance:** every run stores its exact `run.toml`, engine version, package hash and (on the
+  GPU) the device, OpenMM, ROCm and container versions.
+- **Engine:** ucmd 0.0.0 (c9098de), branches `e27-barostat` and `e37-openmm`.
+
+### References
+
+- J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019).
+- L. Lehnert et al., J. Electrochem. Soc. 172, 050523 (2025), and SI.
+- E. R. Logan et al., J. Electrochem. Soc. 165, A3350 (2018).
+- M. Bernetti, G. Bussi, J. Chem. Phys. 153, 114107 (2020).
+- K. D. Fong et al., Macromolecules 53, 9503 (2020).
+- L. S. Dodda et al., Nucleic Acids Res. 45, W331 (2017); J. Phys. Chem. B 121, 3864 (2017)
+  (LigParGen).
+- K. P. Jensen, W. L. Jorgensen, J. Chem. Theory Comput. 2, 1499 (2006).
+- J. N. Canongia Lopes, A. A. H. Pádua, J. Phys. Chem. B 108, 16893 (2004).
