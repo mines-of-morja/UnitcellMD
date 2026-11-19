@@ -152,11 +152,32 @@ Last update: 2026-11-13.
 4. PLAN.md §10:
    - item 5: benchmark 1 M LiPF₆ in EC:EMC 3:7 at 20 °C;
    - item 8: agent setup.
+5. **Decision D1, the solvent parameters** (calculation plan stage B;
+   `docs/research/forcefield-survey.md`): stay with LigParGen, test the OPLS-AA atom-type set
+   (EC, PC) first, fit QM charges (needs psi4 in a container), or license Maestro.
+6. Experimental sources for ΔH_vap and ε (A5, A7). The Caleman 2012 SI compiles them with
+   their primary references. A source for the expected EC enrichment in the Li⁺ shell.
+7. A4 (one LiPF₆ pair in EC, EMC, EC:EMC 1:1; 5 ns each) is queued on the GPU behind the
+   transport pilot, as the baseline before D1. Say if it should not run.
 
 ## Log
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-19 — research plan, stage A (A1–A4, B1; D1, D4, D5 tools) — calculation plan and report
+draft (`docs/research/calculation-plan.md`, `report/report.md`). Electrolyte NPT to 3 ns:
+ρ = 1.1850 ± 0.0008 g/cm³ (−1.4 % vs Lehnert's model); the Li⁺ shell holds 3.7 EMC, 0.4 EC and
+0.07 PF₆⁻, with 93.5 % of Li⁺ free. The B1 survey (`docs/research/forcefield-survey.md`) finds
+no open copy of Lehnert's Maestro charges; the GROMACS OPLS-AA EC types are the closest open
+candidate. ucmd-analysis `a1`: κ self/distinct split, clusters, shell, residence times — evidence:
+analysis tests 14/14 (exact Markov-chain and pair-walk cases) — next: transport pilot A3 (GPU,
+running), then A4 (queued), decision D1.
+
+2026-11-18 — E3.7 / ADR 0012 / ADR 0011 — mixed precision admitted for thermostatted runs
+(`ucmd-engine/validation/e37-precision`: PASS); study driver with watchdog, retry and ready
+packages; LJ tail correction on (ADR 0009 amendment) — evidence: REPORT.md files, study tests
+10/10 — next: overnight densities and the electrolyte NPT.
 
 2026-11-17 — E3.7 (research plan, GPU first) — OpenMM backend on the Radeon VII through the
 machine profile (`ucmd-engine/bridge`, branch `e37-openmm`; design/E3.7.md) — evidence:
