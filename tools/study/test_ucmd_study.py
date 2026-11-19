@@ -9,6 +9,7 @@ import json
 import os
 import stat
 import sys
+import time
 import tomllib
 from pathlib import Path
 
@@ -42,6 +43,7 @@ elif cmd == "run":
     T = doc["thermostat"]["temperature_K"]
     out = Path("out"); out.mkdir(exist_ok=True)
     stop_at = int(os.environ.get("FAKE_STOP_AT", "-1"))
+    hang_at = int(os.environ.get("FAKE_HANG_AT", "-1"))
     restart = "--restart" in args
     start = 50 if restart else 0
     mode = "a" if restart else "w"
@@ -53,6 +55,14 @@ elif cmd == "run":
             if step == stop_at and not restart:
                 (out / "checkpoint.ucchk").write_text("ckpt")
                 sys.exit(143)
+            if step == hang_at and not restart:  # a hung GPU: no output, no exit
+                fh.flush()
+                (out / "checkpoint.ucchk").write_text("ckpt")
+                import signal, subprocess, time
+                signal.signal(signal.SIGTERM, signal.SIG_IGN)  # stuck: only SIGKILL ends it
+                helper = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(600)"])
+                Path(os.environ["FAKE_HELPER_PID"]).write_text(str(helper.pid))
+                time.sleep(600)
             fh.write(f"{step}\t{step / 1000}\t-5.0\t-1.0\t-1.0\t{T}\t{T - 300}\n")
     (out / "checkpoint.ucchk").write_text("ckpt")
 sys.exit(0)
@@ -74,6 +84,8 @@ def study(tmp_path: Path, monkeypatch) -> Path:
     monkeypatch.setenv("UCMD_MACHINE_PROFILE", str(profile))
     monkeypatch.setenv("FAKE_LOG", str(tmp_path / "calls.log"))
     monkeypatch.delenv("FAKE_STOP_AT", raising=False)
+    monkeypatch.delenv("FAKE_HANG_AT", raising=False)
+    monkeypatch.setenv("FAKE_HELPER_PID", str(tmp_path / "helper.pid"))
     studies = tmp_path / "studies"
     monkeypatch.setattr(us, "STUDIES", studies)
     recipes = tmp_path / "recipes"
@@ -174,6 +186,75 @@ def test_a_changed_plan_is_refused_for_existing_runs(study: Path) -> None:
     us.main(["run", str(study), "--nice", "0", "--max-runs", "1"])
     status = json.loads((first / "status.json").read_text())
     assert status["state"] == "failed" and "differs from study.toml" in status["reason"]
+
+
+def _alive(pid: int) -> bool:
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    # a zombie (killed, not yet reaped by its parent) counts as gone
+    stat_file = Path(f"/proc/{pid}/stat")
+    return not (stat_file.exists() and stat_file.read_text().split(") ")[1].startswith("Z"))
+
+
+def test_the_watchdog_ends_a_hung_run_and_the_next_run_continues_it(
+    study: Path, monkeypatch
+) -> None:
+    monkeypatch.setenv("FAKE_HANG_AT", "50")
+    monkeypatch.setattr(us, "KILL_GRACE_S", 2.0)
+    assert us.main(["run", str(study), "--nice", "0", "--stall-minutes", "0.02"]) == 0
+    first = study / "runs/mixa_1.0M/T-10C"
+    status = json.loads((first / "status.json").read_text())
+    assert status["state"] == "stalled" and "watchdog" in status["reason"]
+    # the whole process group is ended, including what the engine started (the container)
+    helper = int((study.parents[1] / "helper.pid").read_text())
+    time.sleep(0.2)
+    assert not _alive(helper)
+    # the study stops after a stall instead of hanging on the next run
+    assert not (study / "runs/mixa_1.0M/T20C/status.json").exists()
+    log = (study / "logs/driver.log").read_text()
+    assert "watchdog: no output" in log and "stopping the study after a stall" in log
+    # the next driver continues the stalled run from its checkpoint
+    monkeypatch.setenv("FAKE_HANG_AT", "-1")
+    assert us.main(["run", str(study), "--nice", "0", "--max-runs", "1"]) == 0
+    status = json.loads((first / "status.json").read_text())
+    assert status["state"] == "done" and "reason" not in status
+    calls = (study.parents[1] / "calls.log").read_text()
+    assert calls.count("run run.toml --restart out/checkpoint.ucchk") == 1
+
+
+def test_retry_failed_continues_from_the_checkpoint(study: Path) -> None:
+    assert us.main(["run", str(study), "--nice", "0", "--max-runs", "1"]) == 0
+    first = study / "runs/mixa_1.0M/T-10C"
+    status = json.loads((first / "status.json").read_text())
+    status.update(state="failed", reason="engine exit 125; see run.log")
+    (first / "status.json").write_text(json.dumps(status))
+    us.main(["run", str(study), "--nice", "0", "--max-runs", "1"])  # skipped without the flag
+    calls = (study.parents[1] / "calls.log").read_text()
+    assert "--restart" not in calls
+    us.main(["run", str(study), "--nice", "0", "--max-runs", "1", "--retry-failed"])
+    calls = (study.parents[1] / "calls.log").read_text()
+    assert "run run.toml --restart out/checkpoint.ucchk" in calls
+    status = json.loads((first / "status.json").read_text())
+    assert status["state"] == "done" and "reason" not in status
+
+
+def test_summary_skips_rows_without_a_value(tmp_path: Path) -> None:
+    thermo = tmp_path / "thermo.tsv"
+    thermo.write_text(
+        "# step\ttime_ps\ttemperature_K\tpressure_bar\tvolume_nm3\n"
+        "0\t0.0\t300\t5.0\t80.0\n"
+        "1\t1.0\t300\tnan\t80.0\n"
+        "2\t2.0\t300\t1.0\t80.0\n"
+        "3\t3.0\t300\tnan\t80.0\n"
+        "4\t4.0\t300\t3.0\t80.0\n"
+    )
+    s = us.summarize(thermo)  # the second half: t = 2, 3, 4
+    assert s["rows"] == 3
+    assert s["pressure_bar"]["mean"] == pytest.approx(2.0)
+    assert s["pressure_bar"]["sd"] == pytest.approx(2.0**0.5)
+    assert s["temperature_K"]["mean"] == pytest.approx(300.0)
 
 
 def test_a_second_driver_is_refused(study: Path) -> None:

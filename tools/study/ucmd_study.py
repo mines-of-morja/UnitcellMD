@@ -2,6 +2,7 @@
 
     python3 tools/study/ucmd_study.py plan   STUDY_DIR      # the runs, their order, the cost
     python3 tools/study/ucmd_study.py run    STUDY_DIR [--ucmd PATH] [--max-runs N] [--nice N]
+                                             [--stall-minutes M] [--retry-failed]
     python3 tools/study/ucmd_study.py status STUDY_DIR      # rebuild INDEX.md, views/, CATALOG.md
     python3 tools/study/ucmd_study.py stop   STUDY_DIR      # graceful: the engine checkpoints
 
@@ -41,6 +42,8 @@ ZERO_CELSIUS_K = 273.15  # definition of the Celsius scale
 GRAM_PER_AMU = 1.66053906660e-24  # CODATA 2018 atomic mass constant
 CM3_PER_NM3 = 1e-21
 STOPPED = (130, 143)  # the engine stopped gracefully on SIGINT / SIGTERM
+RESUMABLE = ("running", "stopped", "stalled")  # continue from the checkpoint, if there is one
+KILL_GRACE_S = 60.0  # after SIGTERM, how long a stalled engine gets to exit before SIGKILL
 
 
 # -- the plan -----------------------------------------------------------------------------------
@@ -245,7 +248,11 @@ def summarize(path: Path, from_fraction: float = 0.5) -> dict:
     out = {"last_time_ps": t[-1], "window_ps": [start, t[-1]], "rows": len(window)}
     for col in ("temperature_K", "pressure_bar", "potential_kjmol", "total_kjmol", "volume_nm3"):
         if col in names:
-            xs = [r[names.index(col)] for r in window]
+            # a backend may report a column only on some rows (OpenMM: pressure on barostat
+            # steps) and writes nan on the others; average over the rows that have a value
+            xs = [x for r in window if math.isfinite(x := r[names.index(col)])]
+            if not xs:
+                continue
             mean = sum(xs) / len(xs)
             sd = math.sqrt(sum((x - mean) ** 2 for x in xs) / max(1, len(xs) - 1))
             out[col] = {"mean": mean, "sd": sd}
@@ -310,10 +317,14 @@ def version_of(program: Path) -> str:
 
 
 class Driver:
-    def __init__(self, study: Study, engine: Path, builder: Path, nice: int) -> None:
+    def __init__(
+        self, study: Study, engine: Path, builder: Path, nice: int, stall_minutes: float = 0.0
+    ) -> None:
         self.study, self.engine, self.builder, self.nice = study, engine, builder, nice
+        self.stall_s = 60.0 * stall_minutes  # 0: no watchdog
         self.child: subprocess.Popen | None = None
         self.stop_requested = False
+        self.stalled = False  # the last call was ended by the watchdog
         self.log_path = study.dir / "logs" / "driver.log"
         self.log_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -332,10 +343,13 @@ class Driver:
         if self.child is not None and self.child.poll() is None:
             self.child.send_signal(signal.SIGTERM)
 
-    def call(self, args: list, cwd: Path, log: Path) -> int:
+    def call(self, args: list, cwd: Path, log: Path, watch: tuple[Path, ...] = ()) -> int:
+        """Run a program to its end. With `watch` and a stall time, a watchdog ends it when
+        none of the watched files has changed for that long (a hung GPU, a dead container)."""
         nice = shutil.which("nice")
         if self.nice and nice:  # lower priority, so the workstation stays usable
             args = [nice, "-n", str(self.nice), *args]
+        self.stalled = False
         with log.open("a") as fh:
             fh.write(f"\n{now()}  $ {' '.join(str(a) for a in args)}\n")
             fh.flush()
@@ -344,10 +358,44 @@ class Driver:
                 cwd=cwd,
                 stdout=fh,
                 stderr=subprocess.STDOUT,
+                start_new_session=True,  # its own process group, so a stall ends the bridge too
             )
-            code = self.child.wait()
+            code = self._wait(watch, time.time())
             self.child = None
         return code
+
+    def _wait(self, watch: tuple[Path, ...], started: float) -> int:
+        assert self.child is not None
+        if not (watch and self.stall_s > 0):
+            return self.child.wait()
+        poll = max(0.05, min(30.0, self.stall_s / 4))
+        while True:
+            try:
+                return self.child.wait(timeout=poll)
+            except subprocess.TimeoutExpired:
+                pass
+            mtimes = [p.stat().st_mtime for p in watch if p.exists()]
+            quiet = time.time() - max([started, *mtimes])
+            if quiet < self.stall_s or self.stop_requested:
+                continue
+            self.stalled = True
+            self.log(
+                f"watchdog: no output for {quiet / 60:.0f} min; ending the engine "
+                "(SIGTERM, then SIGKILL); if it used the GPU container, check `docker ps`"
+            )
+            self._signal_group(signal.SIGTERM)
+            try:
+                return self.child.wait(timeout=KILL_GRACE_S)
+            except subprocess.TimeoutExpired:
+                self._signal_group(signal.SIGKILL)
+                return self.child.wait()
+
+    def _signal_group(self, signum: int) -> None:
+        assert self.child is not None
+        try:
+            os.killpg(self.child.pid, signum)
+        except ProcessLookupError:
+            pass
 
     # one system: build + minimize, once
     def prepare(self, system: System) -> bool:
@@ -421,9 +469,12 @@ class Driver:
             return "failed"
         args = [self.engine, "run", "run.toml"]
         checkpoint = d / "out" / "checkpoint.ucchk"
-        if checkpoint.is_file() and status.get("state") in ("running", "stopped"):
+        # a failed run (only reached with --retry-failed) also continues: the checkpoint holds
+        # the last good state (invariant 7), and the engine cuts its outputs back to it
+        if checkpoint.is_file() and status.get("state") in (*RESUMABLE, "failed"):
             args += ["--restart", "out/checkpoint.ucchk"]
-            self.log(f"continue {task.id} from its checkpoint")
+            self.log(f"continue {task.id} from its checkpoint ({status.get('state')})")
+            status.pop("reason", None)
         else:
             if (d / "out").exists():
                 shutil.rmtree(d / "out")
@@ -441,13 +492,19 @@ class Driver:
         )
         write_json(status_path, status)
         t0 = time.time()
-        code = self.call(args, d, d / "run.log")
+        code = self.call(args, d, d / "run.log", watch=(d / "out" / "thermo.tsv", d / "run.log"))
         status["wall_s"] = round(status.get("wall_s", 0.0) + time.time() - t0, 1)
         status["exit"] = code
         status["summary"] = summarize(d / "out" / "thermo.tsv")
         if code == 0:
             status.update(state="done", finished=now())
-        elif code in STOPPED:
+        elif self.stalled:
+            status.update(
+                state="stalled",
+                reason=f"no output for {self.stall_s / 60:g} min; ended by the watchdog",
+            )
+        elif code in STOPPED or (self.stop_requested and checkpoint.is_file()):
+            # a stop we asked for; an engine stuck in its backend may not exit cleanly
             status["state"] = "stopped"
         else:
             status.update(state="failed", reason=f"engine exit {code}; see run.log")
@@ -483,6 +540,10 @@ class Driver:
                 done_now += state == "done"
                 self.log(f"{task.id}: {state}")
                 write_index(self.study)
+                if state == "stalled":
+                    # a hung GPU or driver: the next runs would hang the same way
+                    self.log("stopping the study after a stall; `run` again continues it")
+                    break
         finally:
             write_index(self.study)
             lock.unlink(missing_ok=True)
@@ -751,8 +812,18 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("study", type=Path, help="the study folder (with study.toml)")
     ap.add_argument("--ucmd", help="the engine; default: [executables] ucmd of the profile")
     ap.add_argument("--max-runs", type=int, help="stop after this many finished runs")
-    ap.add_argument("--retry-failed", action="store_true", help="run failed runs again")
+    ap.add_argument(
+        "--retry-failed",
+        action="store_true",
+        help="run failed runs again (from their checkpoint, if they have one)",
+    )
     ap.add_argument("--nice", type=int, default=10, help="niceness of builder and engine")
+    ap.add_argument(
+        "--stall-minutes",
+        type=float,
+        default=30.0,
+        help="end a run whose thermo table and log stay unchanged this long; 0: never",
+    )
     args = ap.parse_args(argv)
     study = load_study(args.study)
     if args.command == "plan":
@@ -764,7 +835,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "stop":
         return cmd_stop(study)
     engine, builder = find_executables(args.ucmd)
-    return Driver(study, engine, builder, args.nice).run(args.max_runs, args.retry_failed)
+    driver = Driver(study, engine, builder, args.nice, args.stall_minutes)
+    return driver.run(args.max_runs, args.retry_failed)
 
 
 if __name__ == "__main__":
