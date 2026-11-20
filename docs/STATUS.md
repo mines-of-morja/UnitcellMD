@@ -223,6 +223,32 @@ Lehnert's κ uses formal charges. Strategy draft `docs/research/forcefield-strat
 A4: pure EC ended at 1.76 ns (exit −9 after a stall); the 1:1 run continues — evidence: report
 §3.4, §3.5 — next: A4 analysis, S1 sources, S2 after approval.
 
+2026-11-20 — E2.5 complete (engine branch `e25-constraints`) — constraints in every mode of
+the engine and the bridge.
+- **Modes:** VV, NHC, Langevin BAOAB (constrained BAOAB), C-rescale (molecular scaling for
+  constrained molecules), FIRE (projected forces), and the OpenMM CustomIntegrators.
+- **Evidence:**
+  - rigid dimers: atomic + constraint virial = molecular pressure at every step to 1.5·10⁻¹⁵;
+  - constrained Langevin: T 299.4 ± 0.5 K, P 98.25 ± 0.23 bar (exact 98.18);
+  - NPT: H holds to 0.012 kJ/mol against 0.16 for a stiff bond;
+  - FIRE reaches the analytic constrained minimum;
+  - CPU and OpenMM agree to 3.8·10⁻⁷ kJ/mol over 200 fs;
+  - engine 113 tests, bridge 26.
+- **Found on the way:**
+  - the end-of-step constraint virial was wrong in BAOAB (now exact instantaneous constraint
+    forces);
+  - atomic scaling + SHAKE broke NPT energy bookkeeping;
+  - OpenMM holds constraint lengths in float32 (≤ 6·10⁻⁸).
+- **Also:**
+  - identity tracker: accepts fast unambiguous moves; repair `--skip-ps`. A4 has 0 swaps.
+  - Water rung: 512 molecules (216 too small for cutoff + skin). First CPU result: ρ 1.0060 ±
+    0.0017 (Wu 1.012), ΔH_vap 10.80 kcal/mol (Wu 10.72).
+  - GPU hangs continue under the clock cap: a lost completion event, per session unitcellmd-3f.
+    The logger now ends a hang after 3 min; the HIP platform would need a new image (question
+    for the author).
+- **Next:** GPU queue results; merge order of the branches (e37-identity → e29-pressure-tensor
+  → e25-constraints).
+
 2026-11-20 — E2.9 continued (author: order approved, Wu 2006 added, pressure tensor yes, EC
 test yes, "best decision" on performance) —
 - **Spec 0.1.1:** `[output.thermo] pressure_tensor` (umbrella 32c6def); engine and bridge
