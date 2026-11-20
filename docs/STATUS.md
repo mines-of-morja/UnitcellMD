@@ -167,8 +167,11 @@ Last update: 2026-11-13.
 8. **The GPU hangs** (11 so far; bridge stuck in `kfd_wait_on_events`). The 10:54Z hang on
    2026-11-20 came at normal temperatures (junction 54–61 °C, 80–92 W). That points to the
    ROCm driver or firmware rather than cooling. The kernel log needs root:
-   `sudo dmesg -T | grep -i amdgpu` (2026-11-20: reported as run, but `~/amdgpu-dmesg.txt` does
-   not exist; please run again or say where it went). Proposals for the study driver: stall timeout 5 min
+   `sudo dmesg -T | grep -i amdgpu` (2026-11-20: empty, no amdgpu line in the ring buffer; the full
+   kernel journal is requested). **Test since 14:31Z:** top sclk states locked out (manual, states
+   0–5, max 1683 MHz; about 968 instead of 1068 mV, 75 instead of 85 W), after hangs every
+   ~10 min at 1801 MHz and normal temperatures. Revert: `echo auto > power_dpm_force_performance_level`;
+   lost on reboot. Proposals for the study driver: stall timeout 5 min
    instead of 30, checkpoints every 0.1 ns.
 9. **κ comparison — answered, to confirm:** Landesfeind 2019 (Eq. 15, Table II) gives
    0.84 S/m at 1 M, 20 °C; Lehnert's Eq. 4 uses formal charges, so our 0.42 ± 0.09 S/m is
