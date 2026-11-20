@@ -167,8 +167,11 @@ Last update: 2026-11-13.
 8. **The GPU hangs** (11 so far; bridge stuck in `kfd_wait_on_events`). The 10:54Z hang on
    2026-11-20 came at normal temperatures (junction 54–61 °C, 80–92 W). That points to the
    ROCm driver or firmware rather than cooling. The kernel log needs root:
-   `sudo dmesg -T | grep -i amdgpu` (2026-11-20: empty, no amdgpu line in the ring buffer; the full
-   kernel journal is requested). **Test since 14:31Z:** top sclk states locked out (manual, states
+   `sudo dmesg -T | grep -i amdgpu` (2026-11-20: the ring buffer had rotated, full of UFW messages). **Kernel journal
+   since boot (2026-11-19 11:18):** not one amdgpu/kfd line after initialisation, despite about
+   15 hangs: no ring timeout, no reset, no VM fault. The hangs are invisible to the driver. The
+   card runs the **Radeon VII VBIOS 113-D3600200-106** (RAS EEPROM unreadable, I2C NAK, as usual
+   for a flashed MI50), so its top states 1749–1801 MHz lie above the MI50's own peak clock. **Test since 14:31Z:** top sclk states locked out (manual, states
    0–5, max 1683 MHz; about 968 instead of 1068 mV, 75 instead of 85 W), after hangs every
    ~10 min at 1801 MHz and normal temperatures. Revert: `echo auto > power_dpm_force_performance_level`;
    lost on reboot. Proposals for the study driver: stall timeout 5 min
@@ -181,8 +184,8 @@ Last update: 2026-11-13.
     M1 and the M3 trial approved (2026-11-20); QM method delegated (Psi4 container, RESP2,
     cluster references). To confirm before S6: the pass criteria for ζ_ECC (κ ±15 %, κ maximum
     ±0.2 M).
-10. CLAUDE.md lists the GPUs as "RX 580, Radeon VII". The compute card is an MI50 (gfx906);
-    correct the text?
+10. CLAUDE.md lists the GPUs as "RX 580, Radeon VII". The compute card is an MI50 (gfx906)
+    flashed with the Radeon VII VBIOS, hence the name; correct the text?
 
 ## Log
 
