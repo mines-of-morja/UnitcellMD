@@ -96,7 +96,7 @@ research extension for high concentrations, not a prerequisite.
 | S1 | Sources: n_D, ε, ΔH_vap of EC, EMC, DMC, PC (Caleman 2012 SI lists the primary references); experimental evidence on preferential Li⁺ solvation; ECC and ECC-R primary papers (Leontyev & Stuchebrukhov; Kirby & Jungwirth 2019); APPLE&P availability | none | literature (citations to be checked against the papers) |
 | S2 | M1 for EC: A1 (density at 40 °C) and A4 in pure EC and EC:EMC 1:1 | about 3 h GPU, after A4 | approval of M1 as a test set (not yet as the working horse) |
 | S3 | A5 (ΔH_vap) and A7 (ε) for EC and EMC on M0 and M1; tools exist | CPU | S1 sources |
-| S4 | A6, viscosity of pure EMC and of 1 M on M0: tests the mobility hypothesis | about 9 h GPU | pressure-tensor output (spec addition, open) |
+| S4 | A6, viscosity of pure EMC and of 1 M on M0: tests the mobility hypothesis | about 9 h GPU | pressure tensor: spec 0.1.1 and `ucmd-analyze viscosity` exist (E2.9); engine branch `e29-pressure-tensor` |
 | S5 | Decision point: M1 + LigParGen EMC good enough, or M2 | — | author |
 | S6 | M3: 1 M EC:EMC with ζ_ECC, 3 × 30 ns; κ as a prediction | about 40 h GPU | S1, S5 |
 | S7 | Only if S6 fails at high c: M4 | — | design doc and ADR |
@@ -111,3 +111,77 @@ research extension for high concentrations, not a prerequisite.
   This is a hypothesis until S2.
 - **An open, reproducible chain:** open engine, open parameters with citations, scripted
   studies. The benchmark model is commercial.
+
+## 8. Decisions and refinements (author, 2026-11-20)
+
+### M1 approved as a test set
+
+- EC density and ΔH_vap with the OPLS-AA types run as rung EC of E2.9
+  (`studies/2026-11-20_ec-opls-test`, GPU queue 3).
+- The Li⁺ preference with M1 runs as `studies/2026-11-20_li-preference-m1` (GPU queue 4). M0 is
+  the 1:1 run of A4, with the same protocol.
+- **A4, preliminary (M0, one Li⁺, first 2 ns of the 1:1 run):** without salt crowding, EC holds
+  21 % of the carbonyl O in the first shell (0.92 EC, 3.52 EMC), against 50 % of the molecules.
+  In pure EC the same Li⁺ binds 4.9 EC carbonyl O. So EC can bind; it loses against EMC. The
+  depletion is a property of the M0 parameters, not of crowding.
+
+### M3 approved as a trial, with the author's caution about refractive indices
+
+The author's point: n is a bulk, optical-frequency property. Treating it as a constant works
+until it does not, and then the result deviates from experiment. The two ECC papers locate
+where that happens:
+- **What ECC assumes** (Leontyev & Stuchebrukhov, Phys. Chem. Chem. Phys. 13, 2613 (2011)):
+  - the electronic response is a uniform continuum with ε_el = n² (high-frequency limit);
+  - organic materials have ε_el ≈ 1.7–2.2, and ζ = 1/√ε_el;
+  - the unscaled standard practice only works when ε₀/ε_el ≫ 1. It fails in low-dielectric
+    media (ε₀/ε_el ≈ 1). Linear carbonates have a low static ε, so EMC-rich electrolytes are
+    exactly where the choice matters (ε₀ of EMC to be sourced).
+- **Where it must fail** (Kirby & Jungwirth, J. Phys. Chem. Lett. 10, 7531 (2019)):
+  - wherever the high-frequency dielectric constant is non-uniform, in proportion to the
+    omitted bound charge;
+  - ε_el itself varies little between materials, because it depends on atomic density and
+    orbital size.
+
+**Consequence for us:**
+- The bulk n_D is the robust part. Its dependence on salt concentration must still be checked
+  against data.
+- The fragile part is the continuum at the scale of the first Li⁺ shell. A Li⁺ 0.2 nm from a
+  carbonyl O induces a local dipole that no uniform ε_el represents, and that is where the
+  EC/EMC preference is decided.
+
+**Approximations, in order:** each step either passes or names the next one.
+
+1. **ζ_ECC from n_D of the solvent mixture** (bulk mean field).
+2. **Sensitivity:** κ at ζ_ECC ± 0.03. If κ moves much more than the n_D uncertainty would
+   explain, ζ is not a robust prediction, and we say so.
+3. **First-shell correction from quantum chemistry on clusters:** Li⁺–EC and Li⁺–EMC binding
+   curves, and mixed Li⁺(S)₄.
+   - These clusters are small enough for accurate methods. So we do use first principles, but
+     only where the continuum fails; the mean field covers everything else.
+   - Implemented as ECC-R (a rescaled Li⁺ σ). If one σ cannot match both carbonyls, a
+     pair-specific Li⁺–O term follows, which needs per-pair overrides in the spec.
+4. **Drude (M4)** only if step 3 cannot reproduce both binding curves with one parameter set.
+   That would show that the missing physics is many-body polarization.
+
+**Pass criteria, fixed before the runs** (a proposal, to be confirmed by the author before S6):
+- κ(1 M, 20 °C) within ±15 % of 0.84 S/m without any refit;
+- the κ(c) maximum within ±0.2 M of Landesfeind's.
+- If either fails, C1 (ζ fitted to κ) becomes the fallback, and the failure is reported as a
+  result.
+
+### Quantum chemistry: method (delegated to Claude; an ADR when B2 starts)
+
+- **Program:** Psi4, open source, in a Docker container like the OpenMM image. Nothing is
+  installed on the host.
+- **Solvent charges (M2):** RESP2 (Schauperl et al., Commun. Chem. 3, 44 (2020); citation to be
+  checked against the paper).
+  - Charges are a mix of gas-phase and implicit-solvent RESP charges, controlled by one
+    parameter δ.
+  - Why: one physically interpretable parameter for the polarization level, set by layer-1
+    data (ε, ΔH_vap); the same method for all solvents; minutes per conformer.
+  - Plain RESP at HF/6-31G* is the cheaper standard, but its polarization level is fixed by
+    accident of the basis set, not by data.
+- **Ion–solvent references (layer 0, ECC-R):**
+  - counterpoise-corrected DFT with dispersion for all clusters;
+  - CCSD(T) spot checks on the Li⁺–solvent dimers (about 12 atoms; feasible on 16 cores).
+- **Cost:** about one CPU day in total. No GPU.

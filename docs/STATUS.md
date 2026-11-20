@@ -167,16 +167,17 @@ Last update: 2026-11-13.
 8. **The GPU hangs** (11 so far; bridge stuck in `kfd_wait_on_events`). The 10:54Z hang on
    2026-11-20 came at normal temperatures (junction 54–61 °C, 80–92 W). That points to the
    ROCm driver or firmware rather than cooling. The kernel log needs root:
-   `sudo dmesg -T | grep -i amdgpu`. Proposals for the study driver: stall timeout 5 min
+   `sudo dmesg -T | grep -i amdgpu` (2026-11-20: reported as run, but `~/amdgpu-dmesg.txt` does
+   not exist; please run again or say where it went). Proposals for the study driver: stall timeout 5 min
    instead of 30, checkpoints every 0.1 ns.
 9. **κ comparison — answered, to confirm:** Landesfeind 2019 (Eq. 15, Table II) gives
    0.84 S/m at 1 M, 20 °C; Lehnert's Eq. 4 uses formal charges, so our 0.42 ± 0.09 S/m is
    the comparable value: a factor 2 low. κ_NE (0.48 S/m) is low too, so the ions are too slow,
    not too associated (report §3.5).
-11. **Force-field strategy** ([forcefield-strategy.md](research/forcefield-strategy.md)):
-    levels M1–M4, what is left out on purpose, steps S1–S7. To approve: M1 (OPLS-AA EC types)
-    as a test set (S2), and the aim of a ζ from the refractive index (ECC) instead of a κ fit
-    (M3).
+11. **Force-field strategy** ([forcefield-strategy.md](research/forcefield-strategy.md) §8):
+    M1 and the M3 trial approved (2026-11-20); QM method delegated (Psi4 container, RESP2,
+    cluster references). To confirm before S6: the pass criteria for ζ_ECC (κ ±15 %, κ maximum
+    ±0.2 M).
 10. CLAUDE.md lists the GPUs as "RX 580, Radeon VII". The compute card is an MI50 (gfx906);
     correct the text?
 
@@ -184,6 +185,17 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-20 — research S2 prepared; A4 preliminary — author approved M1 (test set) and the ECC
+trial (M3) with a caution on refractive indices; strategy §8 now places ECC's failure in the
+first Li⁺ shell and adds cluster QM there (Leontyev & Stuchebrukhov 2011, Kirby & Jungwirth
+2019, both in ../Lit). A4 1:1, first 2 ns: EC 21 % of the first-shell carbonyl O at 50 % of
+the molecules; Li⁺ in pure EC binds 4.9 EC, so the depletion is parametric, not crowding. The
+identity repair stops on these NPT trajectories (molecule moves 0.96 / 1.14 nm after
+relabelling); shell counts do not need it. New study `studies/2026-11-20_li-preference-m1`
+(OPLS-AA EC + LigParGen EMC; trial build 6258 atoms, `ucmd-build check` OK, Caleman charges in
+the package), GPU queue 4 after queue 3 — evidence: strategy §8, calculation plan A4 — next:
+M1 vs M0 shells when queue 4 is done; S1 sources (n_D, ε of EMC).
 
 2026-11-20 — research (stage B strategy) — Li⁺ shell compared with Lehnert at his radius
 (rs = 5.16 Å, SI Fig. S10): EC 0.98 / EMC 3.91 / PF₆⁻ 0.28 per Li⁺ (EC 20 % of the carbonyl O;
