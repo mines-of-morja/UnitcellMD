@@ -223,6 +223,17 @@ Lehnert's κ uses formal charges. Strategy draft `docs/research/forcefield-strat
 A4: pure EC ended at 1.76 ns (exit −9 after a stall); the 1:1 run continues — evidence: report
 §3.4, §3.5 — next: A4 analysis, S1 sources, S2 after approval.
 
+2026-11-20 — GPU hang test on HIP (author approved) — image `ucmd-openmm:gfx906-hip`
+(Dockerfile.hip on `e25-constraints`: OpenMM 8.5 + OpenMM-HIP-7 from PyPI).
+- **Short test (pilot electrolyte, 100k steps):** conformance 1.6·10⁻⁸; 92.6 ns/day while
+  sharing the GPU with A4 (OpenCL alone ≈ 80); T and U consistent with OpenCL.
+- **Queue switch:** queue 3 (and queue 4, same profile) runs on HIP via
+  `machine-gpu-mixed-identity.toml` (OpenCL backup `.opencl.toml.bak`). The hang rate per GPU
+  hour is the test.
+- **Found on the way:** the strict identity tracker without the afternoon's relaxation stopped
+  a run because methyl rotation moved an EMC by 0.21 nm in 0.25 ps. `e25-constraints` now merges
+  `e37-identity`.
+
 2026-11-20 — E2.5 complete (engine branch `e25-constraints`) — constraints in every mode of
 the engine and the bridge.
 - **Modes:** VV, NHC, Langevin BAOAB (constrained BAOAB), C-rescale (molecular scaling for
