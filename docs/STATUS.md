@@ -177,6 +177,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-20 — E2.9 started (design draft `docs/design/E2.9.md`: problems P1–P8, each with a
+check that can fail) — ucmd-analysis `a1`: `dielectric` (A7) and `hvap` (A5), tested against
+exact answers (random dipoles; synthetic thermo tables). Rung W, SPC/Fw water: CPU NPT running
+(`studies/2026-11-20_water-spcfw-cpu`). Gas phase reproduces equipartition, ⟨U_gas⟩ = 3/2 k_BT
+at 0.25/0.5/1 fs. The BAOAB kinetic temperature falls with the timestep (O–H stretch), as
+expected. GPU hangs: 3 more in A4 (`kfd_wait_on_events`, normal temperatures). The local
+telemetry logger now ends a confirmed hang after 6 min (logged in resume.log), until the
+driver fix (P2) can go in after A4 — evidence: analysis tests 23/23 — next: water density vs
+the GPU backend, then ε and D on the GPU, Wu 2006 targets once the paper is in ../Lit.
+
 2026-11-20 — A3 pilot done; E3.7 identity defect found and fixed — 20 ns at 20 °C on the GPU
 (10 hangs, all recovered; bridge threads stuck in `kfd_wait_on_events`). The OpenMM output
 exchanged identical molecules every 84 000 steps (237 events); collective κ, t₊, L_ij were
