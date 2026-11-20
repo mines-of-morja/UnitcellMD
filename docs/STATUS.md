@@ -193,6 +193,21 @@ Lehnert's κ uses formal charges. Strategy draft `docs/research/forcefield-strat
 A4: pure EC ended at 1.76 ns (exit −9 after a stall); the 1:1 run continues — evidence: report
 §3.4, §3.5 — next: A4 analysis, S1 sources, S2 after approval.
 
+2026-11-20 — E2.9 continued (author: order approved, Wu 2006 added, pressure tensor yes, EC
+test yes, "best decision" on performance) —
+- **Spec 0.1.1:** `[output.thermo] pressure_tensor` (umbrella 32c6def); engine and bridge
+  refusal on branch `e29-pressure-tensor`.
+- **Analysis:** `viscosity` (Green–Kubo, tested on OU processes).
+- **Engine (found and fixed):** constraints were counted in N_dof but not enforced, now refused
+  until E2.5 (d9a6b19). E2.5 first step (RATTLE) on `e25-constraints`.
+- **Rung W:** parameters verified against Wu Table I. Wu-matched GPU study and GPU twin queued
+  after A4 (queue 3, identity-fixed bridge). CPU viscosity run queued after the CPU density run.
+- **Rung EC:** OPLS-AA EC from Caleman's files reproduces OpenMM on the originals to 1.2·10⁻¹⁵.
+  Gas phases done; liquids queued.
+- **Performance decision:** GPU for production; CPU at most 8 threads, nice 10.
+- **Evidence:** engine 111 tests; bridge 24; analysis 26; validator 57.
+- **Next:** GPU queue results (P1, rung W, rung EC), CPU viscosity, E2.5 second step.
+
 2026-11-20 — E2.9 started (design draft `docs/design/E2.9.md`: problems P1–P8, each with a
 check that can fail) — ucmd-analysis `a1`: `dielectric` (A7) and `hvap` (A5), tested against
 exact answers (random dipoles; synthetic thermo tables). Rung W, SPC/Fw water: CPU NPT running
