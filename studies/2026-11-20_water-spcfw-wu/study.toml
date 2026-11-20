@@ -3,7 +3,7 @@
 
 [study]
 created = "2026-11-20"
-question = "Rung W (design E2.9, P3/P4/P1): SPC/Fw water as in Wu, Tepper, Voth 2006 (216 molecules, 298.16 K, 1 atm, 1 fs, 9 Å cutoff + tail corrections, PME 1e-6, 6.5 ns, first 0.5 ns skipped) on the GPU with the identity-fixed bridge: ρ, ΔH_vap, D, ε, ⟨r_OH⟩, ⟨θ⟩, ⟨μ⟩ against Table II"
+question = "Rung W (design E2.9, P3/P4/P1): SPC/Fw water as in Wu, Tepper, Voth 2006 (their 216 molecules → 512 here, see the recipe; 298.16 K, 1 atm, 1 fs, 9 Å cutoff + tail corrections, PME 1e-6, 6.5 ns, first 0.5 ns skipped) on the GPU with the identity-fixed bridge: ρ, ΔH_vap, D, ε, ⟨r_OH⟩, ⟨θ⟩, ⟨μ⟩ against Table II"
 requested_by = "the author, 2026-11-20 (Wu 2006 added to ../Lit; order of design E2.9 approved)"
 
 [systems]
