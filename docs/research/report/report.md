@@ -263,8 +263,32 @@ smoothed g(r), stated in brackets):
    equilibrations would report unconverged structure, and any transport run must start after it.
 2. **EC is strongly under-represented.** It is 34 % of the solvent molecules but only 9–11 % of
    the carbonyl O at Li⁺, and still falling. Mixed-carbonate electrolytes are usually
-   described with EC enriched in the Li⁺ shell (a literature source for the quantitative
-   expectation is still to be added).
+   described with EC enriched in the Li⁺ shell.
+
+**Comparison with Lehnert's model (SI S1.8, Fig. S10).**
+- **Lehnert's shell is wider than ours.** He takes the shell radius from the first minimum of
+  the Li–P g(r), rs = 5.16 Å for EC:EMC (SI Table S7), and uses it for the Li–carbonyl-O
+  distance too. So his coordination numbers include the second shell; ours stop at the first
+  Li–O minimum (0.34–0.36 nm).
+- **Counted his way,** the pilot (§3.5, 1–20 ns, repaired trajectory) gives:
+
+| 1 M EC:EMC 3:7, 20 °C, r ≤ 0.516 nm | EC O=C | EMC O=C | PF₆⁻ (P) | EC share of the carbonyl O |
+|---|---|---|---|---|
+| Lehnert, ζ = 0.75 (Fig. S10, read off) | ≈ 2.3 | ≈ 2.6 | ≈ 0.7 | ≈ 47 % |
+| Ringsby et al. 2021, ζ = 0.8 (Fig. S10, read off) | ≈ 2.1 | ≈ 2.2 | ≈ 0.85 | ≈ 49 % |
+| this work, ζ = 0.75 | 0.98 | 3.91 | 0.28 | 20 % |
+
+- EC is 34 % of the solvent molecules. Lehnert's model enriches EC about 1.7-fold; ours
+  depletes it 2-fold, and 4-fold within the first shell.
+- **ζ does not cause the difference.** Both models use ζ = 0.75, and Ringsby's ζ = 0.8 gives
+  practically Lehnert's composition. ζ scales the Li⁺ attraction to every carbonyl O by the
+  same factor, so it can weaken a preference but not reverse it. The solvent parameters remain.
+- Lehnert himself calls the literature on this point controversial: some studies find purely
+  cyclic shells, others mixed ones. His model gives mixed shells with EC slightly ahead at
+  1 M, falling with c. Fig. S10 is therefore the **model reference** for the reproduction,
+  not an experimental one.
+- Command: `ucmd-analyze shell trajectory.repaired.h5 --skip-ps 1000 --a Li:Li --b EC:O:1
+  --b EMC:O:1 --b PF6:P --r-cut-nm 0.516` (once per `--b`), ucmd-analysis `a1`.
 
 **The likely cause is in the parameters.** LigParGen charges each molecule separately:
 - EC's carbonyl O gets −0.393 e, EMC's −0.531 e (the carbonyl C +0.579 and +0.588 e);
@@ -306,10 +330,19 @@ Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
 | D_EMC | (9.8 ± 0.3)·10⁻¹¹ m²/s | 3 % |
 
 - **Convention:** κ uses formal charges (±1). With the scaled charges (ζ²) it would be
-  0.24 S/m. Which convention Lehnert's comparison uses is still to be checked.
+  0.24 S/m. Lehnert uses formal charges too: his Eq. 4 has z₊ = 1, z₋ = −1.
 - **Finite size:** D is not corrected for the box size. Yeh–Hummer needs η (A6).
-- **Experimental comparison:** κ and t₊ still need cited experimental values here. Lehnert's
-  eNMR t₊ is 0.343, his MD 0.373 ([reproduction-plan.md](../reproduction-plan.md)).
+- **Experimental comparison:**
+  - **κ:** Landesfeind & Gasteiger 2019, Eq. 15 with the EC:EMC (3:7 w:w) parameters of
+    Table II, gives **0.84 S/m** at 1 M and 20 °C (0.91 S/m at 25 °C). The pilot is a
+    **factor 2 too low**. Lehnert's MD matches experiment there by construction, since his ζ
+    is fitted to κ at 1 M.
+  - **Even κ_NE (0.48 S/m) is far below 0.84 S/m.** Nernst–Einstein ignores all ion
+    correlations, so the deficit is in the ion mobilities, not in the association. Likely
+    suspects: a too viscous solvent (EMC is 2.9 % too dense, §3.2) and a Li⁺ that drags its
+    EMC shell (below). Viscosity (A6) tests this.
+  - **t₊:** Lehnert's eNMR t₊ is 0.343, his MD 0.373 ([reproduction-plan.md](../reproduction-plan.md)).
+    The pilot's 0.29 ± 0.11 agrees with both within its error, which is too large to tell.
 
 **κ split into self and distinct parts (D1):**
 - self: Li⁺ 0.18 ± 0.01 S/m, PF₆⁻ 0.30 ± 0.02 S/m;
@@ -359,11 +392,13 @@ Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
 **Not reproduced, with a probable cause:**
 - pure-solvent densities to 2 % for EMC (+2.9 %) and EC (−3.5 % at 40 °C); DMC, PC and MP pass.
   A published OPLS-AA set reproduces EC, so the parameters are at fault, not the functional form;
-- the Li⁺ shell composition (EC excluded), plausibly from the carbonyl charge asymmetry.
+- the Li⁺ shell composition (EC excluded), plausibly from the carbonyl charge asymmetry;
+- κ at 1 M, 20 °C: 0.42 S/m against 0.84 S/m (Landesfeind 2019). Even the uncorrelated
+  κ_NE is too low, so the ions are too slow, not too associated (§3.5).
 
-**Measured, not yet compared:** κ, t₊, D and the residence times of the pilot (§3.5) still
-lack cited experimental values here; with the shell error of §3.4 and a borrowed ζ they test
-the method more than the physics.
+**Measured, not yet compared:** D and the residence times of the pilot (§3.5) still lack cited
+experimental values here; with the shell error of §3.4 and a borrowed ζ they test the method
+more than the physics.
 
 **Not yet tested (pending or needing tools):** the plan's table lists each with its ID.
 - viscosity (A6);

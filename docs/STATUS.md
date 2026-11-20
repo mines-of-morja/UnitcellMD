@@ -156,7 +156,10 @@ Last update: 2026-11-13.
    `docs/research/forcefield-survey.md`): stay with LigParGen, test the OPLS-AA atom-type set
    (EC, PC) first, fit QM charges (needs psi4 in a container), or license Maestro.
 6. Experimental sources for ΔH_vap and ε (A5, A7). The Caleman 2012 SI compiles them with
-   their primary references. A source for the expected EC enrichment in the Li⁺ shell.
+   their primary references. For the Li⁺ shell, Lehnert SI Fig. S10 is now the **model**
+   reference (1 M, 20 °C, within rs = 5.16 Å: EC ≈ 2.3, EMC ≈ 2.6, PF₆⁻ ≈ 0.7; EC ≈ 47 % of
+   the carbonyl O; ours 20 %). An experimental source is still open; stage B counts both ways
+   (report §3.4, calculation plan).
 7. **Gate E3.7 again:** the molecule-identity fix (ucmd-engine branch `e37-identity`,
    `validation/e37-identity`) passes on the CPU. A short GPU check follows when A4 is done;
    then merge into `e37-openmm`. A4 itself (running since 2026-11-20) uses the old bridge, so its
@@ -166,9 +169,14 @@ Last update: 2026-11-13.
    ROCm driver or firmware rather than cooling. The kernel log needs root:
    `sudo dmesg -T | grep -i amdgpu`. Proposals for the study driver: stall timeout 5 min
    instead of 30, checkpoints every 0.1 ns.
-9. **κ comparison:** a cited experimental κ for 1 M LiPF₆ in EC:EMC 3:7 at 20 °C (Landesfeind
-   2019 or Logan 2018), and which charges Lehnert uses for κ: formal (our 0.42 S/m) or scaled
-   by ζ (0.24 S/m).
+9. **κ comparison — answered, to confirm:** Landesfeind 2019 (Eq. 15, Table II) gives
+   0.84 S/m at 1 M, 20 °C; Lehnert's Eq. 4 uses formal charges, so our 0.42 ± 0.09 S/m is
+   the comparable value: a factor 2 low. κ_NE (0.48 S/m) is low too, so the ions are too slow,
+   not too associated (report §3.5).
+11. **Force-field strategy** ([forcefield-strategy.md](research/forcefield-strategy.md)):
+    levels M1–M4, what is left out on purpose, steps S1–S7. To approve: M1 (OPLS-AA EC types)
+    as a test set (S2), and the aim of a ζ from the refractive index (ECC) instead of a κ fit
+    (M3).
 10. CLAUDE.md lists the GPUs as "RX 580, Radeon VII". The compute card is an MI50 (gfx906);
     correct the text?
 
@@ -176,6 +184,14 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-20 — research (stage B strategy) — Li⁺ shell compared with Lehnert at his radius
+(rs = 5.16 Å, SI Fig. S10): EC 0.98 / EMC 3.91 / PF₆⁻ 0.28 per Li⁺ (EC 20 % of the carbonyl O;
+Lehnert ≈ 47 %, same ζ). κ_exp = 0.84 S/m (Landesfeind 2019, Eq. 15) against our 0.42 S/m;
+Lehnert's κ uses formal charges. Strategy draft `docs/research/forcefield-strategy.md`
+(M1 EC types → M2 QM charges + small LJ refit → M3 ζ from n_D (ECC) → M4 Drude only if needed).
+A4: pure EC ended at 1.76 ns (exit −9 after a stall); the 1:1 run continues — evidence: report
+§3.4, §3.5 — next: A4 analysis, S1 sources, S2 after approval.
 
 2026-11-20 — E2.9 started (design draft `docs/design/E2.9.md`: problems P1–P8, each with a
 check that can fail) — ucmd-analysis `a1`: `dielectric` (A7) and `hvap` (A5), tested against

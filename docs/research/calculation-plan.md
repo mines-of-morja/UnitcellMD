@@ -19,7 +19,7 @@
 | A1 | Pure EC, EMC, DMC, PC, MP: NPT 1 atm, 25 and 40 °C, 0.5 ns, tail correction on | density against Lehnert SI Table S2 (±2 %) | 10 × 0.2 h | ✅ 10/10: DMC, PC, MP within 2 %; EMC +2.9 %, EC −3.5 % (at 40 °C) fail (report §3.2) |
 | A2 | 1 M EC:EMC, NPT 1 atm, 20 °C, 3 ns (GPU) plus 0.6 ns (CPU twin) | electrolyte density against Lehnert's model; equilibration time; backend agreement | GPU 1.3 h; CPU twin about 14 h | ✅ ρ = 1.1850 ± 0.0008 g/cm³ (−1.4 %); shell 1.5–3 ns in report §3.4 |
 | A3 | Transport pilot: A2's end state, 20 ns NVT at 20 °C | whole transport chain on real data; noise of L₊₋; κ, t₊, D with the current model | about 9 h at 55 ns/day (took 10 h, with 10 GPU hangs) | ✅ κ 0.42 ± 0.09 S/m, t₊ 0.29 ± 0.11; L₊₋ unresolved after 20 ns; report §3.5 |
-| A4 | Li⁺ preference: one Li⁺PF₆⁻ pair in pure EC and in pure EMC, plus 1 Li⁺ in EC:EMC 1:1 (dilute), 5 ns each | which carbonyl Li⁺ binds, without salt crowding; isolates the charge effect | 3 × ≤ 2.5 h | ⏳ running since 2026-11-20 10:28Z (`studies/2026-11-20_li-preference`); its GPU trajectories need the identity repair (E3.7 fix not yet live) |
+| A4 | Li⁺ preference: one Li⁺PF₆⁻ pair in pure EC and in pure EMC, plus 1 Li⁺ in EC:EMC 1:1 (dilute), 5 ns each | which carbonyl Li⁺ binds, without salt crowding; isolates the charge effect | 3 × ≤ 2.5 h | ⏳ running since 2026-11-20 10:28Z (`studies/2026-11-20_li-preference`); pure EC ended at 1.76 ns (exit −9 after a stall, 11:58Z), 1:1 running; its GPU trajectories need the identity repair (E3.7 fix not yet live) |
 | A5 | Enthalpy of vaporization of each solvent: liquid run (A1) plus a single molecule in vacuum (non-periodic, 10 ns) | ΔH_vap against experiment: cohesion, independent of density | 5 × 2 h CPU | ❓ experimental ΔH_vap source needed |
 | A6 | Viscosity of the pure solvents and of 1 M EC:EMC (Green–Kubo, 5–10 ns NVT each) | η against Logan 2018 (EC:EMC); independent of ζ | 6 × ≤ 4.5 h | 🔧 pressure-tensor output (spec addition) |
 | A7 | Static dielectric constant of EC and EMC from dipole fluctuations (10 ns NVT) | ε against literature: the screening that ion pairing depends on | 2 × 4.5 h | 🔧 analysis (dipole series); ❓ ε source |
@@ -37,8 +37,13 @@
 **Exit criterion of stage B:**
 - pure-solvent densities within 2 %;
 - ΔH_vap within about 5 %, if a source is approved;
-- in 1 M EC:EMC the Li⁺ shell has EC above its share of the solvent. The expectation needs a
-  cited source before it becomes a criterion.
+- in 1 M EC:EMC the Li⁺ shell has EC above its share of the solvent (34 % of the molecules).
+  - Model reference: Lehnert SI Fig. S10, EC ≈ 47 % of the carbonyl O within rs = 5.16 Å at
+    1 M, 20 °C. An experimental source is still open.
+  - Counted two ways: Lehnert's (Li–carbonyl-O ≤ 0.516 nm) and ours (first Li–O minimum).
+    Baseline A3: 20 % and 11–12 % (report §3.4).
+- the strategy behind stage B, and what is deliberately left out:
+  [forcefield-strategy.md](forcefield-strategy.md).
 
 ## Stage C: production with the chosen model (the reproduction)
 

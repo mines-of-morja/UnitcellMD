@@ -1,0 +1,113 @@
+# Force-field strategy: from Lehnert's model to experiment
+
+- **Status:** proposal, 2026-11-20. No parameter is chosen here; each step that sets one needs the
+  author's approval and a cited source (CLAUDE.md).
+- **Companions:**
+  - [calculation-plan.md](calculation-plan.md): the calculations, their costs and statuses;
+  - [forcefield-survey.md](forcefield-survey.md): candidate parameter sets;
+  - [report/report.md](report/report.md): the numbers quoted below.
+- **Question:** how do we extend the model so that it reproduces experiment, with parameters we
+  can defend, and what would be too much or the wrong direction?
+
+## 1. Where we stand
+
+Same protocol, same ions (JJ06 Li⁺, CL&P PF₆⁻), same ζ = 0.75 as Lehnert 2025. Only the solvent
+parameters differ: LigParGen instead of Maestro OPLS.
+
+| 1 M LiPF₆ in EC:EMC 3:7, 20 °C | this work (A2, A3) | Lehnert MD | experiment |
+|---|---|---|---|
+| density | 1.4 % below Lehnert's model | — | open (Logan 2018, Gruber 2026) |
+| EC share of carbonyl O at Li⁺, r ≤ 5.16 Å | 20 % | ≈ 47 % | disputed; source open |
+| κ (formal charges) | 0.42 ± 0.09 S/m | ≈ experiment (ζ fitted) | 0.84 S/m (Landesfeind 2019) |
+| κ_NE (no correlations) | 0.48 ± 0.03 S/m | — | — |
+| t₊ (COM) | 0.29 ± 0.11 | 0.373 | 0.343 (eNMR, Lehnert) |
+| pure EMC / EC density | +2.9 % / −3.5 % | — | Lehnert Table S2 |
+
+**Reading:**
+- We have reached Lehnert's **method**, not his **results**. The remaining gap sits in the
+  solvent model, because everything else is identical.
+- **κ_NE is only 57 % of κ_exp.** Even if all ion correlations vanished, our ions would be too slow. So
+  the κ deficit is a mobility problem (viscosity, Li⁺ dragging an EMC shell), not an
+  association problem.
+- ζ mostly controls association. Fitting ζ to κ now would therefore push it to whatever value
+  hides the solvent error. That is the first thing **not** to do.
+
+## 2. Principles
+
+1. **Repair each layer with its own data.** Molecule → pure liquid → one ion in solvent →
+   electrolyte. A parameter in one layer must not compensate an error in another (e.g. ζ
+   compensating a too viscous EMC).
+2. **Fit set and test set are separate and fixed in advance.** Transport (κ, t₊, D±, residence
+   times) is test data. At most one scalar, ζ, may ever be calibrated against κ, and only if
+   step S6 fails.
+3. **Few parameters, many targets.** Every fit is over-determined; otherwise it explains
+   nothing.
+4. **Change only what a test shows broken,** and record the change as a transform with its
+   source (ADR 0008 §4).
+5. **No direct tuning to the answer:** no carbonyl charge adjusted until EC enters the shell, no
+   ζ per concentration or temperature.
+
+## 3. Targets per layer
+
+| layer | fit to | test against |
+|---|---|---|
+| 0 molecule (QM) | electrostatic potential → charges; conformer energies | Li⁺–EC and Li⁺–EMC binding energies (single and mixed Li⁺(S)₄ clusters); dipole moments (experimental, source open) |
+| 1 pure solvents | ρ(T), ΔH_vap | ε (A7), viscosity η (A6), self-diffusion |
+| 2 one ion in solvent | — | Li–O distance and coordination (diffraction or AIMD, sources open); EC vs EMC preference (A4; spectroscopy, source open) |
+| 3 electrolyte | (ζ only as a last resort, S6) | ρ(c,T) and η(c,T) (Logan 2018, Gruber 2026); κ(c,T) (Landesfeind 2019, Logan 2018); t₊ (with the known dispute) |
+
+The ion–solvent layer is where Lehnert's and our models differ most visibly. It is also the
+layer with the weakest experimental data, so QM cluster energies (layer 0) are the independent
+check there.
+
+## 4. Model levels, from cheap to expensive
+
+Each level is a recipe change and runs through the same tests. We stop at the first level that
+passes.
+
+| level | what changes | why | cost | risk |
+|---|---|---|---|---|
+| **M0** | nothing (LigParGen solvents, ADR 0009) | baseline | done | — |
+| **M1** | EC (and PC) from the published OPLS-AA types (Caleman 2012; survey set 2) | tests the carbonyl-charge hypothesis with a published set; EC density is published to 0.05 % | A1 + A4, about 3 h of GPU | linear carbonates stay LigParGen (EMC +2.9 %); primary citation of the types still open |
+| **M2** | charges for all solvents from one QM method (RESP), plus a small refit of a few LJ types (carbonyl O, ester O, CH₃/CH₂) against ρ(T) and ΔH_vap of all five solvents at once | one consistent method instead of per-molecule fits; repairs EMC and EC together; about 6–10 parameters against about 20 targets | psi4 container (decision open); fit loop about 1–2 GPU days | needs an approved QC method; the fitting tool is new |
+| **M3** | ζ from physics instead of κ: ECC, ζ = 1/√ε_el with ε_el ≈ n_D² of the solvent; optionally the Li⁺ σ adjusted to the QM Li–O distance (ECC-R) | makes κ(c,T) a **prediction**; carbonates have n_D ≈ 1.38–1.42, so ζ ≈ 0.70–0.73, close to Lehnert's fitted 0.75 (n_D values to be sourced) | almost free: one 1 M run per candidate | ECC's standard justification is for ions in polar solvents; it needs its sources checked |
+| **M4** | explicit electronic polarization (Drude), through OpenMM's Drude support in the bridge (ADR 0008 §7), or a published polarizable carbonate set (APPLE&P, Borodin & Smith 2006, if its parameters are available) | concentration-dependent screening; a constant ζ already fails at 3 M in Lehnert's work | about 2–4× compute per ns; bridge work; dual thermostat | only worth it if M3 fails in a specific, measured way |
+
+**Expected path:** M1 → (M2 if EMC stays outside 2 %) → M3 → C-stage production. M4 is the
+research extension for high concentrations, not a prerequisite.
+
+## 5. Too much, or the wrong direction (now)
+
+- **ζ fitted to κ before the solvent passes layer 1.** It would hide the mobility error (§1).
+- **ζ per concentration or temperature.** It fits the curve and removes the prediction;
+  Lehnert avoided it too.
+- **Hand-tuning single charges or LJ values** until the shell or κ looks right.
+- **A global refit against transport data.** Expensive, under-determined and uninterpretable.
+- **Machine-learned potentials for production.** 10²–10³× the cost; transport needs about
+  100 ns per state point. At most a reference for layer 0 or 2.
+- **A Maestro licence to match Lehnert exactly.** It would reproduce his model, not experiment.
+  Useful only as an optional cross-check of the engine, not as the way forward.
+- **Interphases, SEI, reactions.** Outside a bulk model.
+
+## 6. Next steps
+
+| step | content | compute | needs |
+|---|---|---|---|
+| S1 | Sources: n_D, ε, ΔH_vap of EC, EMC, DMC, PC (Caleman 2012 SI lists the primary references); experimental evidence on preferential Li⁺ solvation; ECC and ECC-R primary papers (Leontyev & Stuchebrukhov; Kirby & Jungwirth 2019); APPLE&P availability | none | literature (citations to be checked against the papers) |
+| S2 | M1 for EC: A1 (density at 40 °C) and A4 in pure EC and EC:EMC 1:1 | about 3 h GPU, after A4 | approval of M1 as a test set (not yet as the working horse) |
+| S3 | A5 (ΔH_vap) and A7 (ε) for EC and EMC on M0 and M1; tools exist | CPU | S1 sources |
+| S4 | A6, viscosity of pure EMC and of 1 M on M0: tests the mobility hypothesis | about 9 h GPU | pressure-tensor output (spec addition, open) |
+| S5 | Decision point: M1 + LigParGen EMC good enough, or M2 | — | author |
+| S6 | M3: 1 M EC:EMC with ζ_ECC, 3 × 30 ns; κ as a prediction | about 40 h GPU | S1, S5 |
+| S7 | Only if S6 fails at high c: M4 | — | design doc and ADR |
+
+## 7. What would be new, if it holds
+
+- **κ(c,T) predicted, not fitted:** ζ from the refractive index, every solvent parameter from
+  layer 0–1 data, transport only as a test. Lehnert fits ζ to κ.
+- **A testable explanation for the literature dispute on the Li⁺ shell** (cyclic-only vs mixed
+  shells): the carbonyl charge model alone moves EC from depleted to enriched (M0 vs M1 vs
+  Lehnert). If A4 and S2 confirm this, part of the dispute is a property of the force fields.
+  This is a hypothesis until S2.
+- **An open, reproducible chain:** open engine, open parameters with citations, scripted
+  studies. The benchmark model is commercial.
