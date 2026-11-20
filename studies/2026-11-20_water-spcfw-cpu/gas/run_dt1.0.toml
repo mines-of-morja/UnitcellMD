@@ -1,0 +1,31 @@
+# Gas phase for ΔH_vap (design E2.9 §3): one SPC/Fw molecule alone, 298.15 K, 1 ns.
+# Langevin: a single molecule is not ergodic under Nosé–Hoover. 0.5 fs as the liquid.
+spec_version = "0.1.0"
+system = "one-water.ucsys"
+title = "SPC/Fw gas phase, one molecule, 298.15 K"
+
+[run]
+integrator = "langevin-baoab"
+timestep_fs = 1.0
+steps = 2000000
+seed = 20261121
+
+[velocities]
+generate = "maxwell-boltzmann"
+temperature_K = 298.15
+
+[thermostat]
+kind = "langevin"
+temperature_K = 298.15
+friction_per_ps = 5.0
+
+[[providers]]
+kind = "force-field"
+coulomb = "direct"
+
+[output]
+directory = "out_dt1.0"
+
+[output.thermo]
+file = "thermo.tsv"
+every = 100
