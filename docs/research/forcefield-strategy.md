@@ -125,6 +125,21 @@ research extension for high concentrations, not a prerequisite.
   In pure EC the same Li⁺ binds 4.9 EC carbonyl O. So EC can bind; it loses against EMC. The
   depletion is a property of the M0 parameters, not of crowding.
 
+### Layer 0, first result (2026-11-20): gas-phase Li⁺ binding against G4
+
+- Tool and table: [tools/ffcheck/README.md](../../tools/ffcheck/README.md). The reference is
+  Olguin, Borodin et al., Phys. Chem. Chem. Phys. 18, 164 (2016), Table 1 (G4, MP2, DFT).
+- **QM:** Li⁺ binds EC 6.2 kcal/mol more strongly than DMC (G4; 5.5–7.2 across 11 methods).
+- **M0:** no difference (+0.1 kcal/mol). **M1:** −2.0 kcal/mol, the right sign but a third of
+  the size.
+- Both under-bind Li⁺ by 12–18 kcal/mol, the induction a fixed-charge model lacks.
+- **Consequence:** the carbonyl charges (M1) are part of the answer, not all of it. If the M1
+  liquid run still depletes EC, step 3 of M3 becomes the next lever: a pair-specific Li⁺–O(carbonyl)
+  term fitted to these QM differences. That needs per-pair overrides in the spec (ADR 0008).
+  Drude (M4) remains the fallback.
+- The gas-phase difference overstates the condensed-phase preference (Olguin's implicit-solvent
+  and BOMD results). The test checks the potential, not the shell.
+
 ### M3 approved as a trial, with the author's caution about refractive indices
 
 The author's point: n is a bulk, optical-frequency property. Treating it as a constant works

@@ -192,6 +192,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-20 — research layer 0 — `tools/ffcheck/li_binding.py` (gas-phase Li⁺–solvent binding,
+flexible, OpenMM via the oracle; 5 tests incl. an exact 1D case). Against G4 (Olguin, Borodin et
+al. 2016, Table 1): QM puts EC 6.2 kcal/mol below DMC; M0 +0.1, M1 −2.0. Both under-bind by
+12–18 kcal/mol (no induction). The carbonyl charges explain part of the EC depletion, not all
+of it — evidence: tools/ffcheck/README.md, results JSON — next: M1 liquid run (queue 4); if EC
+stays depleted, a pair-specific Li⁺–O term (needs spec per-pair overrides).
+
 2026-11-20 — research S2 prepared; A4 preliminary — author approved M1 (test set) and the ECC
 trial (M3) with a caution on refractive indices; strategy §8 now places ECC's failure in the
 first Li⁺ shell and adds cluster QM there (Leontyev & Stuchebrukhov 2011, Kirby & Jungwirth
