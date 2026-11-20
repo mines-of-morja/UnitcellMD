@@ -17,6 +17,11 @@
   τ = 0.1 ps, C-rescale at 1 atm, 1.4 nm, PME 1e-5, tail correction, 5 ns NPT, GPU mixed
   precision, a frame every 2 ps. Runs on the identity-fixed bridge (queue 4, after queue 3), so
   residence times need no repair.
+- **Backend:** the shared profile switched to OpenMM 8.5 with the HIP platform on 2026-11-20
+  (author-approved, against the OpenCL hangs). M1 runs on HIP; M0 (A4) ran on OpenCL with
+  OpenMM 8.3. Both pass the per-run conformance check against the CPU engine (about 1e-8). The
+  backend difference is far below the statistical noise of a single-ion shell, so the comparison
+  stands.
 - **Comparison (M0):** the 1:1 run of the A4 study. First 2.07 ns analysed on 2026-11-20 (raw
   trajectory: shell counts around the single Li⁺ do not depend on the labels of identical
   solvent molecules): first shell EC O=C 0.92, EMC O=C 3.52 (EC 21 %); within 0.516 nm (Lehnert's
