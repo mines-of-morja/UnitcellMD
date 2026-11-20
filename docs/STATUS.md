@@ -165,6 +165,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-20 — A1 done; association corrected — all ten pure-solvent densities: DMC, PC, MP
+within 2 % of Table S2; EMC +2.9 % (25 °C) and EC −3.5 % (40 °C, where Table S2's liquid value
+applies) fail (report §3.2). The automatic g(r) cutoff stopped at a noise dip inside the Li–P
+peak; fixed (ucmd-analysis 6c1e368, test with the real shapes). Corrected: 77 ± 1 % of Li⁺ free
+(not 93.5 %), 19.5 ± 0.9 % in contact pairs, 0.25 PF₆⁻ per Li⁺ (report §3.4) — evidence:
+analysis tests 17/17 — next: pilot A3 (GPU, until about 06:10Z), then A4.
+
 2026-11-19 — research plan, stage A (A1–A4, B1; D1, D4, D5 tools) — calculation plan and report
 draft (`docs/research/calculation-plan.md`, `report/report.md`). Electrolyte NPT to 3 ns:
 ρ = 1.1850 ± 0.0008 g/cm³ (−1.4 % vs Lehnert's model); the Li⁺ shell holds 3.7 EMC, 0.4 EC and

@@ -215,22 +215,54 @@ replaces both EC carbonyl O and PF₆⁻ F.
 | CPU | 0.6 ns (last frame) | 0.55 | 3.26 | 0.51 |
 | GPU | 3 ns (last frame) | 0.32 | 3.72 | 0.26 |
 
-**Averaged over 1.5–3 ns (GPU, 300 frames; contacts within the first minimum of each g(r)):**
+The table above counts fixed cutoffs (Li–O 0.28 and 0.29 nm, Li–F 0.26 nm) to show the trend.
+The averages below use the first minimum of each g(r) instead.
 
-| per Li⁺ | EC O=C | EMC O=C | PF₆⁻ (P within 0.33 nm) |
+**Averaged over 1.5–3 ns** (GPU, 300 frames; contact = within the first minimum of the
+smoothed g(r), stated in brackets):
+
+| per Li⁺ | EC O=C | EMC O=C | PF₆⁻ (P) |
 |---|---|---|---|
-| mean contacts | 0.38 | 3.69 | 0.07 |
+| mean contacts, first-minimum cutoffs | 0.47 (0.36 nm) | 3.71 (0.34 nm) | 0.25 (0.44 nm) |
+| mean contacts, Li–O within 0.29 nm | 0.39 | 3.69 | 0.25 |
 
-- The most common shells are four EMC (49 %), four EMC plus one EC (17 %), and three EMC (8 %).
-- **Free ions dominate:** 93.5 ± 0.6 % of Li⁺ have no PF₆⁻ in contact. Contact pairs hold 6.2 ±
-  0.5 %, and larger clusters well under 1 %. (Over 0.3–0.6 ns in the CPU run, with a cutoff of
-  0.38 nm, it was 70 % free.)
+**Cutoff for EC.**
+- After its peak at 0.21 nm, the Li–O(EC) g(r) declines slowly from 0.7 to 0.3 until 0.36 nm.
+- So the strict first minimum lies there, and it counts some carbonyl O at 0.3–0.36 nm that are
+  not bound to the Li⁺.
+- **The EC share of the carbonyl O at Li⁺ is 9–11 %,** depending on this choice.
+
+**Most common shells** (first-minimum cutoffs):
+
+| shell | share |
+|---|---|
+| four EMC | 38 % |
+| four EMC + one EC | 23 % |
+| three EMC + one PF₆⁻ | 11 % |
+| five EMC | 5 % |
+| three EMC + two EC | 5 % |
+
+**Ion association** (clusters of the Li–P contact graph, 5 blocks):
+- **Free:** 77.1 ± 1.4 % of Li⁺ and 76.3 ± 2.1 % of PF₆⁻.
+- **Contact pairs:** 19.5 ± 0.9 % of Li⁺.
+- **Triple ions:** (2,1) 1.0 ± 0.3 %, (1,2) 0.9 ± 0.4 %.
+- **Larger, neutral and charged:** about 1.5 %.
+- So **80 % of the Li⁺ sit in charged clusters**, free ions included, and can carry current.
+
+**Correction.** An earlier version of this draft (2026-11-19) reported 93.5 % free Li⁺ and
+0.07 PF₆⁻ per Li⁺.
+- The automatic cutoff had stopped at a noise dip inside the broad Li–P peak: 0.33 nm instead
+  of 0.44 nm.
+- The rule now smooths g(r) first and requires the minimum to be deep. A test reproduces both
+  shapes seen here (ucmd-analysis 6c1e368).
+- The CPU run, 0.3–0.6 ns, with a cutoff of 0.38 nm, gave 70 % free. That is consistent with the
+  corrected value for a less equilibrated shell.
 
 **Two observations:**
 1. **The shell needs nanoseconds,** two orders of magnitude longer than the density. Short
    equilibrations would report unconverged structure, and any transport run must start after it.
-2. **EC is strongly under-represented.** It is 34 % of the solvent molecules but only about 9 %
-   of the carbonyl O at Li⁺, and still falling. Mixed-carbonate electrolytes are usually
+2. **EC is strongly under-represented.** It is 34 % of the solvent molecules but only 9–11 % of
+   the carbonyl O at Li⁺, and still falling. Mixed-carbonate electrolytes are usually
    described with EC enriched in the Li⁺ shell (a literature source for the quantitative
    expectation is still to be added).
 
