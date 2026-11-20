@@ -22,10 +22,10 @@
   OpenMM 8.3. Both pass the per-run conformance check against the CPU engine (about 1e-8). The
   backend difference is far below the statistical noise of a single-ion shell, so the comparison
   stands.
-- **Comparison (M0):** the 1:1 run of the A4 study. First 2.07 ns analysed on 2026-11-20 (raw
-  trajectory: shell counts around the single Li⁺ do not depend on the labels of identical
-  solvent molecules): first shell EC O=C 0.92, EMC O=C 3.52 (EC 21 %); within 0.516 nm (Lehnert's
-  rs) EC 1.84, EMC 3.78 (EC 33 %). In pure EC the same Li⁺ binds 4.9 EC carbonyl O.
+- **Comparison (M0):** the 1:1 run of the A4 study, finished 2026-11-20 (5 ns, OpenCL, no label
+  swaps). Over 1–5 ns: first shell EC O=C 0.89, EMC O=C 3.65 (**EC 20 %**); within 0.516 nm
+  (Lehnert's rs) EC 1.63, EMC 3.97 (EC 29 %). Continuous residence at Li⁺: EC 24 ps, EMC 250 ps.
+  In pure EC the same Li⁺ binds 4.8 EC carbonyl O.
 - **Analysis:** over the last 4 ns, `ucmd-analyze shell` at the first g(r) minimum and at
   0.516 nm (EC:O:1, EMC:O:1, PF6:P), `residence`, `clusters`.
 - **Reading:** if EC rises well above 21 % (towards or above its 50 % share), the carbonyl

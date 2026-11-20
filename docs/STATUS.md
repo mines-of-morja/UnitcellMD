@@ -197,6 +197,11 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-20 — A4 done (20:06Z, OpenCL with hang restarts; 0 label swaps) — one Li⁺, last 4 ns:
+pure EC 4.8 EC O=C (free); pure EMC 3.4 EMC O=C + 0.88 PF₆⁻ (contact pair); EC:EMC 1:1 first
+shell EC 0.89 / EMC 3.65 = EC 20 % at 50 % of the molecules (29 % within 0.516 nm); residence EC
+24 ps, EMC 250 ps — evidence: calculation plan A4 row — next: M1 (queue 4, HIP) against this.
+
 2026-11-20 — research layer 0 — `tools/ffcheck/li_binding.py` (gas-phase Li⁺–solvent binding,
 flexible, OpenMM via the oracle; 5 tests incl. an exact 1D case). Against G4 (Olguin, Borodin et
 al. 2016, Table 1): QM puts EC 6.2 kcal/mol below DMC; M0 +0.1, M1 −2.0. Both under-bind by
