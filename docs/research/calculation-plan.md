@@ -18,8 +18,8 @@
 |---|---|---|---|---|
 | A1 | Pure EC, EMC, DMC, PC, MP: NPT 1 atm, 25 and 40 °C, 0.5 ns, tail correction on | density against Lehnert SI Table S2 (±2 %) | 10 × 0.2 h | ✅ 10/10: DMC, PC, MP within 2 %; EMC +2.9 %, EC −3.5 % (at 40 °C) fail (report §3.2) |
 | A2 | 1 M EC:EMC, NPT 1 atm, 20 °C, 3 ns (GPU) plus 0.6 ns (CPU twin) | electrolyte density against Lehnert's model; equilibration time; backend agreement | GPU 1.3 h; CPU twin about 14 h | ✅ ρ = 1.1850 ± 0.0008 g/cm³ (−1.4 %); shell 1.5–3 ns in report §3.4 |
-| A3 | Transport pilot: A2's end state, 20 ns NVT at 20 °C | whole transport chain on real data; noise of L₊₋; κ, t₊, D with the current model | about 9 h at 55 ns/day | ⏳ queued tonight |
-| A4 | Li⁺ preference: one Li⁺PF₆⁻ pair in pure EC and in pure EMC, plus 1 Li⁺ in EC:EMC 1:1 (dilute), 5 ns each | which carbonyl Li⁺ binds, without salt crowding; isolates the charge effect | 3 × ≤ 2.5 h | ⬜ prepared: `studies/2026-11-20_li-preference` (one pair in EC, EMC, EC:EMC 1:1), queued after the pilot |
+| A3 | Transport pilot: A2's end state, 20 ns NVT at 20 °C | whole transport chain on real data; noise of L₊₋; κ, t₊, D with the current model | about 9 h at 55 ns/day (took 10 h, with 10 GPU hangs) | ✅ κ 0.42 ± 0.09 S/m, t₊ 0.29 ± 0.11; L₊₋ unresolved after 20 ns; report §3.5 |
+| A4 | Li⁺ preference: one Li⁺PF₆⁻ pair in pure EC and in pure EMC, plus 1 Li⁺ in EC:EMC 1:1 (dilute), 5 ns each | which carbonyl Li⁺ binds, without salt crowding; isolates the charge effect | 3 × ≤ 2.5 h | ⏳ running since 2026-11-20 10:28Z (`studies/2026-11-20_li-preference`); its GPU trajectories need the identity repair (E3.7 fix not yet live) |
 | A5 | Enthalpy of vaporization of each solvent: liquid run (A1) plus a single molecule in vacuum (non-periodic, 10 ns) | ΔH_vap against experiment: cohesion, independent of density | 5 × 2 h CPU | ❓ experimental ΔH_vap source needed |
 | A6 | Viscosity of the pure solvents and of 1 M EC:EMC (Green–Kubo, 5–10 ns NVT each) | η against Logan 2018 (EC:EMC); independent of ζ | 6 × ≤ 4.5 h | 🔧 pressure-tensor output (spec addition) |
 | A7 | Static dielectric constant of EC and EMC from dipole fluctuations (10 ns NVT) | ε against literature: the screening that ion pairing depends on | 2 × 4.5 h | 🔧 analysis (dipole series); ❓ ε source |
@@ -54,11 +54,11 @@
 
 | ID | Analysis or calculation | Question | Tool |
 |---|---|---|---|
-| D1 | Split κ into self (Nernst–Einstein) and distinct parts (L₊₊, L₋₋, L₊₋) along C2 and C5 | which correlation sets the κ maximum, and why it shifts without EC | 🔧 decomposition in ucmd-analysis |
+| D1 | Split κ into self (Nernst–Einstein) and distinct parts (L₊₊, L₋₋, L₊₋) along C2 and C5 | which correlation sets the κ maximum, and why it shifts without EC | ✅ tool; on the pilot no distinct part is resolved after 20 ns |
 | D2 | Walden analysis along C3 (κ against 1/η), and ionicity against T | how much of κ(T) is viscosity, how much association | needs A6 (η) |
 | D3 | Li⁺–PF₆⁻ potential of mean force at −10, 20, 50 °C (umbrella sampling) | energy and entropy of ion pairing: why association grows with T | 🔧 distance restraint in the engine |
-| D4 | Cluster populations (free, pairs, triple ions, larger) and their share of the current, at −10 °C | can charged clusters make t₊ negative (Landesfeind) or not (Lehnert, eNMR)? | 🔧 cluster analysis |
-| D5 | Solvent residence times at Li⁺ against the Li⁺ diffusion time | vehicular or exchange transport of Li⁺, and why Li⁺ is slower than PF₆⁻ | 🔧 residence-time analysis |
+| D4 | Cluster populations (free, pairs, triple ions, larger) and their share of the current, at −10 °C | can charged clusters make t₊ negative (Landesfeind) or not (Lehnert, eNMR)? | ✅ tool; pilot: 77 % free, 21 % pairs |
+| D5 | Solvent residence times at Li⁺ against the Li⁺ diffusion time | vehicular or exchange transport of Li⁺, and why Li⁺ is slower than PF₆⁻ | ✅ tool; pilot: EMC stays ≈ 0.6 ns, EC 28 ps |
 | D6 | Volume-fixed frame and electrophoretic mobilities | comparison with eNMR (Lehnert: 20 % gap for EC:EMC:MP) | 🔧 VOL frame (needs partial molar volumes from C2) |
 
 ## What we can only partly test, or not at all (recorded on purpose)

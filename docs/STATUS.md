@@ -165,6 +165,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-20 — A3 pilot done; E3.7 identity defect found and fixed — 20 ns at 20 °C on the GPU
+(10 hangs, all recovered; bridge threads stuck in `kfd_wait_on_events`). The OpenMM output
+exchanged identical molecules every 84 000 steps (237 events); collective κ, t₊, L_ij were
+right, self-diffusion 3.5× wrong. Fix on ucmd-engine branch `e37-identity` (tracker every 250
+steps, permutation in checkpoints, emergency checkpoint now keeps its own step) plus
+`python -m ucmd_bridge.repair`; the pilot repaired. Results: κ 0.42 ± 0.09 S/m, t₊ 0.29 ± 0.11,
+D_Li 4.74 ± 0.20·10⁻¹¹ m²/s, ionicity 0.90 ± 0.19, EMC residence at Li⁺ ≈ 0.6 ns (report §3.5)
+— evidence: `ucmd-engine/validation/e37-identity/REPORT.md`, bridge tests 23/23 — next: GPU
+check of the fix after A4 (A4 runs on the old bridge and needs the repair), then the gate.
+
 2026-11-20 — A1 done; association corrected — all ten pure-solvent densities: DMC, PC, MP
 within 2 % of Table S2; EMC +2.9 % (25 °C) and EC −3.5 % (40 °C, where Table S2's liquid value
 applies) fail (report §3.2). The automatic g(r) cutoff stopped at a noise dip inside the Li–P

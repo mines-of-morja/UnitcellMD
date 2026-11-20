@@ -277,17 +277,76 @@ smoothed g(r), stated in brackets):
 
 Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
 
-### 3.5 Transport (pending)
+### 3.5 Transport: the pilot (A3)
 
-- **Run:** the pilot (20 ns NVT at 20 °C from the equilibrated state of §3.3) runs tonight.
-- **It will report:**
-  - D of every species;
-  - L₊₊, L₋₋ and L₊₋;
-  - κ, t₊ (COM frame) and the ionicity κ/κ_NE, with block errors;
-  - above all, the noise of the cross term L₊₋ after 20 ns, which sets the length and number
-    of replicas of the campaign.
-- **Interpretation:** its κ and t₊ inherit the shell error of §3.4 and a ζ fitted to a
-  different model. They are a test of the method, not of the physics.
+**Run:**
+- 20 ns NVT at 20 °C on the GPU, from the equilibrated state of §3.3;
+- evaluated over 1–20 ns in 5 blocks (3.8 ns each);
+- the GPU hung 10 times; checkpoint restarts kept the trajectory continuous (9784 frames,
+  2 ps apart).
+
+**A defect of the GPU backend, found here and repaired:**
+- The OpenMM output exchanged the labels of identical molecules: every 84 ps, up to 300 at
+  once.
+- Box images moved with the molecules, so **κ, t₊ and the L_ij are unaffected**.
+- Self-diffusion and residence times were wrong, D_Li 3.5× too high.
+- A repaired copy of the trajectory restores the labels. It checks every assignment and
+  changes no collective quantity (`ucmd-engine/validation/e37-identity`).
+- The backend now tracks molecules itself, so future runs are written correctly.
+
+| quantity | value (1 M EC:EMC 3:7, 20 °C, LigParGen solvents, ζ = 0.75) | relative error |
+|---|---|---|
+| κ | 0.42 ± 0.09 S/m | 21 % |
+| κ_NE (Nernst–Einstein) | 0.48 ± 0.03 S/m | 5 % |
+| ionicity κ/κ_NE | 0.90 ± 0.19 | 21 % |
+| t₊ (COM frame) | 0.29 ± 0.11 | 39 % |
+| D_Li⁺ | (4.74 ± 0.20)·10⁻¹¹ m²/s | 4 % |
+| D_PF₆⁻ | (7.9 ± 0.6)·10⁻¹¹ m²/s | 8 % |
+| D_EC | (1.50 ± 0.04)·10⁻¹⁰ m²/s | 2 % |
+| D_EMC | (9.8 ± 0.3)·10⁻¹¹ m²/s | 3 % |
+
+- **Convention:** κ uses formal charges (±1). With the scaled charges (ζ²) it would be
+  0.24 S/m. Which convention Lehnert's comparison uses is still to be checked.
+- **Finite size:** D is not corrected for the box size. Yeh–Hummer needs η (A6).
+- **Experimental comparison:** κ and t₊ still need cited experimental values here. Lehnert's
+  eNMR t₊ is 0.343, his MD 0.373 ([reproduction-plan.md](../reproduction-plan.md)).
+
+**κ split into self and distinct parts (D1):**
+- self: Li⁺ 0.18 ± 0.01 S/m, PF₆⁻ 0.30 ± 0.02 S/m;
+- distinct: ++ −0.06 ± 0.03, −− +0.01 ± 0.07, +− −0.01 ± 0.07 S/m.
+- None of the distinct parts is resolved after 20 ns. The cross term alone carries an
+  uncertainty of 17 % of κ. That was the pilot's main question.
+
+**What the noise means for the campaign** (sem ∝ 1/√time):
+- κ to 10 % needs about 85 ns per state point, e.g. 3 replicas × 30 ns.
+- t₊ to 10 % needs about 300 ns.
+- Lehnert evaluated 40–160 ns × 3 replicas.
+
+**Association and Li⁺ shell over 1–20 ns** (repaired trajectory; cutoffs at the g(r) minima):
+- **Free:** 77.1 ± 1.8 % of Li⁺.
+- **Contact pairs:** 20.8 ± 1.3 %.
+- **Triple ions:** about 2 %.
+- Consistent with the ionicity of 0.9.
+- **Li⁺ shell:**
+  - EC O=C 0.48–0.52, EMC O=C 3.67–3.69, PF₆⁻ 0.23 per Li⁺;
+  - EC holds 11–12 % of the carbonyl O at Li⁺ (34 % of the solvent);
+  - that is slightly more than over 1.5–3 ns (9–11 %), so the shell may still be changing.
+
+**How long a partner stays at a Li⁺** (contact within the g(r) minimum; 5 blocks):
+
+| partner | continuous τ | intermittent τ |
+|---|---|---|
+| EC (carbonyl O) | 28 ± 1 ps | 234 ± 11 ps |
+| PF₆⁻ (P) | 56 ± 5 ps | 386 ± 67 ps |
+| EMC (carbonyl O) | 600 ± 9 ps | ≥ 1.9 ns (no block decays; 3.6 ns over the whole run) |
+
+**Reading:**
+- A Li⁺ needs about (0.5 nm)²/(6 D_Li) ≈ 0.9 ns to move by its own shell radius.
+- Its EMC partners stay about that long. So in this model Li⁺ moves largely together with its
+  EMC shell (vehicular).
+- EC and PF₆⁻ exchange within tens of picoseconds.
+- This follows from the shell composition of §3.4. With EC excluded, it is a property of this
+  force field, not yet of the electrolyte.
 
 ## 4. Discussion: what the model explains, and what it does not
 
@@ -302,8 +361,11 @@ Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
   A published OPLS-AA set reproduces EC, so the parameters are at fault, not the functional form;
 - the Li⁺ shell composition (EC excluded), plausibly from the carbonyl charge asymmetry.
 
+**Measured, not yet compared:** κ, t₊, D and the residence times of the pilot (§3.5) still
+lack cited experimental values here; with the shell error of §3.4 and a borrowed ζ they test
+the method more than the physics.
+
 **Not yet tested (pending or needing tools):** the plan's table lists each with its ID.
-- κ, t₊, D (A3, then C);
 - viscosity (A6);
 - dielectric constant (A7);
 - ΔH_vap (A5);
@@ -336,6 +398,7 @@ status:
 |---|---|
 | figures 1, 3, 4 | `2026-11-17_pressure-at-reference-density`, `2026-11-17_electrolyte-npt-{cpu,gpu}` |
 | figure 2 | `2026-11-17_pure-solvent-densities` (tail off), `2026-11-17_solvent-densities-tail-on` |
+| §3.5 | `2026-11-19_transport-pilot`: `transport.json` (original file), `transport.repaired.json`, `clusters.json`, `shell*.json`, `residence_*.json` (repaired file) |
 
 - **Provenance:** every run stores its exact `run.toml`, engine version, package hash and (on the
   GPU) the device, OpenMM, ROCm and container versions.
