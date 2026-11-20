@@ -1,6 +1,6 @@
 # A verified open MD engine for Li-ion battery electrolytes, and what an open OPLS-AA model does and does not reproduce
 
-*Working draft, 2026-11-19. Results marked **pending** follow from runs in progress. Numbers come
+*Working draft, 2026-11-20. Results marked **pending** follow from runs in progress. Numbers come
 from `data.json` (written by `figures.py` from the study data) and from the validation reports
 cited. Not peer reviewed.*
 
@@ -20,7 +20,7 @@ cited. Not peer reviewed.*
   - the GPU backend reproduces the CPU trajectory from an identical state;
   - mixed and double precision are statistically indistinguishable.
 - **The open force field (LigParGen OPLS-AA for the solvents) fails in a characteristic way:**
-  - pure EMC is 2.9 % too dense, EC about 2 % too light;
+  - pure EMC is 2.9 % too dense and EC 3.5 % too light; DMC, PC and MP lie within 2 %;
   - the 1 M EC:EMC electrolyte comes out 1.4 % lighter than with Lehnert's model;
   - the Li⁺ first shell excludes EC almost completely. We trace this to an asymmetry of the
     fitted carbonyl charges.
@@ -117,26 +117,67 @@ what the present model gets right and wrong.
 - GPU, double precision: 34 ns/day;
 - GPU, mixed precision: about 55 ns/day.
 
-### 3.2 Pure solvents: EMC too dense, EC too light
+### 3.2 Pure solvents: linear carbonates too dense, EC too light
 
 ![Pure-solvent densities](figures/fig2_solvent_densities.png)
 
-| solvent | T | ρ_sim (g/cm³), tail correction on | Table S2 | deviation |
-|---|---|---|---|---|
-| EMC | 25 °C | 1.0347 ± 0.0003 | 1.006 | **+2.9 %** |
-| EMC | 40 °C | 1.0180 ± 0.0008 | 1.006 (25 °C) | – |
-| EC (supercooled) | 25 °C | 1.2975 ± 0.0003 | 1.321 (liquid) | **−1.8 %** (more at equal T) |
-| EC | 40 °C | pending | 1.321 | – |
-| DMC, PC, MP | 25/40 °C | pending | 1.069, 1.204, 0.915 | – |
+NPT at 1 atm, 0.5 ns, tail correction on, mean over the second half with block errors.
+Deviations are from Lehnert SI Table S2.
 
+| solvent | ρ_sim 25 °C (g/cm³) | ρ_sim 40 °C (g/cm³) | Table S2 | deviation 25 °C | deviation 40 °C |
+|---|---|---|---|---|---|
+| EC | 1.2975 ± 0.0003 (supercooled) | 1.2753 ± 0.0011 | 1.321 | −1.8 % | **−3.5 %** |
+| PC | 1.1972 ± 0.0011 | 1.1804 ± 0.0007 | 1.204 | −0.6 % | −2.0 % |
+| DMC | 1.0873 ± 0.0003 | 1.0708 ± 0.0014 | 1.069 | +1.7 % | +0.2 % |
+| EMC | 1.0347 ± 0.0003 | 1.0180 ± 0.0008 | 1.006 | **+2.9 %** | +1.2 % |
+| MP | 0.9248 ± 0.0013 | 0.9052 ± 0.0007 | 0.915 | +1.1 % | −1.1 % |
+
+**Which temperature Table S2 refers to.**
+- Table S2 does not state a temperature. Manufacturer data are usually given at 20–25 °C.
+- **The EC value is different:**
+  - EC melts at 36 °C, so 1.321 g/cm³ must be a liquid density;
+  - it matches the experimental density at 39 °C, 1.3214 g/cm³ (DIPPR, compiled in the
+    Caleman et al. 2012 SI);
+  - so the like-for-like comparison for EC is at 40 °C. A 1 K offset changes ρ by about 0.1 %.
+- With that reading, at the temperature that applies:
+  - DMC (+1.7 %), PC (−0.6 %) and MP (+1.1 %) pass the ±2 % criterion;
+  - **EMC (+2.9 %) and EC (−3.5 %) fail it.**
+
+**Pattern.**
+- The linear carbonates are too dense: EMC +2.9 %, DMC +1.7 %.
+- The cyclic ones are too light: EC −3.5 %, PC −0.6 %.
+- Opposite signs within one parameter source point to the parameters of individual molecules,
+  not to a common convention or to the engine. The engine reproduces OpenMM densities within
+  one standard error (§3.1).
+- **The functional form is not the problem:**
+  - the OPLS-AA atom types distributed with GROMACS reproduce EC at 39 °C to 0.05 %:
+    1.3207 against 1.3214 g/cm³ (Caleman 2012; candidate 2 in
+    [forcefield-survey.md](../forcefield-survey.md));
+  - a different parameter set in the same functional form does what ours does not.
+
+**Thermal expansion.** The simulated α = −d ln ρ/dT between 25 and 40 °C:
+
+| solvent | α (10⁻³ K⁻¹) |
+|---|---|
+| EC | 1.15 |
+| EMC | 1.09 |
+| DMC | 1.02 |
+| PC | 0.94 |
+| MP | 1.43 |
+
+There is no cited experimental α yet, so these values are recorded, not judged (A8).
+
+**Checks.**
 - Without the tail correction, EMC is 1.0278 g/cm³ (+2.2 %). The correction adds the dispersion
   attraction beyond the cutoff and raises the density, as expected.
 - The pressure test at fixed density agrees: pure EMC held at 1.006 g/cm³ shows
   −435 ± 21 bar (tail correction off; Figure 1).
-- **The errors have opposite signs** for the cyclic carbonate (too light) and the linear one (too
-  dense). That points to the parameters of individual molecules rather than to a common
-  convention. Whether LJ parameters or charges are responsible is open; A5 (ΔH_vap) and B3 decide
-  it.
+- The mean pressure of the NPT runs is within 2σ of the 1 atm target in 9 of 10 runs.
+  - MP at 40 °C reads 21 ± 7 bar.
+  - At a compressibility of order 10⁻⁴ bar⁻¹, 20 bar shifts ρ by about 0.2 %, which is small
+    against the deviations above.
+  - The block errors of a 0.25 ns window probably understate the pressure noise.
+- **Whether LJ parameters or charges cause the errors is open.** A5 (ΔH_vap) and B3 decide it.
 
 ### 3.3 The electrolyte: density settles fast, structure slowly
 
@@ -225,7 +266,8 @@ Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
 - the electrolyte density, within 1.4 % of Lehnert's model, but for partly cancelling reasons.
 
 **Not reproduced, with a probable cause:**
-- pure-solvent densities to 2 %: EMC +2.9 %, EC −1.8 % or more;
+- pure-solvent densities to 2 % for EMC (+2.9 %) and EC (−3.5 % at 40 °C); DMC, PC and MP pass.
+  A published OPLS-AA set reproduces EC, so the parameters are at fault, not the functional form;
 - the Li⁺ shell composition (EC excluded), plausibly from the carbonyl charge asymmetry.
 
 **Not yet tested (pending or needing tools):** the plan's table lists each with its ID.
@@ -276,5 +318,7 @@ status:
 - K. D. Fong et al., Macromolecules 53, 9503 (2020).
 - L. S. Dodda et al., Nucleic Acids Res. 45, W331 (2017); J. Phys. Chem. B 121, 3864 (2017)
   (LigParGen).
+- C. Caleman et al., J. Chem. Theory Comput. 8, 61 (2012), and SI (experimental ρ, ΔH_vap, ε compiled
+  from DIPPR, CRC and others; OPLS-AA results).
 - K. P. Jensen, W. L. Jorgensen, J. Chem. Theory Comput. 2, 1499 (2006).
 - J. N. Canongia Lopes, A. A. H. Pádua, J. Phys. Chem. B 108, 16893 (2004).
