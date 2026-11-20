@@ -157,8 +157,20 @@ Last update: 2026-11-13.
    (EC, PC) first, fit QM charges (needs psi4 in a container), or license Maestro.
 6. Experimental sources for ΔH_vap and ε (A5, A7). The Caleman 2012 SI compiles them with
    their primary references. A source for the expected EC enrichment in the Li⁺ shell.
-7. A4 (one LiPF₆ pair in EC, EMC, EC:EMC 1:1; 5 ns each) is queued on the GPU behind the
-   transport pilot, as the baseline before D1. Say if it should not run.
+7. **Gate E3.7 again:** the molecule-identity fix (ucmd-engine branch `e37-identity`,
+   `validation/e37-identity`) passes on the CPU. A short GPU check follows when A4 is done;
+   then merge into `e37-openmm`. A4 itself (running since 2026-11-20) uses the old bridge, so its
+   trajectories need the repair tool.
+8. **The GPU hangs** (11 so far; bridge stuck in `kfd_wait_on_events`). The 10:54Z hang on
+   2026-11-20 came at normal temperatures (junction 54–61 °C, 80–92 W). That points to the
+   ROCm driver or firmware rather than cooling. The kernel log needs root:
+   `sudo dmesg -T | grep -i amdgpu`. Proposals for the study driver: stall timeout 5 min
+   instead of 30, checkpoints every 0.1 ns.
+9. **κ comparison:** a cited experimental κ for 1 M LiPF₆ in EC:EMC 3:7 at 20 °C (Landesfeind
+   2019 or Logan 2018), and which charges Lehnert uses for κ: formal (our 0.42 S/m) or scaled
+   by ζ (0.24 S/m).
+10. CLAUDE.md lists the GPUs as "RX 580, Radeon VII". The compute card is an MI50 (gfx906);
+    correct the text?
 
 ## Log
 
