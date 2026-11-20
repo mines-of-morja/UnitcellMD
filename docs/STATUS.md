@@ -173,7 +173,12 @@ Last update: 2026-11-13.
    card runs the **Radeon VII VBIOS 113-D3600200-106** (RAS EEPROM unreadable, I2C NAK, as usual
    for a flashed MI50), so its top states 1749–1801 MHz lie above the MI50's own peak clock. **Test since 14:31Z:** top sclk states locked out (manual, states
    0–5, max 1683 MHz; about 968 instead of 1068 mV, 75 instead of 85 W), after hangs every
-   ~10 min at 1801 MHz and normal temperatures. Revert: `echo auto > power_dpm_force_performance_level`;
+   ~10 min at 1801 MHz and normal temperatures. **Result so far: not the cause.** Hangs at
+   14:47Z (1546 MHz) and 15:22Z (1683 MHz). In all 9 hang snapshots the GPU drops from 60–90 %
+   busy to 0 % within 5 s and stays idle while the bridge waits in `kfd_wait_on_events`: the
+   work finishes, the completion event never reaches the host. That points to the ROCm OpenCL
+   runtime or KFD (a lost signal), not to voltage margin. Options: a short stall timeout with
+   frequent checkpoints (cheap), OpenMM's HIP platform instead of OpenCL, another ROCm version. Revert: `echo auto > power_dpm_force_performance_level`;
    lost on reboot. Proposals for the study driver: stall timeout 5 min
    instead of 30, checkpoints every 0.1 ns.
 9. **κ comparison — answered, to confirm:** Landesfeind 2019 (Eq. 15, Table II) gives
