@@ -1,6 +1,8 @@
 """Every valid fixture passes; every invalid fixture fails with exactly its expected code."""
 
 import json
+import os
+from pathlib import Path
 
 import pytest
 from conftest import FIXTURES
@@ -66,3 +68,21 @@ def test_valid_run_config_passes_with_its_system(run) -> None:
 def test_invalid_run_config_reports_its_code(name) -> None:
     report = validate_run_config(FIXTURES / "runs" / "invalid" / name)
     assert report.error is not None and report.error.code == INVALID_RUNS[name], report.error
+
+
+def test_pressure_tensor_needs_a_periodic_system(tmp_path: Path) -> None:
+    """0.1.1: [output.thermo] pressure_tensor on a non-periodic package is E_INCOMPATIBLE."""
+    text = (FIXTURES / "runs" / "harmonic-nve.toml").read_text()
+    text = text.replace(
+        '"../valid/harmonic-3d"',
+        f'"{os.path.relpath(FIXTURES / "valid" / "harmonic-3d", tmp_path)}"',
+    )
+    text += (
+        '\n[output]\ndirectory = "out"\n\n'
+        '[output.thermo]\nfile = "t.tsv"\nevery = 1\npressure_tensor = true\n'
+    )
+    run = tmp_path / "run.toml"
+    run.write_text(text.replace('spec_version = "0.1.0"', 'spec_version = "0.1.1"'))
+    report = validate_run_config(run, with_system=True)
+    assert report.error is not None and report.error.code == "E_INCOMPATIBLE"
+    assert report.error.location == "/output/thermo/pressure_tensor"

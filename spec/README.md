@@ -1,6 +1,7 @@
 # UnitcellMD specification
 
-Version **0.1.0**, approved at Gate 0 on 2026-11-12 (git tag `spec-v0.1.0`). Changes need the
+Version **0.1.1** (2026-11-20; 0.1.0 approved at Gate 0 on 2026-11-12, git tag `spec-v0.1.0`;
+see [CHANGELOG.md](CHANGELOG.md)). Changes need the
 author's approval and a new version. This is the contract between
 `ucmd-builder`, `ucmd-engine`, `ucmd-analysis` and every force provider: the components share
 these files and protocols, and nothing else.

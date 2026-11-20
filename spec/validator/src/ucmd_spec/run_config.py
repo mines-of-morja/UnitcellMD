@@ -78,6 +78,12 @@ def _validate(path: Path, with_system: bool, report: Report) -> None:
             raise Invalid(sub.error.code, f"system package {package}: {sub.error.message}")
         system = json.loads((package / "system.json").read_text(encoding="utf-8"))
         periodicity = system["periodicity"]
+        if _lookup(doc, ("output", "thermo", "pressure_tensor")) and not all(periodicity):
+            raise Invalid(
+                "E_INCOMPATIBLE",
+                "the pressure tensor needs a fully periodic system",
+                "/output/thermo/pressure_tensor",
+            )
         if "barostat" in doc and not all(periodicity):
             raise Invalid("E_INCOMPATIBLE", "a barostat needs a fully periodic system", "/barostat")
         if doc.get("momentum", {}).get("remove_angular") and any(periodicity):

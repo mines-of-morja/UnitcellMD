@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 — 2026-11-20 (approved by the author for implementation; not yet tagged)
+
+Backwards compatible: every 0.1.0 file stays valid.
+
+- run-config: `[output.thermo] pressure_tensor` (bool, default false) adds the six components of
+  the symmetrized pressure tensor to the thermo table (Green–Kubo viscosity, design E2.9 §4).
+
 ## 0.1.0 — 2026-11-12
 
 Initial version, approved at Gate 0 (git tag `spec-v0.1.0`). Contents:
