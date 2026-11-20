@@ -1,0 +1,24 @@
+# 216 SPC/Fw water molecules, the system size of Wu, Tepper, Voth 2006 (§II B).
+format = "ucmd-build"
+version = "0.1"
+name = "spcfw_216"
+seed = 2006
+
+[forcefield]
+source = "library"
+set = "water-spcfw"
+
+[[component]]
+name = "water"
+molecule = { library = "water" }
+count = 216
+
+[box]
+density_g_cm3 = { value = 1.012, source = "Wu, Tepper, Voth, J. Chem. Phys. 124, 024503 (2006), Table II: SPC/Fw at 298 K; the NVT runs of this study keep it (Wu measured η at that density, 300.2 K)" }
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2
+
+[velocities]
+temperature_K = 298.16

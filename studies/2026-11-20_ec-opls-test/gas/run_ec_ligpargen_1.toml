@@ -1,0 +1,32 @@
+# Gas phase for ΔH_vap (rung EC, design E2.9): one EC molecule alone, 312.15 K, 10 ns,
+# Langevin BAOAB (Caleman 2012 used stochastic dynamics for the gas phase; with LINCS, we have no
+# constraints). The package is made by gas/make_gas_package.py from external/build/ec_ligpargen_1.ucsys.
+spec_version = "0.1.0"
+system = "../external/build/ec_ligpargen_1-gas.ucsys"
+title = "EC gas phase (ec_ligpargen_1), 312.15 K"
+
+[run]
+integrator = "langevin-baoab"
+timestep_fs = 1.0
+steps = 10000000
+seed = 20261126
+
+[velocities]
+generate = "maxwell-boltzmann"
+temperature_K = 312.15
+
+[thermostat]
+kind = "langevin"
+temperature_K = 312.15
+friction_per_ps = 5.0
+
+[[providers]]
+kind = "force-field"
+coulomb = "direct"
+
+[output]
+directory = "../external/gas-ec_ligpargen_1"
+
+[output.thermo]
+file = "thermo.tsv"
+every = 100

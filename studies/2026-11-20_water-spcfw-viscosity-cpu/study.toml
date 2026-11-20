@@ -1,0 +1,90 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-20"
+question = "Rung W, P5 (design E2.9): Green-Kubo shear viscosity of SPC/Fw with the CPU engine (spec 0.1.1 pressure-tensor columns), NVT at Wu 2006 conditions for η (ρ = 1.012 g/cm³, 300.2 K), against Wu's periodic-perturbation value 0.75 cP"
+requested_by = "the author, 2026-11-20 (Wu 2006 added to ../Lit; order of design E2.9 approved)"
+
+[systems]
+recipes = "recipes/*.toml"
+
+[scan]
+temperature_C = [27.05]
+
+[protocol]
+seed = 20261127
+
+[estimate]
+seconds_per_atom_per_run = 40.0
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 0.9
+coulomb = "pme"
+ewald_tolerance = 1e-6
+dispersion_correction = true
+
+# NVT at the packing density 1.012 g/cm³ (Wu 2006 Table II) and 300.2 K (Wu's η), 4 ns at 1 fs.
+# Thermo every 2 steps with the pressure tensor (spec 0.1.1): the flexible O-H stretch oscillates
+# with about 9 fs, so 2 fs resolves it. Nosé–Hoover chain with τ = 1 ps (gentle on the dynamics).
+# Run with the engine of branch e29-pressure-tensor.
+[run_template]
+spec_version = "0.1.1"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 4000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 1.0
+chain_length = 3
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 0.9
+coulomb = "pme"
+ewald_tolerance = 1e-6
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 2
+pressure_tensor = true
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 1000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 100000

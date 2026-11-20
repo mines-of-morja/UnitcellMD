@@ -1,0 +1,30 @@
+# Pure EC with the OPLS-AA atom types of Caleman et al. 2012 (rung EC, design E2.9; a test, not
+# decision D1). The parameters come from external/ec-oplsaa-explicit.itp, written by
+# make_explicit_itp.py from virtualchemistry.org's 96-49-1.top + oplsaaff.itp (kept local).
+format = "ucmd-build"
+version = "0.1"
+name = "ec_oplsaa_1"
+seed = 20261120
+
+[forcefield]
+source = "gromacs-top"
+file = "../external/ec-oplsaa-explicit.itp"  # relative to checks/ (built directly)
+citations = [
+    { what = "EC: OPLS-AA atom types opls_771-777 with bonded types of oplsaaff.itp, topology 96-49-1.top", citation = "C. Caleman, P. J. van Maaren, M. Hong, J. S. Hub, L. T. Costa, D. van der Spoel, J. Chem. Theory Comput. 8, 61 (2012); files from virtualchemistry.org" },
+    { what = "OPLS-AA force field", citation = "W. L. Jorgensen, D. S. Maxwell, J. Tirado-Rives, J. Am. Chem. Soc. 118, 11225 (1996)" },
+]
+
+[[component]]
+name = "EC"
+molecule = { smiles = "O=C1OCCO1" }
+count = 1
+
+[box]
+density_g_cm3 = { value = 0.01, source = "dilute: one molecule for the vacuum comparison with OpenMM (the cell is not used)" }
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2
+
+[velocities]
+temperature_K = 312.15

@@ -1,0 +1,25 @@
+# Pure EC with the current parameters (LigParGen 1.14·CM1A-LBCC, ADR 0009), the twin of
+# ec_oplsaa_1000 with identical box and settings (rung EC, design E2.9).
+format = "ucmd-build"
+version = "0.1"
+name = "ec_ligpargen_1"
+seed = 20261120
+
+[forcefield]
+source = "library"
+set = "opls-aa-carbonates"
+
+[[component]]
+name = "EC"
+molecule = { library = "EC" }
+count = 1
+
+[box]
+density_g_cm3 = { value = 0.01, source = "dilute: one molecule for the gas phase (the cell is not used)" }
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2
+
+[velocities]
+temperature_K = 312.15

@@ -1,0 +1,96 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-20"
+question = "Rung EC (design E2.9, P6): does pure EC at 39 °C reach Caleman 2012's OPLS-AA density (1320.7 g/L) and ΔH_vap (64.90 kJ/mol) with the OPLS-AA atom types, and how far is the current LigParGen set from it under identical settings? A test, not decision D1."
+requested_by = "the author, 2026-11-20 ('yes, run the test')"
+
+[systems]
+recipes = "recipes/*.toml"
+
+[scan]
+temperature_C = [39]
+
+[protocol]
+seed = 20261124
+
+[estimate]
+seconds_per_atom_per_run = 0.4
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.1
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+# NPT at 1 bar, 2 ns, on the GPU. Caleman 2012 §2.3: 1000 molecules, LJ cutoff 1.1 nm with
+# analytic tail corrections, PME, Nosé–Hoover τ = 1 ps, Parrinello–Rahman τ = 5 ps,
+# compressibility 5e-5 /bar. Differences: C-rescale instead of Parrinello–Rahman (same
+# ensemble); no bond constraints (Caleman: LINCS on all bonds; our engine has none yet, P7).
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 2000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 1.0
+chain_length = 3
+
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.0
+tau_ps = 5.0
+compressibility_per_bar = 5e-5
+every = 25
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.1
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 100
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 2000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 100000
