@@ -155,7 +155,18 @@ def _starts(top: Topology, solvent: list[int], mt: dict) -> tuple[list[np.ndarra
     return starts, carbonyl
 
 
-def run(path: Path, q_values: list[float]) -> list[dict]:
+ANGSTROM_PER_NM = 10.0  # exact (definition)
+
+
+def write_xyz(path: Path, elements: list[str], positions_nm: np.ndarray, comment: str) -> None:
+    """Extended-XYZ-free plain xyz in Å, the input format of the QM tools (tools/qm)."""
+    lines = [str(len(elements)), comment]
+    for el, r in zip(elements, positions_nm * ANGSTROM_PER_NM, strict=True):
+        lines.append(f"{el:2s} {r[0]:14.8f} {r[1]:14.8f} {r[2]:14.8f}")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def run(path: Path, q_values: list[float], xyz_dir: Path | None = None) -> list[dict]:
     top = load_topology(path)
     info = _package_info(path)
     li = info["Li"][0][0]
@@ -189,6 +200,12 @@ def run(path: Path, q_values: list[float]) -> list[dict]:
             row["e_bind_carbonyl_kjmol"] = round(best_carbonyl.energy_kjmol, 3)
             row["e_bind_carbonyl_kcalmol"] = round(best_carbonyl.energy_kjmol / KCAL_IN_KJ, 3)
             row["li_o_carbonyl_nm"] = round(best_carbonyl.distance_nm, 4)
+            if xyz_dir is not None:
+                els = ["Li"] + [a["element"] for a in mt["atoms"]]
+                pos = best_carbonyl.positions_nm[[li, *solvent]]
+                pos = pos - pos.mean(axis=0)
+                f = xyz_dir / f"{path.stem}_q{q:g}_li-carbonyl.xyz"
+                write_xyz(f, els, pos, f"Li+ {name}, carbonyl, force-field minimum of {path.name}")
         rows.append(row)
     return rows
 
@@ -197,8 +214,11 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("packages", nargs="+", type=Path)
     ap.add_argument("--q-li", type=float, nargs="+", default=[1.0, 0.75])
+    ap.add_argument("--xyz", type=Path, help="write the carbonyl complexes as xyz (Å) here")
     args = ap.parse_args()
-    out = [row for p in args.packages for row in run(p, args.q_li)]
+    if args.xyz:
+        args.xyz.mkdir(parents=True, exist_ok=True)
+    out = [row for p in args.packages for row in run(p, args.q_li, args.xyz)]
     json.dump(out, sys.stdout, indent=1)
     print()
 

@@ -87,3 +87,11 @@ def test_li_charge_override():
     full = lb.binding_energy(top, li=0, solvent=[1], starts_nm=[np.array([0.0, 0, 0])])
     scaled = lb.binding_energy(top, li=0, solvent=[1], starts_nm=[np.array([0.0, 0, 0])], q_li=0.75)
     assert scaled.energy_kjmol > full.energy_kjmol  # weaker attraction
+
+
+def test_write_xyz_converts_nm_to_angstrom(tmp_path):
+    f = tmp_path / "a.xyz"
+    lb.write_xyz(f, ["Li", "O"], np.array([[0.0, 0, 0], [0.19, 0, 0]]), "test")
+    lines = f.read_text().splitlines()
+    assert lines[0] == "2" and lines[1] == "test"
+    assert lines[3].split() == ["O", "1.90000000", "0.00000000", "0.00000000"]
