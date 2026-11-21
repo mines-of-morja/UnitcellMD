@@ -158,8 +158,12 @@ Last update: 2026-11-13.
 6. Experimental sources for ΔH_vap and ε (A5, A7). The Caleman 2012 SI compiles them with
    their primary references. For the Li⁺ shell, Lehnert SI Fig. S10 is now the **model**
    reference (1 M, 20 °C, within rs = 5.16 Å: EC ≈ 2.3, EMC ≈ 2.6, PF₆⁻ ≈ 0.7; EC ≈ 47 % of
-   the carbonyl O; ours 20 %). An experimental source is still open; stage B counts both ways
-   (report §3.4, calculation plan).
+   the carbonyl O; ours 20 %). **Experimental source found (2026-11-21):** dielectric
+   spectroscopy, Self, Hahn, Persson, Energy Environ. Mater. 7, e12494 (2024, CC BY): the free-EC
+   amplitude drops from 14.1 to 5.3 at 1 M, which we read as ≈ 2.2 bound EC per Li⁺ (an estimate,
+   strategy §8). Stage B counts both ways (report §3.4, calculation plan). For ../Lit, if wanted:
+   that paper (open) and Hall, Self, Dahn, J. Phys. Chem. C 119, 22322 (2015) (paywalled; neat
+   EMC ε).
 7. **Gate E3.7 again:** the molecule-identity fix (ucmd-engine branch `e37-identity`,
    `validation/e37-identity`) passes on the CPU. A short GPU check follows when A4 is done;
    then merge into `e37-openmm`. A4 itself (running since 2026-11-20) uses the old bridge, so its

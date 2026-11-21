@@ -133,6 +133,38 @@ research extension for high concentrations, not a prerequisite.
 - **EC density (rung EC, 39 °C, 1000 EC):** OPLS-AA 1.3193 g/cm³, LigParGen 1.2800
   (`studies/2026-11-20_ec-opls-test/INDEX.md`; the experimental comparison belongs to that study).
 
+### An experimental anchor for the Li⁺ shell: dielectric spectroscopy (2026-11-21)
+
+Source: J. Self, N. T. Hahn, K. A. Persson, *Energy Environ. Mater.* 7, e12494 (2024; online
+2022), doi:10.1002/eem2.12494, CC BY 4.0. DRS of neat EC:EMC 3:7 (w/w) and of 1 M LiPF₆ in it,
+21 °C, Table 1:
+
+| | neat 3:7 | 1 M LiPF₆ |
+|---|---|---|
+| ε_s | 18.7 ± 0.4 | 18.5 ± 0.5 |
+| free-EC amplitude ε₁ | 14.1 ± 0.3 | **5.3 ± 0.2** |
+| free-EMC amplitude ε₂ | 1.1 ± 0.2 | 1.0 ± 0.2 (constrained ≤ 1.0) |
+| associated salt ε₃ | — | 8.0 ± 0.3 (0.55 GHz) |
+| ε∞ (fit) | 3.6 ± 0.1 | 4.2 ± 0.3 |
+
+- **Reading of the authors:** EC coordinates Li⁺ strongly and loses its free dielectric
+  contribution; EMC's amplitude does not change, but it is too small to prove that EMC stays
+  out of the shell. Ion pairs (SSIP or CIP) make up the largest contribution at 1 M.
+- **Our estimate, not theirs:** if ε₁ scales with the number of free EC, 1 − 5.3/14.1 = 62 ± 2 %
+  of the EC are bound. At 1 M (3.58 mol/L EC, from the solvent mass at 1.202 g/cm³, Lehnert's
+  model density) that is **≈ 2.2 EC per Li⁺**. Lehnert's model gives ≈ 2.3 within rs (Fig. S10),
+  ours (M0) 0.98. The estimate ignores kinetic depolarization and changes in dipole
+  correlation. Kinetic depolarization lowers the solvent amplitude in a conducting solution, so
+  2.2 is more likely an upper bound than a lower one. It is a check, not a fit target.
+- **This is the first experimental source for STATUS Q6.** It says the 1 M shell holds about
+  two EC, like Lehnert's model and unlike M0.
+- **For ECC (M3):** the DRS ε∞ = 3.6 is not n². It contains the atomic (far-IR) polarization
+  above the DRS range, which a flexible fixed-charge model partly carries itself. ECC needs the
+  electronic part only, ε_el = n_D² ≈ 1.9–2.0. Using 3.6 would give ζ ≈ 0.53 instead of ≈ 0.72.
+  This is one concrete form of the author's caution about "which high-frequency ε".
+- Neat EMC ε: Hall, Self, Dahn, *J. Phys. Chem. C* 119, 22322 (2015),
+  doi:10.1021/acs.jpcc.5b06022 (EC/EMC blends, 25–60 °C; not yet read, paywalled).
+
 ### Layer 0, first result (2026-11-20): gas-phase Li⁺ binding against G4
 
 - Tool and table: [tools/ffcheck/README.md](../../tools/ffcheck/README.md). The reference is
