@@ -39,10 +39,22 @@ docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp -e USER=psi4 -v "$PWD:/work"
 | level | Li⁺–EC | Li⁺–DMC (cc) | EC − DMC |
 |---|---|---|---|
 | Olguin, MP2/6-31+G(d,p) | −47.7 | −40.8 | −6.9 |
-| **here, MP2/6-31+G(d,p)** (2026-11-21) | **−48.0** | **−40.6** | **−7.4** |
+| **here, MP2/6-31+G(d,p)** (2026-11-21) | **−48.3** | **−40.8** | **−7.5** |
 | Olguin, MP2/aug-cc-pVTZ | −47.8 | −41.3 | −6.5 |
 | Olguin, G4 | −48.1 | −41.9 | −6.2 |
 
-The small-basis check agrees to 0.3 kcal/mol per complex. The remaining difference can come from
-density fitting, frozen core, or the conformer found from our start. Counterpoise-corrected
-interaction energies at this level: EC −45.8, DMC −38.0.
+The small-basis check agrees to 0.6 kcal/mol per complex. The remaining difference can come from
+density fitting or the conformer found from our start. Counterpoise interaction energies at the
+complex geometry, at this level: EC −49.7, DMC −42.0. They exclude the solvent's deformation
+energy, so they are more negative than E_bind.
+
+### Frozen core and bare Li⁺ (fixed 2026-11-21)
+
+Psi4's `freeze_core = True` unfreezes the outermost core shell when freezing it would leave no
+valence electrons. Bare Li⁺ was therefore correlated, while the Li 1s inside the complex stayed
+frozen. That made E_bind too weak by the Li⁺ 1s² correlation energy: 0.3 kcal/mol at
+6-31+G(d,p), which went unnoticed, and 6.9 kcal/mol at aug-cc-pVTZ (EC −41.3 instead of −48.2),
+which the comparison with Olguin caught. The script now takes the SCF energy for any species
+without active electrons, and does the counterpoise correction by hand so that Li⁺ in the dimer
+basis is treated the same way. Rerun with the fix at 6-31+G(d,p): EC −48.30, DMC −40.85
+kcal/mol, the same as the first run corrected by hand from its output.

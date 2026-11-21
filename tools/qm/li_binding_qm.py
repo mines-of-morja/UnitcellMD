@@ -9,9 +9,10 @@ Each START.xyz holds Li⁺ (first atom) and one solvent molecule, e.g. the force
 written by tools/ffcheck/li_binding.py --xyz. For each file:
 - the complex (charge +1) and the solvent alone (from the complex geometry without Li) are
   optimized at METHOD/BASIS;
-- E_bind = E(Li⁺·S) − E(S) − E(Li⁺), all at their own optimized geometries; the counterpoise
-  correction is reported separately (Boys–Bernardi, at the complex geometry, fragment
-  relaxation not included).
+- E_bind = E(Li⁺·S) − E(S) − E(Li⁺), all at their own optimized geometries and all frozen core
+  (for bare Li⁺ that is its SCF energy, see frozen_core_energy); the counterpoise interaction
+  energy is reported separately (Boys–Bernardi, at the complex geometry, without the solvent's
+  deformation energy, so it can be more negative than E_bind).
 The default level, MP2/aug-cc-pVTZ on MP2/aug-cc-pVTZ geometries, is one of the levels in
 Olguin et al., PCCP 18, 164 (2016), Table 1, so EC and DMC check the setup against their numbers
 before EMC (not in their table) is trusted.
@@ -55,6 +56,33 @@ def optimized_energy(m: psi4.core.Molecule, method: str) -> float:
     return float(psi4.optimize(method, molecule=m))
 
 
+def core_pairs(z: int) -> int:
+    """Doubly occupied core orbitals that frozen core freezes for element Z (H–Ar)."""
+    if z <= 2:
+        return 0
+    if z <= 10:
+        return 1
+    if z <= 18:
+        return 5
+    raise ValueError(f"no frozen-core count for Z = {z}")
+
+
+def frozen_core_energy(method: str, m: psi4.core.Molecule) -> float:
+    """Frozen-core energy, also for a molecule with no valence electrons such as bare Li⁺.
+
+    Psi4's freeze_core = True unfreezes the outermost core shell when freezing it would leave no
+    valence electrons. Bare Li⁺ is then correlated (−6.9 kcal/mol at aug-cc-pVTZ) while the Li 1s
+    in the complex stays frozen, and E_bind comes out too weak. With no active electrons the
+    frozen-core energy is the SCF energy, so that is returned. Ghost atoms (Z = 0) do not count.
+    """
+    m.update_geometry()
+    n_el = sum(int(m.Z(i)) for i in range(m.natom())) - m.molecular_charge()
+    n_core = sum(core_pairs(int(m.Z(i))) for i in range(m.natom()) if m.Z(i) > 0)
+    if n_el - 2 * n_core <= 0:
+        return float(psi4.energy("scf", molecule=m))
+    return float(psi4.energy(method, molecule=m))
+
+
 def run_one(path: Path, method: str, basis: str) -> dict:
     atoms = read_xyz(path)
     if atoms[0][0] != "Li":
@@ -67,15 +95,17 @@ def run_one(path: Path, method: str, basis: str) -> dict:
     solv = molecule(atoms[1:], 0, "solvent")
     e_s = optimized_energy(solv, method)
     li = molecule([atoms[0]], +1, "li")
-    e_li = float(psi4.energy(method, molecule=li))
-    # counterpoise at the optimized complex geometry: fragment 1 = Li+, fragment 2 = solvent
+    e_li = frozen_core_energy(method, li)
+    # counterpoise at the optimized complex geometry, by hand so that Li⁺ in the dimer basis gets
+    # the same frozen-core treatment: E_int = E(Li⁺·S) − E(Li⁺, dimer basis) − E(S, dimer basis)
     xyz = [line.split() for line in cplx.save_string_xyz().splitlines()[1:]]
-    frag = "\n".join(" ".join(r[:4]) for r in xyz[:1])
-    rest = "\n".join(" ".join(r[:4]) for r in xyz[1:])
-    dimer = psi4.geometry(
-        f"1 1\n{frag}\n--\n0 1\n{rest}\nunits angstrom\nno_reorient\nno_com\n", name="cp"
-    )
-    e_cp = float(psi4.energy(method, molecule=dimer, bsse_type="cp"))  # interaction, CP
+    xyz_li = [(r[0], float(r[1]), float(r[2]), float(r[3])) for r in xyz[:1]]
+    xyz_s = [(r[0], float(r[1]), float(r[2]), float(r[3])) for r in xyz[1:]]
+    ghost = [(f"Gh({el})", x, y, z) for el, x, y, z in xyz_s]
+    e_li_gh = frozen_core_energy(method, molecule(xyz_li + ghost, +1, "li_in_dimer_basis"))
+    ghost_li = [(f"Gh({el})", x, y, z) for el, x, y, z in xyz_li]
+    e_s_gh = frozen_core_energy(method, molecule(ghost_li + xyz_s, 0, "solvent_in_dimer_basis"))
+    e_cp = e_c - e_li_gh - e_s_gh  # interaction, CP
     e_bind = (e_c - e_s - e_li) * KJMOL_PER_HARTREE
     d_li_o = min(
         ((float(r[1]) - float(xyz[0][1])) ** 2 + (float(r[2]) - float(xyz[0][2])) ** 2
@@ -90,6 +120,8 @@ def run_one(path: Path, method: str, basis: str) -> dict:
         "e_complex_hartree": e_c,
         "e_solvent_hartree": e_s,
         "e_li_hartree": e_li,
+        "e_li_in_dimer_basis_hartree": e_li_gh,
+        "e_solvent_in_dimer_basis_hartree": e_s_gh,
         "e_bind_kjmol": round(e_bind, 3),
         "e_bind_kcalmol": round(e_bind / KCAL_IN_KJ, 3),
         "e_int_cp_at_complex_kjmol": round(e_cp * KJMOL_PER_HARTREE, 3),
