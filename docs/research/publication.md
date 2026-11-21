@@ -96,6 +96,10 @@ repeated here.
     that cannot be argued away. The COM-frame value of the pilot is not compared with either.
 11. **Solvation: dielectric (Self 2024), Raman and NMR together.** Raman and NMR sources still
     have to be found and entered in the ledger.
+12. **The summary PDF is held (author, 2026-11-21).** It goes to the JMU contacts only once the
+    MD reproduces experiment, judged by the pass criteria (decision 7). The goal is an MD that
+    shows how experiment and simulation together lead to a model that works, not a list of
+    deficits. `docs/research/summary/` stays and is rebuilt when results change.
 
 ## Still open
 
