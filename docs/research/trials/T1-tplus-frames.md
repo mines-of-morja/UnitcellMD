@@ -24,3 +24,38 @@ own derivation.
 | (a) convention A or B | Δ_AB = mean \|t₊^VOL(A) − t₊^VOL(B)\| | Δ_AB < 0.015 (half the production target, ±10 % of t₊ ≈ ±0.03): the convention does not matter at our precision; A is central (the published single-ion scale, with electrostriction), B the stated band. Δ_AB ≥ 0.015: no MD test can pick a convention; the author decides from the literature. |
 | (b) per-solvent frames now or later | t₊^EC − t₊^EMC against its block standard error | resolved (> 2 SE): per-solvent frames go into the first implementation step. Not resolved: the first step implements COM, SOL and VOL; per-solvent frames follow with the production runs, which have about 3× smaller errors. |
 | (c) is Eq. (2) right | t₊^SOL computed directly from displacements against (t₊^COM − ω₋)/ω₀, block by block | Eq. (2) is linear, so the two must agree to round-off (< 1e-9). If not, the derivation in §2.1 of the note is wrong and the note goes back to Jo before approval. |
+
+## Result (2026-11-21)
+
+Setup check: with frames 501–10 000 the script reproduces the pilot's published
+t₊^COM = 0.2859 ± 0.1103 exactly (`transport.repaired.json`), so blocks, window and estimator are
+the pilot's. Mass fractions ω₋ = 0.1206, ω₀ = 0.8736; box concentration 0.987 mol/L.
+
+| frame | t₊ (mean ± SE over 5 blocks) |
+|---|---|
+| COM | 0.286 ± 0.110 |
+| SOL (EC + EMC centre of mass) | 0.189 ± 0.126 |
+| SOL from Eq. (2) | 0.189 ± 0.126 |
+| EC | 0.51 ± 0.35 |
+| EMC | 0.05 ± 0.12 |
+| VOL, convention A (ν₊ = −9) | 0.243 ± 0.119 |
+| VOL, convention B (ν₊ = 1.1) | 0.233 ± 0.119 |
+
+**Decisions by the rules above:**
+
+- **(a)** Δ_AB = 0.0100 < 0.015. The convention does not matter at our precision: **A is central,
+  B the stated band** (Jo's proposal stands).
+- **(b)** t₊^EC − t₊^EMC = 0.45 ± 0.38 (1.2 SE): **not resolved.** The first implementation step
+  is COM, SOL and VOL; per-solvent frames follow with the production runs. This differs from the
+  note's proposal (§8.2). The EC frame is the noisiest: 168 EC molecules carry the reference for
+  47 ions, and the block values range from −0.27 to 1.74.
+- **(c)** Largest block difference between SOL computed directly and from Eq. (2): 2 × 10⁻¹³.
+  **The note's derivation is correct.**
+
+Transport values, reported and not used for any decision: t₊^SOL is the frame of Landesfeind's
+cell-model parameters (0.16 measured, 0.22 fit at 1 M, 20 °C); t₊^VOL that of Lehnert (0.373 MD,
+0.343 eNMR). With 20 ns, our errors (±0.12) cannot separate any of them.
+
+Command: `HDF5_USE_FILE_LOCKING=FALSE ucmd-analysis/.venv/bin/python
+docs/research/trials/T1/t1_frames.py <pilot>/out/trajectory.repaired.h5 OUT.json 501`
+(ucmd-analysis `a1` at 3b56fc2; output `T1/t1_result.json`). Awaiting the author's confirmation.
