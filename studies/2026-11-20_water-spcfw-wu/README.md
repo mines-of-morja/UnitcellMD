@@ -43,7 +43,7 @@ One run, 6.5 ns in 2 h 10 min (72 ns/day, alone on the MI50), HIP double precisi
   box (L = 1.855 nm: +0.445·10⁻⁵ cm²/s with η = 0.75 cP). That assumes their D is uncorrected;
   I found no correction mentioned in their text. The correction uses Wu's η; it is redone with
   our own η when the viscosity run is analysed (`2026-11-20_water-spcfw-viscosity-cpu`). The
-  ratio of fit windows and block numbers changes D by ≤ 0.04.
+  choice of fit window and block count changes D by ≤ 0.04.
 - **ε:** the estimate from all frames (80.7) is above the block mean (77.6 ± 2.7); fluctuations
   slower than a block are lost in blocks, and ε converges slowly (Wu report relaxation up to
   2 ns). Within either, Wu's 79.63 is inside one standard error.
