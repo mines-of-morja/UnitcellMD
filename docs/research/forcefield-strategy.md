@@ -125,6 +125,14 @@ research extension for high concentrations, not a prerequisite.
   In pure EC the same Li⁺ binds 4.9 EC carbonyl O. So EC can bind; it loses against EMC. The
   depletion is a property of the M0 parameters, not of crowding.
 
+- **M1 result (2026-11-21, one Li⁺, last 4 ns):** EC holds 31 ± 7 % of the first-shell
+  carbonyl O (M0 19 ± 4 %; SEM over 4 × 1 ns blocks, correlated, so larger in truth), 39 % within
+  Lehnert's 0.516 nm (M0 29 %, Lehnert ≈ 47 %). EC residence 42 ps (M0 24 ps). The direction
+  matches layer 0; the size does not reach the 50 % share. Details:
+  `studies/2026-11-20_li-preference-m1/README.md`.
+- **EC density (rung EC, 39 °C, 1000 EC):** OPLS-AA 1.3193 g/cm³, LigParGen 1.2800
+  (`studies/2026-11-20_ec-opls-test/INDEX.md`; the experimental comparison belongs to that study).
+
 ### Layer 0, first result (2026-11-20): gas-phase Li⁺ binding against G4
 
 - Tool and table: [tools/ffcheck/README.md](../../tools/ffcheck/README.md). The reference is

@@ -197,6 +197,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-21 — research S2 (M1 Li⁺ preference) done — one LiPF₆ in EC:EMC 1:1 with OPLS-AA EC,
+5 ns NPT on HIP (58 min, no hang). Last 4 ns: EC 31 ± 7 % of the first-shell carbonyl O (M0
+19 ± 4 %), 39 % within 0.516 nm (M0 29 %; Lehnert ≈ 47 %); EC residence 42 ps (M0 24 ps). Trend
+towards EC as layer 0 predicts, 1.4 SEM from one ion; not yet significant and below the 50 %
+share — evidence: studies/2026-11-20_li-preference-m1/README.md — next: more statistics
+(several independent Li⁺ or longer runs) before deciding on the pair-specific Li⁺–O term.
+
 2026-11-20 — A4 done (20:06Z, OpenCL with hang restarts; 0 label swaps) — one Li⁺, last 4 ns:
 pure EC 4.8 EC O=C (free); pure EMC 3.4 EMC O=C + 0.88 PF₆⁻ (contact pair); EC:EMC 1:1 first
 shell EC 0.89 / EMC 3.65 = EC 20 % at 50 % of the molecules (29 % within 0.516 nm); residence EC

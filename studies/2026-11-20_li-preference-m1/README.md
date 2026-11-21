@@ -34,3 +34,42 @@
 - **Caveat:** one ion gives one shell at a time; with EMC residence times of about 0.6 ns, 4 ns
   hold only a handful of independent shells. The difference between M0 and M1 must be large to
   count.
+
+## Result, 2026-11-21
+
+Run finished 2026-11-20 22:34Z on HIP: 58 min wall, no hang, ⟨ρ⟩ 1.1664 g/cm³ (M0: 1.1499).
+Li⁺ stayed free of PF₆⁻ throughout. Last 4 ns, 2000 frames:
+
+| | M0 (A4) | **M1** |
+|---|---|---|
+| first shell (r < 0.28 nm), EC O=C / EMC O=C | 0.86 / 3.63 | **1.41 / 3.19** |
+| EC share of the first-shell carbonyl O | 19 ± 4 % | **31 ± 7 %** |
+| per ns (1–2, 2–3, 3–4, 4–5) | 19, 24, 24, 8 % | 48, 35, 17, 22 % |
+| within 0.516 nm (Lehnert's rs), EC / EMC | 1.63 / 3.97 (29 %) | 2.20 / 3.44 (39 %) |
+| continuous residence at Li⁺ (0.30 nm), EC / EMC | 24 / 250 ps | 42 / 303 ps |
+| intermittent residence, EC / EMC | 118 / ~2000 ps | 272 / 2043 ps |
+| distinct molecules in contact, EC / EMC | 25 / 15 | 36 / 14 |
+
+Errors are the SEM over 4 × 1 ns blocks. The blocks are correlated (EMC stays about 2 ns,
+intermittent), so the true uncertainty is larger.
+
+**Reading:**
+1. M1 moves EC towards its share (19 → 31 %) and nearly doubles its residence time. This is the
+   direction the gas-phase test predicts (M1 recovers a third of the QM EC–DMC difference).
+2. The shift is 1.4 standard errors, from one ion. It is a trend, not a result.
+3. EC stays below its 50 % share and below Lehnert's ≈ 47 % at rs (Fig. S10). The carbonyl
+   charges are part of the answer, not all of it, as layer 0 suggested.
+4. M1 took EC from 31 % in its first nanosecond to about 20 % later. A single ion cannot tell
+   whether this is drift or one long EMC visit.
+
+Commands (ucmd-analysis venv; M0 the same on the A4 trajectory):
+
+```sh
+ucmd-analyze shell TRAJ.h5 --skip-ps 1000 --a Li:Li --b EC:O:1 --b EMC:O:1 --b PF6:P
+ucmd-analyze shell TRAJ.h5 --skip-ps 1000 --a Li:Li --b EC:O:1 --b EMC:O:1 --b PF6:P \
+    --r-cut-nm 0.516 --r-cut-nm 0.516 --r-cut-nm 0.516
+ucmd-analyze residence TRAJ.h5 --a Li:Li --b EC:O:1 --r-cut-nm 0.30   # and EMC:O:1
+ucmd-analyze clusters TRAJ.h5 --cation Li:Li --anion PF6:P
+```
+
+The per-nanosecond split counts carbonyl O within 0.28 nm of Li⁺ (minimum image) frame by frame.
