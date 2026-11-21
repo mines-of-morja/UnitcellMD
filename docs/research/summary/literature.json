@@ -79,6 +79,20 @@
    "version_read": "VoR (SI)",
    "checked_vor": true
   },
+  "landesfeind2019_density_fit_ec_emc_3_7": {
+   "quantity": "electrolyte density fit rho = p1 + p2*c + p3*T in g/cm3, c in mol/L, T in K, LiPF6 in EC:EMC 3:7 w:w, 0-50 C, 0.1-3 M",
+   "value": {
+    "p1": 1.41,
+    "p2": 0.0912,
+    "p3": -0.00109,
+    "R2": 0.997
+   },
+   "source": "T. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), SI",
+   "doi": "10.1149/2.0571912jes",
+   "location": "SI Eq. S1, Table S1 (95 % bounds 5 %, 3 %, 22 %)",
+   "version_read": "SI PDF from library",
+   "checked_vor": true
+  },
   "marcus2004_single_ion_volumes_pc_25C": {
    "quantity": "standard partial molar volumes of single ions in propylene carbonate at 25 C, TATB/TPTB scale, cm3/mol, uncertainty +-2; and the salt value they derive from",
    "value": {
