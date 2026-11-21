@@ -1,0 +1,97 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-21"
+question = "Trial T2 (docs/research/trials/T2-ec-model-1M.md): EC model at 1 M, M0 (LigParGen EC) or M1 (OPLS-AA EC, Caleman 2012). Lehnert 1 M box (47 LiPF6, 168 EC, 332 EMC), three packing seeds per model; same protocol as the replica study: NPT 1 atm, 20 °C, 5 ns (GPU); decision by the first-shell EC count against the DRS bound"
+requested_by = "author 2026-11-21: contested choices are decided by running both ways (trials, docs/research/trials/README.md); M1 is an approved test set"
+
+[systems]
+recipes = "recipes/*.toml"
+
+[scan]
+temperature_C = [20]
+
+[protocol]
+seed = 20261124
+
+[estimate]
+seconds_per_atom_per_run = 1.0
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+# NPT at 1 atm from the minimized box, GPU backend, mixed precision (ADR 0012). 5 ns: the Li+ shell
+# of the 1 M electrolyte needed about 2 ns; the last 4 ns are analysed. Unchanged from the replica
+# study, so T2 and the replicas share one protocol.
+# Lehnert 2025 settings: 1 fs, no constraints, Nosé–Hoover τ = 0.1 ps, barostat τ_p = 1 ps,
+# 1.4 nm cutoff, PME to 1e-5; LJ tail correction on (ADR 0009 amendment).
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 5000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.01325
+tau_ps = 1.0
+compressibility_per_bar = 4.5e-5
+every = 25
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 100
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 2000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 100000

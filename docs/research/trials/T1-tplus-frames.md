@@ -58,4 +58,4 @@ cell-model parameters (0.16 measured, 0.22 fit at 1 M, 20 °C); t₊^VOL that of
 
 Command: `HDF5_USE_FILE_LOCKING=FALSE ucmd-analysis/.venv/bin/python
 docs/research/trials/T1/t1_frames.py <pilot>/out/trajectory.repaired.h5 OUT.json 501`
-(ucmd-analysis `a1` at 3b56fc2; output `T1/t1_result.json`). Awaiting the author's confirmation.
+(ucmd-analysis `a1` at bacb32c; output `T1/t1_result.json`). Awaiting the author's confirmation.

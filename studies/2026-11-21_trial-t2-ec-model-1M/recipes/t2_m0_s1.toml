@@ -1,0 +1,25 @@
+# Trial T2 (docs/research/trials/T2-ec-model-1M.md), M0: Lehnert 2025 1 M box (47 LiPF6, 168 EC,
+# 332 EMC; SI Table S1), start edge 4.27 nm as in the transport pilot; NPT finds the density.
+# Ion charge scale 0.75 (Lehnert 2025, SI Table S3). Otherwise the replica-study M0 recipe.
+format = "ucmd-build"
+version = "0.1"
+name = "t2_m0_s1"
+description = "Trial T2, M0 seed 1: 1 M LiPF6 (47 pairs, zeta 0.75) in 168 EC + 332 EMC (3:7 w:w), Lehnert 2025 box; packing seed 20261124"
+seed = 20261124
+component = [
+    { name = "Li", molecule = { library = "Li" }, count = 47, charge_scale = 0.75 },
+    { name = "PF6", molecule = { library = "PF6" }, count = 47, charge_scale = 0.75 },
+    { name = "EC", molecule = { library = "EC" }, count = 168 },
+    { name = "EMC", molecule = { library = "EMC" }, count = 332 },
+]
+
+[forcefield]
+source = "library"
+set = "opls-aa-carbonates"
+
+[box]
+length_nm = 4.27
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2
