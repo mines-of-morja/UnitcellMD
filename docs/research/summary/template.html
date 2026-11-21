@@ -59,7 +59,7 @@ Built from commit ${build_id}. ${pending_note}</div>
     Dielectric spectroscopy [3] gives at most about ${drs_ec} bound EC per Li⁺. Gas-phase quantum chemistry shows the cause:
     E<sub>bind</sub>(EC) − E<sub>bind</sub>(DMC) is ${dqm} kcal/mol in QM, but ${dm0} in the open force field.</li>
   <li><b>Next:</b> solvent parameters chosen from molecular and pure-liquid data, the ion-charge scaling taken from
-    the refractive index rather than fitted to κ, and pass criteria for κ fixed before the production runs.</li>
+    the refractive index rather than fitted to κ, and pass criteria for κ fixed before the production runs (section 1).</li>
 </ul>
 </div>
 
@@ -68,9 +68,9 @@ Built from commit ${build_id}. ${pending_note}</div>
 heat of vaporization, one ion in solvent against binding and solvation data, and only then the electrolyte. Three rules
 hold throughout.</p>
 <ul>
-  <li><b>Fit data and test data are fixed in advance.</b> Transport (κ, t₊, D, residence times) is never fitted. The proposed pass criteria
-    for the first predictive model are κ(1 M, 20 °C) within ±15 % of the measured value without refit, and the
-    concentration of maximum κ within ±0.2 M.</li>
+  <li><b>Fit data and test data are fixed in advance.</b> Transport (κ, t₊, D, residence times) is never fitted. The pass criteria
+    for the first predictive model are fixed now, before its runs: κ(1 M, 20 °C) within ±15 % of the measured value without refit, and the
+    concentration of maximum κ within ±0.2 M. If either fails, that failure is reported as a result.</li>
   <li><b>A method reproduces a published number before it produces a new one.</b> This applies to the engine, the force
     field and the quantum chemistry (section 2).</li>
   <li><b>Errors stay on record.</b> Section 5 lists the defects found so far and how each was caught.</li>
@@ -118,7 +118,7 @@ ${fig_transport}
 <figcaption><b>Fig. 2.</b> Conductivity (left) and transference number (right) of 1 M LiPF₆ in EC:EMC (3:7 w:w) at 20 °C.
 Error bars are block standard errors. The experimental κ is Eq. 15 of [1] with its Table II parameters. The t₊ values are
 in different reference frames: ours in the centre-of-mass frame, Lehnert's in the volume-averaged frame. The conversion is
-not yet done; with ${tplus}, our t₊ cannot separate the published values anyway.</figcaption>
+not yet done (section 7); with ${tplus}, our t₊ cannot separate the published values anyway.</figcaption>
 </figure>
 <table>
   <tr><th>Quantity</th><th class="n">This work</th><th>Comparison</th></tr>
@@ -193,17 +193,24 @@ corrected versions. They are listed because a result is only as good as the chec
     J. Chem. Inf. Model., not before May 2027.</li>
 </ul>
 
-<h2>7. Where your view would help us</h2>
-<p class="draft">[Draft questions, to be edited by the author.]</p>
+<h2>7. How we will compare, and where you could help</h2>
 <ul>
-  <li><b>Comparison basis.</b> Should we compare with the Eq. 15/20 fits or with the measured points and their uncertainties? Can the
-    data behind [1] (κ, t₊, D±, TDF, and the density fit of the SI) be shared for this?</li>
-  <li><b>Priorities.</b> For cell-level modelling, which quantities and which (c, T) range would benefit most from MD? For example,
-    t₊ at high concentration, low temperature, or the thermodynamic factor.</li>
-  <li><b>The t₊ question.</b> What would you accept as evidence from MD on the difference between [1] and [2], for example
-    cluster contributions to t₊ in a stated reference frame?</li>
-  <li><b>Solvation.</b> Which experimental probe of the Li⁺ shell composition (dielectric, Raman, NMR) do you consider most
-    reliable for EC:EMC?</li>
+  <li><b>Measured points, not only fits.</b> We compare with the measured points of [1] and their uncertainties; the fits serve
+    as guides between them. (The t₊ fit cannot be re-evaluated from its printed parameters, see Fig. 2.) The data behind [1]
+    (κ, D±, t₊, TDF, and the density fit of the SI) would let us do this exactly. Our data and scripts are open in return.</li>
+  <li><b>Priorities: temperature and the thermodynamic factor.</b> Every transport quantity is computed over temperature, not
+    only at 20 °C. The thermodynamic factor is the hardest quantity for MD: it needs the ion–ion structure at several
+    concentrations (Kirkwood–Buff integrals) or free-energy calculations. As with every method here, we will first reproduce a
+    published value before we report our own.</li>
+  <li><b>t₊ in a stated reference frame.</b> MD gives the full matrix of Onsager coefficients, from which t₊ follows in any frame.
+    We will report t₊ in the solvent-velocity frame of concentrated-solution theory, the one a Newman-type cell model uses, for
+    the comparison with [1], and in the volume-averaged frame for the comparison with [2]. EC and EMC are treated together as
+    the solvent, as in a binary-electrolyte model; the conversion uses partial molar volumes from our densities at several
+    concentrations. Contributions of ion pairs and clusters are shown separately, so the difference between [1] and [2] can be
+    traced to its source.</li>
+  <li><b>Solvation from three probes.</b> The Li⁺ shell is tested against dielectric spectroscopy [3], Raman and NMR together,
+    since each probe sees a different part of the shell and none settles it alone. We would welcome your pointers to Raman and
+    NMR data for LiPF₆ in EC:EMC that you trust.</li>
 </ul>
 
 <h2>Data, code and the use of AI</h2>

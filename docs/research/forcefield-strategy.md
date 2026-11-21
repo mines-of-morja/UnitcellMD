@@ -227,7 +227,7 @@ where that happens:
 4. **Drude (M4)** only if step 3 cannot reproduce both binding curves with one parameter set.
    That would show that the missing physics is many-body polarization.
 
-**Pass criteria, fixed before the runs** (a proposal, to be confirmed by the author before S6):
+**Pass criteria, fixed before the runs** (confirmed by the author 2026-11-21):
 - κ(1 M, 20 °C) within ±15 % of 0.84 S/m without any refit;
 - the κ(c) maximum within ±0.2 M of Landesfeind's.
 - If either fails, C1 (ζ fitted to κ) becomes the fallback, and the failure is reported as a

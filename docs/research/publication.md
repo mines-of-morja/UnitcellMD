@@ -79,6 +79,24 @@ repeated here.
    - Fallback without the six-month rule: Digital Discovery (RSC; open access, a data reviewer
      reproduces the results).
 
+## Comparison decisions (author, 2026-11-21, after the first summary draft)
+
+7. **κ pass criteria confirmed:** κ(1 M, 20 °C) within ±15 % of Landesfeind's measured value
+   without refit; the concentration of maximum κ within ±0.2 M. A failure is a reported result.
+8. **Compare with the measured points and their uncertainties**, not only with the fits; the
+   data behind Landesfeind 2019 may be shared and compared.
+9. **Priorities: temperature dependence and the thermodynamic factor.** The TDF method
+   (Kirkwood–Buff or free energy) must first reproduce a published value (rule 4).
+10. **t₊ (delegated to Claude):** compute the full Onsager matrix; report t₊ in the
+    solvent-velocity frame of concentrated-solution theory (Newman; the frame of Landesfeind's
+    cell-model parameters), with EC + EMC as one solvent, and in the volume-averaged frame for
+    Lehnert/eNMR. Partial molar volumes from our own densities over c. Ion-pair and cluster
+    contributions reported separately. Why: the frame is a definition, not a result. Stating it,
+    and converting the same Onsager matrix into both published frames, is the only comparison
+    that cannot be argued away. The COM-frame value of the pilot is not compared with either.
+11. **Solvation: dielectric (Self 2024), Raman and NMR together.** Raman and NMR sources still
+    have to be found and entered in the ledger.
+
 ## Still open
 
 1. **Lehnert's group:** co-authors or an independent comparison. This follows from their reply to
