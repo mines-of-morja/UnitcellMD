@@ -79,6 +79,20 @@
    "version_read": "VoR (SI)",
    "checked_vor": true
   },
+  "marcus2004_single_ion_volumes_pc_25C": {
+   "quantity": "standard partial molar volumes of single ions in propylene carbonate at 25 C, TATB/TPTB scale, cm3/mol, uncertainty +-2; and the salt value they derive from",
+   "value": {
+    "Li+": -9,
+    "PF6-": 72,
+    "LiPF6_salt_40C_single_source": 62.4,
+    "Li+_intrinsic_volume": 1.1
+   },
+   "source": "Y. Marcus, G. Hefter, Chem. Rev. 104, 3405 (2004)",
+   "doi": "10.1021/cr030047d",
+   "location": "Table 15 (ions), Table 14 (LiPF6, 40 C, ref 41, unconfirmed), Table 40 (Vint), Eq. 29 (V(TP+) - V(TB-) = 2 +- 2)",
+   "version_read": "VoR (ACS PDF)",
+   "checked_vor": true
+  },
   "lundgren2015_partial_molar_volumes_ec_dec": {
    "quantity": "partial molar volumes of LiPF6 and of the solvent, LiPF6 in EC:DEC (1:1 w:w), cm3/mol, at 10, 25, 40 C; constant in 0.5-1.5 M",
    "value": {
