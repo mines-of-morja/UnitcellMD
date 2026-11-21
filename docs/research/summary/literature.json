@@ -61,6 +61,72 @@
    "version_read": "VoR",
    "checked_vor": true
   },
+  "lehnert2025_tplus_com_sol_fit_ec_emc": {
+   "quantity": "linear fit t+ = t0 + t1*c (c in mol/L) of the MD transference number, LiPF6 in EC:EMC (3:7 w:w), centre-of-mass (COM) and solvent-velocity (SOL) frames",
+   "value": {
+    "COM": {
+     "t0": 0.364,
+     "t1": 0.046
+    },
+    "SOL": {
+     "t0": 0.362,
+     "t1": -0.031
+    }
+   },
+   "source": "Lehnert et al. 2025, SI",
+   "doi": "10.1149/1945-7111/add381",
+   "location": "SI Table S5 (COM), Table S6 (SOL)",
+   "version_read": "VoR (SI)",
+   "checked_vor": true
+  },
+  "landesfeind2019_density_fit_ec_emc_3_7": {
+   "quantity": "electrolyte density fit rho = p1 + p2*c + p3*T in g/cm3, c in mol/L, T in K, LiPF6 in EC:EMC 3:7 w:w, 0-50 C, 0.1-3 M",
+   "value": {
+    "p1": 1.41,
+    "p2": 0.0912,
+    "p3": -0.00109,
+    "R2": 0.997
+   },
+   "source": "T. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), SI",
+   "doi": "10.1149/2.0571912jes",
+   "location": "SI Eq. S1, Table S1 (95 % bounds 5 %, 3 %, 22 %)",
+   "version_read": "SI PDF from library",
+   "checked_vor": true
+  },
+  "marcus2004_single_ion_volumes_pc_25C": {
+   "quantity": "standard partial molar volumes of single ions in propylene carbonate at 25 C, TATB/TPTB scale, cm3/mol, uncertainty +-2; and the salt value they derive from",
+   "value": {
+    "Li+": -9,
+    "PF6-": 72,
+    "LiPF6_salt_40C_single_source": 62.4,
+    "Li+_intrinsic_volume": 1.1
+   },
+   "source": "Y. Marcus, G. Hefter, Chem. Rev. 104, 3405 (2004)",
+   "doi": "10.1021/cr030047d",
+   "location": "Table 15 (ions), Table 14 (LiPF6, 40 C, ref 41, unconfirmed), Table 40 (Vint), Eq. 29 (V(TP+) - V(TB-) = 2 +- 2)",
+   "version_read": "VoR (ACS PDF)",
+   "checked_vor": true
+  },
+  "lundgren2015_partial_molar_volumes_ec_dec": {
+   "quantity": "partial molar volumes of LiPF6 and of the solvent, LiPF6 in EC:DEC (1:1 w:w), cm3/mol, at 10, 25, 40 C; constant in 0.5-1.5 M",
+   "value": {
+    "LiPF6": {
+     "10C": 57.0,
+     "25C": 56.8,
+     "40C": 56.5
+    },
+    "EC_DEC": {
+     "10C": 89.5,
+     "25C": 90.8,
+     "40C": 92.1
+    }
+   },
+   "source": "H. Lundgren, M. Behm, G. Lindbergh, J. Electrochem. Soc. 162, A413 (2015)",
+   "doi": "10.1149/2.0641503jes",
+   "location": "Table I, Eq. 8",
+   "version_read": "VoR, read by a research subagent",
+   "checked_vor": false
+  },
   "lehnert2025_shell_fig_s10": {
    "quantity": "Li+ coordination numbers within rs = 0.516 nm (first minimum of g_LiP, SI Table S7), 1 M LiPF6 in EC:EMC (3:7 w:w), 20 C, zeta = 0.75; carbonyl O of EC and EMC, and PF6- (P)",
    "value": {
