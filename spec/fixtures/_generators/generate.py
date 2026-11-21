@@ -602,8 +602,10 @@ k_kjmol_nm2 = 1000.0
 RUNS["argon-pressure-tensor.toml"] = (
     RUNS["argon-nvt.toml"]
     .replace('spec_version = "0.1.0"', 'spec_version = "0.1.1"', 1)
-    .replace("[output.thermo]\nfile = \"thermo.tsv\"\nevery = 10\n",
-             "[output.thermo]\nfile = \"thermo.tsv\"\nevery = 10\npressure_tensor = true\n")
+    .replace(
+        '[output.thermo]\nfile = "thermo.tsv"\nevery = 10\n',
+        '[output.thermo]\nfile = "thermo.tsv"\nevery = 10\npressure_tensor = true\n',
+    )
 )
 assert "pressure_tensor = true" in RUNS["argon-pressure-tensor.toml"]
 
@@ -625,7 +627,9 @@ INVALID_RUNS = {
     ),
     "pressure-tensor-not-bool.toml": (
         "E_SCHEMA",
-        RUNS["argon-pressure-tensor.toml"].replace("pressure_tensor = true", 'pressure_tensor = "yes"'),
+        RUNS["argon-pressure-tensor.toml"].replace(
+            "pressure_tensor = true", 'pressure_tensor = "yes"'
+        ),
     ),
     "langevin-with-vv.toml": (
         "E_INCOMPATIBLE",

@@ -39,9 +39,11 @@ Last update: 2026-11-13.
 - **Waiting for the author:**
   1. Hands-on tests of the GUI ([testing.md](testing.md) §9), then Gates B2a and B1a together
      (`b2a` contains `b1`). E2 hands-on: §8, §8a.
-  2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
-     densities are marked placeholders. It is also the density reference for the transport
-     study (PLAN.md §10.12).
+  2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Jo's agent entered
+     the fit from its own copy of the SI (ledger `landesfeind2019_density_fit_ec_emc_3_7`:
+     ρ(1 M, 25 °C) = 1.176 g/cm³, our boxes 1.202); a second reading from the PDF in `../Lit` is
+     still needed before the placeholders are replaced. It is also the density reference for
+     the transport study (PLAN.md §10.12).
 
 ## Decisions by the author
 
@@ -145,7 +147,8 @@ Last update: 2026-11-13.
 
 1. Gates B2a and B1a, after the hands-on tests ([testing.md](testing.md) §9 and §7), and
    [gate-b2a.md §5](gates/gate-b2a.md): spec v0.1.1 for the new engine behaviour, live frames.
-2. The Landesfeind 2019 SI for the densities.
+2. The Landesfeind 2019 SI for the densities (values entered from Jo's copy, 2026-11-21; the PDF
+   itself is still wanted for a second reading).
 3. The validator packaging fix (gate-b1a.md §4.1).
 4. PLAN.md §10:
    - item 5: benchmark 1 M LiPF₆ in EC:EMC 3:7 at 20 °C;
@@ -208,6 +211,26 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-21 — contributions of Jo and Copilot reviewed — **merged into b2a** (drafts, not
+approved): A1.5 design notes for t₊ in the SOL and VOL frames and for the Green–Kubo cross-check
+(`docs/design/A1.5.md`, `A1.5-green-kubo.md`) with five ledger entries; the Lehnert SI values and
+the COM→SOL conversion (0.3315 against their fit 0.331) re-checked here, the entries from papers
+not in `../Lit` flagged for a second reading. **Not merged:** the Copilot i-PI provider
+(ucmd-engine PR #2). Against ASE's real `SocketClient` it times out in `initialize`: the server
+waits for the client to speak first, where i-PI has the server ask (STATUS, POSDATA, GETFORCE,
+FORCEREADY, as in the S4 spike and ADR 0007). Its test passes only against a mock written in the
+same inverted order. Also: extras read as a fixed 1024 bytes (ADR: i32 length + bytes); the cell
+goes out untransposed (sheared cell: sent `[2,0,0,0.5,2,0,…]`, ADR `[2,0.5,0,0,2,0,…]`); the
+virial is not transposed; `accept()` has no timeout; a stale-socket cleanup deletes any file at
+the path; malformed extras are dropped silently. The issue was `needs-design` and no design
+doc was written. The branch is based on `main`, not on the engine stack. No engine change, so no
+recompile. UnitcellMD PR #5 (Copilot, ΔH_vap and ε sources) has no commits yet (+0/−0) though its
+text describes ledger entries. **CI:** `spec` was red since `b2a` was first pushed, from one
+over-long line in `spec/fixtures/_generators/generate.py` (32c6def); formatted with the
+validator's ruff config, fixtures byte-identical, 58 validator tests pass —
+evidence: ucmd-engine PR #2 probe against ASE (scratch), `docs/design/A1.5.md` §10 — next: review
+comments for Jo; the author approves or changes the two design notes
 
 2026-11-21 — gate-b1a §4.1 fixed: validator 0.1.1 ships its schemas — the first outside
 contribution (branch jo/validator-schema-packaging, merged into b2a by the author's request).
