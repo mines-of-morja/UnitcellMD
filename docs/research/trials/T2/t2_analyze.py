@@ -8,6 +8,12 @@ Run from the workspace root with the ucmd-analysis venv:
 Per run (last 4 ns): carbonyl O of EC and EMC and PF6- (P) within 0.28 nm and 0.516 nm of Li+,
 mean contacts per Li+ (`ucmd-analyze shell`, cutoffs given explicitly for every partner); density;
 D and kappa_NE (`ucmd-analyze transport`, reported only). Mean +- SE over the three seeds.
+
+Run-length diagnostic (author, 2026-11-21: a long run must show it was worth it): the EC
+first-shell count per Li+ in 250 ps windows over the whole run, from the first frame. The
+equilibration time is the start of the first window after which every window lies within
++-10 % of the run's final-4-ns mean. It is reported, not used for the decision, and sets the
+justified length of later 1 M shell runs.
 """
 
 from __future__ import annotations
@@ -41,6 +47,32 @@ def shell(traj: Path, r_nm: float) -> dict:
     return analyze(*cmd)["mean_contacts"]
 
 
+def convergence(traj: Path, window_ps: float = 250.0, tol: float = 0.10) -> dict:
+    """EC carbonyl O within 0.28 nm per Li+, in windows over the whole run."""
+    from ucmd_analysis.association import contacts
+    from ucmd_analysis.io import read_h5md
+
+    t = read_h5md(traj)
+    a = t.system.atoms_where("Li", "Li")
+    b = t.system.atoms_where("EC", "O", bonded=1)
+    per_frame = contacts(t.positions_nm, t.boxes_nm, a, b, 0.28).sum(axis=2).mean(axis=1)
+    dt = float(t.times_ps[1] - t.times_ps[0])
+    n = max(1, round(window_ps / dt))
+    starts = list(range(0, len(per_frame) - n + 1, n))
+    means = [float(per_frame[i : i + n].mean()) for i in starts]
+    final = float(per_frame[t.times_ps >= t.times_ps[0] + SKIP_PS].mean())
+    ok = [abs(m - final) <= tol * final for m in means]
+    t_eq = next((starts[i] * dt for i in range(len(ok)) if all(ok[i:])), None)  # None: not reached
+    return {
+        "window_ps": n * dt,
+        "window_start_ps": [i * dt for i in starts],
+        "EC_first_shell_per_window": means,
+        "final_4ns_mean": final,
+        "tolerance": tol,
+        "equilibration_ps": t_eq,
+    }
+
+
 def mean_se(x: list[float]) -> tuple[float, float]:
     return st.fmean(x), (st.stdev(x) / math.sqrt(len(x)) if len(x) > 1 else float("nan"))
 
@@ -66,6 +98,7 @@ def main(out_path: str) -> None:
                 "density": dens,
                 "reported_only": {k: tr[k] for k in tr if k.startswith(("D_", "kappa_NE"))},
                 "engine": status.get("engine"),
+                "convergence": convergence(traj),
             }
     summary = {}
     for model in ("M0", "M1"):
@@ -103,9 +136,21 @@ def main(out_path: str) -> None:
             "difference_within_2se": same,
             "verdict": verdict,
         },
+        "run_length": {
+            "equilibration_ps_per_run": {
+                k: r["convergence"]["equilibration_ps"] for k, r in runs.items()
+            },
+            "longest_ps": (
+                None
+                if any(r["convergence"]["equilibration_ps"] is None for r in runs.values())
+                else max(r["convergence"]["equilibration_ps"] for r in runs.values())
+            ),
+        },
     }
     Path(out_path).write_text(json.dumps(result, indent=1))
-    print(json.dumps(result["decision"], indent=1))
+    print(
+        json.dumps({"decision": result["decision"], "run_length": result["run_length"]}, indent=1)
+    )
 
 
 if __name__ == "__main__":

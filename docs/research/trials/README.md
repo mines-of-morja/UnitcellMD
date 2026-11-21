@@ -20,7 +20,15 @@ one. Author's request, 2026-11-21.
 4. **Results go into the same file**, below the plan, with commands and versions; the losing
    option stays documented (rule 5 of publication.md).
 5. **The author confirms the decision.** A convention that sticks becomes an ADR.
-6. **Discussion:** each trial has a GitHub issue labelled `discussion` in UnitcellMD, where
+6. **Run length must be worth it** (author, 2026-11-21). Simulation cost grows with the
+   simulated time, and short runs often show the relevant effect already. So:
+   - the plan justifies the length from measured time scales (residence times, relaxation
+     times, the time a property takes to settle), not from habit;
+   - every long run reports how much of it was needed: the property against time in windows,
+     and the time after which it stays within a stated tolerance of its final value;
+   - that measured time sets the length of later runs of the same kind, so the second run of a
+     kind is shorter whenever the first one shows it can be.
+7. **Discussion:** each trial has a GitHub issue labelled `discussion` in UnitcellMD, where
    anyone, Jo and his agents included, can argue for another option or another test before the
    runs. After the runs, the issue gets the result and is closed when the author confirms.
 

@@ -39,3 +39,12 @@
 writing the analysis showed that rules 1 and 3 can both apply (M1 closer to 2.2, but within 2 SE of
 M0). Then rule 3 takes precedence: a difference that is not resolved does not replace the model.
 Analysis script: `T2/t2_analyze.py`.
+
+**Amendment 2 (2026-11-21, 22:40Z, run 1 at 164 ps, before any result):** the author
+questioned the 5 ns length (50 ps proposed) and accepted 5 ns on the measured time scales: EMC
+stays at a Li⁺ for 260–360 ps continuously and 1.7–1.9 ns with short excursions (replica study),
+and the 1 M shell took about 2 ns to form from packing. As a reported diagnostic, not a decision
+criterion, the analysis gives the EC first-shell count per Li⁺ in 250 ps windows from the first
+frame, and the time after which every window stays within ±10 % of the final-4-ns mean. That time
+sets the length of later 1 M shell runs (trials rule 6).
+
