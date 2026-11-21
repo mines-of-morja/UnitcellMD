@@ -11,5 +11,6 @@ python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
 .venv/bin/pytest
 ```
 
-The JSON Schemas are read from the spec directory: `$UCMD_SPEC_DIR`, or the directory two levels
-above this package's source (`spec/`) in a checkout.
+The JSON Schemas are read from `$UCMD_SPEC_DIR/schemas` if that variable is set, else from the
+copy bundled in the wheel (`ucmd_spec/schemas`), else from `spec/schemas` of the checkout. The
+fixtures are read from `$UCMD_SPEC_DIR` or the checkout.
