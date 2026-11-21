@@ -1,0 +1,6 @@
+2026-11-20T11:48:53Z  driver start: 1 runs; engine ucmd 0.0.0 (c9098de83592)
+2026-11-20T11:48:53Z  build spcfw_500
+2026-11-20T11:48:54Z  minimize spcfw_500
+2026-11-20T11:48:59Z  run spcfw_500/T25C
+2026-11-20T13:24:57Z  spcfw_500/T25C: done
+2026-11-20T13:24:57Z  driver end
