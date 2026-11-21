@@ -39,6 +39,9 @@ acceptance criteria and the review branch.
   only after the author approves it in the pull request.
 - **`blocked`:** waits for something outside the task (named in the issue). Don't start it.
 - **`literature`:** sources for the literature ledger, no code.
+- **`discussion`:** a contested choice decided by a trial ([docs/research/trials/](docs/research/trials/README.md)):
+  both options run, a test fixed in advance decides. Argue for another option or test in the
+  issue before the runs; don't implement either option until the trial is decided.
 - Name the branch `<your-name>/<issue-number>-<short-title>` and write `Closes #<n>` in the pull
   request.
 - Found more work? Open an issue without the `task` label; the author decides whether it
