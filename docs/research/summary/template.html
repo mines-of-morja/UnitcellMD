@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UnitcellMD results summary</title>
+<style>
+  @page { size: A4; margin: 17mm 17mm 16mm 17mm; }
+  :root { --ink: #1f1f1e; --muted: #6b6a63; --rule: #d9d8d2; --tint: #f3f2ee; --accent: #2a78d6; }
+  html { background: #ffffff; }
+  body { font-family: "Liberation Serif", "DejaVu Serif", serif; font-size: 10.3pt; line-height: 1.38;
+         color: var(--ink); background: #ffffff; margin: 0; }
+  h1, h2, h3, .sans, table, figcaption, .meta { font-family: "Noto Sans", "DejaVu Sans", sans-serif; }
+  h1 { font-size: 16.5pt; line-height: 1.2; margin: 0 0 4pt; font-weight: 700; }
+  .subtitle { font-size: 11pt; color: var(--muted); margin: 0 0 6pt; font-family: "Noto Sans", sans-serif; }
+  .meta { font-size: 8.5pt; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 6pt; margin-bottom: 10pt; }
+  h2 { font-size: 11.5pt; margin: 14pt 0 4pt; break-after: avoid; }
+  h3 { font-size: 10pt; margin: 9pt 0 2pt; break-after: avoid; }
+  p { margin: 0 0 5pt; }
+  ul { margin: 0 0 5pt; padding-left: 15pt; }
+  li { margin: 0 0 2.5pt; }
+  .box { background: var(--tint); border-left: 3px solid var(--accent); padding: 7pt 10pt 4pt; margin: 4pt 0 8pt; }
+  .box h2 { margin-top: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.3pt; margin: 4pt 0 7pt; break-inside: avoid; }
+  th, td { text-align: left; padding: 2.6pt 5pt; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; border-bottom: 1.2px solid var(--muted); }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  figure { margin: 6pt 0 8pt; break-inside: avoid; }
+  figure svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { font-size: 8.2pt; color: var(--ink); margin-top: 3pt; }
+  figcaption b { font-weight: 600; }
+  .two { display: flex; gap: 12pt; align-items: flex-start; }
+  .two > * { flex: 1; }
+  .note { font-size: 8.5pt; color: var(--muted); }
+  .refs { font-size: 8.4pt; padding-left: 14pt; }
+  .refs li { margin-bottom: 1.5pt; }
+  .draft { font-family: "Noto Sans", sans-serif; font-size: 8pt; color: #9a5b00; }
+</style>
+</head>
+<body>
+
+<h1>Open molecular dynamics for LiPF₆ carbonate electrolytes</h1>
+<p class="subtitle">A verified engine, first transport results, and why the Li⁺ solvation shell is the next problem</p>
+<div class="meta">Moritz Limbacher · UnitcellMD, github.com/mines-of-morja · ${date} · Working results, not peer reviewed.
+Built from commit ${build_id}. ${pending_note}</div>
+
+<div class="box">
+<h2>Summary</h2>
+<ul>
+  <li><b>Aim.</b> Predict the transport properties of LiPF₆ in carbonate solvents (κ, t₊, D) from molecular dynamics
+    and test them against the measurements of Landesfeind &amp; Gasteiger [1]. Transport data are kept as test data:
+    no model parameter is fitted to them.</li>
+  <li><b>The software is verified independently of any force field.</b> Energies agree with OpenMM to ${q_m2a_energy}
+    on a 7036-atom electrolyte, densities under pressure control within ${q_argon_npt_sigma} standard error, and the GPU
+    backend must reproduce the CPU reference before every run.</li>
+  <li><b>First result: κ is a factor ${kappa_ratio} too low.</b> With open OPLS-AA parameters and Lehnert's set-up [2], 1 M
+    LiPF₆ in EC:EMC (3:7 w:w) at 20 °C gives κ = ${kappa} S/m, against ${kappa_exp} S/m from Landesfeind's fit. Even the
+    uncorrelated Nernst–Einstein value is too low, so the ions move too slowly; association does not explain it.</li>
+  <li><b>The Li⁺ shell holds too little EC.</b> Our model has ${pi_ec} EC per Li⁺ within 0.516 nm, Lehnert's ${le_ec}.
+    Dielectric spectroscopy [3] gives at most about ${drs_ec} bound EC per Li⁺. Gas-phase quantum chemistry shows the cause:
+    E<sub>bind</sub>(EC) − E<sub>bind</sub>(DMC) is ${dqm} kcal/mol in QM, but ${dm0} in the open force field.</li>
+  <li><b>Next:</b> solvent parameters chosen from molecular and pure-liquid data, the ion-charge scaling taken from
+    the refractive index rather than fitted to κ, and pass criteria for κ fixed before the production runs.</li>
+</ul>
+</div>
+
+<h2>1. Approach</h2>
+<p>The model is built and tested in layers: single molecules against quantum chemistry, pure liquids against density and
+heat of vaporization, one ion in solvent against binding and solvation data, and only then the electrolyte. Three rules
+hold throughout.</p>
+<ul>
+  <li><b>Fit data and test data are fixed in advance.</b> Transport (κ, t₊, D, residence times) is never fitted. The proposed pass criteria
+    for the first predictive model are κ(1 M, 20 °C) within ±15 % of the measured value without refit, and the
+    concentration of maximum κ within ±0.2 M.</li>
+  <li><b>A method reproduces a published number before it produces a new one.</b> This applies to the engine, the force
+    field and the quantum chemistry (section 2).</li>
+  <li><b>Errors stay on record.</b> Section 5 lists the defects found so far and how each was caught.</li>
+</ul>
+
+<h2>2. Software and verification</h2>
+<p>UnitcellMD has three parts: an engine with a bitwise-reproducible CPU reference backend (Rust) and an OpenMM GPU
+backend, a system builder, and an analysis library for structure and Onsager transport. All are open source (Apache-2.0).</p>
+<table>
+  <tr><th>Test</th><th>Result</th><th>Reference</th></tr>
+  <tr><td>Energies and forces, 7036-atom LiPF₆ EC:EMC box with PME</td><td>total energy ${q_m2a_energy} relative, forces ${q_m2a_forces} (rms)</td><td>OpenMM, same parameters</td></tr>
+  <tr><td>Energy conservation, velocity Verlet</td><td>error shrinks ${q_m2a_nve_ratio}-fold when Δt is halved</td><td>4 (second order)</td></tr>
+  <tr><td>Pressure control, argon NPT</td><td>density ${q_argon_npt_pct} (${q_argon_npt_sigma} combined standard errors)</td><td>OpenMM Monte Carlo barostat</td></tr>
+  <tr><td>GPU against CPU backend, identical start, 1 ps NVE</td><td>total energy differs by ${q_gpu_cpu_etot} kJ/mol</td><td>CPU reference backend</td></tr>
+  <tr><td>Force field as published: OPLS-AA EC, 39 °C</td><td>ρ = ${q_ec_rung_rho} g/L, ΔH_vap = ${q_ec_rung_dhvap} kJ/mol</td><td>Caleman 2012 [4]: ${cal_rho} g/L, ${cal_dh} kJ/mol (experiment ${cal_rho_exp} g/L, ${cal_dh_exp} kJ/mol)</td></tr>
+  <tr><td>Quantum chemistry (Psi4), gas-phase Li⁺ binding, ${qm_level}</td><td>EC ${qm_ec}, DMC ${qm_dmc} kcal/mol</td><td>Olguin 2016 [5]: ${ol_ec}, ${ol_dmc} kcal/mol</td></tr>
+</table>
+
+<h2>3. Baseline model: densities and transport</h2>
+<p>The baseline follows Lehnert et al. [2] with openly available parameters: OPLS-AA conventions, EC and EMC from LigParGen
+(“M0”), Li⁺ from Jensen &amp; Jorgensen, PF₆⁻ from CL&amp;P, and ion charges scaled by ζ = 0.75 (Lehnert's value). Lehnert's
+box has 47 ion pairs at 1.0 M.</p>
+<div class="two">
+<figure>
+${fig_density}
+<figcaption><b>Fig. 1.</b> Pure-solvent densities, NPT at 1 atm, against the reference values in Lehnert's SI Table S2. EC is
+compared at 40 °C because its reference is a liquid density (EC melts at 36 °C).</figcaption>
+</figure>
+<div>
+<table>
+  <tr><th>Solvent</th><th class="n">T (°C)</th><th class="n">ρ (g/cm³)</th><th class="n">ref.</th><th class="n">dev.</th></tr>
+  ${dens_rows}
+</table>
+<p class="sans" style="font-size:8.6pt">The linear carbonates come out too dense and the cyclic ones too light, so the error lies in the parameters of
+individual molecules, not in the engine. The published OPLS-AA set for EC reproduces its density (section 2). The 1 M
+electrolyte comes out at ${el_rho} g/cm³, ${el_dev} % from Lehnert's model, partly because the solvent errors cancel.</p>
+</div>
+</div>
+
+<h3>Transport at 1 M, 20 °C</h3>
+<p>20 ns NVT on the GPU (${pilot_frames} frames analysed, five blocks). Onsager coefficients from collective displacements
+in the barycentric frame; κ with formal charges, as in Lehnert's Eq. 4.</p>
+<figure>
+${fig_transport}
+<figcaption><b>Fig. 2.</b> Conductivity (left) and transference number (right) of 1 M LiPF₆ in EC:EMC (3:7 w:w) at 20 °C.
+Error bars are block standard errors. The experimental κ is Eq. 15 of [1] with its Table II parameters. The t₊ values are
+in different reference frames: ours in the centre-of-mass frame, Lehnert's in the volume-averaged frame. The conversion is
+not yet done; with ${tplus}, our t₊ cannot separate the published values anyway.</figcaption>
+</figure>
+<table>
+  <tr><th>Quantity</th><th class="n">This work</th><th>Comparison</th></tr>
+  <tr><td>κ (S/m)</td><td class="n">${kappa}</td><td>${kappa_exp} (experiment [1]); factor ${kappa_ratio}</td></tr>
+  <tr><td>κ_NE, Nernst–Einstein (S/m)</td><td class="n">${kappa_ne}</td><td>still a factor ${kne_ratio} below experiment</td></tr>
+  <tr><td>ionicity κ/κ_NE</td><td class="n">${ionicity}</td><td>little net association</td></tr>
+  <tr><td>t₊ (centre of mass)</td><td class="n">${tplus}</td><td>${tp_lf_meas} measured, ${tp_lf_fit} fit [1]; ${tp_le_enmr} eNMR, ${tp_le_md} MD [2] (volume frame)</td></tr>
+  <tr><td>D(Li⁺), D(PF₆⁻) (10⁻¹¹ m²/s)</td><td class="n">${D_Li}; ${D_PF6}</td><td>not corrected for box size</td></tr>
+  <tr><td>D(EC), D(EMC) (10⁻¹¹ m²/s)</td><td class="n">${D_EC}; ${D_EMC}</td><td></td></tr>
+</table>
+<p><b>Reading.</b> Lehnert's model matches κ at 1 M by construction, because ζ is fitted there. Ours is not fitted and comes
+out a factor ${kappa_ratio} low. The Nernst–Einstein κ, which ignores all ion–ion correlations, is still a factor
+${kne_ratio} low. So the ions are too slow; association does not explain the deficit. Likely causes: a too viscous solvent
+(EMC is too dense) and a Li⁺ that drags an EMC-only shell. Viscosity is being checked; the shell is section 4.
+Reaching κ to 10 % needs about ${q_noise_kappa} per state point, t₊ to 10 % about ${q_noise_tplus}.</p>
+
+<h2>4. The Li⁺ solvation shell</h2>
+<figure>
+${fig_shell}
+<figcaption><b>Fig. 3.</b> (a) EC carbonyl O per Li⁺ within 0.516 nm, Lehnert's shell radius (first minimum of g<sub>Li–P</sub>).
+Ours: 1–20 ns of the transport run. Lehnert's: read off his SI Fig. S10. DRS: estimate from [3] (see text), an upper bound.
+(b) Test system with one LiPF₆ in EC:EMC 1:1 (mol), 5 ns NPT at 20 °C, last 4 ns. The first shell is Li–O(carbonyl) &lt; 0.28 nm.
+Each point is an independent start (packing and seed). Bars show the mean ± standard error over runs. ${pending_runs}</figcaption>
+</figure>
+<ul>
+  <li><b>Our baseline excludes EC.</b> At 1 M, ${pi_ec} EC and ${pi_emc} EMC carbonyl O sit within 0.516 nm, plus
+    ${pi_pf6} PF₆⁻. So EC holds ${pi_share} % of the carbonyl O at Li⁺, while it is ${ec_mol_pct} % of the solvent molecules. Lehnert's model,
+    with the same ζ, gives ${le_ec} EC and ${le_emc} EMC (${le_share} % EC).</li>
+  <li><b>Experimental anchor.</b> Self, Hahn and Persson [3] measured dielectric spectra of EC:EMC (3:7 w:w) and of 1 M LiPF₆ in it at
+    21 °C. The free-EC amplitude drops from ${drs_a_neat} to ${drs_a_1m}. If the amplitude is proportional to the
+    free-EC concentration, ${drs_frac} % of the EC (${drs_cec} mol/L) is bound, about ${drs_ec} ± ${drs_ec_err} EC per Li⁺.
+    Two effects make this an upper bound: the dilution of EC by the salt, and kinetic depolarization. This is our reading
+    of their data, not their conclusion.</li>
+  <li><b>Gas-phase binding shows the cause</b> (Fig. 4). The difference E<sub>bind</sub>(EC) − E<sub>bind</sub>(DMC) is ${dqm} kcal/mol in quantum chemistry, ${dm0} in the
+    baseline force field and ${dm1} with the published OPLS-AA EC charges (“M1”). ${qm_emc_sentence} All fixed-charge models under-bind Li⁺ by
+    ${under_lo}–${under_hi} kcal/mol in vacuum against G4 [5] (missing induction). That part is common to all solvents; the difference between solvents
+    decides the preference.</li>
+  <li><b>Liquid test of M1</b> (Fig. 3b). Over ${n_M0} M0 and ${n_M1} M1 runs, the EC share of the first shell is ${M0_first} %
+    and ${M1_first} %; within 0.516 nm it is ${M0_wide} % and ${M1_wide} %. Correcting the charges moves the shell
+    towards EC, but by itself not to the experimental level.</li>
+</ul>
+<figure>
+${fig_binding}
+<figcaption><b>Fig. 4.</b> Binding energy of Li⁺ to one solvent molecule at the carbonyl O, in vacuum, each species at its own
+optimized geometry (QM: Psi4 1.9.1, DF-MP2, frozen core, no counterpoise, as in [5]; force fields: OpenMM, Li⁺ charge 1).
+M1 changes only the EC parameters; DMC, EMC and PC are the same as in M0.</figcaption>
+</figure>
+
+<h2>5. Errors found and corrected</h2>
+<p>The defects found so far, their effect, and how they were caught and fixed. Every number in this document comes from the
+corrected versions. They are listed because a result is only as good as the checks behind it.</p>
+<table>
+  <tr><th>Defect</th><th>Effect</th><th>Caught and fixed</th></tr>
+  <tr><td>OpenMM integrators read the start velocities as half-step values</td><td>${q_gpu_halfstep} in U after 10 fs</td><td>caught comparing GPU and CPU from an identical state, before any production run; fixed in the integrators</td></tr>
+  <tr><td>The GPU output swapped the labels of identical molecules</td><td>D(Li⁺) ${q_identity_dli} too high; κ and t₊ unaffected</td><td>seen in the output of the first transport run (labels exchanged every ${q_identity_period} steps); the backend now tracks molecules itself, and that run was repaired with a check of every assignment</td></tr>
+  <tr><td>The ion-cluster cutoff stopped at a noise dip in g(r)</td><td>a draft reported ${q_cluster_old} free Li⁺</td><td>the cutoff fell inside the broad Li–P peak; the rule now smooths g(r) first and requires a deep minimum, with a test for both g(r) shapes</td></tr>
+  <tr><td>The GPU bridge counted LJ tail pairs over all atoms, including H without LJ</td><td>${q_water_tail_gap} kJ/mol for 500 waters</td><td>caught by the conformance check before every GPU run; now ${q_water_conformance_after}, tolerance unchanged</td></tr>
+  <tr><td>Psi4's frozen-core rule correlates bare Li⁺ but not the Li 1s in the complex</td><td>binding ${q_psi4_fc}</td><td>caught comparing with the published value at the same level [5]; Li⁺ now treated consistently</td></tr>
+</table>
+
+<h2>6. Next steps</h2>
+<ul>
+  <li>Replicas of the shell test (Fig. 3b, in progress) and M1 at 1 M against the DRS estimate.</li>
+  <li><b>M2:</b> solvent charges from quantum chemistry (RESP2), tested against densities, heats of vaporization and the
+    gas-phase binding differences. <b>M3:</b> ζ from the refractive index (electronic continuum correction), not fitted to κ.
+    Explicit polarization only if M3 fails in a specific, measured way.</li>
+  <li><b>Then the transport campaign</b> for the model that passes: κ(c, T), t₊, D and the thermodynamic factor for 1 M EC:EMC over
+    concentration and temperature, at about ${q_noise_kappa} per state point. Decompositions that only MD provides: ion correlations
+    behind the κ maximum, viscosity against association in κ(T), and cluster contributions to t₊.</li>
+  <li><b>Publication:</b> a software paper (UnitcellMD with this electrolyte as the validated application), planned for
+    J. Chem. Inf. Model., not before May 2027.</li>
+</ul>
+
+<h2>7. Where your view would help us</h2>
+<p class="draft">[Draft questions, to be edited by the author.]</p>
+<ul>
+  <li><b>Comparison basis.</b> Should we compare with the Eq. 15/20 fits or with the measured points and their uncertainties? Can the
+    data behind [1] (κ, t₊, D±, TDF, and the density fit of the SI) be shared for this?</li>
+  <li><b>Priorities.</b> For cell-level modelling, which quantities and which (c, T) range would benefit most from MD? For example,
+    t₊ at high concentration, low temperature, or the thermodynamic factor.</li>
+  <li><b>The t₊ question.</b> What would you accept as evidence from MD on the difference between [1] and [2], for example
+    cluster contributions to t₊ in a stated reference frame?</li>
+  <li><b>Solvation.</b> Which experimental probe of the Li⁺ shell composition (dielectric, Raman, NMR) do you consider most
+    reliable for EC:EMC?</li>
+</ul>
+
+<h2>Data, code and the use of AI</h2>
+<p>All code, inputs and analysis scripts are public at github.com/mines-of-morja under Apache-2.0. This document is generated by
+<span class="sans" style="font-size:8.6pt">docs/research/summary/build.py</span>. Every number in it is computed from the study data,
+taken from a literature ledger with its source, or checked verbatim against our validation reports. Trajectories are available on
+request.</p>
+<p>The UnitcellMD software was written by Claude Code (Anthropic), an AI coding agent, under the direction of the author, who set
+the requirements, reviewed the work and approved every physical parameter and acceptance criterion. Claude Code was also used to plan
+and run validation and to propose research directions. All numerical results were produced by the computations described here
+(molecular dynamics with published force fields, and quantum chemistry with Psi4). No number was written or changed by a language
+model.</p>
+
+<h2>References</h2>
+<ol class="refs">
+  <li>J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), doi:10.1149/2.0571912jes.</li>
+  <li>L. Lehnert et al., J. Electrochem. Soc. 172, 050523 (2025), doi:10.1149/1945-7111/add381, and SI.</li>
+  <li>J. Self, N. T. Hahn, K. A. Persson, Energy Environ. Mater. 7, e12494 (2024), doi:10.1002/eem2.12494.</li>
+  <li>C. Caleman et al., J. Chem. Theory Comput. 8, 61 (2012), and SI.</li>
+  <li>M. Olguin, O. Borodin, P. Ganesh, P. R. C. Kent, J. L. Allen, W. A. Henderson, Phys. Chem. Chem. Phys. 18, 164 (2016), doi:10.1039/C5CP05121E.</li>
+  <li>L. S. Dodda et al., J. Phys. Chem. B 121, 3864 (2017); Nucleic Acids Res. 45, W331 (2017) (LigParGen). K. P. Jensen, W. L. Jorgensen,
+    J. Chem. Theory Comput. 2, 1499 (2006). J. N. Canongia Lopes, A. A. H. Pádua, J. Phys. Chem. B 108, 16893 (2004).</li>
+  <li>K. D. Fong et al., Macromolecules 53, 9503 (2020) (Onsager transport). M. Bernetti, G. Bussi,
+    J. Chem. Phys. 153, 114107 (2020) (barostat).</li>
+</ol>
+</body>
+</html>
