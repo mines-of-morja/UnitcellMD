@@ -14,3 +14,9 @@
   preference. The size of the shift then sets how much a pair-specific Li⁺–O term still has to
   add towards the QM EC–DMC difference (layer 0, `tools/ffcheck/README.md`).
 - **Cost:** 6 runs of about 1 h each on HIP (M1 took 58 min), GPU queue 6.
+- **Bridge:** all runs use the e37-identity bridge, the same as the M1 run, so the runs stay
+  consistent. That bridge takes OpenMM's LJ tail correction as is: it counts N(N+1)/2 pairs over
+  all atoms, including H without LJ, while the engine weights the pairs by atom class. That
+  difference made SPC/Fw water fail the start-up check. It is fixed on the bridge branch
+  e25-constraints (afbc3b2). For these boxes the error is of order 1/N of the tail: the EC
+  systems pass the energy check at 2.7e-7. It has no visible effect on the shell counts.
