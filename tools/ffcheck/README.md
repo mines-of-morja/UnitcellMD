@@ -37,12 +37,14 @@ in its cis-cis conformer (also ours).
 |---|---|---|---|---|---|---|
 | G4 (Olguin Table 1) | −48.1 | −41.9 | — | — | **−6.2** | — |
 | range of the 11 QM methods in Table 1 | | | | | −5.5 … −7.2 | — |
+| MP2/aug-cc-pVTZ, ours (`../qm`, 2026-11-21) | −48.15 | −41.27 | −41.92 | −49.86 | −6.89 | **−6.24** |
 | **M0** (LigParGen EC), q_Li = 1 | −29.76 | −29.86 | −30.60 | −30.72 | **+0.10** | +0.84 |
 | **M1** (OPLS-AA EC), q_Li = 1 | −31.84 | −29.86 (M0) | −30.60 (M0) | — | **−1.99** | −1.24 |
 | M0, q_Li = 0.75 | −21.54 | −21.24 | −21.78 | −22.24 | −0.31 | +0.24 |
 | M1, q_Li = 0.75 | −22.97 | −21.24 (M0) | −21.78 (M0) | — | −1.73 | −1.19 |
 
-Li–O distances are 0.194–0.204 nm in all cases (`results/li_binding_2026-11-20.json`).
+Li–O distances are 0.194–0.204 nm in all force-field cases (`results/li_binding_2026-11-20.json`);
+MP2/aug-cc-pVTZ gives 0.175–0.176 nm.
 
 **Reading:**
 1. **Every fixed-charge model under-binds Li⁺ by 12–18 kcal/mol in vacuum.** This is the
@@ -52,7 +54,10 @@ Li–O distances are 0.194–0.204 nm in all cases (`results/li_binding_2026-11-
 2. **The difference between solvents decides the preference.** All QM methods put EC 5.5–7.2
    kcal/mol below DMC. M0 has no difference at all (+0.1); its EC is even slightly weaker than
    EMC. This is the gas-phase counterpart of the EC depletion in A4.
-3. **M1 gets the sign right but recovers only about a third** (−2.0 of −6.2 kcal/mol). Changing
+3. **M1 gets the sign right but recovers only about a third** (−2.0 of −6.2 kcal/mol). Against
+   EMC, the cosolvent of the target electrolyte, it is a fifth: −1.24 of −6.24 kcal/mol (our
+   MP2/aug-cc-pVTZ; EMC is not in Olguin's table, so this QM number is ours, at the level that
+   reproduces Olguin for EC and DMC to 0.35 kcal/mol). Changing
    the EC charges alone is therefore probably not enough. The rest has to come from terms a
    fixed-charge model lacks (induction, charge transfer), or from a pair-specific Li⁺–O term
    fitted to these curves.

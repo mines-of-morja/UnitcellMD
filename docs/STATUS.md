@@ -211,6 +211,20 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-21 — research: QM layer 0 at the default level; results summary — **Psi4 frozen
+core:** bare Li⁺ was correlated (Psi4 unfreezes the core when no valence electrons remain), Li 1s
+in the complex was not, so every E_bind was too weak by the Li⁺ 1s² correlation (0.3 kcal/mol at
+6-31+G(d,p), 6.9 at aug-cc-pVTZ). Fixed in `tools/qm/li_binding_qm.py` (SCF for species without
+active electrons, counterpoise by hand). **MP2/aug-cc-pVTZ after the fix:** EC −48.15, DMC
+−41.27 kcal/mol against Olguin's −47.8, −41.3; EMC −41.92, PC −49.86 (ours, not in Olguin).
+EC − EMC −6.24 kcal/mol against M0 +0.84 and M1 −1.24; Li–O 1.75–1.76 Å against 1.94–2.04 Å in
+the force fields. **Summary PDF** for the JMU contacts (`docs/research/summary/`, rules in
+docs/research/publication.md): built by script, every number computed, from the ledger, or
+checked verbatim against a report. **Replicas (queue 6):** m1_r2 was ended at 3340 ps by the
+GPU-hang telemetry (bridge in kfd_wait_on_events); the queue resumes it from its checkpoint —
+evidence: tools/qm/README.md, tools/qm/results/, tools/ffcheck/README.md — next: replicas
+analysed; summary rebuilt
+
 2026-11-21 — E2.9 rung EC done; bridge LJ tail fixed — **rung EC** (2 ns NPT on HIP, 0.5–2 ns):
 OPLS-AA EC ρ = 1319.2 ± 0.3 g/L, ΔH_vap = 64.36 ± 0.05 kJ/mol against Caleman 2012's 1320.7 and
 64.90; LigParGen EC 1280.1 g/L (−3.1 %) and 62.00 kJ/mol under identical settings. **Water on

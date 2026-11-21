@@ -172,6 +172,9 @@ Source: J. Self, N. T. Hahn, K. A. Persson, *Energy Environ. Mater.* 7, e12494 (
 - **QM:** Li⁺ binds EC 6.2 kcal/mol more strongly than DMC (G4; 5.5–7.2 across 11 methods).
 - **M0:** no difference (+0.1 kcal/mol). **M1:** −2.0 kcal/mol, the right sign but a third of
   the size.
+- **EC against EMC (2026-11-21, our MP2/aug-cc-pVTZ, which reproduces Olguin's EC and DMC to
+  0.35 kcal/mol):** QM −6.24 kcal/mol, M0 +0.84, M1 −1.24 (a fifth). QM puts Li⁺ 0.175 nm from
+  the carbonyl O, both force fields 0.194–0.204 nm ([tools/qm/README.md](../../tools/qm/README.md)).
 - Both under-bind Li⁺ by 12–18 kcal/mol, the induction a fixed-charge model lacks.
 - **Consequence:** the carbonyl charges (M1) are part of the answer, not all of it. If the M1
   liquid run still depletes EC, step 3 of M3 becomes the next lever: a pair-specific Li⁺–O(carbonyl)
