@@ -199,9 +199,10 @@ Last update: 2026-11-13.
     identical conformance failure, and it leaves a stale `reason` in status.json after a
     successful fresh restart (EC rung runs: done, exit 0, "engine exit 1"). Proposal when
     resumed: `out/failure.json` (category, step, diagnostics, last checkpoint, provider) with
-    per-category exit codes; the driver skips lasting failures. Related, for the author: HIP
-    mixed misses the ADR 0010/0012 energy tolerance (1e-6) for SPC/Fw water by 4.1–4.7e-6;
-    EC systems pass at 2–3e-7. The tolerance is not loosened.
+    per-category exit codes; the driver skips lasting failures. Related: the SPC/Fw water
+    conformance failure (4.1–4.7e-6 against 1e-6) is resolved without loosening the
+    tolerance; see the log entry of 2026-11-21 (LJ tail count; water runs in double
+    precision).
 10. CLAUDE.md lists the GPUs as "RX 580, Radeon VII". The compute card is an MI50 (gfx906)
     flashed with the Radeon VII VBIOS, hence the name; correct the text?
 
@@ -209,6 +210,20 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-21 — E2.9 rung EC done; bridge LJ tail fixed — **rung EC** (2 ns NPT on HIP, 0.5–2 ns):
+OPLS-AA EC ρ = 1319.2 ± 0.3 g/L, ΔH_vap = 64.36 ± 0.05 kJ/mol against Caleman 2012's 1320.7 and
+64.90; LigParGen EC 1280.1 g/L (−3.1 %) and 62.00 kJ/mol under identical settings. **Water on
+the GPU:** the conformance failure was not precision (double: energy 6.3e-6 off, forces
+7.6e-8). OpenMM's LJ long-range correction averages over N(N+1)/2 pairs of all atoms, including
+H without LJ; the engine's is 2π/V Σ n_a n_b I_ab. For 500 waters the two differ by 0.1668
+kJ/mol, the whole gap. The bridge now weights OpenMM's tail integral per class pair (engine
+`e25-constraints` afbc3b2, test-first; bridge 30 tests): water agrees to 1.4e-9 on the
+Reference platform and 4.1e-8 on HIP double. HIP mixed stays at 2.1e-6 (single-precision
+rounding), so rung W runs in double precision (author, 2026-11-21): queue 7 after queue 6,
+profile `machine-gpu-double-identity.toml`. HIP so far: no hang in about 2.3 GPU hours (EC test,
+M1) — evidence: studies/2026-11-20_ec-opls-test/README.md, bridge tests — next: twin and Wu
+water (queue 7), CPU viscosity (≈ 23:00Z), then the rung W report.
 
 2026-11-21 — research S2 (M1 Li⁺ preference) done — one LiPF₆ in EC:EMC 1:1 with OPLS-AA EC,
 5 ns NPT on HIP (58 min, no hang). Last 4 ns: EC 31 ± 7 % of the first-shell carbonyl O (M0
