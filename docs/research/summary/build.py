@@ -89,6 +89,11 @@ def f(x: float, nd: int = 2) -> str:
     return f"{x:.{nd}f}".replace("-", "−")
 
 
+def sf(x: float, nd: int = 1) -> str:
+    """Signed: a difference that can have either sign."""
+    return ("+" if x > 0 else "") + f(x, nd)
+
+
 def pm(m: float, s: float, nd: int = 2) -> str:
     return f"{f(m, nd)} ± {s:.{nd}f}"
 
@@ -209,7 +214,8 @@ for model in pref:
     v[f"n_{model}"] = str(n)
     for key in ("first", "wide"):
         m, s = mean_sem(pref[model][key])
-        v[f"{model}_{key}"] = f"{m:.0f} ± {s:.0f}" if n > 1 else f"{m:.0f}"
+        nd = 0 if n > 1 and round(s) >= 1 else 1  # never print a spread as "± 0"
+        v[f"{model}_{key}"] = f"{m:.{nd}f} ± {s:.{nd}f}" if n > 1 else f"{m:.0f}"
 v["pending_runs"] = (
     f"{len(pending)} of the {sum(len(r) for r in RUNS.values())} runs are still running and "
     "are not included."
@@ -241,9 +247,10 @@ under = [ffb[(m, sv)] - ol["G4"][sv] for m, sv in (("m0", "EC"), ("m1", "EC"), (
 v["under_lo"], v["under_hi"] = f"{min(under):.0f}", f"{max(under):.0f}"
 if "EMC" in qm:
     v["qm_emc_sentence"] = (
-        f"For EMC, which no published table covers, {qm_level} gives {f(qm['EMC'], 1)} kcal/mol, "
-        f"{f(qm['EC'] - qm['EMC'], 1)} kcal/mol weaker than EC; the M0 force field has "
-        f"{f(ffb[('m0', 'EC')] - ffb[('m0', 'EMC')], 1)}."
+        f"For EMC, which no published table covers, {qm_level} gives {f(qm['EMC'], 1)} kcal/mol. "
+        f"E<sub>bind</sub>(EC) − E<sub>bind</sub>(EMC) is then {f(qm['EC'] - qm['EMC'], 1)} "
+        f"kcal/mol in quantum chemistry, {sf(ffb[('m0', 'EC')] - ffb[('m0', 'EMC')])} in M0 and "
+        f"{sf(ffb[('m1', 'EC')] - ffb[('m0', 'EMC')])} in M1."
     )
 else:
     v["qm_emc_sentence"] = (
@@ -337,7 +344,7 @@ for j, (model, col, mk) in enumerate((("M0", BLUE, "o"), ("M1", ORANGE, "s"))):
     if len(vals) > 1:
         m, s = mean_sem(vals)
         a2.errorbar(j + 0.33, m, yerr=s, fmt="_", color=INK, ms=12, capsize=3, lw=1.2)
-        a2.text(j + 0.42, m, f"{m:.0f} ± {s:.0f} %", fontsize=7.5, va="center")
+        a2.text(j + 0.42, m, f"{v[f'{model}_first']} %", fontsize=7.5, va="center")  # as in the text
 a2.axhline(50, color=MUTED, lw=0.8, ls="--")
 a2.text(1.75, 51, "EC share of the molecules", fontsize=7, color=MUTED, ha="right", va="bottom")
 a2.set_xticks([0, 1], ["M0 (LigParGen EC)", "M1 (OPLS-AA EC)"], fontsize=7)
