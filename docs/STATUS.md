@@ -211,6 +211,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-21 — research S2: Li⁺ preference replicas analysed — 4 runs per model, one Li⁺ in
+EC:EMC 1:1: EC share of the first shell M0 17.7 ± 1.4 %, M1 30.4 ± 3.1 % (+12.7 ± 3.4); within
+0.516 nm 29.3 ± 0.5 % against 39.2 ± 2.1 %; EC residence 21 → 40 ps. Every M1 run lies above
+every M0 run, the criterion set before the runs. m1_r2 continued from its checkpoint after the
+GPU hang; trajectories gap-free. Error found: the M1 study's first-shell command lacked
+`--r-cut-nm 0.28` (the CLI then uses per-pair minima, EC 0.3175 nm); corrected, the replicas
+reanalysed. Summary PDF rebuilt with all runs and the aug-cc-pVTZ QM, nothing pending —
+evidence: studies/2026-11-21_li-preference-replicas/README.md, analysis/replicas.json — next:
+M1 at 1 M against the DRS estimate (≈ 2.2 EC per Li⁺)
+
 2026-11-21 — research: QM layer 0 at the default level; results summary — **Psi4 frozen
 core:** bare Li⁺ was correlated (Psi4 unfreezes the core when no valence electrons remain), Li 1s
 in the complex was not, so every E_bind was too weak by the Li⁺ 1s² correlation (0.3 kcal/mol at

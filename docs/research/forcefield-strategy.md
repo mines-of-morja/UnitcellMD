@@ -108,7 +108,8 @@ research extension for high concentrations, not a prerequisite.
 - **A testable explanation for the literature dispute on the Li⁺ shell** (cyclic-only vs mixed
   shells): the carbonyl charge model alone moves EC from depleted to enriched (M0 vs M1 vs
   Lehnert). If A4 and S2 confirm this, part of the dispute is a property of the force fields.
-  This is a hypothesis until S2.
+  This is a hypothesis until S2. M0 against M1 is now confirmed at one Li⁺ in 1:1 (4 runs each,
+  2026-11-21); the 1 M electrolyte is still open.
 - **An open, reproducible chain:** open engine, open parameters with citations, scripted
   studies. The benchmark model is commercial.
 
@@ -130,6 +131,11 @@ research extension for high concentrations, not a prerequisite.
   Lehnert's 0.516 nm (M0 29 %, Lehnert ≈ 47 %). EC residence 42 ps (M0 24 ps). The direction
   matches layer 0; the size does not reach the 50 % share. Details:
   `studies/2026-11-20_li-preference-m1/README.md`.
+- **Replicas (2026-11-21, 4 independent runs per model):** EC share of the first shell M0
+  17.7 ± 1.4 %, M1 30.4 ± 3.1 % (+12.7 ± 3.4, 3.8 SE); within 0.516 nm 29.3 ± 0.5 % against
+  39.2 ± 2.1 %. All four M1 runs lie above all four M0 runs, the criterion set before the runs.
+  So the carbonyl charges move the shell; the hypothesis of §7 survives its first test, at one
+  Li⁺ in 1:1. Details: `studies/2026-11-21_li-preference-replicas/README.md`.
 - **EC density (rung EC, 39 °C, 1000 EC):** OPLS-AA 1.3193 g/cm³, LigParGen 1.2800
   (`studies/2026-11-20_ec-opls-test/INDEX.md`; the experimental comparison belongs to that study).
 

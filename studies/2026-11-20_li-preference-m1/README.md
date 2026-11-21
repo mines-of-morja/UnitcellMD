@@ -65,7 +65,8 @@ intermittent), so the true uncertainty is larger.
 Commands (ucmd-analysis venv; M0 the same on the A4 trajectory):
 
 ```sh
-ucmd-analyze shell TRAJ.h5 --skip-ps 1000 --a Li:Li --b EC:O:1 --b EMC:O:1 --b PF6:P
+ucmd-analyze shell TRAJ.h5 --skip-ps 1000 --a Li:Li --b EC:O:1 --b EMC:O:1 --b PF6:P \
+    --r-cut-nm 0.28 --r-cut-nm 0.28 --r-cut-nm 0.28   # corrected 2026-11-21: without it, auto per pair
 ucmd-analyze shell TRAJ.h5 --skip-ps 1000 --a Li:Li --b EC:O:1 --b EMC:O:1 --b PF6:P \
     --r-cut-nm 0.516 --r-cut-nm 0.516 --r-cut-nm 0.516
 ucmd-analyze residence TRAJ.h5 --a Li:Li --b EC:O:1 --r-cut-nm 0.30   # and EMC:O:1
