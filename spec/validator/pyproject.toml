@@ -13,7 +13,7 @@ dependencies = ["jsonschema>=4.18", "numpy>=1.26"]
 
 [project.optional-dependencies]
 trajectory = ["h5py>=3.10"]
-dev = ["pytest>=8", "ruff>=0.6", "h5py>=3.10"]
+dev = ["pytest>=8", "ruff>=0.6", "h5py>=3.10", "hatchling>=1.27"]  # hatchling: test_packaging builds the wheel
 
 [project.scripts]
 ucmd-spec = "ucmd_spec.cli:main"

@@ -42,8 +42,6 @@ Last update: 2026-11-13.
   2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Until then,
      densities are marked placeholders. It is also the density reference for the transport
      study (PLAN.md §10.12).
-  3. Approval to fix the validator's packaging (gate-b1a.md §4.1): its schemas are not in the
-     wheel.
 
 ## Decisions by the author
 
@@ -210,6 +208,14 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-21 — gate-b1a §4.1 fixed: validator 0.1.1 ships its schemas — the first outside
+contribution (branch jo/validator-schema-packaging, merged into b2a by the author's request).
+The wheel bundles spec/schemas; lookup order UCMD_SPEC_DIR, bundled copy, checkout. Spec stays
+0.1.0. Review: hatchling added to the dev extras, otherwise the new packaging test skipped in CI —
+evidence: 58 validator tests, none skipped; a non-editable 0.1.1 install validates the fixtures
+without UCMD_SPEC_DIR, 0.1.0 fails with FileNotFoundError — next: the builder's UCMD_SPEC_DIR
+workaround can go once it pins validator 0.1.1
 
 2026-11-21 — research S2: Li⁺ preference replicas analysed — 4 runs per model, one Li⁺ in
 EC:EMC 1:1: EC share of the first shell M0 17.7 ± 1.4 %, M1 30.4 ± 3.1 % (+12.7 ± 3.4); within

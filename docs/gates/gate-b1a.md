@@ -76,6 +76,7 @@
    - **Proposed fix:** ship the schemas in the validator wheel and look them up as package data
      first; release it as validator 0.1.1. The spec itself stays 0.1.0.
    - This changes files under `spec/` after the tag, so it needs your approval (CLAUDE.md).
+   - **Fixed 2026-11-21** (validator 0.1.1, merged from `jo/validator-schema-packaging`).
 2. **Densities:** Landesfeind 2019 gives its density fit only in the SI (Table S1, Eq. S1),
    which is not in `../Lit`. Please add it. Until then recipes use the placeholder
    1.2 g/cm³, and every package built with it says so in its provenance.
