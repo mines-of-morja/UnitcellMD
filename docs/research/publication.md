@@ -63,9 +63,24 @@ repeated here.
    The last sentence holds only while rule 6 holds (figures and tables from scripts), so rule 6
    is now part of the disclosure.
 
+6. **Target journal: J. Chem. Inf. Model. (JCIM), as an Application Note** (chosen by the agent at
+   the author's request). Why: reviewers there judge software and validation, not a new
+   electrochemical finding; MD software is a standard topic; no fee unless open access is chosen.
+   Requirements from the ACS author guidelines (checked 2026-11-21, last updated 2026-11-09):
+   - at most 4000 words including abstract and captions, excluding references; at least one
+     figure;
+   - the software must be available to reviewers and at publication, or the manuscript is
+     returned without review;
+   - a standalone package must show **at least six months of active development in an open
+     repository** before submission, plus community uptake metrics such as downloads. Our repos
+     start on 2026-11-11, so **the earliest submission is 2027-05-11**. Uptake has to be built
+     up until then: releases, documentation, and people other than the author running it (e.g.
+     the JMU contact).
+   - Fallback without the six-month rule: Digital Discovery (RSC; open access, a data reviewer
+     reproduces the results).
+
 ## Still open
 
-1. **Target journal** (agent's suggestion in the session of 2026-11-21; author to decide).
-2. **Lehnert's group:** co-authors or an independent comparison. This follows from their reply to
+1. **Lehnert's group:** co-authors or an independent comparison. This follows from their reply to
    the summary PDF.
-3. **DOI archive and data licence** (CC BY 4.0 suggested; all four repos are Apache-2.0).
+2. **DOI archive and data licence** (CC BY 4.0 suggested; all four repos are Apache-2.0).
