@@ -1,0 +1,26 @@
+# Calculation plan A4: one LiPF6 pair in 250 EC + 250 EMC, no salt crowding.
+# Box edge from the Lehnert 2025 SI Table S2 densities (ideal mixing; the salt volume, < 0.2 %,
+# is neglected). NPT finds the model's own density.
+# Ion charge scale ζ = 0.75 as in the 1 M electrolyte (Lehnert 2025, SI Table S3).
+format = "ucmd-build"
+version = "0.1"
+name = "m0_r3"
+description = "M0 replica 3: one LiPF6 pair in 250 EC + 250 EMC (LigParGen); packing seed 20261123"
+seed = 20261123
+component = [
+    { name = "Li", molecule = { library = "Li" }, count = 1, charge_scale = 0.75 },
+    { name = "PF6", molecule = { library = "PF6" }, count = 1, charge_scale = 0.75 },
+    { name = "EC", molecule = { library = "EC" }, count = 250 },
+    { name = "EMC", molecule = { library = "EMC" }, count = 250 },
+]
+
+[forcefield]
+source = "library"
+set = "opls-aa-carbonates"
+
+[box]
+length_nm = 4.134
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2

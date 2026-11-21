@@ -189,6 +189,15 @@ Last update: 2026-11-13.
     M1 and the M3 trial approved (2026-11-20); QM method delegated (Psi4 container, RESP2,
     cluster references). To confirm before S6: the pass criteria for ζ_ECC (κ ±15 %, κ maximum
     ±0.2 M).
+12. **Parked (author, 2026-11-21: not the edge of the project; later):** structured failure
+    records. The engine writes a clear text error, but the study driver cannot tell a lasting
+    failure from a transient one: it retried the Wu water run 40 times overnight on an
+    identical conformance failure, and it leaves a stale `reason` in status.json after a
+    successful fresh restart (EC rung runs: done, exit 0, "engine exit 1"). Proposal when
+    resumed: `out/failure.json` (category, step, diagnostics, last checkpoint, provider) with
+    per-category exit codes; the driver skips lasting failures. Related, for the author: HIP
+    mixed misses the ADR 0010/0012 energy tolerance (1e-6) for SPC/Fw water by 4.1–4.7e-6;
+    EC systems pass at 2–3e-7. The tolerance is not loosened.
 10. CLAUDE.md lists the GPUs as "RX 580, Radeon VII". The compute card is an MI50 (gfx906)
     flashed with the Radeon VII VBIOS, hence the name; correct the text?
 
