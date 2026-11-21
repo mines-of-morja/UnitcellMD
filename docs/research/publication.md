@@ -38,16 +38,34 @@ repeated here.
    are in git. Trajectories stay local and are archived with a DOI only for the production set
    (see the questions below).
 
-## Questions for the author (not urgent; before the production set)
+## Decisions (author, 2026-11-21)
 
-1. **Scope.** One science paper, a software paper (e.g. JOSS) for UnitcellMD, or both? The
-   candidate science result so far is the Li⁺ shell composition in EC:EMC: what the fixed-charge
-   models get wrong, why (gas-phase QM), and whether a model chosen without fitting to transport
-   matches the DRS estimate and κ(c,T).
-2. **Lehnert's group.** When to contact them, and whether as co-authors or as an independent
-   comparison. This decides how far we reproduce their model before diverging from it.
-3. **Data archive.** Zenodo (or the university repository), and the licence for data (CC BY 4.0
-   suggested; all four repos are Apache-2.0).
-4. **Authorship and AI disclosure.** Journals require a statement on the use of AI tools. Commit
-   trailers record which work was done with Claude; the author decides how to describe it.
-5. **Target journal**, which fixes the SI format and the data-availability rules.
+1. **Rules 4 and 5 matter most:** reproduce a published number first, and keep errors on record.
+2. **Scope: a software paper** in a journal close to MD, electrochemistry or a related field, not a
+   pure science paper as the first publication. The electrolyte work (LiPF₆ in EC:EMC) is its
+   application and validation case.
+3. **Before contacting Lehnert's group**, a first PDF summarizing our results, which the author
+   will send with an email. It is written once there is something to present.
+4. **Code and data are published in the GitHub organization `mines-of-morja`.** A DOI archive
+   (e.g. Zenodo, which can mint one per GitHub release) is still open.
+5. **AI disclosure: open.** Claude Code wrote the code, and helped validate results and develop
+   ideas. The results themselves come from computation: MD with cited force fields and quantum
+   chemistry with Psi4. Draft wording for the paper:
+
+   > The UnitcellMD software was written by Claude Code (Anthropic), an AI coding agent, under the
+   > direction of the author, who set the requirements, reviewed the work and approved every
+   > physical parameter and acceptance criterion. Claude Code was also used to plan and run
+   > validation and to propose research directions. All numerical results were produced by the
+   > computations described here (molecular dynamics with published force fields and quantum
+   > chemistry with Psi4), from inputs, scripts and outputs that are public at
+   > github.com/mines-of-morja. No number was written or changed by a language model.
+
+   The last sentence holds only while rule 6 holds (figures and tables from scripts), so rule 6
+   is now part of the disclosure.
+
+## Still open
+
+1. **Target journal** (agent's suggestion in the session of 2026-11-21; author to decide).
+2. **Lehnert's group:** co-authors or an independent comparison. This follows from their reply to
+   the summary PDF.
+3. **DOI archive and data licence** (CC BY 4.0 suggested; all four repos are Apache-2.0).
