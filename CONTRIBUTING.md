@@ -27,6 +27,23 @@ git clone -b a1  https://github.com/mines-of-morja/ucmd-analysis.git
 Setup, test and lint commands for each repo are in the table in CLAUDE.md. Read
 [docs/STATUS.md](docs/STATUS.md) first: it says what is done, what runs and what is open.
 
+## Tasks
+
+Open tasks are GitHub issues with the label `task`, in all repos of the organization:
+[all open tasks](https://github.com/issues?q=is%3Aopen+label%3Atask+org%3Amines-of-morja).
+The author (or the author's agent) posts them; each says its goal, context, deliverable,
+acceptance criteria and the review branch.
+
+- **Claim** a task by assigning yourself or commenting on it, before you start.
+- **`needs-design`:** the first deliverable is a design note as a draft pull request. Implement
+  only after the author approves it in the pull request.
+- **`blocked`:** waits for something outside the task (named in the issue). Don't start it.
+- **`literature`:** sources for the literature ledger, no code.
+- Name the branch `<your-name>/<issue-number>-<short-title>` and write `Closes #<n>` in the pull
+  request.
+- Found more work? Open an issue without the `task` label; the author decides whether it
+  becomes one.
+
 ## Where to commit
 
 - **`main`:** only the author merges, after a gate.
