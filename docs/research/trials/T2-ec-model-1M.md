@@ -34,3 +34,8 @@
    1 M; M0 stays (fewer sources), and the shell deficit is passed to the M2 and M3 steps.
 4. Density is a consistency check, not a criterion here: M1's box density is reported against
    Landesfeind's fit (one reading, flagged).
+
+**Amendment (2026-11-21, about 22:36Z, during the first 70 ps of the first run, before any result):**
+writing the analysis showed that rules 1 and 3 can both apply (M1 closer to 2.2, but within 2 SE of
+M0). Then rule 3 takes precedence: a difference that is not resolved does not replace the model.
+Analysis script: `T2/t2_analyze.py`.
