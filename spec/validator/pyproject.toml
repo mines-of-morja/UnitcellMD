@@ -24,6 +24,12 @@ path = "src/ucmd_spec/__init__.py"
 [tool.hatch.build.targets.wheel]
 packages = ["src/ucmd_spec"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"../schemas" = "ucmd_spec/schemas"
+
+[tool.hatch.build.targets.sdist.force-include]
+"../schemas" = "schemas"
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
