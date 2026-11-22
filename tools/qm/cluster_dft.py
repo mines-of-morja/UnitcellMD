@@ -17,6 +17,11 @@ found by covalent connectivity. Per file:
     basis)], both at the complex geometry.
 - Li–O distances to every carbonyl O (O with one bonded neighbour) and the solvent formulas.
 
+With --geometries R.json, the geometries (complex and solvents alone) are taken from an earlier
+run's output for the same start file, and only the def2-TZVPD energies are computed. This is for
+functionals without analytic gradients in Psi4 1.9.1 (the VV10 ones, ωB97M-V and ωB97X-V), e.g.
+ωB97M-V/def2-TZVPD//ωB97X-D/def2-SVP.
+
 Validation only, like tools/oracle: nothing in the components imports it. Energies in kJ/mol
 (spec units) and kcal/mol, converted from hartree with CODATA 2018.
 """
@@ -121,12 +126,16 @@ def optimize(f: str, atoms: list[Atom], charge: int) -> list[Atom]:
     return geometry(m)
 
 
-def run_one(path: Path, f: str) -> dict:
+def run_one(path: Path, f: str, given: dict | None = None) -> dict:
+    """One start file; with `given` (an earlier run's row), its geometries and no optimization."""
     t0 = time.time()
     start = read_xyz(path)
     if start[0][0] != "Li":
         raise ValueError(f"{path}: the first atom must be Li")
-    cplx = optimize(f, start, +1)
+    if given is None:
+        cplx = optimize(f, start, +1)
+    else:
+        cplx = [(a[0], *map(float, a[1:])) for a in given["complex_xyz"]]
     frags = fragments(cplx)
     names = [NAMES.get(formula(cplx, fr), formula(cplx, fr)) for fr in frags]
     e_c = energy(f, cplx, +1)
@@ -142,7 +151,13 @@ def run_one(path: Path, f: str) -> dict:
         bsse_h += own - full
         e_int_h -= full
         if name != "Li":
-            alone = optimize(f, [cplx[i] for i in idx], 0)
+            if given is None:
+                alone = optimize(f, [cplx[i] for i in idx], 0)
+            else:
+                row = given["solvent_alone"][len(solvents)]  # same geometry, same fragment order
+                if row["name"] != name:
+                    raise ValueError(f"{path}: fragment {name} vs {row['name']} in --geometries")
+                alone = [(a[0], *map(float, a[1:])) for a in row["xyz_alone"]]
             e_alone = energy(f, alone, 0)
             e_bind_h -= e_alone
             solvents.append({"name": name, "e_alone_hartree": e_alone, "e_at_complex_hartree": own,
@@ -157,6 +172,7 @@ def run_one(path: Path, f: str) -> dict:
         "start": path.name,
         "functional": f,
         "opt_basis": OPT_BASIS,
+        "geometry_functional": f if given is None else given["geometry_functional"],
         "sp_basis": SP_BASIS,
         "solvents": names,
         "e_complex_hartree": e_c,
@@ -180,17 +196,23 @@ def main() -> None:
     ap.add_argument("--threads", type=int, default=16)
     ap.add_argument("--memory", default="20 GB")
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--geometries", type=Path, help="earlier output: use its geometries, no opt")
     args = ap.parse_args()
     psi4.set_num_threads(args.threads)
     psi4.set_memory(args.memory)
     psi4.set_options({"scf_type": "df", "dft_radial_points": 99, "dft_spherical_points": 590})
     rows = json.loads(args.out.read_text()) if args.out.exists() else []
     done = {(r["start"], r["functional"]) for r in rows}
+    given = {}
+    if args.geometries:
+        for r in json.loads(args.geometries.read_text()):
+            r.setdefault("geometry_functional", r["functional"])
+            given[r["start"]] = r
     for p in args.starts:
         if (p.name, args.functional) in done:
             continue
         psi4.core.set_output_file(str(args.out.with_suffix("")) + f"_{p.stem}.out", False)
-        rows.append(run_one(p, args.functional))
+        rows.append(run_one(p, args.functional, given[p.name] if args.geometries else None))
         args.out.write_text(json.dumps(rows, indent=1) + "\n")  # after each, so a crash keeps work
         psi4.core.clean()
 

@@ -120,3 +120,24 @@ fits.
   with PF₆⁻ absent and q_Li = 0.75.
 - **The fit is good** if the weighted RMS residual is ≤ 1, i.e. within the reference
   uncertainty. That is reported. It is not a gate: stage 3 decides.
+
+**Amendment 3 (2026-11-22, 22:31Z, functional check part-run): ωB97M-V on ωB97X-D geometries.**
+- **What was found:** Psi4 1.9.1 has no analytic gradients for the VV10 functionals (ωB97M-V,
+  ωB97X-V). This was tested on water; ωB97X-D and M06-2X have them. The optimizer therefore fell
+  back to finite differences: the EC complex alone took 11.8 h (1 176 energy evaluations,
+  09:56–21:42Z). The clusters (41–61 atoms) would take weeks, so the protocol as planned cannot
+  be run with ωB97M-V. The run was stopped after EC.
+- **Change:** ωB97M-V enters as ωB97M-V/def2-TZVPD//ωB97X-D/def2-SVP.
+  - Its energies are single points, with counterpoise as before, on the ωB97X-D geometries of the
+    complexes and of the solvents alone (`cluster_dft.py --geometries`).
+  - Its Li–O distances are therefore those of ωB97X-D.
+  - This is the usual composite for functionals without gradients.
+  - The selection rule of Amendment 1 is unchanged. It applies to ωB97X-D, M06-2X and
+    ωB97M-V//ωB97X-D. If the composite is chosen, the clusters are optimized with ωB97X-D, and
+    s_d is ωB97X-D's.
+- **Disclosed, already seen when this was written:**
+  - ωB97X-D: EC and EMC. E_bind −48.80 and −43.61 kcal/mol; CP interaction −51.25 and −46.51;
+    Li–O 1.750 and 1.739 Å.
+  - ωB97M-V, full protocol, EC only: E_bind −50.36; CP interaction −53.38; Li–O 1.731 Å. It is
+    reported, not used for the selection.
+  - No M06-2X result, and no ωB97X-D PC or DMC value, had been read.
