@@ -39,6 +39,9 @@ git clone https://github.com/mines-of-morja/ucmd-builder.git
 git clone https://github.com/mines-of-morja/ucmd-analysis.git
 ```
 
+`main` holds approved gates only; the current work is on review branches. To contribute, see
+[CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Background
 
 UnitcellMD grows out of NeNePo_builder, an on-the-fly Ag₄ dynamics code for NeNePo pump–probe

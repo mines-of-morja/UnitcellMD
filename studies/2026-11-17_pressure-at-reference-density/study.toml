@@ -1,0 +1,86 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file. Change it only before the first run: finished runs keep the run.toml they had.
+
+[study]
+created = "2026-11-17"
+question = "Is opls-aa-carbonates right at the reference density? Equilibrium pressure after 100 ps NVT at 20 °C for Lehnert's 1 M EC:EMC box and for pure EMC at its manufacturer density."
+requested_by = "the author, 2026-11-17 (the pressure is far too high: improve the force field)"
+
+[systems]
+recipes = "recipes/*.toml"
+
+[scan]
+temperature_C = [20]
+
+[protocol]
+seed = 20261119  # each run's seed: this + crc32(run id) mod 10^6 (independent of the order)
+
+[estimate]
+seconds_per_atom_per_run = 1.0  # 10^5 steps at ~70 ms/step for ~7000 atoms
+
+[index]
+group_by = "T"
+row_by = "system"
+
+[views]
+by-temperature = "{T}/{system}"
+
+# Minimization of each built box, once (FIRE until max |F| < 100 kJ/mol/nm).
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+
+# Each run: 100 ps NVT at 20 °C at the reference density, from the minimized box. Settings of
+# Lehnert 2025, SI S1.1: 1 fs, no constraints, Nosé–Hoover with 100 fs damping, 1.4 nm cutoff,
+# PME to 1e-5, no LJ tail correction (its pressure, about -160 bar, is added in the analysis).
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 100000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 20
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 1000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 5000

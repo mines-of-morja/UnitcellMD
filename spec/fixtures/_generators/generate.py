@@ -598,6 +598,16 @@ kind = "harmonic-tether"
 k_kjmol_nm2 = 1000.0
 """,
 }
+# 0.1.1: the pressure tensor in the thermo table (run-config.md §2)
+RUNS["argon-pressure-tensor.toml"] = (
+    RUNS["argon-nvt.toml"]
+    .replace('spec_version = "0.1.0"', 'spec_version = "0.1.1"', 1)
+    .replace(
+        '[output.thermo]\nfile = "thermo.tsv"\nevery = 10\n',
+        '[output.thermo]\nfile = "thermo.tsv"\nevery = 10\npressure_tensor = true\n',
+    )
+)
+assert "pressure_tensor = true" in RUNS["argon-pressure-tensor.toml"]
 
 INVALID_RUNS = {
     "not-toml.toml": ("E_TOML", 'spec_version = "0.1.0"\nsystem = \n'),
@@ -614,6 +624,12 @@ INVALID_RUNS = {
     "no-providers.toml": (
         "E_SCHEMA",
         RUNS["harmonic-nve.toml"].split("[[providers]]")[0],
+    ),
+    "pressure-tensor-not-bool.toml": (
+        "E_SCHEMA",
+        RUNS["argon-pressure-tensor.toml"].replace(
+            "pressure_tensor = true", 'pressure_tensor = "yes"'
+        ),
     ),
     "langevin-with-vv.toml": (
         "E_INCOMPATIBLE",

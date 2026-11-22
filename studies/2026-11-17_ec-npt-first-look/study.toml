@@ -1,0 +1,106 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file. Change it only before the first run: finished runs keep the run.toml they had.
+
+[study]
+created = "2026-11-17"
+question = "With the new C-rescale barostat (E2.7): which density does opls-aa-carbonates give for the five 1.0 M mixtures at -10, 20 and 50 °C and 1 atm, and how fast does it settle?"
+requested_by = "the author, 2026-11-17 (extend the engine, then run a few simulations)"
+
+[systems]
+recipes = "../../ucmd-builder/examples/EC/recipes/*_1.0M.toml"
+# Recipe stem "ec-emc_3-7w_1.0M" → mixture "ec-emc_3-7w", concentration_M "1.0".
+label = '^(?P<mixture>.+)_(?P<concentration_M>[0-9.]+)M$'
+
+[scan]
+temperature_C = [-10, 20, 50]
+# EC:EMC (Lehnert's benchmark mixture) first.
+priority = { mixture = ["ec-emc_3-7w", "ec-emc-mp_2-6-2v", "ec-dmc-pc_27-63-10v", "ec-dmc_1-1w", "emc-fec_19-1w"] }
+
+[protocol]
+seed = 20261118  # each run's seed: this + crc32(run id) mod 10^6 (independent of the order)
+
+[estimate]
+seconds_per_atom_per_run = 0.35  # measured in the NVT scan: 0.18 s per atom per 10 ps, ×2
+
+[index]
+group_by = "concentration_M"
+row_by = "mixture"
+grid = "density"
+
+# Symbolic views: links into runs/, sorted another way. Keys: system, mixture,
+# concentration_M, T.
+[views]
+by-temperature = "{T}/{system}"
+by-mixture = "{mixture}/{concentration_M}M/{T}"
+by-concentration = "{concentration_M}M/{mixture}/{T}"
+
+# Minimization of each built box, once (FIRE until max |F| < 100 kJ/mol/nm).
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+
+# Each run: 20 ps NPT at the scan temperature and 1 atm from the minimized box. Settings of
+# Lehnert 2025, SI S1.1: 1 fs, no constraints, Nosé–Hoover with 100 fs damping, barostat damping
+# 1000 fs (here C-rescale, tau_p = 1 ps), 1.4 nm cutoff, PME to 1e-5. The driver fills in system,
+# title, run.seed and both temperature_K values.
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 20000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+# 1 atm = 1.01325 bar (definition). The compressibility only sets how fast the volume relaxes
+# (with tau_p); the sampled density does not depend on it (Bernetti & Bussi 2020). 4.5e-5/bar is
+# GROMACS's customary value for water, used here as a coupling setting.
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.01325
+tau_ps = 1.0
+compressibility_per_bar = 4.5e-5
+every = 10
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 10
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 100
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 1000

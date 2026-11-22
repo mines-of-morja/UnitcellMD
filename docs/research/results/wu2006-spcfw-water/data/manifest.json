@@ -1,0 +1,46 @@
+{
+ "_about": "Local inputs of analyze.py. Not in git; archive for the production set (publication.md, open question 2). Paths are relative to the workspace.",
+ "doi": null,
+ "files": [
+  {
+   "path": "studies/2026-11-20_water-spcfw-wu/runs/spcfw_512/T25.01C/out/thermo.tsv",
+   "bytes": 8148354,
+   "sha256": "7082e6c89c053ffbec4f035a115ad42a27a86c5d58f1302c84df4036a262299a"
+  },
+  {
+   "path": "studies/2026-11-20_water-spcfw-wu/runs/spcfw_512/T25.01C/out/trajectory.h5",
+   "bytes": 252641624,
+   "sha256": "b4cb8fe26d2ca8042258678ed480db56abc4b3aed92930dd42753e5df3e0c659"
+  },
+  {
+   "path": "studies/2026-11-20_water-spcfw-wu/runs/spcfw_512/T25.01C/run.toml",
+   "bytes": 872,
+   "sha256": "23d79e840e51b4b0e6e810d2c040da4ed149fe4dca0eacb7ac50968a4b3faea7"
+  },
+  {
+   "path": "studies/2026-11-20_water-spcfw-wu/runs/spcfw_512/T25.01C/status.json",
+   "bytes": 1044,
+   "sha256": "f4b1dd6e3ef74c07f8206285602358cf10fb2ebf46b21bbd4ed3dbd011263960"
+  },
+  {
+   "path": "studies/2026-11-20_water-spcfw-viscosity-cpu/runs/spcfw_512/T27.05C/out/thermo.tsv",
+   "bytes": 645839392,
+   "sha256": "d155428ca0ebf02275ee79391c703db57ab102d8bf56622f3e1a640e0b86f795"
+  },
+  {
+   "path": "studies/2026-11-20_water-spcfw-viscosity-cpu/runs/spcfw_512/T27.05C/run.toml",
+   "bytes": 791,
+   "sha256": "51087ed903d6ac6c7930a13e81d1ce16e301683186c440bc7fe89ee1342b1f23"
+  },
+  {
+   "path": "studies/2026-11-20_water-spcfw-viscosity-cpu/runs/spcfw_512/T27.05C/status.json",
+   "bytes": 972,
+   "sha256": "02b6f7711588ae23ce729a766ef36f430018433a8a78e2d04eb278e401733504"
+  },
+  {
+   "path": "studies/2026-11-20_water-spcfw-cpu/gas/out_dt1.0/thermo.tsv",
+   "bytes": 4079713,
+   "sha256": "5f6c0feb5063554a71af065f677c52cfc991733f0bc3832a8b9011db80792cbd"
+  }
+ ]
+}

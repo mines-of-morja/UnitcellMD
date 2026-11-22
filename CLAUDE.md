@@ -21,8 +21,10 @@ UnitcellMD/            this git repo: plan, spec, fixtures, cross-repo tools
 ├── docs/              STATUS.md, nenepo-audit.md, decisions/ (ADRs), design/ (one per phase)
 ├── spec/              formats, units, provider contract, JSON Schemas, fixtures, validator
 ├── tools/oracle/      OpenMM reference calculations (validation only)
+├── tools/study/       study driver: scans of many runs (ADR 0011)
+├── studies/          one folder per study; plans in git, data local (studies/README.md)
 ├── _reference/        read-only clone of NeNePo_builder (gitignored)
-├── ucmd-engine/       own git repo: Rust Cargo workspace, binary `ucmd`, Python bridge
+├── ucmd-engine/       own git repo: Rust Cargo workspace, binary `ucmd`, Python bridge (OpenMM GPU backend)
 ├── ucmd-builder/      own git repo: Python library, CLI `ucmd-build`, PySide6 GUI
 └── ucmd-analysis/     own git repo: Python library, CLI `ucmd-analyze`
 ```
@@ -143,9 +145,13 @@ Run these inside the repo concerned, and keep this table current.
 |---|---|---|---|
 | spec (validator) | `cd spec/validator && python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; fixtures: `spec/fixtures/_generators/generate.py` |
 | tools/oracle | `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` | `.venv/bin/python -m pytest test_oracle.py` | — |
+| tools/study | stdlib only (Python ≥ 3.11) | `ucmd-builder/.venv/bin/pytest tools/study` | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/study`; run a study: `python3 tools/study/ucmd_study.py run studies/<study>` |
+| tools/ffcheck | uses `tools/oracle/.venv` | `tools/oracle/.venv/bin/python -m pytest tools/ffcheck` | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/ffcheck`; Li⁺ binding: `tools/ffcheck/build_packages.sh OUT`, then `li_binding.py OUT/*.ucsys` |
+| tools/qm | `docker build -t ucmd-psi4:1.9.1 tools/qm` (Psi4 in Docker; validation only) | `li_binding_qm.py` against Olguin 2016 (tools/qm/README.md) | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/qm` |
 | ucmd-engine | `cargo build --workspace` | `UCMD_REQUIRE_SPEC=1 cargo test --workspace` | `cargo fmt --all --check`; `cargo clippy --workspace --all-targets -- -D warnings`; `scripts/check-architecture.sh`; `cargo build --workspace --no-default-features`; physics: `validation/argon/run.sh` |
-| ucmd-builder | `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; `.venv/bin/ruff format --check .` |
-| ucmd-analysis | same as ucmd-builder | `.venv/bin/pytest` | same as ucmd-builder |
+| ucmd-builder | `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'`; GUI: `'.[dev,gui-test]'` | `.venv/bin/pytest` (GUI tests run headless; skipped without the GUI extras) | `.venv/bin/ruff check .`; `.venv/bin/ruff format --check .`; GUI screenshots: `QT_QPA_PLATFORM=offscreen .venv/bin/python validation/b2a/screenshots.py` |
+| ucmd-analysis | `python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; `.venv/bin/ruff format --check .`; CLI: `.venv/bin/ucmd-analyze transport\|rdf\|density TRAJ.h5` |
+| ucmd-engine/bridge (E3.7) | `python3 -m venv .venv && .venv/bin/pip install -e '.[openmm,dev]' ../../spec/validator`; GPU image: `docker build -t ucmd-openmm:gfx906 --build-arg BASE=<ROCm image> docker` | `.venv/bin/pytest` (needs `target/release/ucmd`) | `.venv/bin/ruff check .`; GPU runs: `UCMD_MACHINE_PROFILE=~/.config/ucmd/machine-gpu.toml ucmd run run.toml` |
 
 Each component repo has a CI workflow in `.github/workflows/ci.yml` that runs the same checks.
 In Python repos, `tests/test_architecture.py` enforces the import boundaries between

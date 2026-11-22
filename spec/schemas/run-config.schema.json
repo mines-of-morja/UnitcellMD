@@ -130,7 +130,8 @@
           "required": ["file", "every"],
           "properties": {
             "file": { "$ref": "#/$defs/relpath" },
-            "every": { "type": "integer", "minimum": 1 }
+            "every": { "type": "integer", "minimum": 1 },
+            "pressure_tensor": { "type": "boolean" }
           }
         },
         "checkpoint": {

@@ -1,0 +1,47 @@
+{
+ "_about": "Literature ledger for this result (docs/research/publication.md, rule 3). Every number the summary quotes from a paper is here, with the table, the version read and whether it was checked against the version of record. Before any submission every entry must have checked_vor = true. Values in parentheses in Wu's Table II are standard deviations of the simulation, not errors of a mean.",
+ "entries": {
+  "wu2006_spcfw_table2": {
+   "quantity": "bulk properties of SPC/Fw water, simulation at 298.15 K and 1 atm (216 molecules, 6.5 ns); the value in brackets is the quoted standard deviation",
+   "value": {
+    "r_OH_angstrom": {"value": 1.0310, "bracket": 1e-6},
+    "theta_HOH_deg": {"value": 107.69, "bracket": 0.33},
+    "mu_debye": {"value": 2.39, "bracket": 0.19},
+    "rho_g_cm3": {"value": 1.012, "bracket": 0.016},
+    "dHvap_kcal_mol": {"value": 10.72, "bracket": 0.12},
+    "Ds_1e-5_cm2_s": {"value": 2.32, "bracket": 0.05},
+    "epsilon0": {"value": 79.63, "bracket": 1.62},
+    "eta_cP_at_300.2_K": {"value": 0.75, "bracket": null, "inaccuracy": 0.01}
+   },
+   "source": "Y. Wu, H. L. Tepper, G. A. Voth, J. Chem. Phys. 124, 024503 (2006)",
+   "doi": "10.1063/1.2136877",
+   "location": "Table II, column SPC/Fw; the inaccuracy of eta is stated in the table caption",
+   "version_read": "publisher PDF (AIP, 'Research article' header, as filed in ../Lit)",
+   "checked_vor": true,
+   "note": "Whether Ds is corrected for the box size is not stated in the text read; the comparison in the summary assumes it is not."
+  },
+  "wu2006_spcfw_protocol": {
+   "quantity": "simulation protocol of the SPC/Fw run behind Table II",
+   "value": {
+    "molecules": 216, "temperature_K": 298.16, "pressure_atm": 1, "timestep_fs": 1,
+    "length_ns": 6.5, "equilibration_ns": 0.5, "frame_interval_ps": 0.5,
+    "cutoff_angstrom": 9, "long_range_corrections": true, "pme_tolerance": 1e-6,
+    "code": "DL_POLY 2.13", "eta_method": "periodic perturbation method"
+   },
+   "source": "Wu, Tepper, Voth, J. Chem. Phys. 124, 024503 (2006)",
+   "doi": "10.1063/1.2136877",
+   "location": "Sec. II B and the text around Table II",
+   "version_read": "publisher PDF (AIP, as filed in ../Lit)",
+   "checked_vor": true
+  },
+  "yeh_hummer2004_finite_size": {
+   "quantity": "finite-size correction of the self-diffusion coefficient in a cubic periodic box, D_inf = D_PBC + k_B T xi / (6 pi eta L), xi = 2.837297",
+   "value": {"xi_cubic": 2.837297},
+   "source": "I.-C. Yeh, G. Hummer, J. Phys. Chem. B 108, 15873 (2004)",
+   "doi": "10.1021/jp0477147",
+   "location": "Eq. 1 and the value of xi for a cubic box",
+   "version_read": "formula taken from the ucmd-analysis constants module, which cites it; the paper itself was not re-read for this ledger",
+   "checked_vor": false
+  }
+ }
+}

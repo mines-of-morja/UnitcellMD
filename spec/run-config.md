@@ -137,8 +137,21 @@ Every provider documents its keys, with unit suffixes.
 |---|---|
 | `directory` | relative path, default `"out"` |
 | `[output.trajectory]` | `file`, `every` (steps), `velocities` (bool), `forces` (bool), `precision` (`"float64"` default, or `"float32"`); format in trajectory-h5md.md |
-| `[output.thermo]` | `file`, `every`; tab-separated table: step, time_ps, energies, temperature_K, pressure_bar, volume_nm3, conserved_energy_kjmol |
+| `[output.thermo]` | `file`, `every`; tab-separated table: step, time_ps, energies, temperature_K, pressure_bar, volume_nm3, conserved_energy_kjmol. Since 0.1.1: `pressure_tensor` (bool, default false), see below |
 | `[output.checkpoint]` | `file`, `every`; see checkpoint.md |
+
+**Pressure tensor in the thermo table (since 0.1.1).** `pressure_tensor = true` adds six
+columns after the others:
+- `pressure_xx_bar`, `pressure_yy_bar`, `pressure_zz_bar`, `pressure_xy_bar`, `pressure_xz_bar`,
+  `pressure_yz_bar`;
+- the upper triangle of the symmetrized pressure tensor ½(P + Pᵀ), P as in units.md §4, at every
+  thermo row;
+- their trace / 3 is `pressure_bar`.
+
+It is for Green–Kubo viscosity, which needs the off-diagonal components every few steps; the
+H5MD observable `pressure_tensor` comes only at the trajectory interval. It needs a periodic
+cell and a virial from every provider. A backend that cannot compute the tensor refuses the run
+(`E_UNSUPPORTED`) instead of writing anything else.
 
 ## 3. Validation
 

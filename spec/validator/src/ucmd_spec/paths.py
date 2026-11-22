@@ -16,4 +16,10 @@ def spec_dir() -> Path:
 
 
 def schema_path(name: str) -> Path:
-    return spec_dir() / "schemas" / f"{name}.schema.json"
+    """``$UCMD_SPEC_DIR/schemas`` if set, else the wheel's bundled schemas, else the checkout."""
+    filename = f"{name}.schema.json"
+    if not os.environ.get("UCMD_SPEC_DIR"):
+        bundled = Path(__file__).resolve().parent / "schemas" / filename
+        if bundled.is_file():
+            return bundled
+    return spec_dir() / "schemas" / filename

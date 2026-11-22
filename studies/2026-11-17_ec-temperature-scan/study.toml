@@ -1,0 +1,96 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file. Change it only before the first run: finished runs keep the run.toml they had.
+
+[study]
+created = "2026-11-17"
+question = "How do the 35 carbonate test boxes behave from -10 to 50 °C with opls-aa-carbonates: what changes with temperature, what does not, what must be tuned?"
+requested_by = "the author, 2026-11-17"
+
+[systems]
+recipes = "../../ucmd-builder/examples/EC/recipes/*.toml"
+# Recipe stem "ec-emc_3-7w_1.0M" → mixture "ec-emc_3-7w", concentration_M "1.0".
+label = '^(?P<mixture>.+)_(?P<concentration_M>[0-9.]+)M$'
+
+[scan]
+temperature_C = [-10, 0, 10, 20, 30, 40, 50]
+# Run order: first all mixtures and temperatures at 1.0 M, then the extremes, then the rest,
+# so that a cross-section is complete early.
+priority = { concentration_M = ["1.0", "3.0", "0.5", "2.0", "0.1", "1.5", "2.5"] }
+
+[protocol]
+seed = 20261117  # each run's seed: this + crc32(run id) mod 10^6 (independent of the order)
+
+[estimate]
+seconds_per_atom_per_run = 0.1  # measured: 7036 atoms, 70 ms/step on 16 threads, 10^4 steps
+
+[index]
+group_by = "mixture"
+row_by = "concentration_M"
+
+# Symbolic views: links into runs/, sorted another way. Keys: system, mixture,
+# concentration_M, T.
+[views]
+by-temperature = "{T}/{system}"
+by-mixture = "{mixture}/{concentration_M}M/{T}"
+by-concentration = "{concentration_M}M/{mixture}/{T}"
+
+# Minimization of each built box, once (FIRE until max |F| < 100 kJ/mol/nm).
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+
+# Each run: 10 ps NVT at the scan temperature from the minimized box. Settings of Lehnert 2025,
+# SI S1.1, as in ucmd-engine validation/m2a: 1 fs, no constraints, Nosé–Hoover with 100 fs
+# damping, 1.4 nm cutoff, PME to 1e-5. The driver fills in system, title, run.seed and both
+# temperature_K values.
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 10000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 10
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 100
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 1000
