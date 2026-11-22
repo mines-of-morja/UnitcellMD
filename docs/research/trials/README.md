@@ -37,7 +37,8 @@ one. Author's request, 2026-11-21.
 | ID | question | needs | state | discussion |
 |---|---|---|---|---|
 | [T1](T1-tplus-frames.md) | t₊ frames: ion-volume convention; per-solvent frames; is the note's Eq. (2) right? | pilot trajectory (CPU) | **decided** (ADR 0013) | [#6](https://github.com/mines-of-morja/UnitcellMD/issues/6) |
-| [T2](T2-ec-model-1M.md) | EC model M0 (LigParGen) or M1 (OPLS-AA, Caleman) at 1 M | 6 GPU runs | **done**: M1 replaces M0 (rule 1), awaiting the author | [#7](https://github.com/mines-of-morja/UnitcellMD/issues/7) |
+| [T2](T2-ec-model-1M.md) | EC model M0 (LigParGen) or M1 (OPLS-AA, Caleman) at 1 M | 6 GPU runs | **decided**: M1 (ADR 0014) | [#7](https://github.com/mines-of-morja/UnitcellMD/issues/7) |
 | [T3](T3-density-protocol.md) | transport at the model's own density (NPT) or at the measured density (NVT) | second reading of the Landesfeind SI | planned | [#8](https://github.com/mines-of-morja/UnitcellMD/issues/8) |
 | [T4](T4-slow-ions.md) | slow ions: solvent too viscous, or Li⁺ bound too strongly | spec 0.1.1 (pressure tensor), author | planned | [#9](https://github.com/mines-of-morja/UnitcellMD/issues/9) |
 | [T5](T5-charge-scaling.md) | ion-charge scaling ζ fitted to κ, or from the refractive index | n_D sources (UnitcellMD#3) | planned | [#10](https://github.com/mines-of-morja/UnitcellMD/issues/10) |
+| [T6](T6-li-carbonyl-correction.md) | first-shell correction: one Li⁺ σ (ECC-R) or a pair-specific Li⁺–O(carbonyl) term | QM clusters (CPU); for B, spec per-pair overrides (author) | **stage 1 running** | [#11](https://github.com/mines-of-morja/UnitcellMD/issues/11) |

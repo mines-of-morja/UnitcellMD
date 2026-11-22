@@ -113,3 +113,7 @@ After equilibration, though, even 250 ps windows separate the models, because M0
 Commands (workspace root, `HDF5_USE_FILE_LOCKING=FALSE`, ucmd-analysis venv):
 `python docs/research/trials/T2/t2_analyze.py T2/t2_result.json`, then the same for `t2_posthoc.py`
 and `t2_short.py`.
+
+**Author's decision (2026-11-22):** rule 1 confirmed ("that sounds reasonable, continue with
+that"). M1 is the EC model ([ADR 0014](../../decisions/0014-ec-model-m1.md)). The first-shell
+deficit goes to trial T6 (Li⁺–carbonyl O correction).

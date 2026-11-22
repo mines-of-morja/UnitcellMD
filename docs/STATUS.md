@@ -212,6 +212,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-22 — T2 decided, T6 planned — **ADR 0014** (author: "that sounds reasonable"): EC
+from the OPLS-AA types of Caleman 2012 (M1) replaces LigParGen EC in the working horse. Trial
+T6 (#11), first-shell correction: one Li⁺ σ (A, ECC-R) or a Li⁺–O(carbonyl) pair term (B),
+fitted to DFT Li⁺(EC)ₙ(EMC)₄₋ₙ clusters, tested in the liquid at 3 ns. — evidence:
+`docs/decisions/0014-ec-model-m1.md`, `docs/research/trials/T6-li-carbonyl-correction.md` —
+next: T6 stage 1 (DFT protocol check on the single complexes); author: spec per-pair LJ
+overrides before B's liquid runs.
+
 2026-11-22 — trial T1 decided — **ADR 0013** (the author delegated the choice): t₊ is
 reported in SOL (headline against experiment, Newman's t₊⁰), VOL (eNMR; convention A, B as the
 band) and COM (other MD). SOL is the mass-weighted EC + EMC velocity: Eq. (2) holds exactly, and

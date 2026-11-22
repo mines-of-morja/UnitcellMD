@@ -1,0 +1,96 @@
+# T6 — First-shell correction: one Li⁺ σ (ECC-R) or a pair-specific Li⁺–O(carbonyl) term
+
+Strategy M3, step 3 (`docs/research/forcefield-strategy.md` §8), after T2 (ADR 0014).
+
+## Why it is contested
+
+- **The gap:**
+  - with M1, Li⁺ has 0.97 ± 0.01 EC in its first shell at 1 M, against about 2.2 from
+    dielectric spectroscopy (an upper bound);
+  - in the gas phase, M1 gives EC 1.24 kcal/mol more binding than EMC, against 6.24 in QM;
+  - both force fields put Li⁺ 1.94–2.04 Å from the carbonyl O of a single solvent, QM 1.75–1.76 Å.
+- **For one Li⁺ σ (option A, ECC-R):**
+  - one parameter;
+  - the published form for scaled-charge ions (Kirby & Jungwirth 2019; citation to be checked);
+  - no spec change.
+  - The strategy takes it first.
+- **For a pair term (option B):**
+  - the difference between EC and EMC is an energy difference between two carbonyl O, and a
+    single Li⁺ σ acts on both nearly alike;
+  - a pair term can treat them apart.
+  - It costs four parameters and a spec extension (per-pair LJ overrides, ADR 0008 §3), which
+    needs the author's approval before any liquid run.
+- **Why the single-solvent QM numbers are not the targets:** the 1.76 Å belongs to Li⁺ with one
+  solvent molecule. In the liquid, Li⁺ carries about four carbonyl O, which compete. Clusters
+  Li⁺(S)₄ are therefore the reference; the single-solvent complexes are kept as a check.
+
+## Plan (fixed 2026-11-22, before any calculation of this trial)
+
+### Stage 1 — QM reference (fit side, layer 0)
+
+- **Clusters:** Li⁺(EC)ₙ(EMC)₄₋ₙ, n = 0…4, in the gas phase.
+  - Start: the lowest of 10 force-field minima (M1, q_Li = 1) from random placements of the four
+    carbonyl O around Li⁺.
+  - EMC in the conformer the force field finds.
+- **Level:** DFT with dispersion, as the strategy decided (QM method, delegated).
+  - Geometry optimization with def2-SVP, energies at def2-TZVPD with counterpoise.
+  - Before the clusters, the whole protocol runs on the four single-solvent complexes (EC, EMC, PC,
+    DMC) for three functionals: ωB97X-D, ωB97M-V, M06-2X. All three run in the image without
+    extra programs; B3LYP-D3(BJ) would need s-dftd3, which the image does not have (checked
+    2026-11-22).
+  - The functional with the smallest largest error against our MP2/aug-cc-pVTZ values (E_bind
+    and Li–O, `tools/qm/results/li_binding_mp2_aug-cc-pvtz.json`) is used for the clusters.
+  - If none reproduces the EC − EMC difference within 1 kcal/mol, the clusters are not run, and
+    this goes to the author.
+- **Targets:**
+  - the mean Li–O(carbonyl) distance per cluster and per solvent;
+  - the exchange energies ΔE_n = E(n) − E(0) − n [E(EC) − E(EMC)] for n = 1…4: the energy of
+    replacing EMC by EC in the shell, with the solvents optimized alone.
+
+### Stage 2 — both options fitted to stage 1 (force field, gas phase, q_Li = 0.75)
+
+- **A:** σ_Li fitted to the cluster Li–O distances (least squares over all clusters). The
+  exchange energies are its test.
+- **B:** σ and ε of the pairs Li–O(EC carbonyl) and Li–O(EMC carbonyl) fitted to the distances
+  and the exchange energies together. That is four parameters against about 14 targets. All
+  other pairs keep the combination rule.
+- **Charges:** the production charges (ζ = 0.75 on Li⁺, solvents unscaled). When T5 sets ζ from
+  n_D, both fits are repeated at that ζ.
+- **Reported:** fit residuals, the single-solvent complexes (check), Li–F distances (Li–PF₆⁻ in
+  the gas phase).
+
+### Stage 3 — liquid test (T2 box and protocol)
+
+- **Runs:** 3 packing seeds per option (20261124–26).
+- **Length:** 3 ns from packing, the last 1.5 ns analysed. This is the length T2 measured for
+  this kind of run (trials rule 6).
+- **Option B** runs only after the author has approved the spec extension. Option A can run as
+  soon as stage 2 has its σ.
+- **Metric:** EC carbonyl O within 0.28 nm of Li⁺ (as in T2). Reference: M1, 0.973 ± 0.010
+  (T2); bound 2.2 ± 0.1.
+
+**Decision rule:**
+
+1. A candidate **passes** if its count exceeds M1's by more than 2 combined SE **and** does not
+   exceed 2.2 by more than 2 combined SE (the SE of the runs combined with the bound's ±0.1).
+2. If both pass, the one closer to 2.2 wins if the difference between them is resolved
+   (> 2 combined SE). If it is not, A wins: one parameter and no spec change.
+3. If one passes, it is the correction.
+4. **If a candidate exceeds the bound,** the gas-phase clusters overstate the preference in the
+   liquid, as Olguin et al. 2016 found with implicit solvent. That is reported. Nothing is refit
+   to the liquid shell: that would be fitting to the answer (strategy §5).
+5. If neither passes, step 4 of M3 follows: Drude (M4).
+6. Not used for the decision, reported: density against the Landesfeind fit (one reading), PF₆⁻
+   within 0.516 nm, the first peak of g(Li–O), D and κ_NE.
+
+**Run-length diagnostic (T2 lesson):** the count in 250 ps windows. The tolerance is set from
+the window noise: two standard deviations of the windows after 1.5 ns. It reports the time
+after which every window stays within that band.
+
+## Cost
+
+- **Stage 1:** about 12 DFT optimizations of the single complexes (minutes each), then 5 cluster
+  optimizations (41–61 atoms) and their counterpoise energies, about one CPU day (Psi4 in
+  Docker, `tools/qm`).
+- **Stage 2:** minutes.
+- **Stage 3:** about 40 min per run on the MI50, so 2 h per option.
