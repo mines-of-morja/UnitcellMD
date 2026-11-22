@@ -212,6 +212,15 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-22 — rung W done (SPC/Fw water against Wu 2006); results folder — one 6.5 ns NPT run on the
+GPU (HIP double, 512 molecules) against Table II: ⟨r_OH⟩ 1.0310 Å, ⟨θ⟩ 107.70°, ⟨μ⟩ 2.394 D,
+ΔH_vap 10.72 kcal/mol (Wu's definition) all equal; ε 80.7 (blocks 77.6 ± 2.7) against 79.63; D in
+Wu's box 2.31 (2.31–2.35) against 2.32 after Yeh–Hummer with our own Green–Kubo η = 0.768 ± 0.015
+mPa·s (Wu 0.75). **Density 1.0072 ± 0.0002 against 1.012 (−0.47 %), unexplained.** New home for
+finished comparisons: `docs/research/results/<name>/` (summary PDF, derived data, analysis and
+build scripts, literature ledger; README there). First entry: `wu2006-spcfw-water`, label
+exploration, with `Wu_et_al_water_summary.pdf`. Evidence: that folder's `data/results.json`.
+
 2026-11-22 — trial T2 (EC model at 1 M) — **done, awaiting the author:** by the pre-registered
 rule 1, M1 (Caleman EC) replaces M0. EC carbonyl O within 0.28 nm of Li⁺: 0.97 ± 0.01 (M1)
 against 0.44 ± 0.01 (M0), DRS bound 2.2 ± 0.1. The deficit of 1.2 EC goes to M2/M3. Density

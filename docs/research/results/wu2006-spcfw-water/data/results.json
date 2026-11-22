@@ -1,0 +1,179 @@
+{
+ "_about": "Study data -> data/results.json, data/traces_1ps.csv, data/manifest.json.",
+ "run": {
+  "molecules": 512,
+  "temperature_K": 298.16,
+  "skip_ps": 500.0,
+  "production_ps": 6000.000001,
+  "thermo_rows_used": 60001,
+  "trajectory_frames_used": 12001,
+  "frame_interval_ps": 0.49999999998817657,
+  "mean_volume_nm3": 15.208920038314877,
+  "provenance": {
+   "engine_git_hash": "2ea7e826ccf5",
+   "engine_version": "ucmd-bridge 0.1.0.dev0 (OpenMM 8.5); ucmd 0.0.0 (2ea7e826ccf5)",
+   "positions": "unwrapped",
+   "spec_version": "0.1.0",
+   "system_sha256": "bf545b7f591fbc2b4606cbfe8aa0438ef139e2dfecc2ea538d78150af96e35f6",
+   "backend": {
+    "barostat": "MonteCarloBarostat",
+    "conformance_energy_relative": "6.453003812450036e-08",
+    "conformance_force_relative": "7.405844268881115e-08",
+    "conformance_force_tolerance": "1e-05",
+    "conformance_reference_engine": "ucmd 0.0.0 (2ea7e826ccf5)",
+    "constraints": "none",
+    "device": "AMD Radeon VII",
+    "electrostatics": "{\"coulomb\": \"pme\", \"alpha_per_nm\": 4.024978088645876, \"pme_grid\": [108, 108, 108]}",
+    "energy_kjmol": "29609.690581731382",
+    "host_kernel": "6.12.117+deb13-amd64",
+    "identity_tracking": "positions read every 100 steps; molecules matched by atom RMSD, limit 0.2 nm (identity.py)",
+    "image": "ucmd-openmm:gfx906-hip",
+    "image_id": "sha256:b03b4b352e6d91f1a3afbedc05d32af19e81ee00f227c796e9c34b8ebb34be0b",
+    "kind": "openmm",
+    "openmm_version": "8.5",
+    "platform": "HIP",
+    "precision": "double",
+    "pressure": "molecular, MonteCarloBarostat.computeCurrentPressure",
+    "python": "3.12.16",
+    "reference_energy_kjmol": "29609.692492445967",
+    "rocm_sdk": "10.0.0a20260729.dist"
+   }
+  }
+ },
+ "density_g_cm3": {
+  "mean": 1.0071996427221814,
+  "sem": 0.00018285052556548612,
+  "blocks": 10
+ },
+ "hvap_wu_definition": {
+  "kJ_per_mol": {
+   "mean": 44.83354149290081,
+   "sem": 0.013909525231498103
+  },
+  "kcal_per_mol": {
+   "mean": 10.715473588169408,
+   "sem": 0.0033244563172796613
+  },
+  "u_per_molecule_kJ_per_mol": {
+   "mean": -42.354501318672234,
+   "sem": 0.013909525231498103
+  },
+  "RT_kJ_per_mol": 2.47904017422857,
+  "blocks": 10
+ },
+ "hvap_caleman_definition": {
+  "kJ_per_mol": {
+   "mean": 48.5673459223009,
+   "sem": 0.04267892046560149
+  },
+  "kcal_per_mol": {
+   "mean": 11.607874264412262,
+   "sem": 0.010200506803442038
+  },
+  "u_gas_kJ_per_mol": {
+   "mean": 3.733804429400095,
+   "sem": 0.04034867234424765
+  },
+  "gas_source": "studies/2026-11-20_water-spcfw-cpu/gas/out_dt1.0/thermo.tsv"
+ },
+ "r_OH_angstrom": {
+  "mean": 1.0309960529803954,
+  "sem": 1.4208295805971975e-05
+ },
+ "theta_HOH_deg": {
+  "mean": 107.69940112137849,
+  "sem": 0.0029907495390207
+ },
+ "mu_debye": {
+  "mean": 2.393681923516503,
+  "sem": 0.00010993216289639417
+ },
+ "geometry_blocks": 10,
+ "fluctuation_sd": {
+  "density_g_cm3": 0.01090646618936318,
+  "theta_HOH_deg": 5.280535530160304,
+  "mu_debye": 0.1580231822807823,
+  "density_sd_scaled_to_216_molecules": 0.016791603174230358,
+  "note": "a standard deviation, not an error of the mean; it scales as 1/sqrt(N)"
+ },
+ "epsilon": {
+  "epsilon": 80.70970736747036,
+  "epsilon_blocks": {
+   "mean": 77.62051381951652,
+   "sem": 2.678270186016826,
+   "blocks": 10,
+   "values": [
+    78.90896167616289,
+    81.52018406077964,
+    84.2124028528456,
+    90.90593474884048,
+    70.77847050284653,
+    85.0060839787091,
+    75.74313697889944,
+    68.28802423404643,
+    62.9006009930321,
+    77.94133816900307
+   ]
+  },
+  "mean_dipole_e_nm": [
+   0.018106271002580353,
+   0.03741711425689459,
+   -0.07566469244033693
+  ],
+  "dipole_variance_e2_nm2": 5.163635581802939,
+  "volume_nm3": 15.207664066181483,
+  "temperature_K": 298.16,
+  "frames": 12001,
+  "molecule_types": [
+   "water"
+  ]
+ },
+ "D_pbc_1e-5_cm2_s": {
+  "mean": 2.4221849008416414,
+  "sem": 0.04432576991920537,
+  "blocks": 5,
+  "window_fraction_of_block": [
+   0.1,
+   0.5
+  ],
+  "box_edge_nm": 2.477540923677177
+ },
+ "D_pbc_sensitivity_1e-5_cm2_s": {
+  "5blocks_window_0.1-0.5": 2.4221849008416414,
+  "5blocks_window_0.2-0.6": 2.419755979504891,
+  "5blocks_window_0.1-0.3": 2.4326978860466175,
+  "10blocks_window_0.1-0.5": 2.451358980861735,
+  "10blocks_window_0.2-0.6": 2.4584188849638133,
+  "10blocks_window_0.1-0.3": 2.4301141424238155
+ },
+ "viscosity_mPa_s": {
+  "mean": 0.7680035017474421,
+  "sem": 0.014772059990803015,
+  "blocks": 5,
+  "max_lag_ps": 5.0,
+  "whole_series": 0.7773339181501537,
+  "skip_ps": 200.0,
+  "temperature_K": 300.2,
+  "samples": 1900001,
+  "dt_ps": 0.0019999999999527063,
+  "density_g_cm3": 1.0119999999949139
+ },
+ "D_finite_size_1e-5_cm2_s": {
+  "eta_used_mPa_s": 0.7680035017474421,
+  "yeh_hummer_shift_our_box": 0.3256509137830081,
+  "D_infinity": 2.7478358146246493,
+  "D_infinity_range_over_fit_choices": [
+   2.7454068932878988,
+   2.7840697987468213
+  ],
+  "wu_box_edge_nm": 1.855,
+  "yeh_hummer_shift_wu_box": 0.43493987370904075,
+  "D_expected_in_wu_box": 2.3128959409156087,
+  "D_expected_in_wu_box_range": [
+   2.310467019578858,
+   2.3491299250377806
+  ],
+  "note": "assumes Wu's D is uncorrected for the box size; the temperature of D (298.16 K) differs from that of eta (300.2 K)"
+ },
+ "inputs_manifest": "data/manifest.json"
+}

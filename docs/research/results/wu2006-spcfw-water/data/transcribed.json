@@ -1,0 +1,13 @@
+{
+ "_about": "Numbers in the summary that analyze.py does not recompute. Hand-transcribed from the study READMEs on 2026-11-22; each names its source. Replace by computed values when the twin studies get an analysis script (publication.md rule 6).",
+ "conformance_energy_rel": {"value": 6.5e-8, "source": "studies/2026-11-20_water-spcfw-wu/README.md, Result"},
+ "conformance_force_rel": {"value": 7.4e-8, "source": "studies/2026-11-20_water-spcfw-wu/README.md, Result"},
+ "speed_ns_per_day": {"value": 72, "source": "studies/2026-11-20_water-spcfw-wu/README.md, Result"},
+ "twin_density_cpu": {"mean": 1.0079, "sem": 0.0012, "source": "studies/2026-11-20_water-spcfw-gpu-twin/README.md"},
+ "twin_density_gpu": {"mean": 1.0089, "sem": 0.0011, "source": "studies/2026-11-20_water-spcfw-gpu-twin/README.md"},
+ "twin_u_per_molecule_cpu_kJ_mol": {"mean": -42.687, "sem": 0.020, "source": "studies/2026-11-20_water-spcfw-gpu-twin/README.md"},
+ "twin_u_per_molecule_gpu_kJ_mol": {"mean": -42.701, "sem": 0.059, "source": "studies/2026-11-20_water-spcfw-gpu-twin/README.md"},
+ "u_per_molecule_0.5fs_kJ_mol": {"value": -42.69, "source": "studies/2026-11-20_water-spcfw-wu/README.md, Density paragraph (twin run)"},
+ "hvap_at_0.5fs_kcal_mol": {"value": 10.80, "source": "studies/2026-11-20_water-spcfw-wu/README.md, Density paragraph"},
+ "lj_tail_bug": {"conformance_before": 6e-6, "limit": 1e-6, "gap_kJ_mol": 0.167, "source": "docs/STATUS.md 2026-11-21 entry; bridge commit afbc3b2"}
+}
