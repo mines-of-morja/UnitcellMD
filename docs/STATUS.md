@@ -212,6 +212,15 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-23 — spec 0.1.2 per-pair LJ overrides implemented — **ADR 0015** accepted (the author
+delegated Q1–Q3: own version 0.1.2, overrides include 1-4 pairs, recipes name package types).
+Spec, validator, oracle (umbrella main); engine and bridge (branch `s012-pair-overrides`, from
+`e37-openmm`); builder (branch `s012-pair-overrides`, from `b2a`). — evidence: acceptance tests
+A1–A9 in `docs/design/S0.1.2-pair-lj-overrides.md` §8 (kob-andersen-500 against OpenMM at 1e-15;
+T6 clusters, spec path = fit to 6e-13 kJ/mol). Finding: OpenMM's tail correction counts pairs
+differently from the engine for several atom types (O(1/N)). — next: T6 functional choice and
+clusters; author: tag spec 0.1.1/0.1.2 (the builder's validator pin), merge order of the branches.
+
 2026-11-22 — T6 stage 1 amended; spec 0.1.2 proposed — Psi4 1.9.1 has no analytic gradients
 for VV10 functionals, so ωB97M-V enters as single points on ωB97X-D geometries (T6 Amendment 3;
 `cluster_dft.py --geometries`). The author asked that option B not wait: per-pair LJ overrides
