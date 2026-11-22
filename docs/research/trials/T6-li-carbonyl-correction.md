@@ -143,3 +143,43 @@ fits.
   - ωB97M-V, full protocol, EC only: E_bind −50.36; CP interaction −53.38; Li–O 1.731 Å. It is
     reported, not used for the selection.
   - No M06-2X result, and no ωB97X-D PC or DMC value, had been read.
+
+## Results
+
+### Stage 1a — functional (2026-11-22, 23:48Z)
+
+Applied by `T6/t6_functional.py` (committed before the M06-2X and ωB97M-V results were read).
+Output in `T6/t6_functional_choice.json`; DFT rows in `tools/qm/results/t6_dimers_*.json`.
+
+| Functional | Largest error (kcal/mol) | EC − EMC (MP2 −6.24) | Condition (≤ 1) | Li–O vs MP2 (Å) |
+|---|---|---|---|---|
+| ωB97X-D | **2.38** (EMC, E_int_CP) | −5.19 (off by 1.046) | **missed by 0.046** | −0.012 … −0.016 |
+| ωB97M-V//ωB97X-D | 3.95 (EMC, E_int_CP) | −5.81 (off by 0.43) | met | ωB97X-D's |
+| M06-2X | 4.43 (EMC, E_int_CP) | −5.70 (off by 0.54) | met | −0.035 … −0.037, all four flagged |
+
+**How the result reads:**
+- **Chosen: ωB97M-V//ωB97X-D.** It is the best-ranked functional among those that meet the
+  condition.
+- ωB97X-D ranks first on the largest error, but misses the EC − EMC condition by 0.046 kcal/mol.
+- **The rule's reading:** the condition decides which functionals can be chosen, and the ranking
+  picks among them. This is how the selection script implements Amendment 1 together with the
+  plan's "if none reproduces …". That reading was fixed before the results; it is stated here
+  because the best-ranked functional is not the one chosen.
+- **Pattern:** all three bind more strongly than MP2 (every error is negative). ωB97M-V and
+  M06-2X do so by 2–4.4 kcal/mol, nearly uniformly across the four solvents. That shift largely
+  cancels in the EC − EMC difference, which is the quantity the exchange energies of stage 2
+  measure.
+- **Geometry check:** for EC, ωB97M-V with its own geometry (the stopped run, Amendment 3) gives
+  E_bind −50.36 kcal/mol. On the ωB97X-D geometry it gives −50.76, so the composite costs
+  0.4 kcal/mol here.
+
+**Fit uncertainties (Amendment 2), from the chosen protocol:**
+- s_E = 3.95 kcal/mol (above the 0.3 floor);
+- s_d = 0.0156 Å, which is ωB97X-D's largest Li–O error, since the geometries are ωB97X-D's.
+
+With s_E this large, option B's energy residuals carry little weight against the distances. That
+follows from the rule and is reported, not changed.
+
+**Next:** the five clusters, run since 23:48Z. First ωB97X-D/def2-SVP optimizations, then
+ωB97M-V/def2-TZVPD single points with counterpoise (`run_clusters.sh wb97m-v wb97x-d` in the
+work directory).

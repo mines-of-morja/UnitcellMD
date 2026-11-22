@@ -1,0 +1,111 @@
+{
+ "rule": "T6 Amendment 1 (and 3): smallest largest |error| over 8 energies; EC-EMC within 1 kcal/mol of MP2",
+ "ranking": [
+  {
+   "functional": "wb97x-d",
+   "errors_kcalmol": {
+    "EC E_bind": -0.647,
+    "EC E_int_CP": -0.743,
+    "EMC E_bind": -1.693,
+    "EMC E_int_CP": -2.381,
+    "PC E_bind": -0.246,
+    "PC E_int_CP": -1.05,
+    "DMC E_bind": -1.456,
+    "DMC E_int_CP": -2.222
+   },
+   "largest_error_kcalmol": 2.381,
+   "ec_minus_emc_kcalmol": -5.191,
+   "ec_minus_emc_mp2_kcalmol": -6.237,
+   "condition_met": false,
+   "li_o_angstrom": {
+    "EC": 1.75,
+    "EMC": 1.7388,
+    "PC": 1.7455,
+    "DMC": 1.743
+   },
+   "li_o_error_angstrom": {
+    "EC": -0.0115,
+    "EMC": -0.0156,
+    "PC": -0.0123,
+    "DMC": -0.0154
+   },
+   "li_o_flagged": [],
+   "s_E_kcalmol": 2.381,
+   "s_d_angstrom": 0.0156
+  },
+  {
+   "functional": "wb97m-v//wb97x-d",
+   "errors_kcalmol": {
+    "EC E_bind": -2.601,
+    "EC E_int_CP": -2.659,
+    "EMC E_bind": -3.03,
+    "EMC E_int_CP": -3.951,
+    "PC E_bind": -2.105,
+    "PC E_int_CP": -2.977,
+    "DMC E_bind": -2.909,
+    "DMC E_int_CP": -3.877
+   },
+   "largest_error_kcalmol": 3.951,
+   "ec_minus_emc_kcalmol": -5.808,
+   "ec_minus_emc_mp2_kcalmol": -6.237,
+   "condition_met": true,
+   "li_o_angstrom": {
+    "EC": 1.75,
+    "EMC": 1.7388,
+    "PC": 1.7455,
+    "DMC": 1.743
+   },
+   "li_o_error_angstrom": {
+    "EC": -0.0115,
+    "EMC": -0.0156,
+    "PC": -0.0123,
+    "DMC": -0.0154
+   },
+   "li_o_flagged": [],
+   "s_E_kcalmol": 3.951,
+   "s_d_angstrom": 0.0156
+  },
+  {
+   "functional": "m06-2x",
+   "errors_kcalmol": {
+    "EC E_bind": -2.894,
+    "EC E_int_CP": -3.238,
+    "EMC E_bind": -3.429,
+    "EMC E_int_CP": -4.429,
+    "PC E_bind": -2.431,
+    "PC E_int_CP": -3.516,
+    "DMC E_bind": -3.314,
+    "DMC E_int_CP": -4.359
+   },
+   "largest_error_kcalmol": 4.429,
+   "ec_minus_emc_kcalmol": -5.702,
+   "ec_minus_emc_mp2_kcalmol": -6.237,
+   "condition_met": true,
+   "li_o_angstrom": {
+    "EC": 1.7263,
+    "EMC": 1.7185,
+    "PC": 1.7224,
+    "DMC": 1.7212
+   },
+   "li_o_error_angstrom": {
+    "EC": -0.0352,
+    "EMC": -0.0359,
+    "PC": -0.0354,
+    "DMC": -0.0372
+   },
+   "li_o_flagged": [
+    "EC",
+    "EMC",
+    "PC",
+    "DMC"
+   ],
+   "s_E_kcalmol": 4.429,
+   "s_d_angstrom": 0.0372
+  }
+ ],
+ "best_ranked": "wb97x-d",
+ "chosen": "wb97m-v//wb97x-d",
+ "geometry_of": {
+  "wb97m-v//wb97x-d": "wb97x-d"
+ }
+}
