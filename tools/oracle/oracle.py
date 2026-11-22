@@ -1,6 +1,6 @@
 """OpenMM oracle: reference energies and forces for UnitcellMD system packages.
 
-Validation only; never a runtime dependency (PLAN.md §2.1). Converts a spec v0.1 system package
+Validation only; never a runtime dependency (PLAN.md §2.1). Converts a spec 0.1 system package (0.1.2 with pair overrides)
 into an OpenMM System and evaluates it with the double-precision Reference platform.
 
 - Version 0 (`load_package`, `lj_system`) covers Phase 0 and E1: Lennard-Jones with the cutoff
@@ -41,10 +41,81 @@ class Package:
     sigma_nm: np.ndarray
     epsilon_kjmol: np.ndarray
     combination_rule: str
+    pairs: PairTable | None = None  # only when the package has pair overrides (spec 0.1.2)
 
     @property
     def n_atoms(self) -> int:
         return len(self.masses_amu)
+
+
+@dataclass(frozen=True)
+class PairTable:
+    """LJ parameters per type pair, for packages with `pair_overrides` (spec 0.1.2, §5.2).
+
+    `sigma_nm[a, b]` and `epsilon_kjmol[a, b]` are the override where one is given, else the
+    combination rule; `type_index[i]` is atom i's row.
+    """
+
+    type_index: np.ndarray  # (N,) int
+    sigma_nm: np.ndarray  # (T, T), symmetric
+    epsilon_kjmol: np.ndarray  # (T, T), symmetric
+
+
+def combine(rule: str, s1: float, e1: float, s2: float, e2: float) -> tuple[float, float]:
+    """σ_ij, ε_ij from the combination rule (spec §5.2)."""
+    sigma = math.sqrt(s1 * s2) if rule == "geometric" else 0.5 * (s1 + s2)
+    return sigma, math.sqrt(e1 * e2)
+
+
+def pair_table(ff: dict, atom_types: list[str]) -> PairTable | None:
+    """The type-pair table of a force-field block, or None without overrides."""
+    overrides = ff.get("pair_overrides", [])
+    if not overrides:
+        return None
+    names = sorted(ff["atom_types"])
+    row = {t: k for k, t in enumerate(names)}
+    lj = [ff["atom_types"][t] for t in names]
+    n = len(names)
+    sigma, epsilon = np.zeros((n, n)), np.zeros((n, n))
+    for a in range(n):
+        for b in range(n):
+            sigma[a, b], epsilon[a, b] = combine(
+                ff["combination_rule"],
+                lj[a]["sigma_nm"], lj[a]["epsilon_kjmol"], lj[b]["sigma_nm"], lj[b]["epsilon_kjmol"],
+            )
+    for o in overrides:
+        a, b = (row[t] for t in o["types"])
+        sigma[a, b] = sigma[b, a] = o["sigma_nm"]
+        epsilon[a, b] = epsilon[b, a] = o["epsilon_kjmol"]
+    return PairTable(np.array([row[t] for t in atom_types]), sigma, epsilon)
+
+
+def _lj_nonbonded(rule: str, sigma, epsilon, pairs: PairTable | None, shift: bool) -> mm.CustomNonbondedForce:
+    """The LJ CustomNonbondedForce: per-particle mixing, or per-type tables with overrides."""
+    tail = " - 4*eps*((sig/rc)^12-(sig/rc)^6)" if shift else ""
+    if pairs is None:
+        mix = (
+            "sig=sqrt(sig1*sig2); eps=sqrt(eps1*eps2)"
+            if rule == "geometric"
+            else "sig=0.5*(sig1+sig2); eps=sqrt(eps1*eps2)"
+        )
+        force = mm.CustomNonbondedForce(f"4*eps*((sig/r)^12-(sig/r)^6){tail}; {mix}")
+        force.addPerParticleParameter("sig")
+        force.addPerParticleParameter("eps")
+        for s, e in zip(sigma, epsilon, strict=True):
+            force.addParticle([float(s), float(e)])
+        return force
+    n = len(pairs.sigma_nm)
+    force = mm.CustomNonbondedForce(
+        f"4*eps*((sig/r)^12-(sig/r)^6){tail}; sig=sigt(t1, t2); eps=epst(t1, t2)"
+    )
+    # Discrete2DFunction values run with the first index fastest; the tables are symmetric.
+    force.addTabulatedFunction("sigt", mm.Discrete2DFunction(n, n, pairs.sigma_nm.T.ravel().tolist()))
+    force.addTabulatedFunction("epst", mm.Discrete2DFunction(n, n, pairs.epsilon_kjmol.T.ravel().tolist()))
+    force.addPerParticleParameter("t")
+    for t in pairs.type_index:
+        force.addParticle([float(t)])
+    return force
 
 
 def load_package(path: Path | str) -> Package:
@@ -56,7 +127,7 @@ def load_package(path: Path | str) -> Package:
     ff = doc.get("forcefield")
     if ff is None:
         raise ValueError("the oracle needs a parameterized package")
-    masses, charges, sigma, epsilon = [], [], [], []
+    masses, charges, sigma, epsilon, types = [], [], [], [], []
     for component in doc["components"]:
         mtype = doc["molecule_types"][component["molecule_type"]]
         if mtype["bonds"]:
@@ -64,6 +135,7 @@ def load_package(path: Path | str) -> Package:
         for _ in range(component["count"]):
             for atom in mtype["atoms"]:
                 lj = ff["atom_types"][atom["type"]]
+                types.append(atom["type"])
                 masses.append(atom["mass_amu"])
                 charges.append(atom["charge_e"])
                 sigma.append(lj["sigma_nm"])
@@ -78,6 +150,7 @@ def load_package(path: Path | str) -> Package:
         np.array(sigma),
         np.array(epsilon),
         ff["combination_rule"],
+        pair_table(ff, types),
     )
 
 
@@ -88,18 +161,10 @@ def lj_system(pkg: Package, cutoff_nm: float, mode: CutoffMode) -> mm.System:
     system = mm.System()
     for mass in pkg.masses_amu:
         system.addParticle(float(mass))
-    mix = (
-        "sig=sqrt(sig1*sig2); eps=sqrt(eps1*eps2)"
-        if pkg.combination_rule == "geometric"
-        else "sig=0.5*(sig1+sig2); eps=sqrt(eps1*eps2)"
+    force = _lj_nonbonded(
+        pkg.combination_rule, pkg.sigma_nm, pkg.epsilon_kjmol, pkg.pairs, mode == "potential-shift"
     )
-    shift = " - 4*eps*((sig/rc)^12-(sig/rc)^6)" if mode == "potential-shift" else ""
-    force = mm.CustomNonbondedForce(f"4*eps*((sig/r)^12-(sig/r)^6){shift}; {mix}")
     force.addGlobalParameter("rc", cutoff_nm)
-    force.addPerParticleParameter("sig")
-    force.addPerParticleParameter("eps")
-    for s, e in zip(pkg.sigma_nm, pkg.epsilon_kjmol, strict=True):
-        force.addParticle([float(s), float(e)])
     force.setCutoffDistance(cutoff_nm)
     if pkg.cell_nm is None:
         force.setNonbondedMethod(mm.CustomNonbondedForce.CutoffNonPeriodic)
@@ -144,6 +209,30 @@ def lj_dispersion_correction(pkg: Package, cutoff_nm: float) -> float:
     return 8.0 / 3.0 * math.pi * n * n / volume * epsilon * sigma**3 * (x**9 / 3.0 - x**3)
 
 
+def lj_dispersion_correction_types(pkg: Package, cutoff_nm: float) -> float:
+    """Analytic long-range LJ energy beyond rc, summed over type pairs (kJ/mol).
+
+    E = (8π/3V) Σ_a Σ_b N_a N_b ε_ab σ_ab³ [(σ_ab/rc)⁹/3 − (σ_ab/rc)³], with the pair overrides
+    (spec 0.1.2) where the package has them. One type gives `lj_dispersion_correction`.
+    """
+    if pkg.cell_nm is None:
+        raise NotImplementedError("periodic box only")
+    keys = list(zip(pkg.sigma_nm, pkg.epsilon_kjmol, strict=True))
+    if pkg.pairs is None:
+        index = {k: n for n, k in enumerate(dict.fromkeys(keys))}
+        types = np.array([index[k] for k in keys])
+        per_type = list(index)
+        sig = np.array([[combine(pkg.combination_rule, a[0], a[1], b[0], b[1])[0] for b in per_type] for a in per_type])
+        eps = np.array([[combine(pkg.combination_rule, a[0], a[1], b[0], b[1])[1] for b in per_type] for a in per_type])
+    else:
+        types, sig, eps = pkg.pairs.type_index, pkg.pairs.sigma_nm, pkg.pairs.epsilon_kjmol
+    counts = np.bincount(types, minlength=len(sig)).astype(float)
+    volume = abs(float(np.linalg.det(pkg.cell_nm)))
+    x = sig / cutoff_nm
+    per_pair = eps * sig**3 * (x**9 / 3.0 - x**3)
+    return 8.0 / 3.0 * math.pi / volume * float(counts @ per_pair @ counts)
+
+
 # ---------------------------------------------------------------------------------------------
 # Version 1: molecular packages
 
@@ -174,6 +263,7 @@ class Topology:
     excluded: list[tuple[int, int]]
     pairs14: list[tuple[int, int]]
     constraints: list[tuple[int, int, float]]
+    pairs: PairTable | None = None  # only with pair overrides (spec 0.1.2)
 
     @property
     def n_atoms(self) -> int:
@@ -213,7 +303,7 @@ def load_topology(path: Path | str) -> Topology:
     ff = doc.get("forcefield")
     if ff is None:
         raise ValueError("the oracle needs a parameterized package")
-    masses, charges, sigma, epsilon = [], [], [], []
+    masses, charges, sigma, epsilon, types = [], [], [], [], []
     bonds, angles, periodic, rb, imp_p, imp_h, excluded, pairs14, constraints = ([] for _ in range(9))
     offset = 0
     for component in doc["components"]:
@@ -223,6 +313,7 @@ def load_topology(path: Path | str) -> Topology:
         for _ in range(component["count"]):
             for atom in mtype["atoms"]:
                 lj = ff["atom_types"][atom["type"]]
+                types.append(atom["type"])
                 masses.append(atom["mass_amu"])
                 charges.append(atom["charge_e"])
                 sigma.append(lj["sigma_nm"])
@@ -271,14 +362,18 @@ def load_topology(path: Path | str) -> Topology:
         doc["name"], np.load(path / "positions.npy"), cell, np.array(masses), np.array(charges),
         np.array(sigma), np.array(epsilon), ff["combination_rule"], float(ff["scale_14_lj"]),
         float(ff["scale_14_coulomb"]), bonds, angles, periodic, rb, imp_p, imp_h, excluded,
-        pairs14, constraints,
+        pairs14, constraints, pair_table(ff, types),
     )
 
 
 def _mix(top: Topology, i: int, j: int) -> tuple[float, float]:
-    si, sj = top.sigma_nm[i], top.sigma_nm[j]
-    sigma = math.sqrt(si * sj) if top.combination_rule == "geometric" else 0.5 * (si + sj)
-    return sigma, math.sqrt(top.epsilon_kjmol[i] * top.epsilon_kjmol[j])
+    """σ_ij, ε_ij of atoms i and j: the pair override if there is one, else the rule."""
+    if top.pairs is not None:
+        a, b = top.pairs.type_index[i], top.pairs.type_index[j]
+        return float(top.pairs.sigma_nm[a, b]), float(top.pairs.epsilon_kjmol[a, b])
+    return combine(
+        top.combination_rule, top.sigma_nm[i], top.epsilon_kjmol[i], top.sigma_nm[j], top.epsilon_kjmol[j]
+    )
 
 
 def molecular_system(
@@ -338,17 +433,9 @@ def molecular_system(
     for i, j in top.pairs14:
         qq = top.scale_14_coulomb * top.charges_e[i] * top.charges_e[j]
         coulomb.addException(i, j, float(qq), 1.0, 0.0)
-    mix = (
-        "sig=sqrt(sig1*sig2); eps=sqrt(eps1*eps2)"
-        if top.combination_rule == "geometric"
-        else "sig=0.5*(sig1+sig2); eps=sqrt(eps1*eps2)"
+    lj = _lj_nonbonded(
+        top.combination_rule, top.sigma_nm, top.epsilon_kjmol, top.pairs, lj_mode == "potential-shift"
     )
-    shift = " - 4*eps*((sig/rc)^12-(sig/rc)^6)" if lj_mode == "potential-shift" else ""
-    lj = mm.CustomNonbondedForce(f"4*eps*((sig/r)^12-(sig/r)^6){shift}; {mix}")
-    lj.addPerParticleParameter("sig")
-    lj.addPerParticleParameter("eps")
-    for s, e in zip(top.sigma_nm, top.epsilon_kjmol, strict=True):
-        lj.addParticle([float(s), float(e)])
     for i, j in (*top.excluded, *top.pairs14):
         lj.addExclusion(i, j)
     lj.setUseLongRangeCorrection(False)
