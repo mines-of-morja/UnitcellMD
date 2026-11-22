@@ -94,3 +94,29 @@ after which every window stays within that band.
   Docker, `tools/qm`).
 - **Stage 2:** minutes.
 - **Stage 3:** about 40 min per run on the MI50, so 2 h per option.
+
+**Amendment 1 (2026-11-22, 09:26Z, before any calculation of this trial):** how the
+functional is chosen.
+- The DFT single-solvent values are compared with MP2 in two ways:
+  - E_bind without counterpoise, against MP2's E_bind;
+  - the counterpoise interaction energy at the complex geometry, against MP2's.
+- **Selection:** the functional with the smallest largest absolute error over these 8 numbers
+  (4 complexes) is chosen.
+- **Condition:** its EC − EMC difference must also lie within 1 kcal/mol of MP2's (−6.24).
+- Li–O distances (def2-SVP geometries) are reported. Any that is more than 0.03 Å from MP2 is
+  flagged.
+- Integration grid (99, 590) for all three functionals, so M06-2X is not grid-limited.
+
+**Amendment 2 (2026-11-22, 09:33Z, stage 1 running, no DFT result read yet):** how stage 2
+fits.
+- **Weights:** each residual is divided by the uncertainty of its reference, the chosen
+  functional's largest error against MP2 on the single complexes: s_d for Li–O distances and
+  s_E for energies. Floors are 0.01 Å and 0.3 kcal/mol, so that a lucky agreement does not
+  dominate.
+- **Option A** minimizes Σ (Δd/s_d)² over all cluster Li–O(carbonyl) distances. Option B
+  minimizes that sum plus Σ (ΔE_n/s_E)² over n = 1…4.
+- **The force-field values** come from minimizing each cluster from its DFT geometry, and each
+  free solvent from its DFT minimum. The same Reference-platform minimizer as the starts is used,
+  with PF₆⁻ absent and q_Li = 0.75.
+- **The fit is good** if the weighted RMS residual is ≤ 1, i.e. within the reference
+  uncertainty. That is reported. It is not a gate: stage 3 decides.
