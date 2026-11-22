@@ -1,14 +1,15 @@
 # 0015 — Per-pair Lennard-Jones overrides in the system package (spec 0.1.2)
 
-- **Status:** proposed 2026-11-22, awaiting the author.
-  - The author asked that trial T6 option B not be held up ("B should not be held up once the
-    clusters are done").
-  - The spec change itself needs the author's approval (CLAUDE.md).
+- **Status:** accepted 2026-11-22 by the author, who delegated the open questions: "for Q1, Q2
+  and Q3 pick the best solutions and continue".
+  - The author had asked that trial T6 option B not be held up.
+  - Q1: a version of its own, 0.1.2. Q2: overrides apply to 1-4 pairs as well. Q3: recipes name
+    the package type names.
 - **Context:**
   - Spec 0.1 derives every LJ pair from the atom types through one combination rule.
   - T6 option B needs its own σ and ε for two pairs (Li⁺–O carbonyl of EC and of EMC).
   - ADR 0008 §3 names this as the case that needs a spec extension.
-- **Decision (proposed):**
+- **Decision:**
   - `forcefield.pair_overrides` is a list of `{types: [a, b], sigma_nm, epsilon_kjmol,
     description?}`.
   - For every LJ-interacting pair of those types, including 1-4 pairs before their scaling, it

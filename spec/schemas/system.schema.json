@@ -899,6 +899,40 @@
               }
             }
           }
+        },
+        "pair_overrides": {
+          "description": "Per-type-pair LJ parameters replacing the combination rule (since 0.1.2, §5.2)",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "types",
+              "sigma_nm",
+              "epsilon_kjmol"
+            ],
+            "properties": {
+              "types": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "$ref": "#/$defs/type_name"
+                }
+              },
+              "sigma_nm": {
+                "type": "number",
+                "minimum": 0
+              },
+              "epsilon_kjmol": {
+                "type": "number",
+                "minimum": 0
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     }

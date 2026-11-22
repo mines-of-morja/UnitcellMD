@@ -387,6 +387,80 @@ def nacl_crystal() -> tuple[dict[str, Any], np.ndarray]:
     return doc, f8(np.vstack([na, cl]))
 
 
+def kob_andersen_500() -> tuple[dict[str, Any], np.ndarray]:
+    """Kob-Andersen 80:20 binary LJ mixture: the A-B pair is a pair override (spec 0.1.2)."""
+    mass = 39.948
+    sigma = round(3.4 * ANGSTROM_NM, 9)  # Rahman 1964 argon sets the scale
+    epsilon = 120.0 * K_B_KJMOL
+    n_cells = 5
+    box = round((500 / 1.2) ** (1.0 / 3.0) * sigma, 6)  # ρσ³ = 1.2; pow is not correctly rounded
+    a = box / n_cells
+    basis = np.array([[0, 0, 0], [0.5, 0.5, 0], [0.5, 0, 0.5], [0, 0.5, 0.5]])
+    cells = np.array(
+        [[i, j, k] for i in range(n_cells) for j in range(n_cells) for k in range(n_cells)],
+        dtype=float,
+    )
+    lattice = ((cells[:, None, :] + basis[None, :, :]).reshape(-1, 3)) * a
+    is_b = np.arange(len(lattice)) % 5 == 4  # every fifth site: 400 A, 100 B
+    lattice = np.vstack([lattice[~is_b], lattice[is_b]])  # canonical order: all A, then all B
+    positions = f8(lattice + uniform_noise(1995, lattice.shape, 0.005))
+
+    def atom(name: str) -> dict[str, Any]:
+        return {
+            "formal_charge_e": 0,
+            "atoms": [
+                {"name": name, "element": "Ar", "mass_amu": mass, "charge_e": 0.0, "type": name}
+            ],
+            "bonds": [],
+        }
+
+    forcefield = {
+        "name": "Kob-Andersen binary Lennard-Jones mixture",
+        "combination_rule": "lorentz-berthelot",
+        "scale_14_lj": 1.0,
+        "scale_14_coulomb": 1.0,
+        "atom_types": {
+            "A": {"sigma_nm": sigma, "epsilon_kjmol": epsilon},
+            "B": {"sigma_nm": round(0.88 * sigma, 9), "epsilon_kjmol": 0.5 * epsilon},
+        },
+        "pair_overrides": [
+            {
+                "types": ["A", "B"],
+                "sigma_nm": round(0.8 * sigma, 9),
+                "epsilon_kjmol": 1.5 * epsilon,
+                "description": "sigma_AB = 0.8 sigma_AA, epsilon_AB = 1.5 epsilon_AA",
+            }
+        ],
+    }
+    doc = system_doc(
+        "kob-andersen-500",
+        "400 A + 100 B atoms of the Kob-Andersen mixture on a perturbed FCC lattice (5x5x5 "
+        "cells) at rho sigma_AA^3 = 1.2. The A-B pair is a pair override: no combination rule "
+        "gives sigma_AB = 0.8, epsilon_AB = 1.5 (in units of the A-A values).",
+        [True, True, True],
+        [[box, 0.0, 0.0], [0.0, box, 0.0], [0.0, 0.0, box]],
+        {"A": atom("A"), "B": atom("B")},
+        [{"molecule_type": "A", "count": 400}, {"molecule_type": "B", "count": 100}],
+        forcefield,
+        sources=[
+            {
+                "what": "mixture parameters in units of the A-A pair, composition, density",
+                "citation": "W. Kob, H. C. Andersen, Phys. Rev. E 51, 4626 (1995)",
+                "doi": "10.1103/PhysRevE.51.4626",
+            },
+            {
+                "what": "the A-A scale (argon sigma, epsilon, mass)",
+                "citation": "A. Rahman, Phys. Rev. 136, A405 (1964)",
+                "doi": "10.1103/PhysRev.136.A405",
+            },
+        ],
+        notes="Spec 0.1.2 fixture. Kob and Andersen give the model in reduced units with equal "
+        "masses; argon fixes the scale. Seed 1995.",
+    )
+    doc["spec_version"] = "0.1.2"
+    return doc, positions
+
+
 # --------------------------------------------------------------------------- invalid packages
 
 
@@ -397,6 +471,7 @@ def invalid_packages(root: Path, valid: dict[str, tuple[dict[str, Any], np.ndarr
     argon_doc, argon_pos = valid["argon-864"]
     water_doc, water_pos = valid["water-2"]
     nacl_doc, nacl_pos = valid["nacl-crystal"]
+    ka_doc, ka_pos = valid["kob-andersen-500"]
 
     def mutate(doc: dict[str, Any], change: Any) -> dict[str, Any]:
         new = copy.deepcopy(doc)
@@ -508,6 +583,26 @@ def invalid_packages(root: Path, valid: dict[str, tuple[dict[str, Any], np.ndarr
                 lambda d: d["molecule_types"]["Na+"]["atoms"][0].update(charge_e=1.1),
             ),
             nacl_pos,
+        ),
+        (
+            "pair-override-unknown-type",
+            "E_REFERENCE",
+            mutate(
+                ka_doc,
+                lambda d: d["forcefield"]["pair_overrides"][0].update(types=["A", "C"]),
+            ),
+            ka_pos,
+        ),
+        (
+            "pair-override-duplicate",
+            "E_PAIR_OVERRIDE",
+            mutate(
+                ka_doc,
+                lambda d: d["forcefield"]["pair_overrides"].append(
+                    dict(d["forcefield"]["pair_overrides"][0], types=["B", "A"])
+                ),
+            ),
+            ka_pos,
         ),
         ("positions-missing", "E_ARRAY_MISSING", argon_doc, None),
         ("positions-wrong-shape", "E_ARRAY_FORMAT", argon_doc, argon_pos[:-1]),
@@ -667,6 +762,7 @@ def generate(root: Path) -> None:
         ("argon-864", argon_864),
         ("water-2", water_2),
         ("nacl-crystal", nacl_crystal),
+        ("kob-andersen-500", kob_andersen_500),
     ):
         doc, pos = builder()
         write_package(valid_dir / name, doc, pos)

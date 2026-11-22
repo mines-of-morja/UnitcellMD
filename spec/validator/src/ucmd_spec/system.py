@@ -1,9 +1,10 @@
 """Validation of system packages (spec/system-package.md §7).
 
 Checks run in the order fixed by the spec and stop at the first error:
-E_JSON, E_FORMAT, E_VERSION, E_UNITS, E_SCHEMA, E_REFERENCE, E_INDEX, E_ATOM_COUNT, E_CELL,
-E_PARAMETERS, E_NET_CHARGE, E_ARRAY_MISSING / E_ARRAY_FORMAT / E_NONFINITE (positions, then
-velocities), E_MOLECULE_SPLIT. Warnings (W_*) are collected along the way.
+E_JSON, E_FORMAT, E_VERSION, E_UNITS, E_SCHEMA, E_REFERENCE, E_PAIR_OVERRIDE, E_INDEX,
+E_ATOM_COUNT, E_CELL, E_PARAMETERS, E_NET_CHARGE, E_ARRAY_MISSING / E_ARRAY_FORMAT /
+E_NONFINITE (positions, then velocities), E_MOLECULE_SPLIT. Warnings (W_*) are collected along
+the way.
 """
 
 from __future__ import annotations
@@ -73,6 +74,8 @@ def _validate(package: Path, report: Report) -> None:
     periodic = any(doc["periodicity"])
 
     _check_references(molecule_types, components, forcefield)
+    if forcefield is not None:
+        _check_pair_overrides(forcefield.get("pair_overrides", []))
     _check_indices(molecule_types)
     _check_atom_count(doc["atom_count"], molecule_types, components)
     _check_cell(doc["periodicity"], doc["cell_nm"])
@@ -119,6 +122,27 @@ def _check_references(
                     f"atom {k} of molecule type {name!r} names unknown atom type {atom['type']!r}",
                     f"/molecule_types/{name}/atoms/{k}",
                 )
+    for k, override in enumerate(forcefield.get("pair_overrides", [])):
+        for t in override["types"]:
+            if t not in atom_types:
+                raise Invalid(
+                    "E_REFERENCE",
+                    f"pair override {k} names unknown atom type {t!r}",
+                    f"/forcefield/pair_overrides/{k}",
+                )
+
+
+def _check_pair_overrides(overrides: list[dict[str, Any]]) -> None:
+    seen: dict[frozenset[str], int] = {}
+    for k, override in enumerate(overrides):
+        pair = frozenset(override["types"])
+        if pair in seen:
+            raise Invalid(
+                "E_PAIR_OVERRIDE",
+                f"pair override {k} repeats the pair {sorted(pair)} of override {seen[pair]}",
+                f"/forcefield/pair_overrides/{k}",
+            )
+        seen[pair] = k
 
 
 def _check_indices(molecule_types: dict[str, Any]) -> None:

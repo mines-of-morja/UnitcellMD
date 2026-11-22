@@ -105,9 +105,14 @@ internally, but every output is in canonical order.
   "combination_rule": "geometric",
   "scale_14_lj": 0.5,
   "scale_14_coulomb": 0.5,
-  "atom_types": {"ec_c1": {"sigma_nm": 0.375, "epsilon_kjmol": 0.43932}}
+  "atom_types": {"ec_c1": {"sigma_nm": 0.375, "epsilon_kjmol": 0.43932}},
+  "pair_overrides": [
+    {"types": ["li", "ec_o_carbonyl"], "sigma_nm": 0.21, "epsilon_kjmol": 0.9}
+  ]
 }
 ```
+
+(The numbers are placeholders for the format.) `pair_overrides` is optional (since 0.1.2, §5.2).
 
 ### 5.1 Parameterized vs. unparameterized packages
 
@@ -125,6 +130,16 @@ internally, but every output is in canonical order.
   atom types via `combination_rule`:
   - `geometric`: σ_ij = √(σ_i σ_j), ε_ij = √(ε_i ε_j) (OPLS);
   - `lorentz-berthelot`: σ_ij = (σ_i + σ_j)/2, ε_ij = √(ε_i ε_j).
+- **Pair overrides (since 0.1.2):** `pair_overrides` is a list of
+  `{types: [a, b], sigma_nm, epsilon_kjmol, description?}` (the CHARMM `NBFIX` form).
+  - `a` and `b` are keys of `atom_types`; they may be equal. The pair is unordered, and each
+    pair appears at most once.
+  - For every pair of atoms with types a and b that interacts by LJ, σ_ij and ε_ij are the
+    override's, not the combination rule's. This includes 1-4 pairs, which are then scaled by
+    `scale_14_lj` as usual. Exclusions are unchanged.
+  - A long-range dispersion correction (a run setting) sums over type pairs and uses the
+    overridden σ_ij and ε_ij for them.
+  - Absent or `[]`: every pair follows the combination rule, as in 0.1.0.
 - **Coulomb:** E = k_e q_i q_j / r, with k_e from units.md §2.
 - **Exclusions:** within a molecule, let d be the shortest path length in the bond graph. Pairs
   with d = 1 or 2 are excluded. Pairs with d = 3 interact with LJ scaled by `scale_14_lj` and
@@ -172,7 +187,8 @@ warnings: the package is valid, but suspicious.
 | `E_VERSION` | `spec_version` not semver, or not supported by the reader (§9) |
 | `E_UNITS` | `units` block missing or different from §2 |
 | `E_SCHEMA` | any other JSON Schema violation (missing key, wrong type, unknown key, parameter out of range) |
-| `E_REFERENCE` | a component names an unknown molecule type, or an atom names an unknown atom type |
+| `E_REFERENCE` | a component names an unknown molecule type, an atom names an unknown atom type, or a pair override names an unknown atom type |
+| `E_PAIR_OVERRIDE` | a pair override repeats a pair (in either order) (since 0.1.2) |
 | `E_INDEX` | an interaction index is out of range for its molecule type, or repeated within one interaction |
 | `E_ATOM_COUNT` | `atom_count` ≠ Σ count × atoms per type |
 | `E_CELL` | `cell_nm` is `null` although a direction is periodic, or present although none is; not in reduced form; or a non-positive diagonal |
@@ -187,7 +203,8 @@ warnings: the package is valid, but suspicious.
 Checks run in this order, and the first error stops validation, so every reader reports the
 same code:
 
-E_JSON → E_FORMAT → E_VERSION → E_UNITS → E_SCHEMA → E_REFERENCE → E_INDEX → E_ATOM_COUNT →
+E_JSON → E_FORMAT → E_VERSION → E_UNITS → E_SCHEMA → E_REFERENCE → E_PAIR_OVERRIDE → E_INDEX →
+E_ATOM_COUNT →
 E_CELL → E_PARAMETERS → E_NET_CHARGE → positions.npy (E_ARRAY_MISSING, E_ARRAY_FORMAT,
 E_NONFINITE) → velocities.npy (E_ARRAY_FORMAT, E_NONFINITE) → E_MOLECULE_SPLIT.
 

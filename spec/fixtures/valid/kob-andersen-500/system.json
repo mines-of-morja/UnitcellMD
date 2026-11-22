@@ -1,0 +1,120 @@
+{
+  "format": "ucmd-system",
+  "spec_version": "0.1.2",
+  "name": "kob-andersen-500",
+  "description": "400 A + 100 B atoms of the Kob-Andersen mixture on a perturbed FCC lattice (5x5x5 cells) at rho sigma_AA^3 = 1.2. The A-B pair is a pair override: no combination rule gives sigma_AB = 0.8, epsilon_AB = 1.5 (in units of the A-A values).",
+  "units": {
+    "length": "nm",
+    "time": "ps",
+    "mass": "amu",
+    "energy": "kJ/mol",
+    "charge": "e",
+    "temperature": "K",
+    "angle": "deg"
+  },
+  "periodicity": [
+    true,
+    true,
+    true
+  ],
+  "cell_nm": [
+    [
+      2.539463,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      2.539463,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      2.539463
+    ]
+  ],
+  "molecule_types": {
+    "A": {
+      "formal_charge_e": 0,
+      "atoms": [
+        {
+          "name": "A",
+          "element": "Ar",
+          "mass_amu": 39.948,
+          "charge_e": 0.0,
+          "type": "A"
+        }
+      ],
+      "bonds": []
+    },
+    "B": {
+      "formal_charge_e": 0,
+      "atoms": [
+        {
+          "name": "B",
+          "element": "Ar",
+          "mass_amu": 39.948,
+          "charge_e": 0.0,
+          "type": "B"
+        }
+      ],
+      "bonds": []
+    }
+  },
+  "components": [
+    {
+      "molecule_type": "A",
+      "count": 400
+    },
+    {
+      "molecule_type": "B",
+      "count": 100
+    }
+  ],
+  "atom_count": 500,
+  "forcefield": {
+    "name": "Kob-Andersen binary Lennard-Jones mixture",
+    "combination_rule": "lorentz-berthelot",
+    "scale_14_lj": 1.0,
+    "scale_14_coulomb": 1.0,
+    "atom_types": {
+      "A": {
+        "sigma_nm": 0.34,
+        "epsilon_kjmol": 0.9977355141783888
+      },
+      "B": {
+        "sigma_nm": 0.2992,
+        "epsilon_kjmol": 0.4988677570891944
+      }
+    },
+    "pair_overrides": [
+      {
+        "types": [
+          "A",
+          "B"
+        ],
+        "sigma_nm": 0.272,
+        "epsilon_kjmol": 1.4966032712675832,
+        "description": "sigma_AB = 0.8 sigma_AA, epsilon_AB = 1.5 epsilon_AA"
+      }
+    ]
+  },
+  "provenance": {
+    "created_by": "spec/fixtures/_generators/generate.py",
+    "created_utc": "2026-11-12T00:00:00Z",
+    "sources": [
+      {
+        "what": "mixture parameters in units of the A-A pair, composition, density",
+        "citation": "W. Kob, H. C. Andersen, Phys. Rev. E 51, 4626 (1995)",
+        "doi": "10.1103/PhysRevE.51.4626"
+      },
+      {
+        "what": "the A-A scale (argon sigma, epsilon, mass)",
+        "citation": "A. Rahman, Phys. Rev. 136, A405 (1964)",
+        "doi": "10.1103/PhysRev.136.A405"
+      }
+    ],
+    "notes": "Spec 0.1.2 fixture. Kob and Andersen give the model in reduced units with equal masses; argon fixes the scale. Seed 1995."
+  }
+}

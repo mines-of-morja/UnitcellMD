@@ -17,8 +17,14 @@ INVALID_RUNS = json.loads((FIXTURES / "runs" / "invalid" / "expected.json").read
 
 
 def test_fixture_sets_are_complete() -> None:
-    assert {p.name for p in VALID} == {"argon-864", "harmonic-3d", "nacl-crystal", "water-2"}
-    assert len(INVALID) >= 19
+    assert {p.name for p in VALID} == {
+        "argon-864",
+        "harmonic-3d",
+        "kob-andersen-500",
+        "nacl-crystal",
+        "water-2",
+    }
+    assert len(INVALID) >= 21
     assert len(RUNS) >= 2 and len(INVALID_RUNS) >= 5
 
 
@@ -46,6 +52,7 @@ def test_every_error_code_of_the_spec_has_a_fixture() -> None:
         "E_UNITS",
         "E_SCHEMA",
         "E_REFERENCE",
+        "E_PAIR_OVERRIDE",
         "E_INDEX",
         "E_ATOM_COUNT",
         "E_CELL",

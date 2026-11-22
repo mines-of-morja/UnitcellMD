@@ -20,6 +20,26 @@ def test_argon_density_and_state_point() -> None:
     assert math.isclose(lj["epsilon_kjmol"] / 0.00831446261815324, 120.0, rel_tol=1e-12)
 
 
+def test_kob_andersen_parameters_and_state_point() -> None:
+    """Kob & Andersen 1995: sigma_BB 0.88, eps_BB 0.5, sigma_AB 0.8, eps_AB 1.5; rho sigma^3 1.2."""
+    doc = load_system(FIXTURES / "valid" / "kob-andersen-500")
+    ff = doc["forcefield"]
+    a, b = ff["atom_types"]["A"], ff["atom_types"]["B"]
+    (ab,) = ff["pair_overrides"]
+    assert sorted(ab["types"]) == ["A", "B"]
+    assert a["sigma_nm"] == 0.34
+    assert math.isclose(b["sigma_nm"] / a["sigma_nm"], 0.88, rel_tol=1e-9)
+    assert math.isclose(b["epsilon_kjmol"] / a["epsilon_kjmol"], 0.5, rel_tol=1e-12)
+    assert math.isclose(ab["sigma_nm"] / a["sigma_nm"], 0.8, rel_tol=1e-9)
+    assert math.isclose(ab["epsilon_kjmol"] / a["epsilon_kjmol"], 1.5, rel_tol=1e-12)
+    counts = [c["count"] for c in doc["components"]]
+    assert counts == [400, 100]
+    box = doc["cell_nm"][0][0]
+    assert math.isclose(500 / box**3 * a["sigma_nm"] ** 3, 1.2, rel_tol=1e-5)
+    # the override is not what the combination rule would give
+    assert not math.isclose(ab["sigma_nm"], 0.5 * (a["sigma_nm"] + b["sigma_nm"]), rel_tol=1e-3)
+
+
 def test_argon_positions_are_a_perturbed_fcc_lattice() -> None:
     positions = np.load(FIXTURES / "valid" / "argon-864" / "positions.npy")
     box = load_system(FIXTURES / "valid" / "argon-864")["cell_nm"][0][0]
