@@ -58,4 +58,16 @@ cell-model parameters (0.16 measured, 0.22 fit at 1 M, 20 °C); t₊^VOL that of
 
 Command: `HDF5_USE_FILE_LOCKING=FALSE ucmd-analysis/.venv/bin/python
 docs/research/trials/T1/t1_frames.py <pilot>/out/trajectory.repaired.h5 OUT.json 501`
-(ucmd-analysis `a1` at bacb32c; output `T1/t1_result.json`). Awaiting the author's confirmation.
+(ucmd-analysis `a1` at bacb32c; output `T1/t1_result.json`).
+
+**Addendum (2026-11-22, not pre-registered):** the SOL frame weighted by moles of solvent
+instead of mass (EC weight 0.336 instead of 0.300). t₊^SOL 0.206 ± 0.134 instead of
+0.189 ± 0.126; difference 0.016 ± 0.014, eight times below the error. Only the mass weighting
+satisfies Eq. (2) exactly. Script `T1/t1_sol_weighting.py`, output `T1/t1_sol_weighting.json`.
+
+**Author's decision (2026-11-22):** the author delegated the choice ("make the best decision
+for the project with existing conventions that make sense"). Decisions (a)–(c) stand. The
+frame convention is recorded in [ADR 0013](../../decisions/0013-transference-frames.md):
+- SOL, weighted by mass, is the headline against experiment;
+- VOL, convention A with B as the band, is compared with eNMR;
+- COM is compared with other MD.

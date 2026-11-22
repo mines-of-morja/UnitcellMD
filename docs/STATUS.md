@@ -212,6 +212,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-22 — trial T1 decided — **ADR 0013** (the author delegated the choice): t₊ is
+reported in SOL (headline against experiment, Newman's t₊⁰), VOL (eNMR; convention A, B as the
+band) and COM (other MD). SOL is the mass-weighted EC + EMC velocity: Eq. (2) holds exactly, and
+mole weighting changes t₊ by 0.016 ± 0.014. Per-solvent frames come with the production runs. —
+evidence: `docs/research/trials/T1-tplus-frames.md`, `T1/t1_sol_weighting.json` — next: Jo
+implements COM/SOL/VOL in ucmd-analysis#1.
+
 2026-11-22 — rung W done (SPC/Fw water against Wu 2006); results folder — one 6.5 ns NPT run on the
 GPU (HIP double, 512 molecules) against Table II: ⟨r_OH⟩ 1.0310 Å, ⟨θ⟩ 107.70°, ⟨μ⟩ 2.394 D,
 ΔH_vap 10.72 kcal/mol (Wu's definition) all equal; ε 80.7 (blocks 77.6 ± 2.7) against 79.63; D in
