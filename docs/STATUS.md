@@ -212,7 +212,7 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
-2026-11-23 — spec 0.1.2 per-pair LJ overrides implemented — **ADR 0015** accepted (the author
+2026-11-22 — spec 0.1.2 per-pair LJ overrides implemented — **ADR 0015** accepted (the author
 delegated Q1–Q3: own version 0.1.2, overrides include 1-4 pairs, recipes name package types).
 Spec, validator, oracle (umbrella main); engine and bridge (branch `s012-pair-overrides`, from
 `e37-openmm`); builder (branch `s012-pair-overrides`, from `b2a`). — evidence: acceptance tests
