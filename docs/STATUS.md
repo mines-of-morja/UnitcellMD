@@ -212,6 +212,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-22 — trial T2 (EC model at 1 M) — **done, awaiting the author:** by the pre-registered
+rule 1, M1 (Caleman EC) replaces M0. EC carbonyl O within 0.28 nm of Li⁺: 0.97 ± 0.01 (M1)
+against 0.44 ± 0.01 (M0), DRS bound 2.2 ± 0.1. The deficit of 1.2 EC goes to M2/M3. Density
++1.1 % (M1) and +0.2 % (M0) against the Landesfeind fit (one reading); κ unchanged (reported
+only). Run length: the pre-registered ±10 % diagnostic is noise-limited (reported as such);
+post hoc, the shell settles after 1–1.5 ns, and 50 ps or 250 ps runs would have given the wrong
+verdict, while 3 ns reproduces 5 ns. Later 1 M shell runs: 3 ns from packing, 1.5 ns from an
+equilibrated state. — evidence: `docs/research/trials/T2-ec-model-1M.md`, `T2/*.json` —
+next: author confirms T1 and T2; then T3 (Landesfeind SI) or M2.
+
 2026-11-21 — contributions of Jo and Copilot reviewed — **merged into b2a** (drafts, not
 approved): A1.5 design notes for t₊ in the SOL and VOL frames and for the Green–Kubo cross-check
 (`docs/design/A1.5.md`, `A1.5-green-kubo.md`) with five ledger entries; the Lehnert SI values and
