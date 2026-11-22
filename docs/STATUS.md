@@ -212,6 +212,12 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-22 — T6 stage 1 amended; spec 0.1.2 proposed — Psi4 1.9.1 has no analytic gradients
+for VV10 functionals, so ωB97M-V enters as single points on ωB97X-D geometries (T6 Amendment 3;
+`cluster_dft.py --geometries`). The author asked that option B not wait: per-pair LJ overrides
+are proposed as spec 0.1.2. — evidence: `docs/design/S0.1.2-pair-lj-overrides.md`, ADR 0015
+(proposed) — next: functional choice, then the five clusters; author: Q1–Q3 of the design.
+
 2026-11-22 — T2 decided, T6 planned — **ADR 0014** (author: "that sounds reasonable"): EC
 from the OPLS-AA types of Caleman 2012 (M1) replaces LigParGen EC in the working horse. Trial
 T6 (#11), first-shell correction: one Li⁺ σ (A, ECC-R) or a Li⁺–O(carbonyl) pair term (B),

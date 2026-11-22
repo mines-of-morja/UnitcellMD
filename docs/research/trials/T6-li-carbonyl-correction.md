@@ -64,7 +64,8 @@ Strategy M3, step 3 (`docs/research/forcefield-strategy.md` §8), after T2 (ADR 
 - **Runs:** 3 packing seeds per option (20261124–26).
 - **Length:** 3 ns from packing, the last 1.5 ns analysed. This is the length T2 measured for
   this kind of run (trials rule 6).
-- **Option B** runs only after the author has approved the spec extension. Option A can run as
+- **Option B** runs only after the author has approved the spec extension (proposed:
+  `docs/design/S0.1.2-pair-lj-overrides.md`, ADR 0015). Option A can run as
   soon as stage 2 has its σ.
 - **Metric:** EC carbonyl O within 0.28 nm of Li⁺ (as in T2). Reference: M1, 0.973 ± 0.010
   (T2); bound 2.2 ± 0.1.
