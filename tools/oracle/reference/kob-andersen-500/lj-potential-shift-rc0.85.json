@@ -1,0 +1,30 @@
+{
+  "package": "spec/fixtures/valid/kob-andersen-500",
+  "provider": {
+    "kind": "lennard-jones",
+    "cutoff_nm": 0.85,
+    "cutoff_mode": "potential-shift",
+    "dispersion_correction": false
+  },
+  "energy_kjmol": -3378.944207766205,
+  "forces_file": "lj-potential-shift-rc0.85-forces.npy",
+  "virial_kjmol": [
+    [
+      844.0365292062908,
+      -5.705679773933297,
+      -14.385873072666422
+    ],
+    [
+      -5.705679773933284,
+      876.0515387269689,
+      -2.9676988325124625
+    ],
+    [
+      -14.385873072666453,
+      -2.9676988325124443,
+      892.5682987770759
+    ]
+  ],
+  "dispersion_correction_energy_kjmol": -248.49293196728598,
+  "generated_by": "tools/oracle/make_references.py, OpenMM 8.6.1 Reference platform"
+}
