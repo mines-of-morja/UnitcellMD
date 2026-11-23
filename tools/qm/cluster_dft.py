@@ -27,6 +27,10 @@ single-solvent complexes) or `both` (redundant internals plus Cartesians). The L
 need `both`: with redundant internals alone, optking's back-transformation to Cartesians failed
 at every step from step 3 on, for Li⁺(EMC)₄ (T6 Amendment 4).
 
+--geometry-only runs only the def2-SVP optimizations (complex and solvents alone) and writes
+the geometries and Li–O distances, with no def2-TZVPD energies. It feeds a later --geometries
+run, so a composite does not pay for the geometry functional's energies (Amendment 4).
+
 Validation only, like tools/oracle: nothing in the components imports it. Energies in kJ/mol
 (spec units) and kcal/mol, converted from hartree with CODATA 2018.
 """
@@ -131,12 +135,49 @@ def optimize(f: str, atoms: list[Atom], charge: int) -> list[Atom]:
     return geometry(m)
 
 
-def run_one(path: Path, f: str, given: dict | None = None) -> dict:
-    """One start file; with `given` (an earlier run's row), its geometries and no optimization."""
-    t0 = time.time()
+def li_o_rows(cplx: list[Atom], frags: list[list[int]], names: list[str]) -> list[dict]:
+    return [
+        {"solvent": n, "li_o_angstrom": round(dist(cplx[0], cplx[o]), 4)}
+        for fr, n in zip(frags, names, strict=True)
+        for o in carbonyl_o(cplx, fr)
+    ]
+
+
+def read_start(path: Path) -> list[Atom]:
     start = read_xyz(path)
     if start[0][0] != "Li":
         raise ValueError(f"{path}: the first atom must be Li")
+    return start
+
+
+def geometries_one(path: Path, f: str) -> dict:
+    """One start file, optimizations only: the input of a later --geometries run."""
+    t0 = time.time()
+    cplx = optimize(f, read_start(path), +1)
+    frags = fragments(cplx)
+    names = [NAMES.get(formula(cplx, fr), formula(cplx, fr)) for fr in frags]
+    solvents = [
+        {"name": n, "xyz_alone": optimize(f, [cplx[i] for i in fr], 0)}
+        for fr, n in zip(frags, names, strict=True)
+    ]
+    return {
+        "start": path.name,
+        "functional": f,
+        "opt_basis": OPT_BASIS,
+        "geometry_functional": f,
+        "solvents": names,
+        "li_o_carbonyl": li_o_rows(cplx, frags, names),
+        "solvent_alone": solvents,
+        "complex_xyz": cplx,
+        "wall_s": round(time.time() - t0, 1),
+        "psi4": psi4.__version__,
+    }
+
+
+def run_one(path: Path, f: str, given: dict | None = None) -> dict:
+    """One start file; with `given` (an earlier run's row), its geometries and no optimization."""
+    t0 = time.time()
+    start = read_start(path)
     if given is None:
         cplx = optimize(f, start, +1)
     else:
@@ -167,11 +208,7 @@ def run_one(path: Path, f: str, given: dict | None = None) -> dict:
             e_bind_h -= e_alone
             solvents.append({"name": name, "e_alone_hartree": e_alone, "e_at_complex_hartree": own,
                              "xyz_alone": alone})  # fmt: skip
-    d = [
-        {"solvent": n, "li_o_angstrom": round(dist(cplx[0], cplx[o]), 4)}
-        for fr, n in zip(frags, names, strict=True)
-        for o in carbonyl_o(cplx, fr)
-    ]
+    d = li_o_rows(cplx, frags, names)
     k = KJMOL_PER_HARTREE
     return {
         "start": path.name,
@@ -203,7 +240,10 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--geometries", type=Path, help="earlier output: use its geometries, no opt")
     ap.add_argument("--opt-coordinates", choices=("redundant", "both"), default="redundant")
+    ap.add_argument("--geometry-only", action="store_true", help="optimizations, no energies")
     args = ap.parse_args()
+    if args.geometry_only and args.geometries:
+        ap.error("--geometry-only and --geometries exclude each other")
     psi4.set_num_threads(args.threads)
     psi4.set_memory(args.memory)
     psi4.set_options({"scf_type": "df", "dft_radial_points": 99, "dft_spherical_points": 590})
@@ -219,7 +259,10 @@ def main() -> None:
         if (p.name, args.functional) in done:
             continue
         psi4.core.set_output_file(str(args.out.with_suffix("")) + f"_{p.stem}.out", False)
-        row = run_one(p, args.functional, given[p.name] if args.geometries else None)
+        if args.geometry_only:
+            row = geometries_one(p, args.functional)
+        else:
+            row = run_one(p, args.functional, given[p.name] if args.geometries else None)
         if not args.geometries:
             row["opt_coordinates"] = args.opt_coordinates
         rows.append(row)

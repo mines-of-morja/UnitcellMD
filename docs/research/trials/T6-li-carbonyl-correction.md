@@ -163,8 +163,16 @@ optimizer coordinates.
 - **Disclosed, already seen:** only the Li⁺(EMC)₄ energies at steps 1–3 (−1537.5899,
   −1537.6168, −1537.6103 hartree). No geometry, Li–O distance or binding energy of any cluster
   had been read. The failed output is kept in the work directory.
-- **Cost:** the stage 1 estimate of about one CPU day was low. A Li⁺(EMC)₄ gradient takes about
-  3.7 min at def2-SVP on 16 threads.
+- **Cost:** the stage 1 estimate of about one CPU day was low.
+  - A Li⁺(EMC)₄ optimization step takes about 6–8 min at def2-SVP on 16 threads.
+  - A def2-TZVPD energy of the EC complex (284 basis functions) took 80 s. Li⁺(EMC)₄ has about
+    1 300, so roughly 2 h per energy, and each cluster needs six energies in the full basis.
+- **Second change (12:20Z), cost only:** the ωB97X-D run now does only the optimizations
+  (`--geometry-only`), and the def2-TZVPD energies are computed once, at ωB97M-V.
+  - Under Amendment 3 the fit uses only the ωB97M-V energies. ωB97X-D cluster energies would
+    have been computed and never used, at about two days of CPU.
+  - Nothing that enters stage 2 changes.
+  - The restart is at 12:20Z, and the five optimization steps already run are discarded.
 
 ## Results
 
