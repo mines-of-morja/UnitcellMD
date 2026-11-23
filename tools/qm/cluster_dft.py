@@ -22,6 +22,11 @@ run's output for the same start file, and only the def2-TZVPD energies are compu
 functionals without analytic gradients in Psi4 1.9.1 (the VV10 ones, ωB97M-V and ωB97X-V), e.g.
 ωB97M-V/def2-TZVPD//ωB97X-D/def2-SVP.
 
+--opt-coordinates picks optking's coordinates: `redundant` (the default, used for the
+single-solvent complexes) or `both` (redundant internals plus Cartesians). The Li⁺(S)₄ clusters
+need `both`: with redundant internals alone, optking's back-transformation to Cartesians failed
+at every step from step 3 on, for Li⁺(EMC)₄ (T6 Amendment 4).
+
 Validation only, like tools/oracle: nothing in the components imports it. Energies in kJ/mol
 (spec units) and kcal/mol, converted from hartree with CODATA 2018.
 """
@@ -120,7 +125,7 @@ def energy(f: str, atoms: list[Atom], charge: int, ghost: set[int] = frozenset()
 
 
 def optimize(f: str, atoms: list[Atom], charge: int) -> list[Atom]:
-    psi4.set_options({"basis": OPT_BASIS, "geom_maxiter": 300})
+    psi4.set_options({"basis": OPT_BASIS, "geom_maxiter": 300})  # opt_coordinates: main()
     m = mol(atoms, charge)
     psi4.optimize(f, molecule=m)
     return geometry(m)
@@ -197,10 +202,12 @@ def main() -> None:
     ap.add_argument("--memory", default="20 GB")
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--geometries", type=Path, help="earlier output: use its geometries, no opt")
+    ap.add_argument("--opt-coordinates", choices=("redundant", "both"), default="redundant")
     args = ap.parse_args()
     psi4.set_num_threads(args.threads)
     psi4.set_memory(args.memory)
     psi4.set_options({"scf_type": "df", "dft_radial_points": 99, "dft_spherical_points": 590})
+    psi4.set_options({"opt_coordinates": args.opt_coordinates})
     rows = json.loads(args.out.read_text()) if args.out.exists() else []
     done = {(r["start"], r["functional"]) for r in rows}
     given = {}
@@ -212,7 +219,10 @@ def main() -> None:
         if (p.name, args.functional) in done:
             continue
         psi4.core.set_output_file(str(args.out.with_suffix("")) + f"_{p.stem}.out", False)
-        rows.append(run_one(p, args.functional, given[p.name] if args.geometries else None))
+        row = run_one(p, args.functional, given[p.name] if args.geometries else None)
+        if not args.geometries:
+            row["opt_coordinates"] = args.opt_coordinates
+        rows.append(row)
         args.out.write_text(json.dumps(rows, indent=1) + "\n")  # after each, so a crash keeps work
         psi4.core.clean()
 

@@ -144,6 +144,28 @@ fits.
     reported, not used for the selection.
   - No M06-2X result, and no ωB97X-D PC or DMC value, had been read.
 
+**Amendment 4 (2026-11-23, 11:32Z, cluster optimizations restarted, no cluster result yet):**
+optimizer coordinates.
+- **What was found:** the first cluster, Li⁺(EMC)₄ (61 atoms), started at 23:48Z with optking's
+  default coordinates, redundant internals.
+  - Steps 1 and 2 went through.
+  - From step 3 on, every step failed with "Back transformation failed. Cartesian step size too
+    large". Optking then erased its history and recomputed the gradient at the same geometry.
+  - After 207 gradients, about 11 h, the run was still at step 3. It would have hit the
+    300-step limit and stopped with an error. It was stopped at 11:29Z, with no cluster finished.
+- **Change:** the five clusters are optimized with `opt_coordinates = both` (redundant internals
+  plus Cartesians, `cluster_dft.py --opt-coordinates both`), from the same start files. The
+  solvents alone use the same setting in that run.
+  - **Unchanged:** functional, basis, grid, convergence criteria and the start geometries. The
+    target is the same local minimum; only the route to it changes.
+  - **Single-solvent complexes:** those runs converged with redundant internals and are not
+    rerun.
+- **Disclosed, already seen:** only the Li⁺(EMC)₄ energies at steps 1–3 (−1537.5899,
+  −1537.6168, −1537.6103 hartree). No geometry, Li–O distance or binding energy of any cluster
+  had been read. The failed output is kept in the work directory.
+- **Cost:** the stage 1 estimate of about one CPU day was low. A Li⁺(EMC)₄ gradient takes about
+  3.7 min at def2-SVP on 16 threads.
+
 ## Results
 
 ### Stage 1a — functional (2026-11-22, 23:48Z)
