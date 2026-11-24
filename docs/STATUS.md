@@ -213,6 +213,23 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — open GitHub issues worked on (branches, not merged) — **ucmd-analysis#1** (branch
+`claude/1-t-plus-frames`): t₊ in COM, SOL and VOL as decided in ADR 0013; the pilot reproduces trial
+T1 block by block (largest difference 3e-15); 40 tests. **ucmd-builder#1** (branch
+`claude/1-spec-validator-pin`, from `s012-pair-overrides`): UCMD_SPEC_DIR workaround removed, pin on
+the new tag `spec-v0.1.2`; 188 tests.
+Found there: the builder's CI is red since 2026-11-17 because fresh installs take Packmol 100.x,
+which gives different positions for the same seed (21.2.3 does not); pinned below 100.
+**UnitcellMD#2, #3:** ledger entries (n_D of five solvents, 37 of 37 values equal to the NIST
+ThermoML records; NMR ratios of Su 2018/2019; Raman band positions) and
+`docs/research/li-shell-experiments.md` with the gaps: no Raman coordination number for EC:EMC, one
+source each for n_D of EMC and EC, none for EC:EMC. **ucmd-analysis#3:** design draft
+`docs/design/A1.7-tdf.md` (TDF from structure factors; EC and EMC must not be lumped; Lehnert's TDF
+is twice Newman's). **ucmd-analysis#2** approved as proposed (option A); the real-data table waits for
+SC-2. — evidence: tests and scripts named above — next: the author's
+review of the pull requests; Green–Kubo and TDF implementation (approved 2026-11-25: Green–Kubo as
+proposed in the note, TDF code and LJ target; tag spec-v0.1.2).
+
 2026-11-24 — sanity check of T, P, ρ; tasks SC-1 to SC-8 on the dashboard — at the author's request.
 1 M, 20 °C density +0.2 % (M0) and +1.1 % (M1) against the Landesfeind fit (one reading), partly by
 cancellation. The atomic pressure at 1 fs is −129 ± 9 bar below the molecular one in water: this
