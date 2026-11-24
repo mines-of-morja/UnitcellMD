@@ -1,0 +1,25 @@
+# 512 SPC/Fw water molecules. Wu, Tepper, Voth 2006 used 216 (§II B), but a 1.86 nm box is
+# too small for the engine (cutoff + neighbour-list skin, 1.1 nm, must fit in half the box).
+format = "ucmd-build"
+version = "0.1"
+name = "spcfw_512_rho1012"
+seed = 2006
+
+[forcefield]
+source = "library"
+set = "water-spcfw"
+
+[[component]]
+name = "water"
+molecule = { library = "water" }
+count = 512
+
+[box]
+density_g_cm3 = { value = 1.012, source = "NVT density scan, see the study README (1.0072: the density of the NPT run of 2026-11-20_water-spcfw-wu; 1.012: Wu, Tepper, Voth 2006 Table II)" }
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2
+
+[velocities]
+temperature_K = 298.16
