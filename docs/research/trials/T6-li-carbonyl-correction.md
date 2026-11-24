@@ -189,8 +189,48 @@ optimizer coordinates.
 - **Interruption:** the way the hold was applied ended the running container (SIGTERM, 08:59:57Z).
   Li⁺(EC)₂(EMC)₂ was lost at about step 69; n = 0 and 1 were finished and are kept. n = 2, 3 and 4
   run since 09:00:26Z in a detached container, n = 2 again from its original start file.
-- **Open:** Amendment 5 (less counterpoise; the energy weight per exchanged solvent) is proposed,
-  not decided. No cluster energy or converged geometry has been read.
+- **Amendment 5** (less counterpoise; the energy weight per exchanged solvent) was open here; it is
+  below. No cluster energy or converged geometry had been read at this record.
+
+**Amendment 5 (2026-11-24, 21:50Z, no ωB97M-V cluster energy computed; author: "both look okay"):**
+less counterpoise, and the energy weight of the fit.
+- **Counterpoise only for n = 0 and 4** (`cluster_dft.py --no-cp` for n = 1–3).
+  - ΔE_n is computed without counterpoise for all n.
+  - **Why:** counterpoise takes 5 of the 6 full-basis energies of a cluster. On the four
+    single-solvent complexes it changes E_bind by 0.05–0.06 kcal/mol (ωB97M-V/def2-TZVPD), and
+    EC − EMC by 0.003. Contacts between solvents in a cluster can add more; the complexes do not
+    test that.
+  - **Check:** the counterpoise shift of ΔE_4, per exchanged solvent. If it is larger than
+    0.5 s_x (0.48 kcal/mol), n = 1–3 get counterpoise energies too and ΔE_n is computed with it, as
+    in the original plan. `t6_fit.py` refuses to fit otherwise.
+- **Energy weight:** s_E = 3.95 kcal/mol is replaced by n s_x for ΔE_n, with s_x per exchanged
+  solvent.
+  - **Why:** s_E is the error of *absolute* binding energies. ΔE_n is a difference between EC and
+    EMC, in which the nearly uniform over-binding of the functional cancels. With s_d = 0.0156 Å,
+    s_E gives the energies almost no weight, and they are what option B is for.
+  - **s_x** is the RMS of the functional's two EC − EMC errors against MP2 (0.43 in E_bind, 1.29 in
+    the CP interaction energy): **0.96 kcal/mol**, floor 0.3. It was chosen knowing these errors. It
+    rests on one solvent pair.
+  - **Factor n:** an error per exchange repeats with every exchange, so it grows with n.
+  - MP2 itself differs from G4 by 0.7 kcal/mol in EC − DMC (−6.89 here, −6.2 in Olguin 2016), so
+    s_x is not smaller than the reference's own uncertainty.
+- **Unchanged:** s_d, option A (distances only), the weighted-RMS ≤ 1 statement, stage 3 and its
+  decision rule. **The hold on the single points stays:** they run only after the sensitivity
+  scan is read and the author decides.
+- **Cost:** about one CPU day instead of two for the single points (estimate).
+- **Disclosed, already seen when this was written:** by other sessions, the ωB97X-D/def2-SVP
+  optimization energies listed in the correction to Amendment 4, from which a rough ΔE_n could be
+  formed. The session that proposed and wrote this amendment had read none of those, and no
+  cluster geometry or Li–O distance. It saw force-field values of M1 at the start geometries,
+  while testing the script on synthetic energies.
+- **Tested:** `T6/test_t6_fit.py` and `tools/qm/test_cluster_dft.py` (9 tests, Psi4 stubbed), and
+  `t6_fit.py` end to end on synthetic energies. `--no-cp` has not run in Psi4 yet: memory was
+  short next to the geometry run. Its first run must reproduce E_bind of the EC complex, −50.755
+  kcal/mol.
+- **Before the single points:** copy the new `cluster_dft.py` to the work directory, after the
+  geometry run has ended (the queue script `run_clusters.sh` there knows neither `--no-cp` nor the
+  hold). Two calls write to the same `--out`: n = 0 and 4 with counterpoise, n = 1–3 with
+  `--no-cp`.
 
 ## Results
 
@@ -227,6 +267,7 @@ Output in `T6/t6_functional_choice.json`; DFT rows in `tools/qm/results/t6_dimer
 
 With s_E this large, option B's energy residuals carry little weight against the distances. That
 follows from the rule and is reported, not changed.
+**Superseded by Amendment 5** (2026-11-24): the energies get n s_x, s_x = 0.96 kcal/mol. s_d stays.
 
 **Next:** the five clusters, run since 23:48Z. First ωB97X-D/def2-SVP optimizations, then
 ωB97M-V/def2-TZVPD single points with counterpoise (`run_clusters.sh wb97m-v wb97x-d` in the

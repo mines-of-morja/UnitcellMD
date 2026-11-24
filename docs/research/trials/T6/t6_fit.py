@@ -1,5 +1,6 @@
 """Trial T6, stage 2: fit option A (one Li⁺ σ) and option B (Li–O(carbonyl) pair terms) to the
-DFT clusters. Plan and weights: docs/research/trials/T6-li-carbonyl-correction.md (amendment 2).
+DFT clusters. Plan and weights: docs/research/trials/T6-li-carbonyl-correction.md (amendments 2
+and 5).
 
 Run from the workspace root with the oracle venv (OpenMM, numpy):
 
@@ -12,7 +13,8 @@ clusters_F.json and dimers_F.json come from tools/qm/cluster_dft.py with the cho
 Force-field side: gas phase, no cutoff, Reference platform, q_Li = 0.75 (production), PF₆⁻ absent
 (decoupled and 100 nm away; all its internal pairs are excluded, so nothing internal changes).
 Each cluster is minimized from its DFT geometry; free solvents from their lowest DFT geometry,
-100 nm apart. Exchange energies ΔE_n = E(n) − E(0) − n [E(EC) − E(EMC)].
+100 nm apart. Exchange energies ΔE_n = E(n) − E(0) − n [E(EC) − E(EMC)], without counterpoise
+unless the check on n = 0 and 4 fails (amendment 5). Their uncertainty is n s_x, s_x per exchange.
 """
 
 from __future__ import annotations
@@ -36,6 +38,7 @@ KJMOL_PER_HARTREE = 4.3597447222071e-18 * 6.02214076e23 / 1e3  # CODATA 2018
 NM_PER_ANGSTROM = 0.1  # exact
 Q_LI = 0.75
 FLOOR_D, FLOOR_E = 0.01, 0.3  # Å, kcal/mol (amendment 2)
+CP_LIMIT = 0.5  # of s_x: largest counterpoise shift of ΔE_4 per exchange (amendment 5)
 MP2 = ROOT / "tools/qm/results/li_binding_mp2_aug-cc-pvtz.json"
 
 
@@ -136,8 +139,11 @@ def free_difference(clusters: list[Cluster], alone: dict[str, list]) -> float:
     return e["EC"] - e["EMC"]
 
 
-def dft_targets(rows: list[dict]) -> tuple[dict, dict, dict]:
-    """Per n_ec: the DFT row; ΔE_n (kcal/mol, CP); lowest free-solvent geometries."""
+def dft_targets(rows: list[dict], s_x: float) -> tuple[dict, dict, dict, dict]:
+    """Per n_ec: the DFT row; ΔE_n (kcal/mol); lowest free-solvent geometries; the CP check.
+
+    ΔE_n is without counterpoise. The check is the counterpoise shift of ΔE_4: above CP_LIMIT s_x
+    per exchange, ΔE_n is with counterpoise, which then every cluster must have (amendment 5)."""
     by_n = {r["solvents"].count("EC"): r for r in rows}
     alone, e_alone = {}, {}
     for r in rows:
@@ -145,35 +151,53 @@ def dft_targets(rows: list[dict]) -> tuple[dict, dict, dict]:
             if s["name"] not in e_alone or s["e_alone_hartree"] < e_alone[s["name"]]:
                 e_alone[s["name"]], alone[s["name"]] = s["e_alone_hartree"], s["xyz_alone"]
     k = KJMOL_PER_HARTREE / KCAL_IN_KJ
-    e_cp = {}
-    for n, r in by_n.items():
-        bsse = r["e_bind_cp_kcalmol"] - r["e_bind_kcalmol"]
-        e_cp[n] = r["e_complex_hartree"] * k + bsse
-    de = {n: e_cp[n] - e_cp[0] - n * (e_alone["EC"] - e_alone["EMC"]) * k for n in by_n if n > 0}
-    return by_n, de, alone
+    e = {n: r["e_complex_hartree"] * k for n, r in by_n.items()}
+    bsse = {
+        n: r["e_bind_cp_kcalmol"] - r["e_bind_kcalmol"]
+        for n, r in by_n.items()
+        if r["e_bind_cp_kcalmol"] is not None
+    }
+    if not {0, 4} <= bsse.keys():
+        raise SystemExit("amendment 5: n = 0 and n = 4 need counterpoise energies")
+    shift = (bsse[4] - bsse[0]) / 4
+    use_cp = abs(shift) > CP_LIMIT * s_x
+    if use_cp:
+        missing = sorted(by_n.keys() - bsse.keys())
+        if missing:
+            raise SystemExit(
+                f"amendment 5: counterpoise shifts ΔE_4 by {shift:.3f} kcal/mol per exchange, above "
+                f"{CP_LIMIT * s_x:.3f}; n = {missing} need counterpoise energies too"
+            )
+        e = {n: e[n] + bsse[n] for n in e}
+    de = {n: e[n] - e[0] - n * (e_alone["EC"] - e_alone["EMC"]) * k for n in by_n if n > 0}
+    check = {"shift_kcalmol_per_exchange": shift, "limit": CP_LIMIT * s_x, "cp_used": use_cp}
+    return by_n, de, alone, check
 
 
 def uncertainties(dimers: list[dict]) -> tuple[float, float, dict]:
+    """s_d (Å): the largest Li–O error against MP2. s_x (kcal/mol per exchanged solvent): the RMS
+    of the EC − EMC errors in E_bind and in the CP interaction energy (amendment 5)."""
     mp2 = {r["start"].split("_q")[0]: r for r in json.loads(MP2.read_text())}
-    err_d, err_e, rows = [], [], {}
+    err_d, by_solvent, rows = [], {}, {}
     for r in dimers:
         m = mp2[r["start"].removesuffix(".xyz")]
         dd = r["li_o_carbonyl"][0]["li_o_angstrom"] - m["li_o_angstrom"]
         de = r["e_bind_kcalmol"] - m["e_bind_kcalmol"]
         dc = r["e_int_cp_at_complex_kcalmol"] - m["e_int_cp_at_complex_kcalmol"]
         err_d.append(abs(dd))
-        err_e += [abs(de), abs(dc)]
+        by_solvent[r["solvents"][0]] = np.array([de, dc])
         rows[r["start"]] = {"d_li_o": dd, "e_bind": de, "e_int_cp": dc}
-    return max(max(err_d), FLOOR_D), max(max(err_e), FLOOR_E), rows
+    s_x = float(np.sqrt(np.mean((by_solvent["EC"] - by_solvent["EMC"]) ** 2)))
+    return max(max(err_d), FLOOR_D), max(s_x, FLOOR_E), rows
 
 
-def residuals(ff: dict, dft: dict, de_dft: dict, s_d: float, s_e: float, energies: bool):
+def residuals(ff: dict, dft: dict, de_dft: dict, s_d: float, s_x: float, energies: bool):
     r = []
     for n, row in dft.items():
         ref = [x["li_o_angstrom"] for x in row["li_o_carbonyl"]]
         r += [(a - b) / s_d for a, b in zip(ff["li_o_angstrom"][n], ref, strict=True)]
     if energies:
-        r += [(ff["delta_e_kcalmol"][n] - de_dft[n]) / s_e for n in de_dft]
+        r += [(ff["delta_e_kcalmol"][n] - de_dft[n]) / (n * s_x) for n in de_dft]
     return np.array(r)
 
 
@@ -239,8 +263,9 @@ def main() -> None:
     ap.add_argument("--max-iter", type=int, default=600, help="Nelder–Mead iterations (B)")
     args = ap.parse_args()
     clusters = [load_cluster(args.pkg / f"li_ec{n}_emc{4 - n}.ucsys", n) for n in range(5)]
-    dft, de_dft, alone = dft_targets(json.loads(args.clusters.read_text()))
-    s_d, s_e, dimer_err = uncertainties(json.loads(args.dimers.read_text()))
+    s_d, s_x, dimer_err = uncertainties(json.loads(args.dimers.read_text()))
+    dft, de_dft, alone, cp_check = dft_targets(json.loads(args.clusters.read_text()), s_x)
+    print(f"counterpoise check: {cp_check}", flush=True)
     e_free = free_difference(clusters, alone)
     c4 = clusters[4]
     sigma0 = float(c4.top.sigma_nm[c4.li])
@@ -254,7 +279,7 @@ def main() -> None:
 
     def cost_a(s: float) -> float:
         ff = evaluate(clusters, dft, e_free, {"sigma_li": s})
-        return float(np.sum(residuals(ff, dft, de_dft, s_d, s_e, energies=False) ** 2))
+        return float(np.sum(residuals(ff, dft, de_dft, s_d, s_x, energies=False) ** 2))
 
     sigma_a = golden(cost_a, 0.5 * sigma0, 1.1 * sigma0, tol=1e-4)
     print(f"A: sigma_li = {sigma_a:.4f} nm (from {sigma0:.4f})", flush=True)
@@ -269,19 +294,19 @@ def main() -> None:
         if min(x[0], x[2]) <= 0.05:
             return 1e12
         ff = evaluate(clusters, dft, e_free, unpack(x))
-        return float(np.sum(residuals(ff, dft, de_dft, s_d, s_e, energies=True) ** 2))
+        return float(np.sum(residuals(ff, dft, de_dft, s_d, s_x, energies=True) ** 2))
 
     x0 = np.array([ec0[0], math.log(ec0[1]), emc0[0], math.log(emc0[1])])
     xb = nelder_mead(cost_b, x0, np.array([0.02, 1.0, 0.02, 1.0]), args.max_iter)
     ff_b = evaluate(clusters, dft, e_free, unpack(xb))
 
     def summary(ff: dict, energies: bool) -> dict:
-        r = residuals(ff, dft, de_dft, s_d, s_e, energies)
+        r = residuals(ff, dft, de_dft, s_d, s_x, energies)
         return {
             **ff,
             "weighted_rms": float(np.sqrt(np.mean(r**2))),
             "rms_with_energies": float(
-                np.sqrt(np.mean(residuals(ff, dft, de_dft, s_d, s_e, True) ** 2))
+                np.sqrt(np.mean(residuals(ff, dft, de_dft, s_d, s_x, True) ** 2))
             ),
         }
 
@@ -289,7 +314,8 @@ def main() -> None:
         "plan": "docs/research/trials/T6-li-carbonyl-correction.md",
         "q_li": Q_LI,
         "s_d_angstrom": s_d,
-        "s_e_kcalmol": s_e,
+        "s_x_kcalmol_per_exchange": s_x,
+        "cp_check": cp_check,
         "dft_vs_mp2_single": dimer_err,
         "dft": {
             "li_o_angstrom": {
@@ -309,7 +335,9 @@ def main() -> None:
         },
     }
     args.out.write_text(json.dumps(result, indent=1) + "\n")
-    print(json.dumps({k: result[k] for k in ("s_d_angstrom", "s_e_kcalmol")}, indent=1))
+    print(
+        json.dumps({k: result[k] for k in ("s_d_angstrom", "s_x_kcalmol_per_exchange")}, indent=1)
+    )
     for k in ("M1", "A", "B"):
         r = result[k]
         print(k, {n: round(v, 2) for n, v in r["delta_e_kcalmol"].items()},

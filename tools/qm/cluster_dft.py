@@ -31,6 +31,9 @@ at every step from step 3 on, for Li⁺(EMC)₄ (T6 Amendment 4).
 the geometries and Li–O distances, with no def2-TZVPD energies. It feeds a later --geometries
 run, so a composite does not pay for the geometry functional's energies (Amendment 4).
 
+--no-cp leaves out the counterpoise energies (every fragment in its own and in the full complex
+basis); E_bind is unchanged and the CP fields are null (Amendment 5).
+
 Validation only, like tools/oracle: nothing in the components imports it. Energies in kJ/mol
 (spec units) and kcal/mol, converted from hartree with CODATA 2018.
 """
@@ -174,8 +177,9 @@ def geometries_one(path: Path, f: str) -> dict:
     }
 
 
-def run_one(path: Path, f: str, given: dict | None = None) -> dict:
-    """One start file; with `given` (an earlier run's row), its geometries and no optimization."""
+def run_one(path: Path, f: str, given: dict | None = None, cp: bool = True) -> dict:
+    """One start file; with `given` (an earlier run's row), its geometries and no optimization.
+    Without `cp`, no counterpoise energies."""
     t0 = time.time()
     start = read_start(path)
     if given is None:
@@ -192,10 +196,12 @@ def run_one(path: Path, f: str, given: dict | None = None) -> dict:
     e_int_h = e_c
     solvents = []
     for (idx, q), name in zip(pieces, ["Li", *names], strict=True):
-        own = energy(f, [cplx[i] for i in idx], q)
-        full = energy(f, cplx, q, ghost=set(range(len(cplx))) - set(idx))
-        bsse_h += own - full
-        e_int_h -= full
+        own = None
+        if cp:
+            own = energy(f, [cplx[i] for i in idx], q)
+            full = energy(f, cplx, q, ghost=set(range(len(cplx))) - set(idx))
+            bsse_h += own - full
+            e_int_h -= full
         if name != "Li":
             if given is None:
                 alone = optimize(f, [cplx[i] for i in idx], 0)
@@ -221,8 +227,9 @@ def run_one(path: Path, f: str, given: dict | None = None) -> dict:
         "e_li_hartree": e_li,
         "e_bind_kjmol": round(e_bind_h * k, 3),
         "e_bind_kcalmol": round(e_bind_h * k / KCAL_IN_KJ, 3),
-        "e_bind_cp_kcalmol": round((e_bind_h + bsse_h) * k / KCAL_IN_KJ, 3),
-        "e_int_cp_at_complex_kcalmol": round(e_int_h * k / KCAL_IN_KJ, 3),
+        "counterpoise": cp,
+        "e_bind_cp_kcalmol": round((e_bind_h + bsse_h) * k / KCAL_IN_KJ, 3) if cp else None,
+        "e_int_cp_at_complex_kcalmol": round(e_int_h * k / KCAL_IN_KJ, 3) if cp else None,
         "li_o_carbonyl": d,
         "solvent_alone": solvents,
         "complex_xyz": cplx,
@@ -241,7 +248,10 @@ def main() -> None:
     ap.add_argument("--geometries", type=Path, help="earlier output: use its geometries, no opt")
     ap.add_argument("--opt-coordinates", choices=("redundant", "both"), default="redundant")
     ap.add_argument("--geometry-only", action="store_true", help="optimizations, no energies")
+    ap.add_argument("--no-cp", action="store_true", help="no counterpoise energies")
     args = ap.parse_args()
+    if args.geometry_only and args.no_cp:
+        ap.error("--geometry-only has no energies, so --no-cp does not apply")
     if args.geometry_only and args.geometries:
         ap.error("--geometry-only and --geometries exclude each other")
     psi4.set_num_threads(args.threads)
@@ -262,7 +272,9 @@ def main() -> None:
         if args.geometry_only:
             row = geometries_one(p, args.functional)
         else:
-            row = run_one(p, args.functional, given[p.name] if args.geometries else None)
+            row = run_one(
+                p, args.functional, given[p.name] if args.geometries else None, cp=not args.no_cp
+            )
         if not args.geometries:
             row["opt_coordinates"] = args.opt_coordinates
         rows.append(row)

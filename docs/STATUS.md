@@ -213,6 +213,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-24 — T6 Amendment 5 — approved by the author: counterpoise only for the clusters n = 0 and 4
+(check with a fallback to all five), and the energy weight per exchanged solvent, s_x = 0.96
+kcal/mol, instead of 3.95 for every ΔE_n. The single points stay on hold until the sensitivity scan
+is read. ωB97X-D optimization energies of three clusters had been seen by other sessions, disclosed
+in the amendment. — evidence: `docs/research/trials/T6-li-carbonyl-correction.md`, 9 tests
+(`T6/test_t6_fit.py`, `tools/qm/test_cluster_dft.py`, Psi4 stubbed); `--no-cp` not yet run in
+Psi4 — next: geometries n = 2–4 finish; sensitivity scan; then the author decides on the single points.
+
 2026-11-23 — **bridge pressure column drifted; fixed** — the first density scan (NVT, 3 × 2 ns) ended
 with a pressure that rose by 380–490 bar/ns at fixed volume (energy and temperature stationary), so
 its pass criteria were not applied. Cause: `MonteCarloBarostat.computeCurrentPressure`, asked of the
