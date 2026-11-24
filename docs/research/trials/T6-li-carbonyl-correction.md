@@ -192,7 +192,7 @@ optimizer coordinates.
 - **Amendment 5** (less counterpoise; the energy weight per exchanged solvent) was open here; it is
   below. No cluster energy or converged geometry had been read at this record.
 
-**Amendment 5 (2026-11-24, 21:50Z, no ωB97M-V cluster energy computed; author: "both look okay"):**
+**Amendment 5 (2026-11-24, 21:45Z, no ωB97M-V cluster energy computed; author: "both look okay"):**
 less counterpoise, and the energy weight of the fit.
 - **Counterpoise only for n = 0 and 4** (`cluster_dft.py --no-cp` for n = 1–3).
   - ΔE_n is computed without counterpoise for all n.
