@@ -4,7 +4,8 @@
   usage … a lightweight dashboard to see what is in the queue, what is currently running and what
   should be computed next … later maybe larger clusters or another computer to send side tasks").
   **Step 1 (the read-only dashboard) is built with this draft; steps 2–4 wait for the author's
-  review.** This is outside the PLAN.md phase order (it prepares A2.2, `ucmd-launch`), done at the
+  review.** Direction given 2026-11-24: this workstation becomes the **server**, and clients on the
+  same local network take tasks from it (§1a). This is outside the PLAN.md phase order (it prepares A2.2, `ucmd-launch`), done at the
   author's explicit request.
 - **Why:** today "the queue" is a set of hand-written shell scripts (`gpu-queue3.sh` … `11.sh`)
   that wait for each other with `pgrep`, plus the study driver's own run order, plus a pause when
@@ -27,6 +28,36 @@ shows its own node and any number of remote nodes (fetched from their `/api/stat
 location-independent (ADR 0002.4): a job is a package plus `run.toml`; a remote node gets it by
 copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no shared file system.
 
+## 1a. Server and clients (direction of 2026-11-24)
+
+- **Server** = this workstation. It owns the job list, the studies and the results, and serves the
+  dashboard. **Client** (worker) = any machine on the LAN that runs one small program,
+  `ucmd-queue work --server URL`.
+- **Pull, not push.** The client calls the server, never the other way round: it registers
+  (name, cores, GPU kind, engine version and git hash, free disk), sends a heartbeat every ~15 s,
+  asks "a job for me?", and the server hands out the best job whose `needs` the client meets. A
+  client that is switched off simply stops appearing; its job goes back to *pending* after a missed
+  heartbeat timeout and continues from its last checkpoint if one was uploaded. No firewall rules or
+  SSH access to the clients are needed; the server needs one open port in the LAN.
+- **A job is data, never a command.** `kind = run`: a package, a `run.toml`, an optional checkpoint;
+  other kinds (`build`, `minimize`, `analyze`) are fixed verbs. The client runs only its own
+  locally installed `ucmd`/`ucmd-build` on that data, with paths from its own machine profile. The
+  server cannot make a client execute arbitrary shell, so a stolen token cannot either.
+- **Transfer:** the client downloads the package and `run.toml` over HTTP, runs, uploads
+  `thermo.tsv` and the checkpoint periodically and the trajectory at the end (resumable, streamed;
+  trajectories are hundreds of MB). The server stores the result exactly where a local run
+  would put it (`runs/<system>/<T>/out/`), so the study layout (ADR 0011) does not change.
+- **Trust:** one shared secret per LAN in the machine profile (`Authorization: Bearer`), the server
+  binds to the LAN address only when a secret is set (without one it stays on 127.0.0.1), no
+  internet exposure, TLS left to the network (WireGuard/SSH tunnel if ever needed).
+- **Reproducibility:** every output already records tool version and git hash (invariant 9). A job
+  may pin an engine hash; clients with another build are skipped. Bitwise identity across different
+  CPUs is not promised (invariant 8 is per machine), so replicas of one study should preferably run
+  on one machine type; the dashboard shows where each run ran.
+- **The local scheduler and the clients use the same code path.** The workstation's own GPU and CPU
+  are two clients that happen to live on the server (`work --server http://127.0.0.1`). Then
+  there is one way to start work, not a local and a remote one.
+
 ## 2. Steps
 
 1. **Read-only dashboard (built).** Collects the state of this machine from files and processes,
@@ -38,10 +69,10 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
    `ucmd-queue stop` (graceful: checkpoint, as the study driver does today). The study driver
    remains the thing that runs one study; the scheduler decides which study/run goes to which
    resource and when.
-3. **Second node (needs approval).** The same agent on another computer; the scheduler on the
-   workstation hands it jobs over SSH (`rsync` the package, run `ucmd`, pull the result). Transport
-   is SSH only: no new daemon with open ports; the dashboard of a remote node is reached through
-   `ssh -L`.
+3. **Clients on the LAN (needs approval).** The server API (`register`, `heartbeat`, `claim`,
+   `progress`, `upload`, `finish`; JSON over HTTP, token) and the `work` program of §1a. The
+   dashboard shows every client as a resource with its heartbeat, the job it holds and its ETA;
+   the `[[remote]]` list of step 1 is then not needed.
 4. **Cluster executor (needs approval, A2.2).** `slurm` executor in `ucmd-launch` that turns a job
    into `sbatch`; the dashboard reads `squeue`. Scheduler-specific code stays in that layer.
 
@@ -89,6 +120,10 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
 2. **Ad-hoc jobs** (a 5-min validation) while a long scan runs: wait, or preempt the scan (it stops
    gracefully and resumes from its checkpoint, as with the game pause)? Proposal: wait unless the
    job says `--preempt`.
-3. **Second computer:** which machine, which GPU/CPU, is SSH with a key available? Step 3 waits
-   for this.
+3. **The clients:** how many, which operating systems (Linux assumed), which hardware (CPU only?
+   GPU of which kind?), and can each build or copy `ucmd` and the bridge image? Large outputs:
+   is the LAN wired (1 Gbit)? Step 3 waits for this.
+5. **Always on?** Should the server run as a systemd user service started at login, and should
+   clients be allowed to take work while someone uses the client machine (a `nice`-level and a
+   "pause when busy" rule like the game pause)?
 4. **Where it lives:** `tools/queue/` now; moves into `ucmd-launch` when A2.2 starts (ADR 0002.3).
