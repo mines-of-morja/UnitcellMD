@@ -46,7 +46,13 @@ def collector(tmp_path: Path) -> q.Collector:
     make_run(s, "b/T1", "running", steps=1000, at=250)
     make_run(s, "d/T1", "stopped")
     make_study(studies, "2026-01-02_old", [("x/T1", "pending")])
-    cfg = {"node": {"name": "test", "studies_dir": str(studies)}}
+    cfg = {
+        "node": {
+            "name": "test",
+            "studies_dir": str(studies),
+            "tasks_file": str(tmp_path / "tasks.toml"),
+        }
+    }
     return q.Collector(cfg)
 
 
@@ -161,3 +167,29 @@ def test_unreachable_remote_does_not_disturb_the_local_node(collector) -> None:
     assert snap["node"] == "test" and snap["studies"]
     (remote,) = snap["remotes"]
     assert remote["node"] == "far" and remote["reachable"] is False
+
+
+def test_tasks_wait_for_their_predecessors_and_faults_are_reported(collector, tmp_path) -> None:
+    assert collector.collect()["tasks"] == []  # no file: no tasks, no error
+    (tmp_path / "tasks.toml").write_text(
+        '[[task]]\nid = "A"\nstate = "open"\n'
+        '[[task]]\nid = "B"\nstate = "open"\nafter = ["A"]\n'
+        '[[task]]\nid = "C"\nstate = "nonsense"\n'
+        '[[task]]\nid = "D"\nstate = "open"\nafter = ["missing"]\n'
+    )
+    doc = collector.collect()
+    assert {t["id"]: t["state"] for t in doc["tasks"]} == {
+        "A": "open",
+        "B": "waiting",
+        "D": "waiting",
+    }
+    assert any("'C'" in e for e in doc["errors"]) and any("missing" in e for e in doc["errors"])
+    (tmp_path / "tasks.toml").write_text("[[task]\n")
+    doc = collector.collect()
+    assert doc["tasks"] == [] and any("tasks.toml" in e for e in doc["errors"])
+
+
+def test_the_task_file_of_the_repository_is_valid() -> None:
+    errors: list[str] = []
+    assert q.read_tasks(q.REPO / "docs" / "tasks.toml", errors)
+    assert errors == []

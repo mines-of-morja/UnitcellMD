@@ -213,6 +213,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-24 — sanity check of T, P, ρ; tasks SC-1 to SC-8 on the dashboard — at the author's request.
+1 M, 20 °C density +0.2 % (M0) and +1.1 % (M1) against the Landesfeind fit (one reading), partly by
+cancellation. The atomic pressure at 1 fs is −129 ± 9 bar below the molecular one in water: this
+matches the open 26 vs 123 bar gap. A density effect of it on the CPU is not shown. The tasks are in
+`docs/tasks.toml`, shown read-only (queue.md §7); nothing was started. — evidence:
+`docs/tasks/2026-11-24-sanity-check/README.md`, tools/queue tests — next: SC-5 and SC-2 need no GPU;
+SC-1 after the sensitivity scan; author: SC-8 (Landesfeind SI).
+
 2026-11-24 — queue dashboard, step 1 — `tools/queue/` (design `docs/design/queue.md`): a read-only page
 (`python3 tools/queue/ucmd_queue.py serve`, http://127.0.0.1:8765) showing the GPU and CPU, the run in
 progress with fraction and ETA, what comes next, the live queue scripts, every study with its open runs

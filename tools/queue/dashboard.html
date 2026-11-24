@@ -27,9 +27,9 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: v
 .grow { flex: 1 1 auto; min-width: 0; }
 .tag { display: inline-block; padding: 0 7px; border-radius: 9px; font-size: 12px;
   border: 1px solid var(--line); color: var(--muted); }
-.tag.busy, .tag.running, .tag.active { color: var(--acc); border-color: var(--acc); }
+.tag.busy, .tag.running, .tag.active, .tag.claimed, .tag.open { color: var(--acc); border-color: var(--acc); }
 .tag.idle, .tag.done { color: var(--ok); border-color: var(--ok); }
-.tag.paused, .tag.waiting, .tag.stopped, .tag.pending { color: var(--warn); border-color: var(--warn); }
+.tag.paused, .tag.waiting, .tag.stopped, .tag.pending, .tag.blocked { color: var(--warn); border-color: var(--warn); }
 .tag.orphan, .tag.failed, .tag.unreachable, .tag.unscheduled { color: var(--bad); border-color: var(--bad); }
 .bar { height: 8px; border-radius: 4px; background: var(--bar); overflow: hidden; margin: 6px 0 2px; }
 .bar > i { display: block; height: 100%; background: var(--acc); }
@@ -131,6 +131,19 @@ function studies(list) {
   }).join("") + "</table>";
 }
 
+function tasks(list) {
+  if (!list || !list.length) return '<div class="empty">no tasks</div>';
+  return `<table><tr><th>id</th><th>task</th><th>needs</th><th>state</th></tr>` + list.map((t) => {
+    const wait = [...(t.after || []).map((a) => "after " + a), t.waits_for].filter(Boolean).join("; ");
+    return `<tr><td class="mono">${esc(t.id)}</td><td><b>${esc(t.title)}</b>
+      <div class="sub">${esc(t.goal)}</div>
+      <div class="sub">Accept: ${esc(t.acceptance)}</div>
+      ${wait ? `<div class="sub">Waits for: ${esc(wait)}</div>` : ""}</td>
+      <td>${esc(t.needs)}${t.author ? " + author" : ""}</td>
+      <td>${tag(t.state)}${t.claimed_by ? `<div class="sub">${esc(t.claimed_by)}</div>` : ""}</td></tr>`;
+  }).join("") + "</table>";
+}
+
 function node(d, local) {
   if (d.reachable === false)
     return `<div class="node"><h1>${esc(d.node)} ${tag("unreachable")}</h1>
@@ -143,6 +156,7 @@ function node(d, local) {
     <h2>Resources</h2>${resources(d.resources)}
     <h2>Running now</h2>${running(d.running)}
     <h2>Next</h2>${next(d.next)}
+    <h2>Tasks (docs/tasks.toml)</h2>${tasks(d.tasks)}
     <h2>Queue scripts</h2>${queues(d.queues)}
     <h2>Studies</h2>${studies(d.studies)}
     <h2>Log</h2><div class="card"><pre>${esc((d.events || []).join("\n"))}</pre></div></div>`;

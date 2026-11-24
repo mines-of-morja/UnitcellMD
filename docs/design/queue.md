@@ -127,3 +127,11 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
    clients be allowed to take work while someone uses the client machine (a `nice`-level and a
    "pause when busy" rule like the game pause)?
 4. **Where it lives:** `tools/queue/` now; moves into `ucmd-launch` when A2.2 starts (ADR 0002.3).
+
+## 7. Tasks (added 2026-11-24 at the author's request)
+
+`docs/tasks.toml` lists work that no queue will start by itself, for people and agents to take
+(goal, acceptance, what it waits for). The dashboard shows it read-only as `tasks` in the state
+document; claiming is an edit of the file. It is not the spool of step 2: a task is a description,
+never a command, and nothing is started from it. Tasks for outside contributors stay GitHub issues
+(CONTRIBUTING.md).

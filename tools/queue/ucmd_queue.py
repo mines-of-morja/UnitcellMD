@@ -4,8 +4,8 @@
     python3 tools/queue/ucmd_queue.py state [--config FILE]       # the JSON once
 
 Read-only (docs/design/queue.md, step 1): it reads status.json / thermo.tsv of the studies, the
-driver locks, a GPU telemetry file, the process list, `docker ps` and the queue scripts' log, and
-changes nothing. Serves on 127.0.0.1 only. Machine-specific settings are in
+driver locks, a GPU telemetry file, the process list, `docker ps`, the queue scripts' log and the
+task file docs/tasks.toml, and changes nothing. Serves on 127.0.0.1 only. Machine-specific settings are in
 ~/.config/ucmd/queue.toml (see queue.example.toml). Standard library only (Python >= 3.11).
 
 Units: time in s (ETA) or ps (simulated time); the pressure and everything else is not touched.
@@ -406,6 +406,43 @@ def build_next(studies: list[dict], queues: list[dict], limit: int = 12) -> list
     return out[:limit]
 
 
+# --- tasks ------------------------------------------------------------------------------------
+
+TASK_STATES = ("open", "claimed", "blocked", "done")
+
+
+def read_tasks(path: Path, errors: list[str]) -> list[dict]:
+    """The tasks of `path` (docs/tasks.toml) for people and agents; nothing here starts one.
+
+    An open task with an unfinished `after` is shown as "waiting". A missing file means no tasks;
+    a faulty file or entry goes into `errors` and is not shown as if it were fine."""
+    if not path.is_file():
+        return []
+    try:
+        raw = tomllib.loads(path.read_text()).get("task", [])
+        if not isinstance(raw, list) or not all(isinstance(t, dict) for t in raw):
+            raise ValueError("[[task]] entries expected")
+    except (OSError, ValueError) as exc:
+        errors.append(f"{path.name}: {exc}")
+        return []
+    tasks, seen = [], {}
+    for t in raw:
+        tid, state = t.get("id"), t.get("state")
+        if not tid or tid in seen or state not in TASK_STATES:
+            errors.append(f"{path.name}: task {tid!r}: duplicate or missing id, or state {state!r}")
+            continue
+        seen[tid] = state
+        tasks.append(dict(t))
+    for t in tasks:
+        unknown = [a for a in t.get("after", []) if a not in seen]
+        if unknown:
+            errors.append(f"{path.name}: task {t['id']}: unknown after {unknown}")
+        if t["state"] == "open" and any(seen.get(a) != "done" for a in t.get("after", [])):
+            t["state"] = "waiting"
+    order = {"claimed": 0, "open": 1, "waiting": 2, "blocked": 3, "done": 4}
+    return sorted(tasks, key=lambda t: (order[t["state"]], t.get("priority", 9), t["id"]))
+
+
 # --- state ------------------------------------------------------------------------------------
 
 
@@ -417,6 +454,8 @@ class Collector:
         self.node = node.get("name", os.uname().nodename)
         sd = node.get("studies_dir")
         self.studies_dir = (expand(sd) if sd else REPO / "studies").resolve()
+        tf = node.get("tasks_file")
+        self.tasks_file = expand(tf) if tf else REPO / "docs" / "tasks.toml"
 
     def collect(self) -> dict:
         errors: list[str] = []
@@ -451,6 +490,7 @@ class Collector:
             "running": running,
             "queues": queues,
             "next": build_next(studies, queues),
+            "tasks": read_tasks(self.tasks_file, errors),
             "studies": [{k: v for k, v in s.items() if k not in ("path", "runs")} for s in studies],
             "events": events,
             "errors": errors,

@@ -1,0 +1,32 @@
+spec_version = "0.1.0"
+system = "../eq.ucsys"
+title = "sanity dt 1.0"
+[run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 10000
+seed = 7
+[momentum]
+remove_com_every = 100
+[thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+temperature_K = 298.16
+[output]
+directory = "out"
+[output.thermo]
+file = "thermo.tsv"
+every = 10
+[output.trajectory]
+file = "trajectory.h5"
+every = 40
+velocities = true
+forces = true
+precision = "float64"
+[[providers]]
+kind = "force-field"
+cutoff_nm = 0.9
+coulomb = "pme"
+ewald_tolerance = 1e-06
+dispersion_correction = true
