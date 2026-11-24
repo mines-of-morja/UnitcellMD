@@ -24,3 +24,4 @@ __pycache__/
 /studies/*/driver.out
 /studies/*/*/out*/
 /studies/2026-11-20_water-spcfw-cpu/gas/*.ucsys/
+/studies/2026-11-24_parameter-sensitivity-1M/packages/
