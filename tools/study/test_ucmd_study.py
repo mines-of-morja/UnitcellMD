@@ -240,6 +240,27 @@ def test_retry_failed_continues_from_the_checkpoint(study: Path) -> None:
     assert status["state"] == "done" and "reason" not in status
 
 
+def test_a_fresh_restart_of_a_failed_run_drops_the_old_reason(study: Path) -> None:
+    """EC rung, 2026-11-21: a run that failed before its first checkpoint starts afresh with
+    --retry-failed; it finished (exit 0) but status.json still said "engine exit 1"."""
+    assert us.main(["run", str(study), "--nice", "0", "--max-runs", "1"]) == 0
+    first = study / "runs/mixa_1.0M/T-10C"
+    (first / "out" / "checkpoint.ucchk").unlink()  # no checkpoint: the next attempt is fresh
+    status = json.loads((first / "status.json").read_text())
+    status.update(state="failed", reason="engine exit 1; see run.log", exit=1)
+    (first / "status.json").write_text(json.dumps(status))
+    us.main(["run", str(study), "--nice", "0", "--max-runs", "1", "--retry-failed"])
+    calls = (study.parents[1] / "calls.log").read_text()
+    assert "--restart" not in calls
+    status = json.loads((first / "status.json").read_text())
+    assert status["state"] == "done" and status["exit"] == 0
+    assert "reason" not in status
+    # the index shows no reason for a done run either
+    index = json.loads((study / "index.json").read_text())
+    done = [r for r in index["runs"] if r["state"] == "done"]
+    assert done and all("reason" not in r for r in done)
+
+
 def test_summary_skips_rows_without_a_value(tmp_path: Path) -> None:
     thermo = tmp_path / "thermo.tsv"
     thermo.write_text(

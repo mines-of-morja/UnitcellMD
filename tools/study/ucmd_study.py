@@ -495,11 +495,12 @@ class Driver:
         if checkpoint.is_file() and status.get("state") in (*RESUMABLE, "failed"):
             args += ["--restart", "out/checkpoint.ucchk"]
             self.log(f"continue {task.id} from its checkpoint ({status.get('state')})")
-            status.pop("reason", None)
         else:
             if (d / "out").exists():
                 shutil.rmtree(d / "out")
             self.log(f"run {task.id}")
+        # a reason belongs to the attempt that failed; this attempt writes its own if it fails too
+        status.pop("reason", None)
         status.update(
             id=task.id,
             system=task.system.name,

@@ -198,7 +198,8 @@ Last update: 2026-11-13.
     records. The engine writes a clear text error, but the study driver cannot tell a lasting
     failure from a transient one: it retried the Wu water run 40 times overnight on an
     identical conformance failure, and it leaves a stale `reason` in status.json after a
-    successful fresh restart (EC rung runs: done, exit 0, "engine exit 1"). Proposal when
+    successful fresh restart (EC rung runs: done, exit 0, "engine exit 1"; **the stale reason is fixed
+    2026-11-23**, test-first, `tools/study`). Proposal when
     resumed: `out/failure.json` (category, step, diagnostics, last checkpoint, provider) with
     per-category exit codes; the driver skips lasting failures. Related: the SPC/Fw water
     conformance failure (4.1–4.7e-6 against 1e-6) is resolved without loosening the
@@ -211,6 +212,43 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-23 — **bridge pressure column drifted; fixed** — the first density scan (NVT, 3 × 2 ns) ended
+with a pressure that rose by 380–490 bar/ns at fixed volume (energy and temperature stationary), so
+its pass criteria were not applied. Cause: `MonteCarloBarostat.computeCurrentPressure`, asked of the
+*stepping* GPU context, is biased and the bias grows with the number of calls; on the same final
+state a fresh context gave −608 bar against +454 bar in-run, and an energy-only calculation −610 bar.
+The calls also relabelled identical molecules (tens of thousands of exchanges per 40 ps; none
+without them). A second effect: two calls in a row without a state read in between gave −1646 and
++40 395 bar. **Fix:** bridge commit c2cc427 (`e25-constraints`), `PressureProbe` evaluates each
+state in a second context that never steps; 40 ps check 953.55 bar in-run against 953.6 bar after
+reload (before: 696 against 565). Pressure columns of earlier GPU runs of the bridge are biased
+upward (about 0.5 bar/ps for water); energies, temperatures and trajectories are not. **Second scan
+(2026-11-24): no drift (−39, −34, −5 ± 20–56 bar/ns); P = −122 / 1.6 ± 22 / +123 bar at ρ = 1.000 / 1.0072 /
+1.012, κ_T = 4.9·10⁻⁵ per bar: criterion 1, the NPT density is the 1 atm density of the engine's own NVT.**
+Open: the CPU NVT run at 1.012 gave 26 ± 7 bar (300.2 K) against 123 bar here. — evidence: bridge 35 tests (3 new, on CPU platforms: the bias
+needs the GPU), study README "Why the pressure drifted"; GPU validation report to follow after the
+scan — next: GPU validation report (running); compare CPU NVT setup with these runs; check which earlier GPU results used the pressure column.
+
+2026-11-23 — results summary of 23 November — `docs/research/summary_261123/` (build script, template,
+quotes pinned to 75fa8d4; output `out1/`, not in git): what was done since the summary of 21
+November (T1, T2, water against Wu 2006, spec 0.1.2, T6 stage 1a) and how far each result goes.
+`docs/research/summary/` is unchanged; every value the two builds share is identical. Not committed
+or sent (decision 12 of publication.md: held). — evidence: `out1/values.json`, build without pending
+runs — next: the author reads it.
+
+2026-11-23 — housekeeping; density puzzle test started — **Density puzzle:** the NVT run at Wu's
+density gave P = 26 ± 7 bar (300.2 K), but the NPT runs settle at 1.007–1.009; at 298.16 K the
+NVT pressure should be near 4 bar, so the NPT density (1.007) is about 100 bar-equivalents
+below what the NVT pressure implies.
+Study `2026-11-23_water-pressure-vs-density` (NVT at 1.000, 1.0072, 1.012 g/cm³ on the GPU, pass
+criteria in its README) is running: it exposed that the GPU identity tracker's 0.1 ps read
+interval fails fast water starts (3 of 3 at 2.6–5.1 ps); the bridge (`e25-constraints`) now reads
+every 0.025 ps (0.01 ps in the first 5 ps), about 25 % slower. **Housekeeping:** study driver no
+longer keeps a stale `reason` after a restart (Q12, part); `ucmd-analyze diffusion` for neutral
+species (pure water) and `transport` refuses neutral ions with a clear error (ucmd-analysis,
+test-first); E2.9 design state updated (P1–P6 resolved, P7 waits for SPC/E). Evidence: tools/study
+11 tests, ucmd-analysis 30 tests, bridge 32 tests. Result of the scan: not yet.
 
 2026-11-22 — spec 0.1.2 per-pair LJ overrides implemented — **ADR 0015** accepted (the author
 delegated Q1–Q3: own version 0.1.2, overrides include 1-4 pairs, recipes name package types).
