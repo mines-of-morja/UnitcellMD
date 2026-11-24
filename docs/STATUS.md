@@ -213,6 +213,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — SC-5 done, SC-2 coded, SC-3 and SC-6 drafted — **SC-5:** Table S2 mixes temperatures (DMC,
+PC at 20 °C, EMC at 25 °C, EC at 39 °C). At the measured temperature LigParGen DMC is +2.3 % (25 °C)
+and +2.6 % (40 °C), so it **fails ±2 %** (report: passes); EMC +2.8 %, MP +1.6 %, PC −0.2 %, EC −3.4 %. EMC against T and
+a measured ΔH_vap of EMC were not found. Values from NIST ThermoML, papers not read. **SC-2:** the bridge
+silently ignored `[output.trajectory] velocities` and `forces` (invariant 7) and failed on every .xyz
+trajectory; fixed on ucmd-engine branch `sc2-bridge-velocities` (2a4cc49, not pushed, not merged).
+— evidence: `docs/research/solvent-densities/README.md`; 41 bridge tests (6 new), argon NVE against the CPU
+engine 1.6e-15 (velocities), 3.6e-15 (forces); GPU label check open — next: author: SC-3
+(`docs/design/SC-3-pressure-estimator.md`, options A/B/C), SC-6 (`docs/tasks/SC-6-proposal.md`), SC-8; SC-1 after the scan.
+
 2026-11-24 — sanity check of T, P, ρ; tasks SC-1 to SC-8 on the dashboard — at the author's request.
 1 M, 20 °C density +0.2 % (M0) and +1.1 % (M1) against the Landesfeind fit (one reading), partly by
 cancellation. The atomic pressure at 1 fs is −129 ± 9 bar below the molecular one in water: this

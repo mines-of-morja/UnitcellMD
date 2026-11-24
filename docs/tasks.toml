@@ -29,14 +29,16 @@ acceptance = "Density difference 1 fs to 0.5 fs given with its error from the se
 [[task]]
 id = "SC-2"
 title = "Bridge: write velocities to the trajectory"
-state = "claimed"
-claimed_by = "unitcellmd-86"
+state = "blocked"
 priority = 2
-needs = "none"
+needs = "gpu"
 author = false
+waits_for = "GPU free: label check of velocities on HIP; then the author merges"
 goal = "run.toml allows [output.trajectory] velocities = true (spec/run-config.md); no code in the OpenMM bridge handles it, so the temperature of molecule centres cannot be measured on the GPU. Check first whether the option is silently ignored: that would break invariant 7 (errors propagate)."
 deliverable = "Branch from e25-constraints in its own worktree (not ucmd-engine-scan): velocities in canonical order after identity correction, full-step; same for `forces` or a clear refusal."
 acceptance = "Test first: CPU and bridge velocities agree for an identical short NVE run; the option is never silently ignored. No merge before the scan ends."
+
+result = "Branch sc2-bridge-velocities of ucmd-engine (2a4cc49, not pushed): velocities and forces written; they were silently ignored before. XYZ output fixed. 41 bridge tests pass on CPU platforms."
 
 [[task]]
 id = "SC-3"
@@ -49,6 +51,8 @@ waits_for = "design approval for any change; CPU free of Psi4 (t6_geometries) fo
 goal = "Atomic minus molecular pressure was -129 +/- 9 bar in a 10 ps water run (predicted -127 from dt^2 F^2/4m). That closes the open 26 vs 123 bar question of studies/2026-11-23_water-pressure-vs-density. The CPU barostat (scaling_virial/scaling_kinetic_tensor in ucmd-md/src/dynamics.rs) uses atomic pressure for molecules without constraints."
 deliverable = "(a) Validation report: bias at 1, 0.5 and 0.25 fs (expected ratio 4) for water and the electrolyte. (b) Design note with the options (half-step kinetic tensor, or molecular virial), with the effect on Green-Kubo viscosity. (c) After (a): a dated note under 'Open, not resolved' of the water study README."
 acceptance = "Bias measured directly at three timesteps. The effect on the CPU DENSITY is unproven: the 0.5 fs water twins go the other way (CPU 1.0064(13), GPU 1.0103(12) g/cm3, 2.2 sigma); do not report a density bias before it is measured. No tolerance loosened; no engine change without approval."
+
+result = "Design note docs/design/SC-3-pressure-estimator.md waits for the author; no runs yet."
 
 [[task]]
 id = "SC-4"
@@ -66,7 +70,7 @@ acceptance = "Proposed criterion: within 1.5 % at every point, and the fitted d(
 [[task]]
 id = "SC-5"
 title = "Literature: densities over T and dH_vap of EMC, DMC, MP, EC, PC"
-state = "claimed"
+state = "done"
 claimed_by = "unitcellmd-86"
 priority = 1
 needs = "none"
@@ -74,6 +78,8 @@ author = false
 goal = "Primary sources for liquid density against temperature (20-40 C or wider) and for the dH_vap of EMC. Table S2 of Lehnert states no temperature; a NIST ThermoML excerpt gives DMC 1.070 g/cm3 at 20 C (S2: 1.069), so S2 looks like 20 C data at least for DMC. The EMC error (+2.9 % at 25 C) depends on this."
 deliverable = "Ledger entries (docs/research/summary/literature.json) with table, page, temperature, version read. GitHub issue #4 (dH_vap and eps of EC, EMC, DMC, PC) is closed: check what it delivered first."
 acceptance = "Each solvent: a cited density at 25 C and at 40 C, or 'not found'. Nothing from search excerpts goes into the ledger as checked."
+
+result = "docs/research/solvent-densities/README.md: densities found except EMC against T (one value, 25 C); no measured dH_vap of EMC. From ThermoML, papers not read."
 
 [[task]]
 id = "SC-6"
@@ -88,6 +94,8 @@ goal = "1.202 g/cm3 is 47 ion pairs at exactly 1.0 M, not a simulated or measure
 deliverable = "The 1.202 part can be drafted now, the Table S2 part after SC-5. Places: trials/T3 (amendment), docs/STATUS.md waiting item 2, report.md (abstract, 3.2, 3.3, 4), reproduction-plan.md, forcefield-strategy.md:19, calculation-plan.md A2, A1.5.md (1.205), literature.json lehnert2025_box_density."
 acceptance = "Old text stays on record (publication.md rule 5). DMC at 25 C is re-judged against the +-2 % criterion with the SC-5 value."
 
+result = "Proposal docs/tasks/SC-6-proposal.md waits for the author; no document corrected yet."
+
 [[task]]
 id = "SC-7"
 title = "Refit EMC to density and dH_vap (not to transport)"
@@ -97,7 +105,7 @@ needs = "gpu"
 author = true
 after = ["SC-1", "SC-5"]
 waits_for = "author: new physical parameters; reading of the sensitivity scan"
-goal = "LigParGen EMC is about 3 % too dense and takes part in the too-slow ions. Strategy step M2. The scan's epsEMC runs are a map only: no parameter is picked from them."
+goal = "LigParGen EMC is 2.8 % too dense at 25 C (SC-5), and no measured dH_vap of EMC was found and takes part in the too-slow ions. Strategy step M2. The scan's epsEMC runs are a map only: no parameter is picked from them."
 deliverable = "Proposal: targets, fitted parameters, sources, held-out checks; design doc before any run."
 acceptance = "Every parameter has a source; targets fixed before fitting; kappa, t+ and D never used."
 
