@@ -183,6 +183,15 @@ optimizer coordinates.
   that the old run would have ended with an error. Seen since: ωB97X-D/def2-SVP optimization
   energies of the first three clusters, and of the solvents alone for the first two.
 
+**Run record (2026-11-24, 09:00Z), no change of the plan:**
+- **Hold:** the author agreed to let the ωB97X-D geometries finish and to hold the ωB97M-V single
+  points until the sensitivity scan (`studies/2026-11-24_parameter-sensitivity-1M`) is read.
+- **Interruption:** the way the hold was applied ended the running container (SIGTERM, 08:59:57Z).
+  Li⁺(EC)₂(EMC)₂ was lost at about step 69; n = 0 and 1 were finished and are kept. n = 2, 3 and 4
+  run since 09:00:26Z in a detached container, n = 2 again from its original start file.
+- **Open:** Amendment 5 (less counterpoise; the energy weight per exchanged solvent) is proposed,
+  not decided. No cluster energy or converged geometry has been read.
+
 ## Results
 
 ### Stage 1a — functional (2026-11-22, 23:48Z)
