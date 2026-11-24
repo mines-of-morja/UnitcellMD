@@ -213,6 +213,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-24 — queue dashboard, step 1 — `tools/queue/` (design `docs/design/queue.md`): a read-only page
+(`python3 tools/queue/ucmd_queue.py serve`, http://127.0.0.1:8765) showing the GPU and CPU, the run in
+progress with fraction and ETA, what comes next, the live queue scripts, every study with its open runs
+(studies nothing will start are marked "not scheduled") and the resume log; remote nodes can be added by
+URL. It starts and changes nothing. Written because a validation job and a queued scan met on the one
+GPU. — evidence: 11 tests (fixtures; an unreadable status.json is reported, not hidden; POST refused; an
+unreachable remote leaves the local node alone), run on the real studies, screenshot checked — next: the
+author's review of steps 2–4 (spool and scheduler with priorities, second computer over SSH, SLURM
+executor) and the four open questions in the design §6.
+
 2026-11-24 — T6 Amendment 5 — approved by the author: counterpoise only for the clusters n = 0 and 4
 (check with a fallback to all five), and the energy weight per exchanged solvent, s_x = 0.96
 kcal/mol, instead of 3.95 for every ΔE_n. The single points stay on hold until the sensitivity scan
