@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UnitcellMD results summary, 2026-11-23</title>
+<style>
+  @page { size: A4; margin: 17mm 17mm 16mm 17mm; }
+  :root { --ink: #1f1f1e; --muted: #6b6a63; --rule: #d9d8d2; --tint: #f3f2ee; --accent: #2a78d6; }
+  html { background: #ffffff; }
+  body { font-family: "Liberation Serif", "DejaVu Serif", serif; font-size: 10.3pt; line-height: 1.33;
+         color: var(--ink); background: #ffffff; margin: 0; }
+  h1, h2, h3, .sans, table, figcaption, .meta { font-family: "Noto Sans", "DejaVu Sans", sans-serif; }
+  h1 { font-size: 16.5pt; line-height: 1.2; margin: 0 0 4pt; font-weight: 700; }
+  .subtitle { font-size: 11pt; color: var(--muted); margin: 0 0 6pt; font-family: "Noto Sans", sans-serif; }
+  .meta { font-size: 8.5pt; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 6pt; margin-bottom: 10pt; }
+  h2 { font-size: 11.5pt; margin: 14pt 0 4pt; break-after: avoid; }
+  h3 { font-size: 10pt; margin: 9pt 0 2pt; break-after: avoid; }
+  p { margin: 0 0 5pt; }
+  ul { margin: 0 0 5pt; padding-left: 15pt; }
+  li { margin: 0 0 2.5pt; }
+  .box { background: var(--tint); border-left: 3px solid var(--accent); padding: 7pt 10pt 4pt; margin: 4pt 0 8pt; }
+  .box h2 { margin-top: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.3pt; margin: 4pt 0 7pt; }
+  tr { break-inside: avoid; }
+  table.keep { break-inside: avoid; }
+  th, td { text-align: left; padding: 2.6pt 5pt; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; border-bottom: 1.2px solid var(--muted); }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  figure { margin: 6pt 0 8pt; break-inside: avoid; }
+  figure svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { font-size: 8.2pt; color: var(--ink); margin-top: 3pt; }
+  figcaption b { font-weight: 600; }
+  .two { display: flex; gap: 12pt; align-items: flex-start; }
+  .two > * { flex: 1; }
+  .note { font-size: 8.5pt; color: var(--muted); }
+  .refs { font-size: 8.1pt; padding-left: 14pt; }
+  .refs li { margin-bottom: 1.5pt; }
+  .draft { font-family: "Noto Sans", sans-serif; font-size: 8pt; color: #9a5b00; }
+</style>
+</head>
+<body>
+
+<h1>Open molecular dynamics for LiPF₆ carbonate electrolytes</h1>
+<p class="subtitle">What has been done up to 23 November 2026, and how far the results go</p>
+<div class="meta">Moritz Limbacher · UnitcellMD, github.com/mines-of-morja · ${date} · Working results, not peer reviewed; every
+result here is exploration, not a production set. Updates the summary of 2026-11-21. State of 23 November; later results are not
+included. Built from commit ${build_id}. ${pending_note}</div>
+
+<div class="box">
+<h2>Summary</h2>
+<ul>
+  <li><b>Aim, unchanged.</b> Predict κ, t₊ and D of LiPF₆ in carbonate solvents from molecular dynamics and test them against the
+    measurements of Landesfeind &amp; Gasteiger [1]. No model parameter is fitted to transport data.</li>
+  <li><b>Done since 21 November.</b> The software reproduces a published water model [8] in ${q_wu_agree} properties compared. A better EC
+    model (M1) was chosen at 1 M by a test fixed in advance. The reference frames of t₊ are settled. The functional for the
+    quantum-chemistry clusters is chosen, and the cluster calculations are running.</li>
+  <li><b>The Li⁺ shell has improved and is not right yet.</b> In its first shell, Li⁺ now has ${t2_M1_f_ec} EC instead of ${t2_M0_f_ec}. Dielectric
+    spectroscopy [3] gives at most about ${bound}. Up to ${t2_deficit} EC are still missing.</li>
+  <li><b>Transport is where it was.</b> κ has been measured only for the baseline (M0): ${kappa} S/m against ${kappa_exp} S/m. In short
+    runs, M1 leaves the Nernst–Einstein κ unchanged within its error. No predictive model exists yet, so the κ pass criteria have not been applied.</li>
+  <li><b>Next:</b> a first-shell correction fitted to quantum-chemistry clusters (running), then viscosity and charge scaling, and only
+    then the transport campaign.</li>
+</ul>
+</div>
+
+<h2>1. How far the results go</h2>
+<p>One line per question, ordered from the software to the electrolyte. “Reference” is what decides the question.</p>
+<table>
+  <tr><th style="width:23%">Question</th><th style="width:27%">Reference</th><th style="width:35%">Result today</th><th>Standing</th></tr>
+  <tr><td>Energies and forces</td><td>OpenMM, 7036-atom electrolyte</td><td>${q_m2a_energy} and ${q_m2a_forces} relative</td><td><b>verified</b></td></tr>
+  <tr><td>A published liquid, full chain</td><td>SPC/Fw water, Wu 2006 [8]</td><td>${q_wu_agree} properties agree; ρ ${w_rho_dev} %</td><td><b>agrees, density open</b></td></tr>
+  <tr><td>Published EC model</td><td>Caleman 2012 [4], 39 °C</td><td>ρ ${ec_rho_vs_cal} %, ΔH<sub>vap</sub> ${ec_dh_vs_cal} %</td><td><b>reproduced</b></td></tr>
+  <tr><td>Quantum chemistry</td><td>Olguin 2016 [5], Li⁺–EC and Li⁺–DMC</td><td>within ${ol_maxdev} kcal/mol, same level</td><td><b>reproduced</b></td></tr>
+  <tr><td>Pure-solvent densities</td><td>Lehnert SI [2], ±2 %</td><td>${dens_ok} within; EMC +${dens_emc} %; EC with M1 ${ec_rho_vs_exp} % (39 °C, against experiment)</td><td><b>EMC open</b></td></tr>
+  <tr><td>Electrolyte density, 1 M, 20 °C</td><td>Landesfeind's fit [1], ${rho_lf} g/cm³ (read once)</td><td>M0 ${t2_M0_rho_dev} %, M1 ${t2_M1_rho_dev} %</td><td><b>close, reference to confirm</b></td></tr>
+  <tr><td>EC in the first Li⁺ shell, 1 M</td><td>dielectric spectroscopy [3], ≤ ${bound} ± ${bound_err}</td><td>M0 ${t2_M0_f_ec}, M1 ${t2_M1_f_ec}</td><td><b>improved, not reached</b></td></tr>
+  <tr><td>κ at 1 M, 20 °C</td><td>${kappa_exp} S/m ± 15 % (${kappa_lo}–${kappa_hi}) [1]</td><td>M0 ${kappa}; M1 not measured</td><td><b>baseline outside; not yet tested</b></td></tr>
+  <tr><td>t₊ at 1 M, 20 °C (solvent frame)</td><td>${tp_lf_meas} measured, ${tp_lf_fit} fit [1]</td><td>M0 ${tp_sol}</td><td><b>frame settled, run too short</b></td></tr>
+  <tr><td>Position of the κ maximum</td><td>Landesfeind [1] ± 0.2 M</td><td>no concentration series</td><td><b>not started</b></td></tr>
+  <tr><td>κ(T), t₊(T), thermodynamic factor</td><td>Landesfeind [1]</td><td>no transport runs over temperature</td><td><b>not started</b></td></tr>
+</table>
+
+<h2>2. What was done since the last summary</h2>
+<p><b>Contested choices are now decided by trials.</b> The question, the options, the runs and the decision rule are committed before
+any run starts. A trial may use quantum chemistry, pure-liquid data and structure, but never agreement with κ, t₊ or D. Changes
+made after the start are recorded as dated amendments that state what had already been seen.</p>
+<table>
+  <tr><th style="width:46%">Trial</th><th>State on 23 November</th></tr>
+  <tr><td>T1: reference frames of t₊</td><td><b>decided</b>, section 5</td></tr>
+  <tr><td>T2: EC model at 1 M, M0 or M1</td><td><b>decided</b>: M1, section 3</td></tr>
+  <tr><td>T3: run at the model's density or the measured one</td><td>planned; needs a second reading of the density fit in the SI of [1]</td></tr>
+  <tr><td>T4: are the ions slow because of viscosity or Li⁺ binding</td><td>planned; the viscosity method is now validated on water</td></tr>
+  <tr><td>T5: charge scaling fitted to κ, or from the refractive index</td><td>planned; needs sourced refractive indices</td></tr>
+  <tr><td>T6: first-shell correction of Li⁺–carbonyl O</td><td><b>running</b>: functional chosen, clusters being optimized, section 4</td></tr>
+</table>
+<p>Two further steps support these trials. The input format now allows Lennard-Jones parameters for individual atom pairs, which one
+option of T6 needs. The engine matches OpenMM on a two-component test to ${q_pair_energy} (energy) and ${q_pair_forces} (forces).
+And SPC/Fw water was run as a complete check of engine, GPU backend and analysis:</p>
+<div class="two">
+<table class="keep">
+  <tr><th>SPC/Fw water</th><th class="n">This work</th><th class="n">Wu 2006 [8]</th></tr>
+  ${w_rows}
+</table>
+<div>
+<p>One NPT run of ${w_ps} ns, ${w_n} molecules, 298.16 K, 1 atm; errors from blocks. η is the Green–Kubo value of a separate NVT
+run. D is converted to Wu's box of 216 molecules (Yeh–Hummer), which assumes that Wu's value is not corrected for box size.</p>
+<p><b>The density is ${w_rho_low} % low and not explained.</b> A CPU run with a different barostat (0.5 fs) gives
+${w_cpu_rho} g/cm³, also low. Pressure against density is now being run at constant volume, with pass criteria fixed
+beforehand. ΔH<sub>vap</sub> depends slightly on the time step: ${w_hvap_05} kcal/mol at 0.5 fs.</p>
+</div>
+</div>
+
+<h2>3. The EC model at 1 M (trial T2)</h2>
+<p>M0 takes EC from LigParGen [6]; M1 takes it from the published OPLS-AA atom types [4]. All else is identical: 47 LiPF₆, 168 EC,
+332 EMC, charge scaling ζ = 0.75, NPT at 20 °C, ${t2_M0_n} independently packed runs of 5 ns per model.</p>
+<figure>
+${fig_shell}
+<figcaption><b>Fig. 1.</b> EC carbonyl O within 0.28 nm of Li⁺ at 1 M. Green band: ${bound} ± ${bound_err} bound EC per Li⁺, our reading of
+the dielectric data of [3]; it is an upper bound, because dilution by the salt and kinetic depolarization lower the same signal.
+Reading: free-EC amplitude ${drs_a_neat} in the neat solvent and ${drs_a_1m} at 1 M, so ${drs_frac} % of the EC is bound.</figcaption>
+</figure>
+<table class="keep">
+  <tr><th>Per Li⁺, last 4 ns (mean ± standard error of ${t2_M0_n} runs)</th><th class="n">M0</th><th class="n">M1</th><th>Reference</th></tr>
+  <tr><td>EC carbonyl O within 0.28 nm (first shell)</td><td class="n">${t2_M0_f_ec}</td><td class="n">${t2_M1_f_ec}</td><td>≤ ${bound} ± ${bound_err} [3]</td></tr>
+  <tr><td>EMC carbonyl O within 0.28 nm</td><td class="n">${t2_M0_f_emc}</td><td class="n">${t2_M1_f_emc}</td><td></td></tr>
+  <tr><td>EC carbonyl O within 0.516 nm</td><td class="n">${t2_M0_w_ec}</td><td class="n">${t2_M1_w_ec}</td><td>${le_ec}, Lehnert's model [2]</td></tr>
+  <tr><td>EMC carbonyl O within 0.516 nm</td><td class="n">${t2_M0_w_emc}</td><td class="n">${t2_M1_w_emc}</td><td>${le_emc}, Lehnert's model [2]</td></tr>
+  <tr><td>PF₆⁻ within 0.516 nm</td><td class="n">${t2_M0_w_pf6}</td><td class="n">${t2_M1_w_pf6}</td><td>${le_pf6}, Lehnert's model [2]</td></tr>
+  <tr><td>density (g/cm³)</td><td class="n">${t2_M0_rho}</td><td class="n">${t2_M1_rho}</td><td>${rho_lf}, fit of [1] (read once)</td></tr>
+  <tr><td>κ<sub>NE</sub> (S/m), reported only</td><td class="n">${t2_M0_kne}</td><td class="n">${t2_M1_kne}</td><td>not used for the decision</td></tr>
+  <tr><td>D(Li⁺) (10⁻¹¹ m²/s), reported only</td><td class="n">${t2_M0_dli}</td><td class="n">${t2_M1_dli}</td><td>not used for the decision</td></tr>
+</table>
+<ul>
+  <li><b>Decision.</b> M1 is closer to the bound, does not exceed it, and differs from M0 by ${t2_gain}. By the rule fixed
+    beforehand, M1 replaces M0.</li>
+  <li><b>What it does not solve.</b> M1 reaches ${t2_frac1} % of the bound (M0 ${t2_frac0} %). EMC still makes up ${t2_emc_share} % of
+    the carbonyl O in the first shell. M1 also has a cost: for pure EC, ΔH<sub>vap</sub> is ${ec_dh_vs_exp} % against experiment.</li>
+  <li><b>Two distances, two numbers.</b> The earlier summary counted EC within 0.516 nm, Lehnert's radius, which reaches beyond the
+    first shell. The dielectric bound is compared with the 0.28 nm count from now on.</li>
+  <li><b>Run length.</b> The shell settles after ${q_t2_settle} from packing (Fig. 1b). After 50 ps the models look alike (${short_m0} and
+    ${short_m1}), and the rule would have kept M0. Runs of 3 ns give the same verdict as 5 ns (${s3_m0} and ${s3_m1}).</li>
+  <li><b>Earlier check.</b> One Li⁺ in EC:EMC 1:1, four runs per model: EC holds ${M0_first} % (M0) and ${M1_first} % (M1) of the
+    first-shell carbonyl O. ${pending_runs}</li>
+</ul>
+
+<h2>4. Why EC is still missing, and the correction under way (trial T6)</h2>
+<figure>
+${fig_binding}
+<figcaption><b>Fig. 2.</b> How much more strongly Li⁺ binds one EC than one EMC in vacuum, at the carbonyl O. Quantum chemistry: Psi4 1.9.1;
+grey bars are density functionals (def2-TZVPD, no counterpoise) on geometries optimized with def2-SVP. Force fields: Li⁺ charge 1.</figcaption>
+</figure>
+<p><b>The force fields do not prefer EC enough.</b> MP2 gives a difference of ${d_mp2} kcal/mol, M0 ${d_m0} and M1 ${d_m1}. M1 has the
+right sign but only ${d_m1_pct} % of the size. The absolute energies at MP2 are ${qm_ec} (EC) and ${qm_emc} (EMC) kcal/mol. A single molecule in
+vacuum overstates the preference in the liquid [5], so the reference for the correction is a full shell: Li⁺(EC)<sub>n</sub>(EMC)<sub>4−n</sub>,
+n = 0…4. Two corrections compete: (A) one new Li⁺ size, and (B) separate Li⁺–O terms for EC and EMC. Both will be fitted to the
+clusters and then tested in the liquid against the dielectric bound.</p>
+<table class="keep">
+  <tr><th>Functional, against MP2/aug-cc-pVTZ</th><th class="n">largest error (kcal/mol)</th><th class="n">EC − EMC</th><th class="n">off by</th><th>condition ≤ 1</th><th class="n">Li–O error (Å)</th></tr>
+  ${t6_rows}
+</table>
+<ul>
+  <li><b>Chosen: ${t6_chosen}.</b> ${t6_best} has the smallest largest error but misses the EC − EMC condition (off by
+    ${t6_best_miss} kcal/mol). The chosen functional is the best one that meets it. The plan does not say outright that the condition comes
+    before the ranking. The selection script fixed that before the M06-2X and composite results were read, but the ωB97X-D values
+    for EC and EMC, and so its near miss, were already known.</li>
+  <li><b>A limit to know about.</b> All three functionals bind Li⁺ more strongly than MP2. The energy uncertainty used in the fit is
+    therefore ${t6_s_E} kcal/mol, against ${t6_s_d} Å for distances, so the energies will constrain option B only weakly.</li>
+  <li><b>State.</b> The five cluster optimizations were restarted on 23 November with a more robust optimizer setting.
+    No cluster has finished, and no fit or liquid run exists yet. The energies follow, then about ${q_t6_gpu} of GPU time per option.</li>
+</ul>
+
+<h2>5. Transport: where it stands</h2>
+<p>The only transport run is still the baseline M0 (20 ns NVT, 1 M, 20 °C, ${pilot_frames} frames, five blocks; Onsager analysis [7]). Its κ has not changed;
+what is new is t₊ in the frame of each reference.</p>
+<figure>
+${fig_transport}
+<figcaption><b>Fig. 3.</b> Left: κ of the baseline M0 against experiment (Eq. 15 of [1]); the band is the pass criterion fixed for the first
+predictive model. Right: t₊ in the solvent (SOL), volume (VOL) and centre-of-mass (COM) frames. Values are comparable only within one
+frame. Lehnert's MD values in SOL and COM are their fits evaluated at 1 M. Error bars: block standard errors.</figcaption>
+</figure>
+<ul>
+  <li><b>κ.</b> ${kappa} S/m, a factor ${kappa_ratio} below experiment; the Nernst–Einstein value ${kappa_ne} S/m is a factor ${kne_ratio} low.
+    So the ions are too slow; association does not explain the deficit. Whether the solvent is too viscous or Li⁺ binds too strongly is
+    trial T4.</li>
+  <li><b>t₊ frames (trial T1).</b> SOL, with EC and EMC as one solvent weighted by mass, is compared with Landesfeind; VOL with eNMR;
+    COM with other MD. The same run gives ${tp_sol} (SOL), ${tp_vol} (VOL) and ${tp_com} (COM). The choice of ion volumes [9] moves the VOL
+    value by ${t1_dab}, far below the error. The conversion between frames holds to ${t1_eq2}. The VOL value uses the salt volume from the
+    density fit of [1], which has been read once.</li>
+  <li><b>What cannot be said.</b> With errors of ${tp_sem_lo}–${tp_sem_hi}, t₊ lies within ${tp_max_pull} standard errors of every published value and separates none. Reaching 10 % needs about
+    ${q_noise_tplus} per state point for t₊ and ${q_noise_kappa} for κ.</li>
+</ul>
+
+<h2>6. Errors found, and what is still open</h2>
+<p>The first five entries were in the earlier summary and are fixed. The others are new.</p>
+<table>
+  <tr><th style="width:38%">Finding</th><th style="width:23%">Effect</th><th>Status</th></tr>
+  <tr><td>OpenMM integrators read the start velocities as half-step values</td><td>${q_gpu_halfstep} in U after 10 fs</td><td>fixed before any production run</td></tr>
+  <tr><td>The GPU output swapped the labels of identical molecules</td><td>D(Li⁺) ${q_identity_dli} too high</td><td>fixed; the transport run was repaired</td></tr>
+  <tr><td>The ion-cluster cutoff stopped at a noise dip in g(r)</td><td>a draft gave ${q_cluster_old} free Li⁺</td><td>fixed, with a test</td></tr>
+  <tr><td>The GPU bridge counted LJ tail pairs over atoms without LJ</td><td>${q_water_tail_gap} kJ/mol for 500 waters</td><td>fixed; now ${q_water_conformance_after}</td></tr>
+  <tr><td>Psi4's frozen core treated Li⁺ and its complex differently</td><td>binding off by ${q_psi4_fc}</td><td>fixed</td></tr>
+  <tr><td>Reading positions every 0.1 ps is too rare to keep identical water molecules apart</td><td>${q_tracker_fail} constant-volume starts stopped</td><td>fixed: every ${q_tracker_every} ps; the check stopped the runs, no wrong output; limit unchanged</td></tr>
+  <tr><td>Psi4 has no analytic gradients for ωB97M-V</td><td>${q_psi4_fd_hours} and ${q_psi4_fd_evals} energies for one complex</td><td>energies on ωB97X-D geometries; on record</td></tr>
+  <tr><td>The cluster optimizer failed in its default coordinates</td><td>${q_optking_energies} energies, geometry unchanged since step 3</td><td>other coordinates; whether they lead to the same minimum is not tested</td></tr>
+  <tr><td>T2's run-length diagnostic (±10 %) was narrower than the noise</td><td>no valid equilibration time</td><td>reported as failed; tolerance now from the noise</td></tr>
+  <tr><td>OpenMM and the engine count LJ tail pairs differently for several atom types</td><td>${q_tail_types} of the energy in a two-component test</td><td><b>open</b>; far smaller in the electrolyte, where Coulomb dominates, but not measured there</td></tr>
+  <tr><td>Water density</td><td>${w_rho_dev} %</td><td><b>open</b>; test running</td></tr>
+  <tr><td>Density fit of [1]: read once</td><td>enters ρ and t₊ (VOL)</td><td><b>open</b>; second reading needed</td></tr>
+</table>
+
+<h2>7. Next steps</h2>
+<ul>
+  <li><b>T6:</b> cluster energies, the two fits, then three 3 ns liquid runs per option. If a candidate overshoots the dielectric bound, that
+    is reported and nothing is refitted to the liquid. If neither passes, explicit polarization is the next level.</li>
+  <li><b>T3–T5:</b> density protocol, viscosity against Li⁺ binding, charge scaling from the refractive index. EMC, whose density is off
+    by +${dens_emc} %, is the other solvent to improve.</li>
+  <li><b>Then transport</b> for the model that passes: κ(c, T), t₊, D and the thermodynamic factor. The criteria stay as fixed on
+    21 November: κ(1 M, 20 °C) within ±15 % and the κ maximum within ±0.2 M, without refit. A failure is reported as a result.</li>
+  <li><b>Publication:</b> a software paper for J. Chem. Inf. Model., not before May 2027. Before that, a production set: tagged releases,
+    at least four independent runs per model.</li>
+  <li><b>What would help most:</b> the measured points behind [1] with their uncertainties and the density data, sourced refractive indices of
+    EC and EMC, and Raman or NMR data on the Li⁺ shell in EC:EMC.</li>
+</ul>
+
+<h2>Data, code and the use of AI</h2>
+<p>Code, inputs and analysis scripts are developed in public at github.com/mines-of-morja under Apache-2.0; the newest commits (pair
+parameters in the engine, the position-reading fix, this document) were not yet pushed when this was built. The document is generated by
+<span class="sans" style="font-size:8.6pt">docs/research/summary_261123/build.py</span>. Every result in it is computed from the study data or
+the committed trial outputs, taken from a literature ledger with its source, or checked verbatim against our own reports.</p>
+<p>The UnitcellMD software was written by Claude Code (Anthropic), an AI coding agent, under the direction of the author, who set the
+requirements, confirmed the trial decisions named here as decided, and delegated some choices, among them the t₊ frames and the
+quantum-chemistry method. Claude Code also planned and ran validation, proposed research directions and drafted the text of this summary.
+All numerical results were produced by the computations described here. No number was written or changed by a language model.</p>
+
+<h2>References</h2>
+<ol class="refs">
+  <li>J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), doi:10.1149/2.0571912jes.</li>
+  <li>L. Lehnert et al., J. Electrochem. Soc. 172, 050523 (2025), doi:10.1149/1945-7111/add381, and SI.</li>
+  <li>J. Self, N. T. Hahn, K. A. Persson, Energy Environ. Mater. 7, e12494 (2024), doi:10.1002/eem2.12494.</li>
+  <li>C. Caleman et al., J. Chem. Theory Comput. 8, 61 (2012), and SI.</li>
+  <li>M. Olguin, O. Borodin, P. Ganesh, P. R. C. Kent, J. L. Allen, W. A. Henderson, Phys. Chem. Chem. Phys. 18, 164 (2016), doi:10.1039/C5CP05121E.</li>
+  <li>L. S. Dodda et al., J. Phys. Chem. B 121, 3864 (2017); Nucleic Acids Res. 45, W331 (2017) (LigParGen). K. P. Jensen, W. L. Jorgensen,
+    J. Chem. Theory Comput. 2, 1499 (2006). J. N. Canongia Lopes, A. A. H. Pádua, J. Phys. Chem. B 108, 16893 (2004).</li>
+  <li>K. D. Fong et al., Macromolecules 53, 9503 (2020) (Onsager transport). M. Bernetti, G. Bussi,
+    J. Chem. Phys. 153, 114107 (2020) (barostat).</li>
+  <li>Y. Wu, H. L. Tepper, G. A. Voth, J. Chem. Phys. 124, 024503 (2006), doi:10.1063/1.2136877. I.-C. Yeh, G. Hummer,
+    J. Phys. Chem. B 108, 15873 (2004) (finite-size correction of D).</li>
+  <li>Y. Marcus, G. Hefter, Chem. Rev. 104, 3405 (2004) (single-ion volumes).</li>
+</ol>
+</body>
+</html>

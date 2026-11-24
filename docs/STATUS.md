@@ -233,8 +233,9 @@ scan — next: GPU validation report (running); compare CPU NVT setup with these
 2026-11-23 — results summary of 23 November — `docs/research/summary_261123/` (build script, template,
 quotes pinned to 75fa8d4; output `out1/`, not in git): what was done since the summary of 21
 November (T1, T2, water against Wu 2006, spec 0.1.2, T6 stage 1a) and how far each result goes.
-`docs/research/summary/` is unchanged; every value the two builds share is identical. Not committed
-or sent (decision 12 of publication.md: held). — evidence: `out1/values.json`, build without pending
+`docs/research/summary/` is unchanged; every value the two builds share is identical. Corrected
+2026-11-24 after T6 Amendment 4 was corrected (207 energies, not gradients; "same target" removed);
+committed the same day. The PDF is not sent (decision 12 of publication.md: held). — evidence: `out1/values.json`, build without pending
 runs — next: the author reads it.
 
 2026-11-23 — housekeeping; density puzzle test started — **Density puzzle:** the NVT run at Wu's
