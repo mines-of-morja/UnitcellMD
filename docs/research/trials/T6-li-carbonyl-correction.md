@@ -151,28 +151,37 @@ optimizer coordinates.
   - Steps 1 and 2 went through.
   - From step 3 on, every step failed with "Back transformation failed. Cartesian step size too
     large". Optking then erased its history and recomputed the gradient at the same geometry.
-  - After 207 gradients, about 11 h, the run was still at step 3. It would have hit the
-    300-step limit and stopped with an error. It was stopped at 11:29Z, with no cluster finished.
+  - After 207 energies, 11.7 h, the geometry had not moved since step 3. The run was stopped at
+    11:31Z, with no cluster finished.
 - **Change:** the five clusters are optimized with `opt_coordinates = both` (redundant internals
   plus Cartesians, `cluster_dft.py --opt-coordinates both`), from the same start files. The
   solvents alone use the same setting in that run.
-  - **Unchanged:** functional, basis, grid, convergence criteria and the start geometries. The
-    target is the same local minimum; only the route to it changes.
+  - **Unchanged:** functional, basis, grid, convergence criteria and the start geometries. Only
+    the route changes. A different route can end in a different local minimum of these floppy
+    clusters; this is not tested.
   - **Single-solvent complexes:** those runs converged with redundant internals and are not
     rerun.
-- **Disclosed, already seen:** only the Li⁺(EMC)₄ energies at steps 1–3 (−1537.5899,
-  −1537.6168, −1537.6103 hartree). No geometry, Li–O distance or binding energy of any cluster
-  had been read. The failed output is kept in the work directory.
+- **Disclosed, already seen:** the Li⁺(EMC)₄ energies at steps 1–3 of the failed run (−1537.5899,
+  −1537.6168, −1537.6103 hartree), and parts of its Cartesian geometries and gradients, printed
+  while the failure was diagnosed. No converged geometry, Li–O distance or binding energy of any
+  cluster had been read. The failed output is kept in the work directory.
 - **Cost:** the stage 1 estimate of about one CPU day was low.
   - A Li⁺(EMC)₄ optimization step takes about 6–8 min at def2-SVP on 16 threads.
   - A def2-TZVPD energy of the EC complex (284 basis functions) took 80 s. Li⁺(EMC)₄ has about
     1 300, so roughly 2 h per energy, and each cluster needs six energies in the full basis.
-- **Second change (12:20Z), cost only:** the ωB97X-D run now does only the optimizations
+- **Second change (12:12Z), cost only:** the ωB97X-D run now does only the optimizations
   (`--geometry-only`), and the def2-TZVPD energies are computed once, at ωB97M-V.
   - Under Amendment 3 the fit uses only the ωB97M-V energies. ωB97X-D cluster energies would
     have been computed and never used, at about two days of CPU.
   - Nothing that enters stage 2 changes.
-  - The restart is at 12:20Z, and the five optimization steps already run are discarded.
+  - The restart is at 12:12Z, and the optimization steps of the 11:32Z run (energies of steps 1–5
+    seen, −1537.5899 to −1537.6173 hartree) are discarded.
+- **Corrected 2026-11-24, 08:50Z, before any cluster geometry or Li–O distance was read:** this
+  amendment as committed (b742cf7, 75fa8d4) gave the stop as 11:29Z and the second change as
+  12:20Z, where run.log has 11:31Z and 12:12Z; it said no geometry had been read; it left out the
+  step energies of the 11:32Z run; and it stated as fact that the same minimum is reached and
+  that the old run would have ended with an error. Seen since: ωB97X-D/def2-SVP optimization
+  energies of the first three clusters, and of the solvents alone for the first two.
 
 ## Results
 
