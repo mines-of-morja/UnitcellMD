@@ -22,6 +22,7 @@ UnitcellMD/            this git repo: plan, spec, fixtures, cross-repo tools
 ├── spec/              formats, units, provider contract, JSON Schemas, fixtures, validator
 ├── tools/oracle/      OpenMM reference calculations (validation only)
 ├── tools/study/       study driver: scans of many runs (ADR 0011)
+├── tools/queue/       read-only dashboard: queue, running, next (docs/design/queue.md)
 ├── studies/          one folder per study; plans in git, data local (studies/README.md)
 ├── _reference/        read-only clone of NeNePo_builder (gitignored)
 ├── ucmd-engine/       own git repo: Rust Cargo workspace, binary `ucmd`, Python bridge (OpenMM GPU backend)
@@ -146,6 +147,7 @@ Run these inside the repo concerned, and keep this table current.
 | spec (validator) | `cd spec/validator && python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'` | `.venv/bin/pytest` | `.venv/bin/ruff check .`; fixtures: `spec/fixtures/_generators/generate.py` |
 | tools/oracle | `python3 -m venv .venv && .venv/bin/pip install -r requirements.txt` | `.venv/bin/python -m pytest test_oracle.py` | — |
 | tools/study | stdlib only (Python ≥ 3.11) | `ucmd-builder/.venv/bin/pytest tools/study` | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/study`; run a study: `python3 tools/study/ucmd_study.py run studies/<study>` |
+| tools/queue | stdlib only (Python ≥ 3.11); machine settings in `~/.config/ucmd/queue.toml` (example: `tools/queue/queue.example.toml`) | `ucmd-builder/.venv/bin/pytest tools/queue` | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/queue`; dashboard (read-only): `python3 tools/queue/ucmd_queue.py serve` → http://127.0.0.1:8765 |
 | tools/ffcheck | uses `tools/oracle/.venv` | `tools/oracle/.venv/bin/python -m pytest tools/ffcheck` | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/ffcheck`; Li⁺ binding: `tools/ffcheck/build_packages.sh OUT`, then `li_binding.py OUT/*.ucsys` |
 | tools/qm | `docker build -t ucmd-psi4:1.9.1 tools/qm` (Psi4 in Docker; validation only) | `li_binding_qm.py` against Olguin 2016 (tools/qm/README.md) | `ucmd-builder/.venv/bin/ruff check --line-length 100 tools/qm` |
 | ucmd-engine | `cargo build --workspace` | `UCMD_REQUIRE_SPEC=1 cargo test --workspace` | `cargo fmt --all --check`; `cargo clippy --workspace --all-targets -- -D warnings`; `scripts/check-architecture.sh`; `cargo build --workspace --no-default-features`; physics: `validation/argon/run.sh` |

@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UnitcellMD queue</title>
+<style>
+:root {
+  --bg: #f6f7f9; --card: #ffffff; --fg: #1c2430; --muted: #66707e; --line: #dfe3e8;
+  --ok: #1b7f4b; --warn: #a15c00; --bad: #b3261e; --acc: #2457c5; --bar: #dfe6f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #14171c; --card: #1c2027; --fg: #e6e9ee; --muted: #9aa4b2; --line: #2d333d;
+    --ok: #4cc38a; --warn: #e0a040; --bad: #f2877f; --acc: #7aa2f7; --bar: #2a3552; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg);
+  font: 14px/1.45 system-ui, sans-serif; }
+main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 18px; margin: 0 0 4px; }
+h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted);
+  margin: 22px 0 8px; }
+.sub { color: var(--muted); font-size: 12px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px 12px; margin-bottom: 8px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: baseline; }
+.grow { flex: 1 1 auto; min-width: 0; }
+.tag { display: inline-block; padding: 0 7px; border-radius: 9px; font-size: 12px;
+  border: 1px solid var(--line); color: var(--muted); }
+.tag.busy, .tag.running, .tag.active { color: var(--acc); border-color: var(--acc); }
+.tag.idle, .tag.done { color: var(--ok); border-color: var(--ok); }
+.tag.paused, .tag.waiting, .tag.stopped, .tag.pending { color: var(--warn); border-color: var(--warn); }
+.tag.orphan, .tag.failed, .tag.unreachable, .tag.unscheduled { color: var(--bad); border-color: var(--bad); }
+.bar { height: 8px; border-radius: 4px; background: var(--bar); overflow: hidden; margin: 6px 0 2px; }
+.bar > i { display: block; height: 100%; background: var(--acc); }
+table { width: 100%; border-collapse: collapse; }
+td, th { text-align: left; padding: 4px 8px 4px 0; border-bottom: 1px solid var(--line);
+  vertical-align: top; }
+th { color: var(--muted); font-weight: 500; font-size: 12px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.mono { font-family: ui-monospace, monospace; font-size: 12px; }
+.err { color: var(--bad); }
+pre { margin: 0; white-space: pre-wrap; font-size: 12px; color: var(--muted); }
+.node { border-top: 2px solid var(--line); margin-top: 28px; padding-top: 4px; }
+.empty { color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>UnitcellMD queue</h1>
+  <div class="sub" id="stamp">loading …</div>
+  <div id="nodes"></div>
+</main>
+<script>
+"use strict";
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g,
+  (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const tag = (cls, text) => `<span class="tag ${esc(cls)}">${esc(text ?? cls)}</span>`;
+
+function dur(s) {
+  if (s == null) return "…";
+  s = Math.max(0, Math.round(s));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return h ? `${h} h ${String(m).padStart(2, "0")} min` : `${m} min`;
+}
+
+function resources(list) {
+  return (list || []).map((r) => {
+    const t = r.telemetry || {};
+    let extra = "";
+    if (r.kind === "gpu" && t.power_W != null) {
+      const stale = t.age_s > 60 ? ` <span class="err">(telemetry ${dur(t.age_s)} old)</span>` : "";
+      extra = `${t.busy_pct ?? "?"} % busy, ${t.power_W} W of ${t.cap_W ?? "?"} W, ` +
+              `${t.edge_C ?? "?"}/${t.junction_C ?? "?"} °C${stale}`;
+    } else if (r.kind === "cpu") {
+      extra = `load ${t.load1?.toFixed(1)} / ${t.load5?.toFixed(1)} (1/5 min)`;
+    }
+    return `<div class="card"><div class="row"><b>${esc(r.name)}</b> ${tag(r.state)}
+      <span class="grow">${esc(r.detail)}</span><span class="sub">${extra}</span></div></div>`;
+  }).join("") || '<div class="empty">no resources</div>';
+}
+
+function running(list) {
+  if (!list || !list.length) return '<div class="empty">nothing is running</div>';
+  return list.map((r) => {
+    const pct = r.fraction == null ? null : Math.round(r.fraction * 1000) / 10;
+    const info = [];
+    if (r.time_ps != null) info.push(`${r.time_ps.toFixed(0)} ps`);
+    if (r.steps) info.push(`${(r.step / 1e6).toFixed(2)} of ${(r.steps / 1e6).toFixed(2)} M steps`);
+    if (r.ns_per_day) info.push(`${r.ns_per_day.toFixed(0)} ns/day`);
+    info.push(`ETA ${dur(r.eta_s)}`);
+    return `<div class="card"><div class="row"><b>${esc(r.run)}</b>
+      <span class="sub">${esc(r.study)}</span>
+      ${r.orphan ? tag("orphan", "orphaned: its driver is gone") : tag("running")}
+      <span class="grow"></span><span class="num">${pct == null ? "" : pct + " %"}</span></div>
+      <div class="bar"><i style="width:${pct ?? 0}%"></i></div>
+      <div class="sub">${esc(info.join(" · "))}</div></div>`;
+  }).join("");
+}
+
+function next(list) {
+  if (!list || !list.length) return '<div class="empty">nothing is queued</div>';
+  return `<table><tr><th class="num">#</th><th>run</th><th>study</th><th>state</th><th>why</th></tr>` +
+    list.map((n) => `<tr><td class="num">${n.rank}</td><td class="mono">${esc(n.run)}</td>
+      <td class="sub">${esc(n.study)}</td><td>${tag(n.state)}</td><td>${esc(n.why)}</td></tr>`).join("") +
+    "</table>";
+}
+
+function queues(list) {
+  if (!list || !list.length) return '<div class="empty">no queue script is alive</div>';
+  return list.map((q) => `<div class="card"><div class="row"><b>${esc(q.name)}</b> ${tag(q.state)}
+    <span class="sub mono">pid ${q.pid}</span></div>
+    <div class="sub">${esc(q.description)}</div>
+    <div class="sub mono">${esc((q.studies || []).join(", "))}</div></div>`).join("");
+}
+
+function studies(list) {
+  const order = ["done", "running", "stopped", "pending", "failed"];
+  const open = (s) => ["pending", "stopped", "failed", "running"].reduce((n, k) => n + (s.counts[k] || 0), 0);
+  const rank = (s) => s.driver_pid ? 0 : (s.scheduled_by || []).length ? 1 : open(s) ? 2 : 3;
+  const rows = (list || []).filter((s) => s.total).sort((a, b) =>
+    (rank(a) - rank(b)) || b.name.localeCompare(a.name));
+  return `<table><tr><th>study</th><th>runs</th><th></th></tr>` + rows.map((s) => {
+    const c = order.filter((k) => s.counts[k]).map((k) => `${s.counts[k]} ${k}`).join(", ");
+    let who = "";
+    if (s.driver_pid) who = tag("running", "driver running");
+    else if ((s.scheduled_by || []).length) who = tag("waiting", "in " + s.scheduled_by.join(", "));
+    else if (open(s)) who = tag("unscheduled", "not scheduled");
+    return `<tr><td class="mono">${esc(s.name)}<div class="sub">${esc((s.question || "").slice(0, 130))}</div></td>
+      <td>${esc(c)}</td><td>${who}</td></tr>`;
+  }).join("") + "</table>";
+}
+
+function node(d, local) {
+  if (d.reachable === false)
+    return `<div class="node"><h1>${esc(d.node)} ${tag("unreachable")}</h1>
+      <div class="err">${esc(d.error)}</div></div>`;
+  const errs = (d.errors || []).length
+    ? `<div class="card err">${d.errors.map(esc).join("<br>")}</div>` : "";
+  return `<div class="${local ? "" : "node"}">
+    ${local ? "" : `<h1>${esc(d.node)}</h1>`}
+    <div class="sub">${local ? esc(d.node) + " · " : ""}state of ${esc(d.time)}</div>${errs}
+    <h2>Resources</h2>${resources(d.resources)}
+    <h2>Running now</h2>${running(d.running)}
+    <h2>Next</h2>${next(d.next)}
+    <h2>Queue scripts</h2>${queues(d.queues)}
+    <h2>Studies</h2>${studies(d.studies)}
+    <h2>Log</h2><div class="card"><pre>${esc((d.events || []).join("\n"))}</pre></div></div>`;
+}
+
+async function refresh() {
+  try {
+    const r = await fetch("/api/state", {cache: "no-store"});
+    const d = await r.json();
+    document.getElementById("nodes").innerHTML =
+      d.starting ? "starting …" : node(d, true) + (d.remotes || []).map((x) => node(x, false)).join("");
+    document.getElementById("stamp").textContent = "updated " + new Date().toLocaleTimeString();
+  } catch (e) {
+    document.getElementById("stamp").innerHTML = `<span class="err">no answer from the server: ${esc(e)}</span>`;
+  }
+}
+refresh();
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>

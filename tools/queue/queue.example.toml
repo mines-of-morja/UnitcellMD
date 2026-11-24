@@ -1,0 +1,23 @@
+# Machine-specific settings of the queue dashboard (docs/design/queue.md).
+# Copy to ~/.config/ucmd/queue.toml. Every key is optional; without a file the dashboard shows the
+# studies and the CPU load only.
+
+[node]
+name = "workstation"
+# studies_dir = "~/ucmd/studies"       # default: the studies/ folder of this repository
+
+[[gpu]]
+name = "gpu0"
+telemetry = "~/.cache/ucmd-overnight/gpu-telemetry.tsv"   # tab-separated, header: time_utc, edge_C, ...
+container_image = "ucmd-openmm"        # a running container whose image contains this holds the GPU
+# a process whose command line matches pauses the GPU (e.g. a game that needs it):
+# pause_process_regex = "[g]ame-launcher"
+
+[queue_scripts]                        # the hand-written queue scripts, until the scheduler exists
+dir = "~/.cache/ucmd-overnight"
+log = "~/.cache/ucmd-overnight/resume.log"
+
+# another node that runs this dashboard (reach it through `ssh -L 8766:127.0.0.1:8765 host`):
+# [[remote]]
+# name = "side-computer"
+# url = "http://127.0.0.1:8766"
