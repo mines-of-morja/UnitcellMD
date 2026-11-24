@@ -29,7 +29,8 @@ acceptance = "Density difference 1 fs to 0.5 fs given with its error from the se
 [[task]]
 id = "SC-2"
 title = "Bridge: write velocities to the trajectory"
-state = "open"
+state = "claimed"
+claimed_by = "unitcellmd-86"
 priority = 2
 needs = "none"
 author = false
@@ -65,7 +66,8 @@ acceptance = "Proposed criterion: within 1.5 % at every point, and the fitted d(
 [[task]]
 id = "SC-5"
 title = "Literature: densities over T and dH_vap of EMC, DMC, MP, EC, PC"
-state = "open"
+state = "claimed"
+claimed_by = "unitcellmd-86"
 priority = 1
 needs = "none"
 author = false
