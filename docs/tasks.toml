@@ -17,7 +17,8 @@
 [[task]]
 id = "SC-1"
 title = "Timestep convergence: is the 1 fs liquid too warm?"
-state = "open"
+state = "claimed"
+claimed_by = "unitcellmd-c8"
 priority = 1
 needs = "gpu"
 author = false
