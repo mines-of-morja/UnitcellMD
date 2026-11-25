@@ -213,6 +213,17 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — queue after the reboot; pressure check (unitcellmd-9d) — server and workers started by hand (no
+service installed), GPU telemetry restarted. Two faults of the worker fixed: a stop now sends one SIGTERM to
+the job's top process and to what it orphans, never to the engine (before: engine hit directly, the driver
+twice behind a forwarding wrapper; found by unitcellmd-c8), and the worker no longer deletes `driver.pid`.
+**The workers started at 21:38 run the older code until restarted: do not cancel a running command job.**
+GPU check of the bridge pressure: probe = energy-only within 13 bar; the large drift of the old estimator
+was **not** reproduced outside the bridge (0 bar at 200 calls, ≤ 1.7 bar at 1000, against 28–98 bar). —
+evidence: 52 tests in `tools/queue`; `validation/openmm-pressure/REPORT.md` (ucmd-engine `e25-constraints`,
+014c104, not pushed) — next: restart the workers at an idle gap; if the mechanism matters, run the old
+bridge with and without `createCheckpoint`.
+
 2026-11-25 — SC-1 planned and queued (unitcellmd-c8) — `studies/2026-11-25_timestep-1M-0p5fs` (README with the criterion, analysis and
 its tests committed before any run) and its EMC and water arms: 1 fs against 0.5 fs, three seeds, plus one 0.25 fs water run;
 five queue jobs, about 14 h of GPU after SC-3's GPU arm. 1 fs references: `base_s1..3` of the scan and SC-3's arm G. No result yet. —

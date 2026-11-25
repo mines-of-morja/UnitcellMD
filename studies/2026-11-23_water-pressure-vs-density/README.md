@@ -68,7 +68,7 @@ This departs from the rule fixed before the runs; the author may overrule it.
 
 The bridge took the pressure from `MonteCarloBarostat.computeCurrentPressure`, asked of the
 **stepping** context. Experiments, all on the HIP/double bridge (scripts in
-`ucmd-engine/validation/openmm-pressure/`):
+`ucmd-engine/validation/openmm-pressure/`, branch `e25-constraints`):
 
 1. Same final state of rho1012 (2000 ps): in-run value +454 bar; the checkpoint loaded into a fresh
    context, **−608 bar**; an energy-only calculation (scale the molecule centres by (1±10⁻³)^(1/3),
@@ -84,6 +84,14 @@ The bridge took the pressure from `MonteCarloBarostat.computeCurrentPressure`, a
 4. A second, separate effect: two `computeCurrentPressure` calls in a row on the same context,
    with no state read in between, gave −1645.7 and +40 395 bar (OpenMM 8.5, HIP). The bridge
    always read the state first; the new probe does so itself.
+
+**Added 2026-11-25: findings 2 and 3 are only partly reproduced outside the bridge.** A standalone
+script with the bridge's system and integrator (100 ps, `validation/openmm-pressure/REPORT.md`) found no
+difference between the stepping and the fresh value with 200 calls (no label exchanges), and at most
+1.7 bar with 4 748 exchanges at 1000 calls (the bridge's cadence), against 28–98 bar and 93 844
+exchanges in the bridge. So the calls alone do not explain the size; something else the bridge does
+(candidate: `createCheckpoint` right after the call) enlarges it. Not tested. The before/after scan below
+is unaffected.
 
 **Fix** (bridge commit c2cc427): `PressureProbe` evaluates each state (positions, velocities, box
 of the stepping context) in a second context that never steps. 40 ps check: last in-run 953.55 bar,
