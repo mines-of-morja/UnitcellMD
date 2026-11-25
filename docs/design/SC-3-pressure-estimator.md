@@ -96,4 +96,4 @@ different things on CPU and GPU today. **Recommendation: 3a.**
   workspace tests: everything passes except two `ucmd-io` contract tests, which fail in the same way on `e25-constraints` without this change:
   that branch predates spec 0.1.2 (`pair_overrides`) and reads the workspace's newer fixtures. With the spec commit that CI pins
   (`da27ef7`) all three contract tests pass.
-- Run `cargo test -p ucmd-md the_barostat_ bonded_groups npt_with` (about 2 minutes) to repeat the numbers above.
+- Run `cargo test -p ucmd-md -- the_barostat_ bonded_groups npt_with` (about 2 minutes) to repeat the numbers above.
