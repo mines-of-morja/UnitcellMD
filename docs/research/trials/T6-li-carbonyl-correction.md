@@ -232,6 +232,18 @@ less counterpoise, and the energy weight of the fit.
   hold). Two calls write to the same `--out`: n = 0 and 4 with counterpoise, n = 1–3 with
   `--no-cp`.
 
+**Run record (2026-11-25, 11:20Z), no change of the plan:**
+- **Geometries:** all five clusters converged (ωB97X-D/def2-SVP, `opt_coordinates both`, container
+  exit 0 at 11:20Z), in 77, 85, 171, 64 and 20 steps for n = 0 to 4. No point group was imposed
+  (C1). Every cluster keeps four Li–O(carbonyl) contacts, 1.89 to 2.02 Å.
+- **Seen by the session that wrote this record** (which did not write Amendment 5): ωB97X-D/def2-SVP
+  total energies of the final steps of n = 0 and 1 and of n = 2 up to step 140, before Amendment 5;
+  the final ones of n = 2, 3 and 4 and the Li–O distances of all five, after it. No ΔE_n was formed
+  from them. No ωB97M-V cluster energy exists.
+- **Not checked:** no frequencies were computed, so a converged geometry may be a saddle point. All
+  four Li–O distances of n = 4 are 1.9391 Å (four equal ones at the start, too); n = 4 converged in 20 steps.
+- **Hold:** the single points have not started.
+
 ## Results
 
 ### Stage 1a — functional (2026-11-22, 23:48Z)
