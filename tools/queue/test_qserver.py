@@ -275,3 +275,58 @@ def test_serve_refuses_to_listen_on_the_lan_without_a_token(tmp_path, capsys) ->
     os.environ.pop("UCMD_QUEUE_TOKEN", None)
     assert q.main(["--config", str(cfg), "serve", "--bind", "0.0.0.0", "--port", "0"]) == 2
     assert "token" in capsys.readouterr().err
+
+
+def _alive(pid: int) -> bool:
+    try:
+        state = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()[0]
+    except OSError:
+        return False
+    return state != "Z"
+
+
+def test_cancelling_a_command_also_stops_what_the_command_started(env, monkeypatch) -> None:
+    """A command job is often a script that starts the study driver or a container: stopping only
+    the script would leave those running while the queue says the resource is free."""
+    import time
+
+    monkeypatch.setattr(qworker, "HEARTBEAT_S", 0.0)
+    pidfile = env["tmp"] / "grandchild.pid"
+    code = (
+        "import subprocess, sys, time, pathlib;"
+        "p = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)']);"
+        f"pathlib.Path({str(pidfile)!r}).write_text(str(p.pid));"
+        "time.sleep(60)"
+    )
+    j = env["spool"].submit(kind="command", needs="cpu", argv=[sys.executable, "-c", code])
+    worker = make_worker(env, allow_command=True)
+
+    def cancel_when_started():
+        for _ in range(200):
+            if pidfile.exists() and pidfile.read_text():
+                env["spool"].cancel(j["id"])
+                return
+            time.sleep(0.05)
+
+    threading.Thread(target=cancel_when_started, daemon=True).start()
+    worker.step()
+    pid = int(pidfile.read_text())
+    for _ in range(100):
+        if not _alive(pid):
+            break
+        time.sleep(0.05)
+    alive = _alive(pid)
+    if alive:
+        os.kill(pid, 9)
+    assert not alive, "the grandchild survived the cancel"
+    assert env["spool"].get(j["id"])["state"] == "cancelled"
+
+
+def test_the_worker_leaves_the_study_lock_to_the_driver(env) -> None:
+    """A live driver.pid may belong to a driver started outside the queue; the driver itself
+    removes stale locks, so the worker never deletes one."""
+    lock = env["studies"] / "2026-01-01_s/driver.pid"
+    lock.write_text(f"{os.getpid()}\n")
+    job = env["spool"].submit(kind="study", needs="cpu", study="2026-01-01_s")
+    make_worker(env).study_command(job)
+    assert lock.exists()

@@ -68,6 +68,15 @@ class Api:
             raise ServerError(0, f"no answer from {self.url}: {exc}") from None
 
 
+def signal_group(pgid: int, sig: int) -> bool:
+    """Send `sig` (0: only probe) to a process group; False if the group is empty."""
+    try:
+        os.killpg(pgid, sig)
+    except ProcessLookupError:
+        return False
+    return True
+
+
 class Worker:
     def __init__(
         self,
@@ -86,6 +95,7 @@ class Worker:
         self.guard, self.paused, self.progress, self.log = guard, paused, progress, log
         self.name = cfg["name"]
         self.stop_requested = False
+        self.stopping = False
         self.child: subprocess.Popen | None = None
         self.study_in_progress: Path | None = None
 
@@ -105,9 +115,11 @@ class Worker:
         self.stop_child()
 
     def stop_child(self) -> None:
-        """Graceful: a study driver checkpoints the engine; anything else gets SIGTERM."""
+        """Graceful: a study driver checkpoints the engine; a command and everything it started
+        (its process group) get SIGTERM."""
         if self.child is None or self.child.poll() is not None:
             return
+        self.stopping = True
         if self.study_in_progress is not None:
             subprocess.run(
                 [sys.executable, str(self.repo / "tools/study/ucmd_study.py"), "stop",
@@ -115,7 +127,7 @@ class Worker:
                 check=False, capture_output=True,
             )  # fmt: skip
         else:
-            self.child.terminate()
+            signal_group(self.child.pid, signal.SIGTERM)
 
     def serve(self, once: bool = False) -> None:
         signal.signal(signal.SIGTERM, self.request_stop)
@@ -166,8 +178,10 @@ class Worker:
         self.logs.mkdir(parents=True, exist_ok=True)
         released = None
         with logfile.open("ab") as out:
+            self.stopping = False
+            # its own process group, so that a stop reaches everything the job started
             self.child = subprocess.Popen(
-                cmd, env=env, cwd=cwd, stdout=out, stderr=subprocess.STDOUT
+                cmd, env=env, cwd=cwd, stdout=out, stderr=subprocess.STDOUT, start_new_session=True
             )
             self.study_in_progress = study_dir
             cancelled = False
@@ -205,12 +219,15 @@ class Worker:
         self.report(job, code, cancelled, released)
 
     def wait_child(self) -> None:
-        try:
-            self.child.wait(timeout=STOP_WAIT_S)
-        except subprocess.TimeoutExpired:
-            self.log(f"worker {self.name}: the job does not stop; killing it")
-            self.child.kill()
-            self.child.wait()
+        """Wait for the job to end; after a stop, for everything in its process group."""
+        deadline = time.time() + STOP_WAIT_S
+        while self.child.poll() is None or (self.stopping and signal_group(self.child.pid, 0)):
+            if time.time() > deadline:
+                self.log(f"worker {self.name}: the job does not stop; killing it")
+                signal_group(self.child.pid, signal.SIGKILL)
+                break
+            time.sleep(0.1)
+        self.child.wait()
 
     def study_command(self, job: dict):
         study = self.studies_dir / job["study"]
@@ -220,8 +237,6 @@ class Worker:
         env = dict(os.environ)
         if settings.get("profile"):
             env["UCMD_MACHINE_PROFILE"] = os.path.expanduser(settings["profile"])
-        # no other driver can hold this study: the server gives one job per study
-        (study / "driver.pid").unlink(missing_ok=True)
         cmd = [
             sys.executable, str(self.repo / "tools/study/ucmd_study.py"), "run", str(study),
             "--retry-failed", "--stall-minutes", str(self.cfg.get("stall_minutes", 10)),
