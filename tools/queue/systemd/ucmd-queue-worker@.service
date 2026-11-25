@@ -1,0 +1,17 @@
+# Example systemd user unit: one worker per instance name, e.g. ucmd-queue-worker@workstation-gpu
+# (the name is the [[worker]] name in ~/.config/ucmd/queue.toml). Not installed by anything.
+#   systemctl --user enable --now ucmd-queue-worker@workstation-gpu
+# A stop (systemctl --user stop ...) is graceful: the running study checkpoints and the job goes
+# back to the queue.
+[Unit]
+Description=UnitcellMD queue worker %i
+After=ucmd-queue-server.service
+
+[Service]
+WorkingDirectory=%h/UnitcellMD
+ExecStart=/usr/bin/python3 tools/queue/ucmd_queue.py work --worker %i
+Restart=on-failure
+TimeoutStopSec=240
+
+[Install]
+WantedBy=default.target

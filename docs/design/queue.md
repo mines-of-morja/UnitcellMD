@@ -3,8 +3,9 @@
 - **Status:** draft 2026-11-24, written at the author's request ("a queuing system to optimize the
   usage … a lightweight dashboard to see what is in the queue, what is currently running and what
   should be computed next … later maybe larger clusters or another computer to send side tasks").
-  **Step 1 (the read-only dashboard) is built with this draft; steps 2–4 wait for the author's
-  review.** Direction given 2026-11-24: this workstation becomes the **server**, and clients on the
+  **Built 2026-11-25: step 1 (dashboard), step 2 (spool, scheduler, CLI) and step 3 in its first form
+  (workers on the LAN with the studies folder mounted, §8). Step 4 (SLURM) waits.** The open
+  questions of §6 are answered with defaults (§8); the author may overrule them. Direction given 2026-11-24: this workstation becomes the **server**, and clients on the
   same local network take tasks from it (§1a). This is outside the PLAN.md phase order (it prepares A2.2, `ucmd-launch`), done at the
   author's explicit request.
 - **Why:** today "the queue" is a set of hand-written shell scripts (`gpu-queue3.sh` … `11.sh`)
@@ -135,3 +136,35 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
 document; claiming is an edit of the file. It is not the spool of step 2: a task is a description,
 never a command, and nothing is started from it. Tasks for outside contributors stay GitHub issues
 (CONTRIBUTING.md).
+
+## 8. What is built (2026-11-25) and what is not
+
+- **Spool** (`qjobs.py`): `queue/jobs/<id>.json`, one `flock`, atomic writes. States `queued →
+  claimed/running → done | failed | cancelled`; priority (larger first, then submit order),
+  `--first`, `--after` (needs *done*), one study job per study at a time, silent worker (two
+  minutes without heartbeat) → job back to `queued` with its place, release on pause.
+- **Server** (`qserver.py`, in `ucmd_queue.py serve`): page and state as before; `/api/jobs`,
+  `claim`, `heartbeat`, `finish`, `release`, `cancel`, `priority`. GET: this machine without token,
+  others with; POST: token and `application/json` always; without a token configured every POST
+  is refused and the server will not listen beyond 127.0.0.1. Docs for the tabs are served from
+  `tools/queue/docs/`.
+- **Worker** (`qworker.py`, `ucmd_queue.py work`): pull model of §1a. Job kinds: `study` (this
+  clone's study driver, `--only` the named runs, machine profile and engine per resource tag from
+  the worker's own config) and `command` (an argv list, only if the worker config allows it).
+  Local guard before taking a job (a container of the GPU image, a live hand-written queue
+  script), pause process (the game): graceful stop and release. Cancel: graceful stop, reported
+  `cancelled`.
+- **Clients** (first form): the client mounts the server's `studies/` folder over its own clone's
+  and the driver writes there, so no transfer protocol exists yet. **Not built:** copy-based
+  clients (package and checkpoint down, results up) for machines without a shared folder; pinning
+  an engine hash per job; per-job profile choice beyond the resource tag; HTTP upload of results;
+  submit and cancel buttons in the page (the page only shows; the CLI and HTTP API change things).
+- **Answers used for §6 until the author says otherwise:** priority = integer in the job, set at
+  submit, changed with `priority`; no preemption except cancel and the game pause (an urgent job
+  waits for the running one, or the author cancels it); second computer unknown, the client setup
+  is written for a Linux machine with SSH to the server; the server and workers are started by
+  hand, with example systemd user units in `tools/queue/systemd/` that nothing installs.
+- **Known limits:** a worker that dies leaves its study driver running (it holds the study lock;
+  the next worker removes a stale lock file only after the server has requeued the job, so check
+  for a leftover driver); `command` jobs trust whoever has the token, so enable `allow_command`
+  only on machines you trust; a job cannot be edited, only cancelled and resubmitted.

@@ -4,10 +4,6 @@ from __future__ import annotations
 
 import json
 import os
-import threading
-import urllib.error
-import urllib.request
-from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 import pytest
@@ -140,24 +136,6 @@ def test_queue_scripts_waiting_state(tmp_path: Path) -> None:
     log.write_text("2020-01-01T00:00:00Z  queue 7 waits for other GPU queues (pids 1)\n")
     (item,) = q.queue_scripts(cfg, procs, [])
     assert item["state"] == "active"
-
-
-def test_server_is_read_only_and_serves_state(collector) -> None:
-    cache = q.Cache(collector, [], 1000.0)
-    cache.refresh()
-    server = ThreadingHTTPServer(("127.0.0.1", 0), q.make_handler(cache, b"<html></html>"))
-    threading.Thread(target=server.serve_forever, daemon=True).start()
-    base = f"http://127.0.0.1:{server.server_address[1]}"
-    try:
-        doc = json.load(urllib.request.urlopen(base + "/api/state", timeout=5))
-        assert doc["node"] == "test" and doc["remotes"] == []
-        for method in ("POST", "PUT", "DELETE"):
-            req = urllib.request.Request(base + "/api/state", data=b"x", method=method)
-            with pytest.raises(urllib.error.HTTPError) as exc:
-                urllib.request.urlopen(req, timeout=5)
-            assert exc.value.code == 405
-    finally:
-        server.shutdown()
 
 
 def test_unreachable_remote_does_not_disturb_the_local_node(collector) -> None:

@@ -279,6 +279,21 @@ matches the open 26 vs 123 bar gap. A density effect of it on the CPU is not sho
 `docs/tasks/2026-11-24-sanity-check/README.md`, tools/queue tests — next: SC-5 and SC-2 need no GPU;
 SC-1 after the sensitivity scan; author: SC-8 (Landesfeind SI).
 
+2026-11-25 — job queue built — `tools/queue/` (design `docs/design/queue.md` §8): job spool (`queue/`,
+files + one lock; priority, `--first`, `--after`, one job per study, silent worker → job requeued), the
+job API in the server (token for every POST; no token → loopback only), workers (`ucmd_queue.py work`:
+study jobs through the study driver with `--only`, command jobs only where allowed; guard against other
+GPU users and the game pause; graceful cancel), CLI for agents (`submit/jobs/cancel/priority`), tabs
+Queue, Connect a computer and For agents in the dashboard, the agent rules in CLAUDE.md. Clients on
+other computers work by mounting the server's `studies/` folder; copy-based clients are not built.
+`tools/study`: `--only ID...`. Workers are not running and nothing is installed as a service (example
+systemd units in `tools/queue/systemd/`); queued: the pressure check of the water bridge (needs a
+worker after the reboot). — evidence: 47 tests (spool ordering and claims, token/JSON rules, a worker
+running a study and a command job against a fake driver, cancel, guard, orphan logic); smoke test with the
+real server and the cpu worker (`echo` job done); the GPU worker declined a job while the scan held the
+GPU — next: the author starts the workers after the reboot; answers to the open questions of §6
+(clients, always-on, priority); copy-based clients if a computer without shared folder is added.
+
 2026-11-24 — queue dashboard, step 1 — `tools/queue/` (design `docs/design/queue.md`): a read-only page
 (`python3 tools/queue/ucmd_queue.py serve`, http://127.0.0.1:8765) showing the GPU and CPU, the run in
 progress with fraction and ETA, what comes next, the live queue scripts, every study with its open runs

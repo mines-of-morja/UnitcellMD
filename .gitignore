@@ -26,3 +26,6 @@ __pycache__/
 /studies/*/*/out*/
 /studies/2026-11-20_water-spcfw-cpu/gas/*.ucsys/
 /studies/2026-11-24_parameter-sensitivity-1M/packages/
+
+# Job queue spool (docs/design/queue.md): local state
+/queue/

@@ -43,12 +43,25 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 pre { margin: 0; white-space: pre-wrap; font-size: 12px; color: var(--muted); }
 .node { border-top: 2px solid var(--line); margin-top: 28px; padding-top: 4px; }
 .empty { color: var(--muted); }
+nav { display: flex; gap: 4px; margin: 12px 0 4px; border-bottom: 1px solid var(--line); }
+nav button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted);
+  font: inherit; padding: 6px 12px; cursor: pointer; }
+nav button.on { color: var(--fg); border-bottom-color: var(--acc); }
+.doc { max-width: 800px; }
+.doc h1 { font-size: 18px; margin: 16px 0 8px; }
+.doc h2 { margin-top: 20px; }
+.doc p, .doc li { margin: 6px 0; }
+.doc pre.code { background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  padding: 8px 10px; color: var(--fg); overflow-x: auto; white-space: pre; margin: 8px 0; }
+.doc code { font-family: ui-monospace, monospace; font-size: 12px; background: var(--card);
+  border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
 </style>
 </head>
 <body>
 <main>
   <h1>UnitcellMD queue</h1>
   <div class="sub" id="stamp">loading …</div>
+  <nav id="tabs"></nav>
   <div id="nodes"></div>
 </main>
 <script>
@@ -144,6 +157,79 @@ function tasks(list) {
   }).join("") + "</table>";
 }
 
+function workers(list) {
+  if (!list || !list.length) return '<div class="empty">no worker has connected yet (tab Connect)</div>';
+  return `<table><tr><th>worker</th><th>provides</th><th>state</th><th>holds</th><th>host</th></tr>` +
+    list.map((w) => `<tr><td class="mono">${esc(w.name)}</td><td>${esc((w.provides || []).join(", "))}
+      ${w.allow_command ? '<span class="sub">(commands)</span>' : ""}</td>
+      <td>${tag(w.online ? "active" : "unreachable", w.online ? "online" : "silent " + dur(w.age_s))}
+        ${w.info && w.info.waiting ? `<div class="sub">waiting: ${esc(w.info.waiting)}</div>` : ""}</td>
+      <td class="mono">${esc(w.job || "")}</td>
+      <td class="sub">${esc(w.info && w.info.host || "")} ${w.info && w.info.cores ? "· " + w.info.cores + " cores, load " + w.info.load1 : ""}</td></tr>`).join("") +
+    "</table>";
+}
+
+function jobs(list) {
+  if (!list || !list.length) return '<div class="empty">no jobs; submit one (tab For agents)</div>';
+  const order = {running: 0, claimed: 0, queued: 1};
+  const rows = [...list].sort((a, b) => ((order[a.state] ?? 2) - (order[b.state] ?? 2)) ||
+    (b.priority - a.priority) || (a.submitted_ts - b.submitted_ts));
+  return `<table><tr><th>job</th><th>what</th><th>state</th><th class="num">prio</th><th>needs</th><th>by</th></tr>` +
+    rows.map((j) => {
+      const what = j.study ? j.study + (j.runs ? " · " + j.runs.join(", ") : "") : (j.argv || []).join(" ");
+      const p = j.progress;
+      const prog = p && p.step && p.steps
+        ? `<div class="sub">${esc(p.run)} ${(100 * p.step / p.steps).toFixed(1)} %</div>` : "";
+      return `<tr><td class="mono">${esc(j.id)}</td>
+        <td><b>${esc(j.title)}</b><div class="sub mono">${esc(what.slice(0, 120))}</div>${prog}
+          ${j.note ? `<div class="sub">${esc(j.note)}</div>` : ""}</td>
+        <td>${tag(j.state)}${j.claimed_by ? `<div class="sub">${esc(j.claimed_by)}</div>` : ""}
+          ${j.requeued ? `<div class="sub">requeued ${j.requeued}×</div>` : ""}</td>
+        <td class="num">${j.priority}</td><td>${esc(j.needs)}</td><td class="sub">${esc(j.submitted_by)}</td></tr>`;
+    }).join("") + "</table>";
+}
+
+function queueTab(d) {
+  return `<h2>Jobs</h2>${jobs(d.jobs)}<h2>Workers</h2>${workers(d.workers)}`;
+}
+
+function md(src) {
+  const inline = (t) => esc(t).replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\*([^*]+)\*/g, "<i>$1</i>");
+  const out = []; let para = [], code = [], list = null, li = null;
+  const flushPara = () => { if (para.length) { out.push(`<p>${inline(para.join(" "))}</p>`); para = []; } };
+  const flushCode = () => { if (code.length) { out.push(`<pre class="code">${esc(code.join("\n"))}</pre>`); code = []; } };
+  const flushList = () => { if (li !== null) { out.push(`<li>${inline(li)}</li>`); li = null; } if (list) { out.push(`</${list}>`); list = null; } };
+  for (const line of src.split("\n")) {
+    if (/^ {4,}\S/.test(line)) { flushPara(); if (li !== null) { out.push(`<li>${inline(li)}</li>`); li = null; } code.push(line.replace(/^ {4}/, "")); continue; }
+    if (code.length && line.trim() === "") { code.push(""); continue; }
+    flushCode();
+    let m;
+    if ((m = /^(#{1,3}) (.*)/.exec(line))) { flushPara(); flushList(); out.push(`<h${m[1].length === 1 ? 1 : 2}>${inline(m[2])}</h${m[1].length === 1 ? 1 : 2}>`); }
+    else if ((m = /^(\d+\.|-) (.*)/.exec(line))) {
+      flushPara(); const kind = m[1] === "-" ? "ul" : "ol";
+      if (list && list !== kind) flushList();
+      if (!list) { list = kind; out.push(`<${kind}>`); } else if (li !== null) out.push(`<li>${inline(li)}</li>`);
+      li = m[2];
+    }
+    else if (line.trim() === "") { flushPara(); if (li !== null) { out.push(`<li>${inline(li)}</li>`); li = null; } }
+    else if (li !== null && /^ {2,3}\S/.test(line)) li += " " + line.trim();
+    else { flushList(); para.push(line.trim()); }
+  }
+  flushPara(); flushCode(); flushList();
+  return out.join("\n");
+}
+
+async function docTab(name) {
+  try {
+    const r = await fetch(`/docs/${name}.md`, {cache: "no-store"});
+    if (!r.ok) throw new Error(r.status);
+    return `<div class="doc">${md(await r.text())}</div>`;
+  } catch (e) {
+    return `<div class="err">cannot load ${esc(name)}: ${esc(e)}</div>`;
+  }
+}
+
 function node(d, local) {
   if (d.reachable === false)
     return `<div class="node"><h1>${esc(d.node)} ${tag("unreachable")}</h1>
@@ -162,19 +248,39 @@ function node(d, local) {
     <h2>Log</h2><div class="card"><pre>${esc((d.events || []).join("\n"))}</pre></div></div>`;
 }
 
+const TABS = [["overview", "Overview"], ["queue", "Queue"], ["connect", "Connect a computer"],
+              ["agents", "For agents"]];
+let tab = (location.hash || "#overview").slice(1);
+if (!TABS.some((t) => t[0] === tab)) tab = "overview";
+const docCache = {};
+function drawTabs() {
+  document.getElementById("tabs").innerHTML = TABS.map(
+    ([id, label]) => `<button class="${id === tab ? "on" : ""}" data-tab="${id}">${esc(label)}</button>`).join("");
+  document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("click", () => {
+    tab = b.dataset.tab; location.hash = tab; drawTabs(); refresh();
+  }));
+}
+
 async function refresh() {
   try {
     const r = await fetch("/api/state", {cache: "no-store"});
     const d = await r.json();
-    document.getElementById("nodes").innerHTML =
-      d.starting ? "starting …" : node(d, true) + (d.remotes || []).map((x) => node(x, false)).join("");
+    let html;
+    if (d.starting) html = "starting …";
+    else if (tab === "queue") html = queueTab(d);
+    else if (tab === "connect" || tab === "agents") {
+      if (!docCache[tab]) docCache[tab] = await docTab(tab);
+      html = docCache[tab];
+    } else html = node(d, true) + (d.remotes || []).map((x) => node(x, false)).join("");
+    document.getElementById("nodes").innerHTML = html;
     document.getElementById("stamp").textContent = "updated " + new Date().toLocaleTimeString();
   } catch (e) {
     document.getElementById("stamp").innerHTML = `<span class="err">no answer from the server: ${esc(e)}</span>`;
   }
 }
+drawTabs();
 refresh();
-setInterval(refresh, 5000);
+setInterval(() => { if (tab !== "connect" && tab !== "agents") refresh(); }, 5000);
 </script>
 </body>
 </html>
