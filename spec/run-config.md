@@ -156,13 +156,14 @@ cell and a virial from every provider. A backend that cannot compute the tensor 
 **Molecular pressure in the thermo table (since 0.1.3).** `pressure_molecular = true` adds the
 column `pressure_molecular_bar`, the molecular pressure of units.md §4. It stands after all other
 columns, the tensor included. It needs a periodic cell and a virial from every provider (or
-another way to compute it). A backend that cannot compute it refuses the run (`E_UNSUPPORTED`); a
-backend that computes the pressure only at some rows writes `nan` in the others. `pressure_bar` keeps its meaning.
+another way to compute it). A backend that cannot compute it refuses the run (`E_UNSUPPORTED`).
+`pressure_bar` keeps its meaning.
 
-**Rows without a pressure (since 0.1.3).** A backend that evaluates the pressure less often than it
-writes thermo rows writes `nan` in `pressure_bar` in the other rows. It means "not evaluated here":
-a pressure that was evaluated and is not finite is an error, as for every provider result. Readers
-leave these rows out of averages and plots of the pressure.
+**Rows without a pressure (since 0.1.3).** A backend that evaluates a pressure less often than it
+writes thermo rows writes `nan` in that column, `pressure_bar` or `pressure_molecular_bar`, in the
+other rows. It means "not evaluated here": a pressure that was evaluated and is not finite is an
+error, as for every provider result. Readers leave these rows out of averages and plots of the
+pressure.
 
 ## 3. Validation
 
