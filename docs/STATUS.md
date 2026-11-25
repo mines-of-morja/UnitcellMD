@@ -221,8 +221,9 @@ PDF not sent (decision 12). — evidence: every quoted number checked verbatim b
 2026-11-25 — B2c built (author approved steps 1–3 and the trend tables) — ucmd-builder branch `b2c` (from `b2a`, not pushed,
 worktree `ucmd-builder-b2c`): molecule files, ruler, ⟨P⟩ over the rows with a value, NPT cell per frame, notebook with a page per result
 table; here `tools/study/ucmd_table.py`, the scan's `analyze.py` writes `tables/` (checked on synthetic numbers only, the scan was not read) —
-evidence: `validation/b2c/REPORT.md` there, 229 tests — next: the author's hands-on test (testing.md §9a); open: spec does not say that
-`pressure_bar` may be `nan` in thermo rows; step 4 (side by side) not approved.
+evidence: `validation/b2c/REPORT.md` there, 229 tests — next: the author's hands-on test (testing.md §9a). Pushed on 2026-11-25 (author); CI: GUI job green,
+headless jobs red on Packmol 100.x, as on `b2a` (fix: builder `54b2e29`, pull request 2). `nan` in `pressure_bar` is in spec 0.1.3 (author).
+Step 4 (side by side) not approved.
 
 2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c.md` waits for
 the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run

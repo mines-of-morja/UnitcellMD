@@ -8,6 +8,8 @@ a run configuration that uses the new key (unknown key, `E_SCHEMA`), so they fai
 - units: the molecular pressure is defined (§4). The definition of `pressure_bar` is unchanged.
 - run-config: `[output.thermo] pressure_molecular` (bool, default false) adds the column
   `pressure_molecular_bar` to the thermo table.
+- run-config: `pressure_bar` may be `nan` in thermo rows where the backend did not evaluate the
+  pressure (approved by the author on 2026-11-25; the OpenMM bridge has written it so from the start).
 - fixtures: `runs/argon-pressure-molecular.toml`, `runs/invalid/pressure-molecular-not-bool.toml`.
 
 ## 0.1.2 — 2026-11-22 (decided by the author's delegation, ADR 0015; not yet tagged)
