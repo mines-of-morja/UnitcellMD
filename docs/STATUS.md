@@ -220,8 +220,8 @@ preference P (1 = solvent composition): DOSY 1.41 ± 0.11 (EC:EMC), Raman 1.6–
 M1 0.58 (0.28 nm, 1 M). Raman at x_EC 0.355: 1.73 EC per Li⁺ (M1 0.97, dielectric bound 2.2).
 Caveats in `docs/research/li-shell-experiments.md`: no Raman number for EC:EMC; the size of α in DOSY
 rests on toluene (the viscosity in its place gives negative α); ¹⁷O NMR disagrees. T6's rule is
-unchanged. — evidence: the output of the script — next:
-author: whether T6 should report P and the Raman count next to the bound.
+unchanged; T6 also reports P and the Raman count (Amendment 6, author approved). — evidence: the
+output of the script — next: T6 stage 3 reports both.
 
 2026-11-25 — open GitHub issues worked on (branches, not merged) — **ucmd-analysis#1** (branch
 `claude/1-t-plus-frames`): t₊ in COM, SOL and VOL as decided in ADR 0013; the pilot reproduces trial

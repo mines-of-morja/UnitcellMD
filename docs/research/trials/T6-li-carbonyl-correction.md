@@ -254,6 +254,27 @@ less counterpoise, and the energy weight of the fit.
   by accident, after Amendment 5 was written; the author's message gave it the Li–O ranges
   above. No ΔE_n was formed.
 
+**Amendment 6 (2026-11-25, 12:28Z, no ωB97M-V cluster energy, no fit and no liquid run of this trial
+exists; author: "yea it should"):** two more numbers are reported in stage 3. **They are not used for
+the decision; rules 1 to 5 are unchanged.**
+- **Why:** 2.2 is an upper bound, but rule 2 takes the candidate closer to it. If both pass, that
+  could favour too much EC. Newly read experiments (`docs/research/li-shell-experiments.md`) give
+  something to compare with that is not a bound.
+- **Reported per option and for M1** (mean ± SE over the three seeds, same frames as the metric):
+  - the EC preference P = (n_EC/n_EMC) (1 − x_EC)/x_EC, with x_EC = 168/500, within 0.28 nm and within
+    0.516 nm (`preference` in `docs/research/li-shell/ec_preference.py`);
+  - the EC count within 0.28 nm next to Raman's 1.73.
+- **References, fixed now:**
+  - P: 1.41 ± 0.11 (Su 2019, NMR diffusion, EC:EMC 1:4:4; the ± is our propagation of 2 % per D and
+    leaves out the toluene correction); 1.77 (Uchida 2021, Raman, EC/DMC, x_EC 0.355).
+  - EC count: 1.73 (Uchida 2021, same point, 11.2 solvents per Li⁺; our box has 10.6).
+  - M1 from T2: P 0.58 ± 0.01 (0.28 nm) and 0.76 ± 0.01 (0.516 nm); count 0.973 ± 0.010.
+- **No threshold.** The report says on which side of each reference a candidate lies.
+- **Limits:** the Raman numbers are for EC/DMC, not EC/EMC; the NMR counts what moves with Li⁺, not a
+  distance; ¹⁷O NMR (Bogle 2013, as analysed by Uchida 2021) gives P of about 1 or below.
+- **Seen by the session that wrote this** (none of the earlier amendments): T2's results, and this file
+  with its run records. No cluster energy, Li–O distance or geometry beyond what the file states.
+
 ## Results
 
 ### Stage 1a — functional (2026-11-22, 23:48Z)

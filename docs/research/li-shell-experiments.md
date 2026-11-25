@@ -62,7 +62,7 @@ comparable because Su 2019 finds DMC and EMC nearly equal (1.02).
 **EC per Li⁺ near our composition:** Raman gives 1.73 (EC/DMC, x_EC 0.355, 11.2 solvents per Li⁺), M1
 0.97 (EC/EMC, x_EC 0.336, 10.6 per Li⁺). Dielectric spectroscopy gives an **upper bound** of about
 2.2 (trial T2). The three are consistent with a true value between M1 and the bound. T6's decision
-rule is fixed and is not changed by this note.
+rule is fixed and unchanged; T6 reports P and the Raman count next to it (its Amendment 6).
 
 **What this does not say**
 
