@@ -213,6 +213,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — UnitcellMD#2: Su 2019 with SI, Uchida 2021 with SI and Morita 1998 read from `../Lit` —
+four ledger entries with `checked_vor` true (Su 2019 replaced, three new), tables compared with the
+page images. New `docs/research/li-shell/ec_preference.py` puts experiments and T2 on one scale: EC
+preference P (1 = solvent composition): DOSY 1.41 ± 0.11 (EC:EMC), Raman 1.6–2.1 (EC/DMC), M0 0.25,
+M1 0.58 (0.28 nm, 1 M). Raman at x_EC 0.355: 1.73 EC per Li⁺ (M1 0.97, dielectric bound 2.2).
+Caveats in `docs/research/li-shell-experiments.md`: no Raman number for EC:EMC; the size of α in DOSY
+rests on toluene (the viscosity in its place gives negative α); ¹⁷O NMR disagrees. T6's rule is
+unchanged. — evidence: the output of the script — next:
+author: whether T6 should report P and the Raman count next to the bound.
+
 2026-11-25 — open GitHub issues worked on (branches, not merged) — **ucmd-analysis#1** (branch
 `claude/1-t-plus-frames`): t₊ in COM, SOL and VOL as decided in ADR 0013; the pilot reproduces trial
 T1 block by block (largest difference 3e-15); 40 tests. **ucmd-builder#1** (branch
