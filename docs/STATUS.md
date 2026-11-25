@@ -223,12 +223,16 @@ which gives different positions for the same seed (21.2.3 does not); pinned belo
 **UnitcellMD#2, #3:** ledger entries (n_D of five solvents, 37 of 37 values equal to the NIST
 ThermoML records; NMR ratios of Su 2018/2019; Raman band positions) and
 `docs/research/li-shell-experiments.md` with the gaps: no Raman coordination number for EC:EMC, one
-source each for n_D of EMC and EC, none for EC:EMC. **ucmd-analysis#3:** design draft
+source each for n_D of EMC and EC, none for EC:EMC. **ucmd-analysis#3:** design note
 `docs/design/A1.7-tdf.md` (TDF from structure factors; EC and EMC must not be lumped; Lehnert's TDF
-is twice Newman's). **ucmd-analysis#2** approved as proposed (option A); the real-data table waits for
-SC-2. — evidence: tests and scripts named above — next: the author's
-review of the pull requests; Green–Kubo and TDF implementation (approved 2026-11-25: Green–Kubo as
-proposed in the note, TDF code and LJ target; tag spec-v0.1.2).
+is twice Newman's), approved for code, synthetic tests and the LJ target; code on branch
+`claude/3-thermodynamic-factor`, 16 tests; the 20 ns pilot is refused (slowest mode 3.9 ns), no
+value reported. **ucmd-analysis#2:** Green–Kubo check approved as proposed, on branch
+`claude/2-green-kubo`; both forms agree to 0.1 % over the same lags on synthetic data, the default
+Einstein window is too noisy to test anything. All in draft pull requests (ucmd-analysis #4–#6,
+ucmd-builder #2, UnitcellMD #12); tag `spec-v0.1.2` made (the changelog still says "not yet
+tagged"). — evidence: tests and scripts named above; CI — next: author: review of the pull
+requests; LJ target when Psi4 has finished; real Green–Kubo table after SC-2.
 
 2026-11-24 — sanity check of T, P, ρ; tasks SC-1 to SC-8 on the dashboard — at the author's request.
 1 M, 20 °C density +0.2 % (M0) and +1.1 % (M1) against the Landesfeind fit (one reading), partly by
