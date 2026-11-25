@@ -38,6 +38,6 @@ Not judged: the distance to Wu's 1.012 g/cm³ (design note, "Limits of option B"
 
 ## Running it (after the reboot of 2026-11-25)
 
-`bash studies/2026-11-25_water-npt-cpu-molecular/run_cpu.sh` (B and A in turn, seed by seed) and `run_gpu.sh` (G, only when no other
-job holds the GPU). Engines: `$SC3_ENGINES/ucmd-atomic`, `ucmd-molecular` (default `~/.cache/ucmd-sc3`). Both scripts may be
+As two queue jobs (CLAUDE.md, "Compute jobs"): `submit command --needs cpu … -- bash
+studies/2026-11-25_water-npt-cpu-molecular/run_cpu.sh` (B and A in turn, seed by seed) and `--needs gpu-hip-double … run_gpu.sh` (G). Engines: `$SC3_ENGINES/ucmd-atomic`, `ucmd-molecular` (default `~/.cache/ucmd-sc3`). Both scripts may be
 started again; finished runs are skipped. Then `python3 analyze.py`.
