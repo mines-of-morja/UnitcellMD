@@ -16,12 +16,16 @@ parameters differ: LigParGen instead of Maestro OPLS.
 
 | 1 M LiPF₆ in EC:EMC 3:7, 20 °C | this work (A2, A3) | Lehnert MD | experiment |
 |---|---|---|---|
-| density | 1.4 % below Lehnert's model | — | open (Logan 2018, Gruber 2026) |
+| density | 1.4 % below Lehnert's model ¹ | — | open (Logan 2018, Gruber 2026) ¹ |
 | EC share of carbonyl O at Li⁺, r ≤ 5.16 Å | 20 % | ≈ 47 % | disputed; source open |
 | κ (formal charges) | 0.42 ± 0.09 S/m | ≈ experiment (ζ fitted) | 0.84 S/m (Landesfeind 2019) |
 | κ_NE (no correlations) | 0.48 ± 0.03 S/m | — | — |
 | t₊ (COM) | 0.29 ± 0.11 | 0.373 | 0.343 (eNMR, Lehnert) |
-| pure EMC / EC density | +2.9 % / −3.5 % | — | Lehnert Table S2 |
+| pure EMC / EC density | +2.9 % / −3.5 % ¹ | — | Lehnert Table S2 |
+
+¹ *Correction 2026-11-25 (SC-6):* "Lehnert's model" was the nominal 1.202 g/cm³ of 47 ion pairs at exactly 1.0 M. Against the
+Landesfeind fit (1.182 ± 0.6 % at 1 M, 20 °C) M0 is +0.2 % and M1 +1.1 %. Against densities at the run's own temperature EMC
+is +2.8 % (25 °C), EC −3.4 % (40 °C) and DMC +2.3 % (25 °C, fails ±2 %); see solvent-densities/README.md.
 
 **Reading:**
 - We have reached Lehnert's **method**, not his **results**. The remaining gap sits in the
@@ -158,7 +162,8 @@ Source: J. Self, N. T. Hahn, K. A. Persson, *Energy Environ. Mater.* 7, e12494 (
   out of the shell. Ion pairs (SSIP or CIP) make up the largest contribution at 1 M.
 - **Our estimate, not theirs:** if ε₁ scales with the number of free EC, 1 − 5.3/14.1 = 62 ± 2 %
   of the EC are bound. At 1 M (3.58 mol/L EC, from the solvent mass at 1.202 g/cm³, Lehnert's
-  model density) that is **≈ 2.2 EC per Li⁺**. Lehnert's model gives ≈ 2.3 within rs (Fig. S10),
+  model density; *nominal, corrected 2026-11-25:* the Landesfeind fit gives 3.52 mol/L, −1.7 %, within the estimate's ± 0.1)
+  that is **≈ 2.2 EC per Li⁺**. Lehnert's model gives ≈ 2.3 within rs (Fig. S10),
   ours (M0) 0.98. The estimate ignores kinetic depolarization and changes in dipole
   correlation. Kinetic depolarization lowers the solvent amplitude in a conducting solution, so
   2.2 is more likely an upper bound than a lower one. It is a check, not a fit target.

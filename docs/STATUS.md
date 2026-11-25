@@ -39,11 +39,11 @@ Last update: 2026-11-13.
 - **Waiting for the author:**
   1. Hands-on tests of the GUI ([testing.md](testing.md) §9), then Gates B2a and B1a together
      (`b2a` contains `b1`). E2 hands-on: §8, §8a.
-  2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Jo's agent entered
-     the fit from its own copy of the SI (ledger `landesfeind2019_density_fit_ec_emc_3_7`:
-     ρ(1 M, 25 °C) = 1.176 g/cm³, our boxes 1.202); a second reading from the PDF in `../Lit` is
-     still needed before the placeholders are replaced. It is also the density reference for
-     the transport study (PLAN.md §10.12).
+  2. ~~The SI of Landesfeind 2019 in `../Lit`.~~ **Done 2026-11-25:** the second reading agrees with the
+     ledger entry of Jo's agent (`landesfeind2019_density_fit_ec_emc_3_7`); the reference is good
+     to about ±0.6 % (`research/landesfeind-density/README.md`). It is the density reference
+     for the transport study (PLAN.md §10.12): 1.182 g/cm³ at 1 M, 20 °C against our NPT boxes 1.184 (M0) and 1.195
+     (M1). Corrected 2026-11-25: this item compared 1.176 (25 °C) with "our boxes 1.202", a nominal density.
 
 ## Decisions by the author
 
@@ -243,6 +243,45 @@ Einstein window is too noisy to test anything. All in draft pull requests (ucmd-
 ucmd-builder #2, UnitcellMD #12); tag `spec-v0.1.2` made (the changelog still says "not yet
 tagged"). — evidence: tests and scripts named above; CI — next: author: review of the pull
 requests; LJ target when Psi4 has finished; real Green–Kubo table after SC-2.
+
+2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c-results-view.md` waits for
+the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
+base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.
+
+2026-11-25 — SC-3 option B, barostat half — ucmd-engine branch `sc3-molecular-pressure` (from `e25-constraints`, not pushed): C-rescale
+scales atoms connected by bonds or constraints by their centre of mass, with the molecular pressure and virial. Free stiff
+dimers: atomic − molecular −2.12 bar (1 fs) and −10.01 bar (2 fs) against −2.09 and −10.00 predicted. The pressure **column** stays
+atomic, because `spec/units.md` §4 defines it. No density effect measured, no runs. — evidence:
+`docs/design/SC-3-pressure-estimator.md`; tests of ucmd-md 40 passed, 1 ignored; two `ucmd-io` contract tests fail on this branch and on its
+base alike (spec 0.1.2 fixtures) — next: author: question 3 (3a recommended); tests 1–2 after the reboot.
+
+2026-11-25 — water pressure, cause found (no new runs) — at 1.012 g/cm³ the excess comes from the 1 fs step with flexible
+bonds, in two parts: **(1)** the CPU logs the atomic pressure, about 127 bar below the molecular one of the GPU; by one
+definition both engines agree (CPU about 109, GPU 122.6 ± 11.9 bar at 298.16 K), and the engine's sum is right (0.24 bar,
+frame by frame). **(2)** the thermostat holds the on-step kinetic energy, so the liquid is warmer than displayed: water
++6.5 K (runs 5.0–8.2), electrolyte M1 +3.4 ± 0.5 K (configurational temperatures), worth about 72 bar in water. 49 ± 12 bar remain. Wu's 1.012
+fits the atomic pressure (inference). Open: the 0.5 fs excess (+2.9 ± 0.8 K) is above Δt² (+1.5). T6: what was known when the
+functional rule was read is corrected. ucmd-engine `e25-constraints` and `s012-pair-overrides` pushed; CI red on both, because
+`UMBRELLA_REF` (da27ef7) predates the fixtures (s012) or a spec 0.1.1 test fails (e25, red since 21 November) — evidence:
+`docs/research/water-pressure/` — next: author: fix order (README, recommendation); SC-1 decides on the step; move `UMBRELLA_REF`.
+
+2026-11-25 — SC-6 and SC-8 done; author: SC-3 option B, SC-4 grid — **SC-8:** the second reading of the Landesfeind
+SI agrees with the ledger; Figure S1, digitized, reproduces the fit (1.414, 0.0900, −0.00109, R² 0.9972). The
+reference is good to about ±0.6 %, so it cannot separate M0 (+0.2 %) from M1 (+1.1 %); the plotted points
+start at 10 °C. **SC-6:** dated corrections applied (T3 amendment 1, report, strategy, plans, A1.5, ledger); old
+text kept; report figures 2 and 3 keep their old labels. **SC-3:** option B approved, not coded, no runs. **SC-4:**
+grid accepted, 1.5 % provisional. — evidence: `docs/research/landesfeind-density/README.md` — next: after
+the reboot: SC-3 code on a branch, SC-1 plan.
+
+2026-11-25 — SC-5 done, SC-2 coded, SC-3 and SC-6 drafted — **SC-5:** Table S2 mixes temperatures (DMC,
+PC at 20 °C, EMC at 25 °C, EC at 39 °C). At the measured temperature LigParGen DMC is +2.3 % (25 °C)
+and +2.6 % (40 °C), so it **fails ±2 %** (report: passes); EMC +2.8 %, MP +1.6 %, PC −0.2 %, EC −3.4 %. EMC against T and
+a measured ΔH_vap of EMC were not found. Values from NIST ThermoML, papers not read. **SC-2:** the bridge
+silently ignored `[output.trajectory] velocities` and `forces` (invariant 7) and failed on every .xyz
+trajectory; fixed on ucmd-engine branch `sc2-bridge-velocities` (2a4cc49, not pushed, not merged).
+— evidence: `docs/research/solvent-densities/README.md`; 41 bridge tests (6 new), argon NVE against the CPU
+engine 1.6e-15 (velocities), 3.6e-15 (forces); GPU label check open — next: author: SC-3
+(`docs/design/SC-3-pressure-estimator.md`, options A/B/C), SC-6 (`docs/tasks/SC-6-proposal.md`), SC-8; SC-1 after the scan.
 
 2026-11-24 — sanity check of T, P, ρ; tasks SC-1 to SC-8 on the dashboard — at the author's request.
 1 M, 20 °C density +0.2 % (M0) and +1.1 % (M1) against the Landesfeind fit (one reading), partly by

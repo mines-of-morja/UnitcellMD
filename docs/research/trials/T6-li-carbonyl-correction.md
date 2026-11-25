@@ -232,6 +232,28 @@ less counterpoise, and the energy weight of the fit.
   hold). Two calls write to the same `--out`: n = 0 and 4 with counterpoise, n = 1–3 with
   `--no-cp`.
 
+**Run record (2026-11-25, 11:20Z), no change of the plan:**
+- **Geometries:** all five clusters converged (ωB97X-D/def2-SVP, `opt_coordinates both`, container
+  exit 0 at 11:20Z), in 77, 85, 171, 64 and 20 steps for n = 0 to 4. No point group was imposed
+  (C1). Every cluster keeps four Li–O(carbonyl) contacts, 1.89 to 2.02 Å.
+- **Seen by the session that wrote this record** (which did not write Amendment 5): ωB97X-D/def2-SVP
+  total energies of the final steps of n = 0 and 1 and of n = 2 up to step 140, before Amendment 5;
+  the final ones of n = 2, 3 and 4 and the Li–O distances of all five, after it. No ΔE_n was formed
+  from them. No ωB97M-V cluster energy exists.
+- **Not checked:** no frequencies were computed, so a converged geometry may be a saddle point. All
+  four Li–O distances of n = 4 are 1.9391 Å (four equal ones at the start, too); n = 4 converged in 20 steps.
+- **Hold:** the single points have not started.
+
+**Correction and disclosure (2026-11-25, 11:57Z), by the session that wrote Amendment 5:**
+- **n = 3:** 147 optimizer steps, not 64. After step 83 Psi4 found new near-linear angles, caught
+  that itself (`AlgError: Linear bends detected`) and continued from the same geometry with new
+  internal coordinates; the step counter restarted, and 64 is the count after that. Largest atom
+  move around the restart 0.03 Å. The final geometry and the convergence statement are unaffected.
+- **Seen:** until today this session had read no cluster energy. While looking for a geometry block
+  in the output of n = 4, it printed the ωB97X-D/def2-SVP total energies of steps 1–3 of n = 4
+  by accident, after Amendment 5 was written; the author's message gave it the Li–O ranges
+  above. No ΔE_n was formed.
+
 ## Results
 
 ### Stage 1a — functional (2026-11-22, 23:48Z)
@@ -251,8 +273,13 @@ Output in `T6/t6_functional_choice.json`; DFT rows in `tools/qm/results/t6_dimer
 - ωB97X-D ranks first on the largest error, but misses the EC − EMC condition by 0.046 kcal/mol.
 - **The rule's reading:** the condition decides which functionals can be chosen, and the ranking
   picks among them. This is how the selection script implements Amendment 1 together with the
-  plan's "if none reproduces …". That reading was fixed before the results; it is stated here
-  because the best-ranked functional is not the one chosen.
+  plan's "if none reproduces …". It is stated here because the best-ranked functional is not the
+  one chosen.
+- **What was known when the reading was fixed** (corrected 2026-11-25; until then this section said
+  "that reading was fixed before the results"): the script was committed at 23:17Z (80d8542),
+  before the M06-2X and the ωB97M-V//ωB97X-D results were read. The ωB97X-D values of EC and EMC
+  had been seen before (Amendment 3, 22:31Z). They give EC − EMC = −5.19 kcal/mol, so the miss of
+  ωB97X-D by 0.046 kcal/mol was already known. The choice itself is unchanged.
 - **Pattern:** all three bind more strongly than MP2 (every error is negative). ωB97M-V and
   M06-2X do so by 2–4.4 kcal/mol, nearly uniformly across the four solvents. That shift largely
   cancels in the EC − EMC difference, which is the quantity the exchange energies of stage 2

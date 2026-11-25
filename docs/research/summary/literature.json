@@ -87,11 +87,12 @@
     "p3": -0.00109,
     "R2": 0.997
    },
-   "source": "T. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), SI",
+   "source": "J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), SI",
    "doi": "10.1149/2.0571912jes",
    "location": "SI Eq. S1, Table S1 (95 % bounds 5 %, 3 %, 22 %)",
-   "version_read": "SI PDF from library",
-   "checked_vor": true
+   "version_read": "first reading: SI PDF from library; second reading 2026-11-25: authors' SI (Word file)",
+   "checked_vor": true,
+   "note": "Rounding of the printed parameters is +-0.0065 g/cm3 at 1 M, 20 C (worst case); the points of Fig. S1 scatter by 0.0066 g/cm3 (SD). Markers in Fig. S1 sit at 10-50 C and 0-3 M, the text says 0-50 C and 0.1-3 M. See docs/research/landesfeind-density/README.md."
   },
   "marcus2004_single_ion_volumes_pc_25C": {
    "quantity": "standard partial molar volumes of single ions in propylene carbonate at 25 C, TATB/TPTB scale, cm3/mol, uncertainty +-2; and the salt value they derive from",
@@ -191,7 +192,7 @@
    "checked_vor": false
   },
   "lehnert2025_box_density": {
-   "quantity": "density of Lehnert's 1 M LiPF6 EC:EMC (3:7 w:w) box, 47 ion pairs, g/cm3 (used for the EC concentration of the DRS estimate)",
+   "quantity": "NOMINAL density of Lehnert's 1 M LiPF6 EC:EMC (3:7 w:w) box, g/cm3: 47 ion pairs at exactly 1.0 M (56 497 g per 47 mol of ion pairs). Not a measured or simulated density; one ion pair of 47 is 2 % in c. Reworded 2026-11-25 (SC-6), before: 'density of Lehnert's box' (used for the EC concentration of the DRS estimate)",
    "value": 1.202,
    "source": "Lehnert et al. 2025, SI (box composition; docs/lehnert2025-si-notes.md)",
    "doi": "10.1149/1945-7111/add381",
@@ -213,6 +214,160 @@
    "doi": null,
    "location": "Table of conventional/abridged values",
    "version_read": "VoR",
+   "checked_vor": false
+  },
+  "density_dmc_pereiro2004": {
+   "quantity": "DMC liquid density at 101.3 kPa, kg/m3, by temperature in K, with the expanded (95 %) uncertainty",
+   "value": {
+    "293.15": [
+     1069.9,
+     0.56
+    ],
+    "298.15": [
+     1063.33,
+     0.56
+    ],
+    "303.15": [
+     1056.71,
+     0.55
+    ],
+    "308.15": [
+     1050.07,
+     0.55
+    ],
+    "313.15": [
+     1043.39,
+     0.54
+    ]
+   },
+   "source": "Density, Viscosity, and Speed of Sound of Dialkyl Carbonates with Cyclopentane and Methyl Cyclohexane, J. Chem. Eng. Data 49, 1392 (2004)",
+   "doi": "10.1021/je049895b",
+   "location": "pure DMC, vibrating tube; https://trc.nist.gov/ThermoML/10.1021/je049895b.xml, sha256 322ad33313cf1791 (2026-11-25)",
+   "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
+   "checked_vor": false
+  },
+  "density_dmc_zhou2010": {
+   "quantity": "DMC liquid density at 101.3 kPa, kg/m3, by temperature in K, with the expanded (95 %) uncertainty",
+   "value": {
+    "293.15": [
+     1069.8,
+     0.4
+    ],
+    "298.15": [
+     1063.2,
+     0.4
+    ],
+    "303.15": [
+     1056.5,
+     0.4
+    ],
+    "308.15": [
+     1049.8,
+     0.4
+    ],
+    "313.15": [
+     1043.0,
+     0.4
+    ]
+   },
+   "source": "Zhou, Zhu, Xu, Tian, J. Chem. Eng. Data 55, 5569 (2010)",
+   "doi": "10.1021/je100353j",
+   "location": "pure DMC at 101.325 kPa, vibrating tube; https://trc.nist.gov/ThermoML/10.1021/je100353j.xml, sha256 0a2b4c13f8cb6b4d (2026-11-25)",
+   "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
+   "checked_vor": false
+  },
+  "density_dmc_emc_ec_fluid2018": {
+   "quantity": "DMC and EMC at 298.15 K, EC at 318.15 K: liquid density at 101.3 kPa, kg/m3, by temperature in K, with the expanded (95 %) uncertainty",
+   "value": {
+    "DMC 298.15": [
+     1060.87,
+     0.14
+    ],
+    "EMC 298.15": [
+     1006.88,
+     0.13
+    ],
+    "EC 318.15": [
+     1315.7,
+     0.2
+    ]
+   },
+   "source": "Solid-liquid equilibria and thermo-physical properties of liquid electrolyte systems for lithium ion batteries, Fluid Phase Equilibria (2018). DMC is 0.23 % below three other values (two from one group): purity or calibration open",
+   "doi": "10.1016/j.fluid.2018.05.033",
+   "location": "pure components, vibrating tube; https://trc.nist.gov/ThermoML/10.1016/j.fluid.2018.05.033.xml, sha256 83c65aa6457d2535 (2026-11-25)",
+   "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
+   "checked_vor": false
+  },
+  "density_pc_comelli2010": {
+   "quantity": "PC liquid density at 101.3 kPa, kg/m3, by temperature in K, with the expanded (95 %) uncertainty",
+   "value": {
+    "293.15": [
+     1204.66,
+     0.18
+    ],
+    "313.15": [
+     1183.06,
+     0.17
+    ]
+   },
+   "source": "Comelli, Bigi, Vitalini, Rubini, J. Chem. Eng. Data 55, 205 (2010)",
+   "doi": "10.1021/je900307z",
+   "location": "pure PC, vibrating tube; https://trc.nist.gov/ThermoML/10.1021/je900307z.xml, sha256 50ae1abcb29d9858 (2026-11-25)",
+   "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
+   "checked_vor": false
+  },
+  "density_pc_je0496903": {
+   "quantity": "PC liquid density at 101.3 kPa, kg/m3, by temperature in K, with the expanded (95 %) uncertainty",
+   "value": {
+    "293.15": [
+     1203.38,
+     1.82
+    ],
+    "298.15": [
+     1197.58,
+     1.86
+    ],
+    "303.15": [
+     1192.53,
+     1.89
+    ],
+    "308.15": [
+     1187.16,
+     1.94
+    ]
+   },
+   "source": "Densities and Viscosities of Binary Mixtures of Paraldehyde + Propylene Carbonate, J. Chem. Eng. Data",
+   "doi": "10.1021/je0496903",
+   "location": "pure PC, pycnometer; https://trc.nist.gov/ThermoML/10.1021/je0496903.xml, sha256 d0999f7570cb3d85 (2026-11-25)",
+   "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
+   "checked_vor": false
+  },
+  "density_mp_fluid2011": {
+   "quantity": "MP liquid density at 101.3 kPa, kg/m3, by temperature in K, with the expanded (95 %) uncertainty",
+   "value": {
+    "298.15": [
+     910.28,
+     0.3
+    ]
+   },
+   "source": "Excess molar volumes ... 1,2-dichloropropane with methyl ethanoate, methyl propanoate, methyl butanoate, Fluid Phase Equilibria (2011)",
+   "doi": "10.1016/j.fluid.2011.01.005",
+   "location": "pure methyl propanoate, vibrating tube; https://trc.nist.gov/ThermoML/10.1016/j.fluid.2011.01.005.xml, sha256 39d1d251ebc532a2 (2026-11-25)",
+   "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
+   "checked_vor": false
+  },
+  "density_mp_jct2005": {
+   "quantity": "MP liquid density at 101.3 kPa, kg/m3, by temperature in K, with the expanded (95 %) uncertainty",
+   "value": {
+    "318.15": [
+     884.6,
+     0.99
+    ]
+   },
+   "source": "Thermodynamic properties of (an ester + an alkane) XVII, J. Chem. Thermodyn.",
+   "doi": "10.1016/j.jct.2004.12.014",
+   "location": "pure methyl propanoate, vibrating tube; https://trc.nist.gov/ThermoML/10.1016/j.jct.2004.12.014.xml, sha256 b5f6f3f67e1e1faf (2026-11-25)",
+   "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
    "checked_vor": false
   },
   "nD_oh2018_dmc_emc_ec": {
