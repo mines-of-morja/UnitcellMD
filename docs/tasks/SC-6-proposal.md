@@ -1,9 +1,9 @@
-# SC-6: proposed corrections (for approval; nothing below is changed yet)
+# SC-6: proposed corrections (approved by the author and applied 2026-11-25)
 
 **Finding.** 1.202 g/cm³ (1.205 in older notes) is 56 497 g/mol per 47 ion pairs at *exactly* 1.0 M. It is neither
 measured nor a density that Lehnert's SI reports: the SI says the counts were the most consistent with the target,
 and one ion pair of 47 is 2 % in c. Our NPT densities at 20 °C are 1.184 (M0) and 1.195 (M1), +0.2 % and +1.1 %
-against the Landesfeind fit (1.1817, one reading).
+against the Landesfeind fit (1.1817; second reading agrees, SC-8).
 
 | place | now | proposal |
 |---|---|---|

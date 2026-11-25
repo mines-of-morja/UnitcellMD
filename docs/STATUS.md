@@ -39,11 +39,11 @@ Last update: 2026-11-13.
 - **Waiting for the author:**
   1. Hands-on tests of the GUI ([testing.md](testing.md) §9), then Gates B2a and B1a together
      (`b2a` contains `b1`). E2 hands-on: §8, §8a.
-  2. The SI of Landesfeind 2019 (density fit, Table S1 / Eq. S1) in `../Lit`. Jo's agent entered
-     the fit from its own copy of the SI (ledger `landesfeind2019_density_fit_ec_emc_3_7`:
-     ρ(1 M, 25 °C) = 1.176 g/cm³, our boxes 1.202); a second reading from the PDF in `../Lit` is
-     still needed before the placeholders are replaced. It is also the density reference for
-     the transport study (PLAN.md §10.12).
+  2. ~~The SI of Landesfeind 2019 in `../Lit`.~~ **Done 2026-11-25:** the second reading agrees with the
+     ledger entry of Jo's agent (`landesfeind2019_density_fit_ec_emc_3_7`); the reference is good
+     to about ±0.6 % (`research/landesfeind-density/README.md`). It is the density reference
+     for the transport study (PLAN.md §10.12): 1.182 g/cm³ at 1 M, 20 °C against our NPT boxes 1.184 (M0) and 1.195
+     (M1). Corrected 2026-11-25: this item compared 1.176 (25 °C) with "our boxes 1.202", a nominal density.
 
 ## Decisions by the author
 
@@ -212,6 +212,14 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-25 — SC-6 and SC-8 done; author: SC-3 option B, SC-4 grid — **SC-8:** the second reading of the Landesfeind
+SI agrees with the ledger; Figure S1, digitized, reproduces the fit (1.414, 0.0900, −0.00109, R² 0.9972). The
+reference is good to about ±0.6 %, so it cannot separate M0 (+0.2 %) from M1 (+1.1 %); the plotted points
+start at 10 °C. **SC-6:** dated corrections applied (T3 amendment 1, report, strategy, plans, A1.5, ledger); old
+text kept; report figures 2 and 3 keep their old labels. **SC-3:** option B approved, not coded, no runs. **SC-4:**
+grid accepted, 1.5 % provisional. — evidence: `docs/research/landesfeind-density/README.md` — next: after
+the reboot: SC-3 code on a branch, SC-1 plan.
 
 2026-11-25 — SC-5 done, SC-2 coded, SC-3 and SC-6 drafted — **SC-5:** Table S2 mixes temperatures (DMC,
 PC at 20 °C, EMC at 25 °C, EC at 39 °C). At the measured temperature LigParGen DMC is +2.3 % (25 °C)

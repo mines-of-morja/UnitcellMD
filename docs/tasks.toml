@@ -43,16 +43,17 @@ result = "Branch sc2-bridge-velocities of ucmd-engine (2a4cc49, not pushed): vel
 [[task]]
 id = "SC-3"
 title = "CPU pressure: on-step atomic estimator is biased at 1 fs for flexible molecules"
-state = "open"
+state = "claimed"
+claimed_by = "unitcellmd-86"
 priority = 2
 needs = "cpu"
 author = true
-waits_for = "design approval for any change; CPU free of Psi4 (t6_geometries) for long runs"
+waits_for = "option B approved by the author 2026-11-25. No new runs before the reboot of 2026-11-25; long runs need a CPU free of Psi4"
 goal = "Atomic minus molecular pressure was -129 +/- 9 bar in a 10 ps water run (predicted -127 from dt^2 F^2/4m). That closes the open 26 vs 123 bar question of studies/2026-11-23_water-pressure-vs-density. The CPU barostat (scaling_virial/scaling_kinetic_tensor in ucmd-md/src/dynamics.rs) uses atomic pressure for molecules without constraints."
 deliverable = "(a) Validation report: bias at 1, 0.5 and 0.25 fs (expected ratio 4) for water and the electrolyte. (b) Design note with the options (half-step kinetic tensor, or molecular virial), with the effect on Green-Kubo viscosity. (c) After (a): a dated note under 'Open, not resolved' of the water study README."
 acceptance = "Bias measured directly at three timesteps. The effect on the CPU DENSITY is unproven: the 0.5 fs water twins go the other way (CPU 1.0064(13), GPU 1.0103(12) g/cm3, 2.2 sigma); do not report a density bias before it is measured. No tolerance loosened; no engine change without approval."
 
-result = "Design note docs/design/SC-3-pressure-estimator.md waits for the author; no runs yet."
+result = "Design note docs/design/SC-3-pressure-estimator.md: option B approved 2026-11-25; not coded, no runs yet."
 
 [[task]]
 id = "SC-4"
@@ -62,10 +63,10 @@ priority = 1
 needs = "gpu"
 author = true
 after = ["SC-1"]
-waits_for = "author: grid and pass criterion"
+waits_for = "SC-1 (timestep). Grid accepted by the author 2026-11-25; 1.5 % provisional ('we will see')"
 goal = "M1, EC:EMC 3:7 w:w, NPT: 0.1, 2 and 3 M at 20 C, and 1 M at 0 and 50 C, against the Landesfeind 2019 fit at the box's own concentration. Expected from ideal mixing (extrapolation): about +2.2 % at 0.1 M falling to -0.8 % at 3 M; a slope means the ion model, an offset the solvent."
 deliverable = "Study with README and criterion before the runs; recipes from ucmd-builder/examples/EC (ec-emc_3-7w_*M) with EC from Caleman 2012 as in T2 M1. Choose the run length from the settling time (trials rule 6); 3 M and 0 C relax slowly."
-acceptance = "Proposed criterion: within 1.5 % at every point, and the fitted d(rho)/dc reported against 0.0912 g/cm3 per M. The fit holds for 0-50 C and 0.1-3 M only. Reads density, not transport."
+acceptance = "Criterion (provisional, to be written into the study README before the first run): within 1.5 % at every point, and the fitted d(rho)/dc reported against 0.0912 g/cm3 per M. The fit is stated for 0-50 C and 0.1-3 M; its markers sit at 10-50 C and 0-3 M, so the 0 C point tests an extrapolation (SC-8). The reference itself is good to about 0.6 %. Reads density, not transport."
 
 [[task]]
 id = "SC-5"
@@ -84,17 +85,17 @@ result = "docs/research/solvent-densities/README.md: densities found except EMC 
 [[task]]
 id = "SC-6"
 title = "Correct the 1.202 g/cm3 premise and the Table S2 comparison"
-state = "open"
+state = "done"
+claimed_by = "unitcellmd-86"
 priority = 2
 needs = "none"
 author = true
 after = ["SC-5"]
-waits_for = "author: T3 is pre-registered, so only a dated amendment"
 goal = "1.202 g/cm3 is 47 ion pairs at exactly 1.0 M, not a simulated or measured density; with 47 pairs one ion pair is 2 % in c. Our NPT densities are 1.184 (M0) and 1.195 (M1) at 20 C, +0.2 % and +1.1 % against the Landesfeind fit (1.182). T3 ('2.2 % denser', 1.202 against 1.176) and the report ('1.4 % below Lehnert') compare the wrong numbers."
 deliverable = "The 1.202 part can be drafted now, the Table S2 part after SC-5. Places: trials/T3 (amendment), docs/STATUS.md waiting item 2, report.md (abstract, 3.2, 3.3, 4), reproduction-plan.md, forcefield-strategy.md:19, calculation-plan.md A2, A1.5.md (1.205), literature.json lehnert2025_box_density."
 acceptance = "Old text stays on record (publication.md rule 5). DMC at 25 C is re-judged against the +-2 % criterion with the SC-5 value."
 
-result = "Proposal docs/tasks/SC-6-proposal.md waits for the author; no document corrected yet."
+result = "Approved and applied 2026-11-25 as dated corrections (old text kept): T3 amendment, STATUS, report, strategy, plans, A1.5, ledger. Figures 2 and 3 of the report still carry the old labels."
 
 [[task]]
 id = "SC-7"
@@ -112,11 +113,13 @@ acceptance = "Every parameter has a source; targets fixed before fitting; kappa,
 [[task]]
 id = "SC-8"
 title = "Second reading of the Landesfeind 2019 SI (density fit)"
-state = "blocked"
+state = "done"
+claimed_by = "unitcellmd-86"
 priority = 1
 needs = "none"
 author = true
-waits_for = "author: put the SI PDF into ../Lit (only the paper is there)"
 goal = "Our density verdicts rest on one reading of Eq. S1 / Table S1 (1.41, 0.0912, -0.00109). The 95 % bounds of the coefficients are 5, 3 and 22 %."
 deliverable = "Second reading compared with the ledger entry landesfeind2019_density_fit_ec_emc_3_7."
 acceptance = "Agreement or correction recorded in the ledger."
+
+result = "Second reading agrees (docs/research/landesfeind-density/README.md); Fig. S1 reproduces the fit. Reference good to about 0.6 %; 0 C lies outside the plotted points."

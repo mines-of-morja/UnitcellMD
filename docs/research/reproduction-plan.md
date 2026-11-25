@@ -58,6 +58,7 @@
 
 1. **Force-field diagnosis** (now): the pressure plateau at the reference density; pure-solvent
    densities (EC at 40 °C, EMC, DMC, PC, MP) against Lehnert SI Table S2.
+   *(Correction 2026-11-25, SC-6: Table S2 mixes 20, 25 and 39 °C; use solvent-densities/README.md.)*
 2. **Force-field decisions** D1–D3, then fix the parameters until level 1 passes (ρ within
    1–2 %).
 3. **Outputs and analysis for transport** (A1):
@@ -109,6 +110,8 @@
 
   - **The density settles within about 100 ps** at 1.185–1.187 g/cm³, 1.6 % below Lehnert's
     1.205. It does not follow the solvation shells, which keep changing for about 2 ns.
+    *(Correction 2026-11-25, SC-6: 1.205, more precisely 1.202, is the nominal density at exactly 1.0 M and no
+    result of Lehnert's model. Against the Landesfeind fit, 1.182, the box is +0.3 to +0.4 %.)*
   - **CPU and GPU agree** over the shared 600 ps (density and solvation trend).
   - **EC is pushed out of the Li⁺ shell.** EC is 34 % of the solvent molecules but gives
     about 10 % of the carbonyl O at the end, still falling. The common picture for

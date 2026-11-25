@@ -21,3 +21,14 @@ pressure; NPT keeps the model self-consistent.
    (strategy M2, LJ refit to ρ and ΔH_vap), production stays NPT with the fixed model, and the NVT
    results are reported as a sensitivity bound. NVT at an imposed density is not adopted, because it
    hides the defect instead of fixing it.
+
+**Amendment 1 (2026-11-25, no run of this trial started; author: "apply the corrections"):**
+
+- "Why it is contested" compares the wrong number. 1.202 g/cm³ is the *nominal* density of the start box, 47 ion
+  pairs at exactly 1.0 M. It is neither measured nor the NPT density of our model, and it was set against 25 °C.
+- The NPT densities of T2 at 20 °C are 1.184 (M0) and 1.195 (M1) g/cm³, +0.2 % and +1.1 % against the Landesfeind fit
+  at 1 M, 20 °C (1.182). **The defect this trial can see is +1.1 % (M1), not 2.2 %.** T3's two states
+  therefore lie closer together, and a difference in D is harder to resolve than the plan assumed.
+- The second reading of the Landesfeind SI is done (SC-8, [reading](../landesfeind-density/README.md)) and
+  agrees. It puts the uncertainty of the reference at about ±0.6 %.
+- The plan and the decision rule are unchanged.

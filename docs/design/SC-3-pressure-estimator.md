@@ -1,6 +1,7 @@
 # SC-3: atomic pressure of flexible molecules at finite timestep (design note, for approval)
 
-- **Status:** draft 2026-11-25. No engine change made. Evidence: `docs/tasks/2026-11-24-sanity-check/README.md`.
+- **Status:** **option B approved by the author 2026-11-25.** No engine change made yet. The session
+  looking for the cause of the water pressure writes no engine code. No new runs before the reboot of that day. Evidence: `docs/tasks/2026-11-24-sanity-check/README.md`.
 
 ## The effect
 
@@ -44,4 +45,15 @@ CPU cost: about 2.7 ns/day for 1536 atoms on 8 threads; runs wait until Psi4 (`t
 
 ## Questions for the author
 
-1. A, B or C?  2. May test 2 run on the CPU (about 2 days for 3 × 1 ns)?
+1. A, B or C? → **B** (author, 2026-11-25).
+2. May test 2 run on the CPU (about 2 days for 3 × 1 ns)? → not before the reboot of 2026-11-25; asked again after it.
+
+## Limits of option B (2026-11-25, from the session working on the water pressure; its numbers are preliminary)
+
+- B removes the on-step bias of the **estimator**. It does not touch a liquid that is too warm at 1 fs (configurational
+  temperatures above the displayed one: water about +6 to +8 K, M1 electrolyte about +3.6 K). So B must not be reported
+  as removing the whole excess pressure; SC-1 tests the other part.
+- Its direct atomic − molecular difference on stored GPU frames is −15 ± 53 bar (ρ = 1.000): not contradicting
+  −129 ± 9, too noisy to confirm it.
+- Wu 2006 ran leapfrog at 1 fs with a Melchionna barostat. If that used the atomic pressure (inferred, not stated in the
+  paper), B moves our CPU density away from Wu's 1.012 g/cm³. Test 2 has to report this, not judge B by it.

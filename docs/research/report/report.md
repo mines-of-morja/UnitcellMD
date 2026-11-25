@@ -22,6 +22,10 @@ cited. Not peer reviewed.*
 - **The open force field (LigParGen OPLS-AA for the solvents) fails in a characteristic way:**
   - pure EMC is 2.9 % too dense and EC 3.5 % too light; DMC, PC and MP lie within 2 %;
   - the 1 M EC:EMC electrolyte comes out 1.4 % lighter than with Lehnert's model;
+  - *Correction 2026-11-25 (SC-6), the two lines above are superseded:* at the measured temperature EMC is
+    2.8 % and DMC 2.3–2.6 % too dense, EC is 3.4 % too light, and only PC and MP lie within 2 % (§3.2).
+    The 1.4 % refers to a nominal density, not to a result of Lehnert's model. Against experiment
+    (Landesfeind fit, 1.182 g/cm³ at 1 M, 20 °C) the electrolyte is +0.3 % (1.185), within the ±0.6 % of the reference;
   - the Li⁺ first shell excludes EC almost completely. We trace this to an asymmetry of the
     fitted carbonyl charges.
 - **Consequence:** the model cannot yet be used to explain Li⁺ transport. The report states what
@@ -143,6 +147,21 @@ Deviations are from Lehnert SI Table S2.
   - DMC (+1.7 %), PC (−0.6 %) and MP (+1.1 %) pass the ±2 % criterion;
   - **EMC (+2.9 %) and EC (−3.5 %) fail it.**
 
+**Correction 2026-11-25 (SC-6).** Table S2 mixes temperatures: DMC and PC are 20 °C values, EMC is 25 °C,
+EC 39 °C, MP nearer 20 °C. Against densities measured at the temperature of the run
+([solvent-densities](../solvent-densities/README.md); NIST ThermoML, papers not read):
+
+| solvent | 25 °C: measured, deviation | 40 °C: measured, deviation |
+|---|---|---|
+| EC | supercooled, none | 1.3204, **−3.4 %** |
+| PC | 1.1993, −0.2 % | 1.1831, −0.2 % |
+| DMC | 1.0633, **+2.3 %** | 1.0433, **+2.6 %** |
+| EMC | 1.0069, **+2.8 %** | not found |
+| MP | 0.9103, +1.6 % | 0.8910, +1.6 % |
+
+- **DMC fails the ±2 % criterion too.** PC and MP pass, EMC and EC fail as before.
+- The verdicts above, the pattern below and Figure 2 use Table S2 and keep their old values.
+
 **Pattern.**
 - The linear carbonates are too dense: EMC +2.9 %, DMC +1.7 %.
 - The cyclic ones are too light: EC −3.5 %, PC −0.6 %.
@@ -199,6 +218,11 @@ There is no cited experimental α yet, so these values are recorded, not judged 
   1.5–3 ns);
 - that is **1.4 % below Lehnert's model**;
 - the two backends agree.
+
+*Correction 2026-11-25 (SC-6):* the 1.202 g/cm³ behind the 1.4 % is nominal: 47 ion pairs at exactly 1.0 M.
+Lehnert's SI does not report a density, and one ion pair of 47 is 2 % in c, so the number carries ±1–2 % of its own.
+"Lehnert's density" here and in Figures 1 and 3 means this nominal value. Against experiment (Landesfeind fit, 1.182 g/cm³ at
+1 M, 20 °C, ±0.6 %) the GPU value is +0.3 %.
 
 The electrolyte error is small because the solvent errors of §3.2 partly cancel; it is not
 evidence that the model is right.
@@ -388,9 +412,11 @@ Calculation A4 (Li⁺ in pure EC and pure EMC) will test this directly.
 - the physical origin of the large initial pressures (a minimization and equipartition artefact,
   not a property of the force field);
 - the electrolyte density, within 1.4 % of Lehnert's model, but for partly cancelling reasons.
+  *(Correction 2026-11-25: +0.3 % against the Landesfeind fit; the 1.4 % refers to a nominal density, §3.3.)*
 
 **Not reproduced, with a probable cause:**
 - pure-solvent densities to 2 % for EMC (+2.9 %) and EC (−3.5 % at 40 °C); DMC, PC and MP pass.
+  *(Correction 2026-11-25: DMC fails as well, +2.3 % at 25 °C and +2.6 % at 40 °C; EMC +2.8 %, EC −3.4 %, §3.2.)*
   A published OPLS-AA set reproduces EC, so the parameters are at fault, not the functional form;
 - the Li⁺ shell composition (EC excluded), plausibly from the carbonyl charge asymmetry;
 - κ at 1 M, 20 °C: 0.42 S/m against 0.84 S/m (Landesfeind 2019). Even the uncorrelated
