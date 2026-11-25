@@ -1,7 +1,7 @@
 """Run and index a simulation study: many systems × many conditions (ADR 0011).
 
     python3 tools/study/ucmd_study.py plan   STUDY_DIR      # the runs, their order, the cost
-    python3 tools/study/ucmd_study.py run    STUDY_DIR [--ucmd PATH] [--max-runs N] [--nice N]
+    python3 tools/study/ucmd_study.py run    STUDY_DIR [--ucmd PATH] [--max-runs N] [--only ID...] [--nice N]
                                              [--stall-minutes M] [--retry-failed]
     python3 tools/study/ucmd_study.py status STUDY_DIR      # rebuild INDEX.md, views/, CATALOG.md
     python3 tools/study/ucmd_study.py stop   STUDY_DIR      # graceful: the engine checkpoints
@@ -533,7 +533,7 @@ class Driver:
         write_json(status_path, status)
         return status["state"]
 
-    def run(self, max_runs: int | None, retry_failed: bool) -> int:
+    def run(self, max_runs: int | None, retry_failed: bool, only: list[str] | None = None) -> int:
         lock = self.study.dir / "driver.pid"
         if lock.exists():
             pid = int(lock.read_text().strip() or 0)
@@ -549,6 +549,8 @@ class Driver:
         done_now = 0
         try:
             for task in self.study.tasks:
+                if only is not None and task.id not in only:
+                    continue
                 if self.stop_requested or (max_runs is not None and done_now >= max_runs):
                     break
                 state = read_json(run_dir(self.study, task) / "status.json").get("state")
@@ -839,6 +841,12 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="run failed runs again (from their checkpoint, if they have one)",
     )
+    ap.add_argument(
+        "--only",
+        nargs="+",
+        metavar="ID",
+        help="run only these runs (ids as in the plan, e.g. base_s1/T20C); others are left alone",
+    )
     ap.add_argument("--nice", type=int, default=10, help="niceness of builder and engine")
     ap.add_argument(
         "--stall-minutes",
@@ -856,9 +864,13 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "stop":
         return cmd_stop(study)
+    if args.only:
+        unknown = sorted(set(args.only) - {t.id for t in study.tasks})
+        if unknown:
+            raise SystemExit(f"not in the plan of {study.dir.name}: {', '.join(unknown)}")
     engine, builder = find_executables(args.ucmd)
     driver = Driver(study, engine, builder, args.nice, args.stall_minutes)
-    return driver.run(args.max_runs, args.retry_failed)
+    return driver.run(args.max_runs, args.retry_failed, args.only)
 
 
 if __name__ == "__main__":
