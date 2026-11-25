@@ -45,7 +45,9 @@ denser and D lower at 0.5 fs).
 excess if it follows Δt²: 1 M 3.4 → 0.9 K; water 6.5 → 1.6 → 0.4 K. The earlier 0.5 fs water value was +2.9 ± 0.8 K.
 
 **Already seen:** the 1 M 1 fs densities, 1.1949, 1.1937, 1.1943 g/cm³ (SD 0.0006, so 2 SE is about 0.08 % for a difference; a
-0.2 % change is resolved, a 0.1 % one is not). The EMC and 0.5 fs numbers and the water 1 fs numbers have not been seen.
+0.2 % change is resolved, a 0.1 % one is not). Older runs with other protocols or bridges are
+known too: EMC at 1 fs, 25 °C, 1.0347 g/cm³ (500 ps, one run); water at 0.5 fs, GPU 1.0103(12) and CPU 1.0064(13) g/cm³, both
+short. No run of this study, and no run of `2026-11-25_water-npt-gpu`, has been looked at.
 
 ## Running it
 
