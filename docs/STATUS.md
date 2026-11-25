@@ -213,6 +213,11 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — SC-1 planned and queued (unitcellmd-c8) — `studies/2026-11-25_timestep-1M-0p5fs` (README with the criterion, analysis and
+its tests committed before any run) and its EMC and water arms: 1 fs against 0.5 fs, three seeds, plus one 0.25 fs water run;
+five queue jobs, about 14 h of GPU after SC-3's GPU arm. 1 fs references: `base_s1..3` of the scan and SC-3's arm G. No result yet. —
+evidence: study README; 10 tests; `analyze.py` gives the known 1 M densities — next: when the jobs are done, `analyze.py`.
+
 2026-11-25 — sensitivity scan complete (15 of 15), summary of 25 November rebuilt — `docs/research/summary_261125/` (build.py, template,
 `data/scan.json` final; `out1/` not in git, PDF not sent, decision 12). **Reading rule:** `zeta` (exponent −3.6 ± 0.5) and `epsEMC` (−4.0 ± 0.6) move
 κ_NE; `sigmaLi` is not resolved (−0.09 ± 0.14 in ln κ_NE over the range), so by the rule **T6 becomes a side result** and the ωB97M-V energies stay off;
