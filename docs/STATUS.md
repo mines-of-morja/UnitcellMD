@@ -229,6 +229,13 @@ Step 4 (side by side) not approved.
 the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
 base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.
 
+2026-11-25 — SC-3 question 3a built, density test planned, SC-4 confirmed — spec 0.1.3 (opt-in column
+`pressure_molecular_bar`, not tagged) and engine `f291a40` on `sc3-molecular-pressure` (not pushed): ucmd-md 40 passed, 1 ignored;
+bridge 37 passed on CPU platforms; validator 66; the two `ucmd-io` contract tests still fail as on the base branch. SC-3 test 2:
+`studies/2026-11-25_water-npt-cpu-molecular` (criteria and analysis committed first), **nothing started**. Author: 3a; SC-4
+grid and 1.5 % (10 °C for 0 °C); density test right after the reboot that follows the GPU scan — next: after the reboot
+`run_cpu.sh` and, with the GPU free, `run_gpu.sh`.
+
 2026-11-25 — SC-3 option B, barostat half — ucmd-engine branch `sc3-molecular-pressure` (from `e25-constraints`, not pushed): C-rescale
 scales atoms connected by bonds or constraints by their centre of mass, with the molecular pressure and virial. Free stiff
 dimers: atomic − molecular −2.12 bar (1 fs) and −10.01 bar (2 fs) against −2.09 and −10.00 predicted. The pressure **column** stays
