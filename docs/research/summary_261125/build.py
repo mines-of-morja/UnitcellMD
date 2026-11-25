@@ -84,7 +84,7 @@ v["prelim"] = f"<b>Preliminary: {len(missing)} of the {len(runs) + len(missing)}
 v["prelim_word"] = "Preliminary" if missing else "Final"
 v["rule_line"] = (
     "The reading rule is applied when all runs are in; the column shows what it gives now."
-    if missing else "All runs are in; the rule fixed before the runs gives:"
+    if missing else "All runs are in; the last column is the verdict."
 )
 v["noise_k"] = f"{100 * d['noise_sd_ln']['kappa_NE']:.0f}"
 v["k_base"] = f(k0)

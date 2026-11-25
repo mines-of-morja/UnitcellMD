@@ -52,8 +52,8 @@ result is exploration, not a production set. Updates the summary of 23 November.
     Gasteiger [1]. No parameter is fitted to transport data. No predictive model exists yet, so the κ criteria have not been applied.</li>
   <li><b>Which parameters slow the ions?</b> ${prelim_word} scan at 1 M, 20 °C (section 1): the ion charge scale ζ and the EMC attraction ε change
     the Nernst–Einstein κ (κ<sub>NE</sub>) far more than the size of Li⁺, whose effect is not resolved. This is a map, not a fit.</li>
-  <li><b>The Li⁺ clusters converged</b> (trial T6, section 2). The energies that would turn them into a correction are on hold: by the rule
-    fixed beforehand, they run only if the Li⁺ size moves transport. The author decides.</li>
+  <li><b>The Li⁺ clusters converged</b> (trial T6, section 2). The energies that would turn them into a correction are on hold. By the rule
+    fixed beforehand, they run only if the Li⁺ size moves transport; it does not, by that rule. The author decides.</li>
   <li><b>The water pressure puzzle has a cause:</b> the 1 fs step with flexible bonds (section 3). The liquid is warmer than displayed, by
     ${q_t_el} K in the electrolyte.</li>
   <li><b>Densities were re-checked</b> (section 4). DMC fails ±2 %, which the 23 November summary had counted as passing.</li>
@@ -62,7 +62,7 @@ result is exploration, not a production set. Updates the summary of 23 November.
 
 <h2>1. Sensitivity scan at 1 M, 20 °C</h2>
 <p>Model M1 (47 LiPF₆, 168 EC, 332 EMC, ζ = 0.75), NPT, 5 ns per run, first 1.5 ns skipped. Three knobs are varied, with four
-probes each, and three baselines are run. ${prelim} Plan, probes and reading rule were committed before any run. ${n_runs_word} of ${n_total} runs are included here.</p>
+probes each, and three baselines are run. ${prelim} Plan, probes and reading rule were committed before any run. All ${n_total} runs are included.</p>
 <figure>
 ${fig_scan}
 <figcaption><b>Fig. 1.</b> κ<sub>NE</sub> against each parameter (logarithmic scale). Blue: probes of this scan, one run each.
@@ -85,7 +85,7 @@ Run-to-run noise of κ<sub>NE</sub>: ${noise_k} % per run (SD, pooled from the b
     ${sig_ec_lo} to ${sig_ec_hi}. More EC in the shell did not visibly speed up or slow down the ions in this range.</li>
   <li><b>ε(EMC) also moves the density,</b> down to ${emc_dens_lo} g/cm³ at the lowest probe, against ${q_m1_rho} for M1 and ${rho_lf} in the fit of [1].
     The direction agrees with EMC being too dense on its own (section 4).</li>
-  <li><b>Noise is larger than expected.</b> The baselines of this scan give ${k_base_lo} and ${k_base_hi} S/m, the T2 runs ${t2_lo}–${t2_hi} S/m.
+  <li><b>Noise is larger than expected.</b> The baselines of this scan range from ${k_base_lo} to ${k_base_hi} S/m, the T2 runs from ${t2_lo} to ${t2_hi} S/m.
     One probe alone says little; the trends rest on several probes.</li>
   <li><b>No parameter is chosen here.</b> Transport is never used to choose one (trials rule 2).</li>
 </ul>
@@ -147,12 +147,12 @@ temperatures, so one column cannot be compared with one run temperature.</p>
 <h2>6. Open questions</h2>
 <table class="keep">
   <tr><th style="width:26%">For the author to decide</th><th>What it is about</th></tr>
-  <tr><td>T6 energies</td><td>If σ(Li⁺) stays unresolved, the rule makes T6 a side result and the held energies are not run. The author decides.</td></tr>
+  <tr><td>T6 energies</td><td>σ(Li⁺) does not move transport by the rule (not resolved is not the same as no effect). The rule then makes T6 a side result and the held energies are not run. The author decides.</td></tr>
   <tr><td>EMC refit (SC-7)</td><td>Fit EMC to density and ΔH<sub>vap</sub>, never to transport. No measured ΔH<sub>vap</sub> of EMC was found, and the density against
     temperature is missing.</td></tr>
   <tr><td>Time step (SC-1)</td><td>1 fs against 0.5 fs (three seeds) is planned after the scan. It decides whether RESPA or 0.5 fs is needed.</td></tr>
-  <tr><td>Pressure column (SC-3)</td><td>The engine's pressure column stays atomic; a second, molecular column is proposed (a spec addition).</td></tr>
-  <tr><td>Density grid (SC-4)</td><td>Grid accepted; the ${q_grid} criterion is provisional.</td></tr>
+  <tr><td>Decided today (no longer open)</td><td>SC-3: a second, molecular pressure column (spec 0.1.3, not tagged). SC-4: grid and the ${q_grid} limit confirmed, 10 °C in place of 0 °C.
+    The density test of SC-3 runs after the reboot; its criteria are committed.</td></tr>
   <tr><td>Engine CI and merges</td><td>CI is red on two branches: the pinned umbrella commit (UMBRELLA_REF) is old, and one spec 0.1.1 test fails. Open: spec 0.1.1/0.1.2 tags, merge order,
     the Kob–Andersen test fixture (a published parameter set used without pre-approval).</td></tr>
   <tr><td>GUI and gates</td><td>Hands-on test of the new result view (B2c), then gates B2a and B1a; the open questions of the queue design.</td></tr>
@@ -180,8 +180,8 @@ temperatures, so one column cannot be compared with one run temperature.</p>
 
 <h2>8. Next</h2>
 <ul>
-  <li><b>Finish the scan</b>, then apply the rule and decide on T6.</li>
-  <li><b>Then SC-1</b> (time step) and SC-4 (density over concentration and temperature), before any transport run.</li>
+  <li><b>The author decides on T6</b> (section 6), now that the scan is complete.</li>
+  <li><b>After the reboot:</b> the SC-3 density test, then SC-1 (time step) and SC-4 (density over concentration and temperature), before any transport run.</li>
   <li><b>Publication:</b> software paper for J. Chem. Inf. Model., not before May 2027. The PDF for the JMU contacts is held until the model meets the criteria.</li>
 </ul>
 

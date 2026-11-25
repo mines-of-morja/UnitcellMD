@@ -41,3 +41,26 @@ The 1 M box of trial T2 (47 LiPF₆, 168 EC, 332 EMC, 7036 atoms), M1, 20 °C, N
 - **Already seen:** T2 results (κ_NE 0.447, 0.499, 0.543 S/m for the M1 seeds), κ_exp 0.84 S/m.
 
 `analyze.py` computes it.
+
+## Result (2026-11-25, all 15 runs; `analyze.py`, output `docs/research/summary_261125/data/scan.json`)
+
+Every run finished at 5 ns, no molecule label corrections. One GPU hang (zeta_0.65, 1.14 ns) and several game pauses
+were continued from checkpoints. Trend of κ_NE (ln κ_NE = a + b ln x), over the scanned range:
+
+| Knob | exponent b | change of ln κ_NE | verdict by the reading rule |
+|---|---|---|---|
+| `zeta` | −3.6 ± 0.5 | −0.97 ± 0.14 | **moves** transport |
+| `epsEMC` | −4.0 ± 0.6 | −0.84 ± 0.13 | **moves** transport |
+| `sigmaLi` | −0.4 ± 0.7 | −0.09 ± 0.14 | **not resolved** |
+
+- **T6:** `sigmaLi` does not move transport by this rule, so T6 becomes a side result and the ωB97M-V energies stay off.
+  The author decides.
+- **What `sigmaLi` did change:** EC per Li⁺ within 0.28 nm, 0.57 (×0.90) to 1.16 (×1.10). A change of κ_NE of
+  −0.36 to +0.18 in ln over the range cannot be excluded (2 SE). ×0.90–1.10 moves the Li–O σ by about ±5 % only
+  (geometric rule), so a larger step could differ.
+- **`epsEMC`** changes D(Li⁺) and D(EMC) by about the same exponent (−3.9 ± 0.6 and −4.2 ± 0.5) and moves the density
+  (1.171 to 1.201 g/cm³). Consistent with a viscosity change, not a proof of it: the scan measured no viscosity (T4).
+- **Noise:** pooled SD of ln κ_NE 0.107, i.e. 11 % per run. The three baselines gave 0.476, 0.628 and 0.522 S/m.
+- **Not decided here:** any parameter value (a map, not a fit). Full κ and t₊ were not analysed.
+- **Not in the runs:** the liquid is about 3.4 K warmer than displayed (1 fs step; `docs/research/water-pressure`).
+

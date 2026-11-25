@@ -36,6 +36,24 @@
    "r_LiO_EC_nm": 0.2125,
    "r_LiO_EMC_nm": 0.20750000000000002
   },
+  "base_s3": {
+   "knob": "base",
+   "x": 1.0,
+   "D_Li": 5.449528843426226e-11,
+   "D_PF6": 8.315989678265853e-11,
+   "D_EC": 1.4138198644786795e-10,
+   "D_EMC": 1.0127060935574314e-10,
+   "kappa_NE": 0.5223844058516557,
+   "density": 1.194376368504,
+   "n_EC_028": 0.908498480243161,
+   "n_EMC_028": 3.383841945288754,
+   "n_PF6_028": 0.0005592705167173252,
+   "n_EC_0516": 1.3296656534954407,
+   "n_EMC_0516": 3.675404255319149,
+   "n_PF6_0516": 0.21012765957446808,
+   "r_LiO_EC_nm": 0.2125,
+   "r_LiO_EMC_nm": 0.20750000000000002
+  },
   "epsEMC_x0.85": {
    "knob": "epsEMC",
    "x": 0.85,
@@ -69,6 +87,24 @@
    "n_EC_0516": 1.343854103343465,
    "n_EMC_0516": 3.5853617021276594,
    "n_PF6_0516": 0.2228936170212766,
+   "r_LiO_EC_nm": 0.2125,
+   "r_LiO_EMC_nm": 0.20750000000000002
+  },
+  "epsEMC_x0.95": {
+   "knob": "epsEMC",
+   "x": 0.95,
+   "D_Li": 6.977780836302612e-11,
+   "D_PF6": 9.577830162474943e-11,
+   "D_EC": 1.7328902068733503e-10,
+   "D_EMC": 1.167107885577631e-10,
+   "kappa_NE": 0.6240326870967812,
+   "density": 1.186329801373056,
+   "n_EC_028": 0.9902370820668693,
+   "n_EMC_028": 3.2943465045592704,
+   "n_PF6_028": 0.0003282674772036474,
+   "n_EC_0516": 1.418468085106383,
+   "n_EMC_0516": 3.5743465045592706,
+   "n_PF6_0516": 0.21133130699088146,
    "r_LiO_EC_nm": 0.2125,
    "r_LiO_EMC_nm": 0.20750000000000002
   },
@@ -235,10 +271,7 @@
    "r_LiO_EMC_nm": 0.20750000000000002
   }
  },
- "not_finished": [
-  "base_s3",
-  "epsEMC_x0.95"
- ],
+ "not_finished": [],
  "t2_m1": {
   "t2_m1_s1": {
    "D_Li": 4.9592527854680243e-11,
@@ -290,143 +323,143 @@
   }
  },
  "noise_sd_ln": {
-  "kappa_NE": 0.1219714233450382,
-  "D_Li": 0.10808599484104849,
-  "D_PF6": 0.13639342774249305,
-  "D_EC": 0.07396015628835113,
-  "D_EMC": 0.09094835620914044,
-  "density": 0.0006337937638371237
+  "kappa_NE": 0.10727845740164348,
+  "D_Li": 0.10098489772809241,
+  "D_PF6": 0.11825157628698409,
+  "D_EC": 0.06409737514436806,
+  "D_EMC": 0.07995057650376752,
+  "density": 0.0005492985606256353
  },
  "trends": {
   "zeta": {
    "kappa_NE": {
-    "exponent": -3.5985205532349394,
-    "exponent_se": 0.5750725257750354,
-    "ln_change_over_range": -0.9653534694536957,
-    "ln_change_se": 0.15427124834548248,
+    "exponent": -3.599380409008755,
+    "exponent_se": 0.5057308292314516,
+    "ln_change_over_range": -0.965584137791476,
+    "ln_change_se": 0.1356693683934622,
     "matters": true
    },
    "D_Li": {
-    "exponent": -4.2179150356251025,
-    "exponent_se": 0.5096053186025049,
-    "ln_change_over_range": -1.1315147025744288,
-    "ln_change_se": 0.13670875435815966,
+    "exponent": -4.221572623599672,
+    "exponent_se": 0.47606180499663964,
+    "ln_change_over_range": -1.1324959017058074,
+    "ln_change_se": 0.12771023767385736,
     "matters": true
    },
    "D_PF6": {
-    "exponent": -3.2569782126991327,
-    "exponent_se": 0.643069588268284,
-    "ln_change_over_range": -0.8737299595906828,
-    "ln_change_se": 0.17251241140664889,
+    "exponent": -3.255794935502222,
+    "exponent_se": 0.5574601759013227,
+    "ln_change_over_range": -0.8734125289325929,
+    "ln_change_se": 0.14954648915506,
     "matters": true
    },
    "D_EC": {
-    "exponent": -2.4788756883652083,
-    "exponent_se": 0.3487083508334633,
-    "ln_change_over_range": -0.6649930744334807,
-    "ln_change_se": 0.09354589235344093,
+    "exponent": -2.477513498320244,
+    "exponent_se": 0.3021670843192427,
+    "ln_change_over_range": -0.664627647901519,
+    "ln_change_se": 0.08106054665717066,
     "matters": true
    },
    "D_EMC": {
-    "exponent": -2.688841810183437,
-    "exponent_se": 0.4288045468841014,
-    "ln_change_over_range": -0.7213194233222627,
-    "ln_change_se": 0.11503281721705412,
+    "exponent": -2.685641253361981,
+    "exponent_se": 0.37690205780460384,
+    "ln_change_over_range": -0.7204608291900163,
+    "ln_change_se": 0.10110924858240129,
     "matters": true
    },
    "density": {
-    "exponent": 0.05708103597503613,
-    "exponent_se": 0.002988219458251554,
-    "ln_change_over_range": 0.0153127862696175,
-    "ln_change_se": 0.0008016316646903549,
+    "exponent": 0.05705787081025249,
+    "exponent_se": 0.0025894967478959064,
+    "ln_change_over_range": 0.015306571890162518,
+    "ln_change_se": 0.0006946687208645131,
     "matters": false
    }
   },
   "sigmaLi": {
    "kappa_NE": {
-    "exponent": -0.4451075566895753,
-    "exponent_se": 0.7688041927364094,
-    "ln_change_over_range": -0.08932004295635597,
-    "ln_change_se": 0.15427647203063302,
+    "exponent": -0.4455658785966257,
+    "exponent_se": 0.6761418278525451,
+    "ln_change_over_range": -0.08941201473218932,
+    "ln_change_se": 0.13568185082622033,
     "matters": false
    },
    "D_Li": {
-    "exponent": 0.1670315412481806,
-    "exponent_se": 0.6812822522765484,
-    "ln_change_over_range": 0.0335183355463874,
-    "ln_change_se": 0.1367133833703557,
+    "exponent": 0.1655811484993298,
+    "exponent_se": 0.636475532825183,
+    "ln_change_over_range": 0.03322728422478225,
+    "ln_change_se": 0.12772198781667274,
     "matters": false
    },
    "D_PF6": {
-    "exponent": -0.8246725116685402,
-    "exponent_se": 0.8597082516081408,
-    "ln_change_over_range": -0.16548760644504498,
-    "ln_change_se": 0.17251825274475568,
+    "exponent": -0.8243928765402349,
+    "exponent_se": 0.7453018888757922,
+    "ln_change_over_range": -0.16543149186937228,
+    "ln_change_se": 0.14956024836996015,
     "matters": false
    },
    "D_EC": {
-    "exponent": -0.9362576253000651,
-    "exponent_se": 0.4661819686163199,
-    "ln_change_over_range": -0.18787946880070625,
-    "ln_change_se": 0.09354905985415167,
+    "exponent": -0.9344595001697042,
+    "exponent_se": 0.40398526824826775,
+    "ln_change_over_range": -0.18751863778026875,
+    "ln_change_se": 0.08106800473584361,
     "matters": false
    },
    "D_EMC": {
-    "exponent": -0.3243076646742273,
-    "exponent_se": 0.5732611431308351,
-    "ln_change_over_range": -0.06507904461388332,
-    "ln_change_se": 0.11503671227349249,
+    "exponent": -0.32222930147190093,
+    "exponent_se": 0.5039029292967253,
+    "ln_change_over_range": -0.06466197802464954,
+    "ln_change_se": 0.10111855126738908,
     "matters": false
    },
    "density": {
-    "exponent": -0.010285654932093284,
-    "exponent_se": 0.0039948972440026235,
-    "ln_change_over_range": -0.0020640295285068652,
-    "ln_change_se": 0.0008016588082538377,
+    "exponent": -0.010278565141499909,
+    "exponent_se": 0.0034620532566727535,
+    "ln_change_over_range": -0.0020626068152978113,
+    "ln_change_se": 0.0006947326347435269,
     "matters": false
    }
   },
   "epsEMC": {
    "kappa_NE": {
-    "exponent": -3.965353623575887,
-    "exponent_se": 0.7007803965737566,
-    "ln_change_over_range": -0.8379152802677957,
-    "ln_change_se": 0.1480812704597464,
+    "exponent": -3.964448816622783,
+    "exponent_se": 0.5989481474210269,
+    "ln_change_over_range": -0.8377240863305916,
+    "ln_change_se": 0.12656319018518986,
     "matters": true
    },
    "D_Li": {
-    "exponent": -3.8554645538929275,
-    "exponent_se": 0.6210023975411799,
-    "ln_change_over_range": -0.814694720549157,
-    "ln_change_se": 0.1312234537895893,
+    "exponent": -3.9142688820430016,
+    "exponent_se": 0.5638104692845463,
+    "ln_change_over_range": -0.8271206098342582,
+    "ln_change_se": 0.11913827926460012,
     "matters": true
    },
    "D_PF6": {
-    "exponent": -4.247622569550871,
-    "exponent_se": 0.7836412641758892,
-    "ln_change_over_range": -0.8975612754121675,
-    "ln_change_se": 0.16559052529323146,
+    "exponent": -4.205990266826344,
+    "exponent_se": 0.6602123507568287,
+    "ln_change_over_range": -0.8887639912561689,
+    "ln_change_se": 0.13950887346632163,
     "matters": true
    },
    "D_EC": {
-    "exponent": -3.808457994771364,
-    "exponent_se": 0.4249341873119673,
-    "ln_change_over_range": -0.8047618071447655,
-    "ln_change_se": 0.08979245798910297,
+    "exponent": -3.8093125437669517,
+    "exponent_se": 0.35786312580480567,
+    "ln_change_over_range": -0.8049423811185173,
+    "ln_change_se": 0.07561973277072716,
     "matters": true
    },
    "D_EMC": {
-    "exponent": -4.247171819273544,
-    "exponent_se": 0.5225389962997874,
-    "ln_change_over_range": -0.8974660277795952,
-    "ln_change_se": 0.1104172417138801,
+    "exponent": -4.18058039777764,
+    "exponent_se": 0.44637339911490037,
+    "ln_change_over_range": -0.8833946548572849,
+    "ln_change_se": 0.09432275840412005,
     "matters": true
    },
    "density": {
-    "exponent": 0.12325436003655474,
-    "exponent_se": 0.0036414287296731903,
-    "ln_change_over_range": 0.026044767109856,
-    "ln_change_se": 0.0007694670045209708,
+    "exponent": 0.1235015191493852,
+    "exponent_se": 0.003066797968915618,
+    "ln_change_over_range": 0.026096994077979795,
+    "ln_change_se": 0.0006480422992719905,
     "matters": false
    }
   }

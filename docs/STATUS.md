@@ -213,10 +213,12 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
-2026-11-25 — results summary of 25 November, preliminary scan — `docs/research/summary_261125/` (build.py, template, quotes pinned to 9ef66f0;
-output `out1/` not in git): sensitivity scan on 13 of 15 runs (`data/scan.json`, preliminary: no verdict yet), T6 geometries, the 1 fs finding,
-densities, open questions, corrections. ζ and ε(EMC) move κ_NE by the reading rule, σ(Li⁺) is not resolved (so far). Noise per run 12 % (not 5.5 %).
-PDF not sent (decision 12). — evidence: every quoted number checked verbatim by the build — next: last two runs, rebuild, then the author decides on T6.
+2026-11-25 — sensitivity scan complete (15 of 15), summary of 25 November rebuilt — `docs/research/summary_261125/` (build.py, template,
+`data/scan.json` final; `out1/` not in git, PDF not sent, decision 12). **Reading rule:** `zeta` (exponent −3.6 ± 0.5) and `epsEMC` (−4.0 ± 0.6) move
+κ_NE; `sigmaLi` is not resolved (−0.09 ± 0.14 in ln κ_NE over the range), so by the rule **T6 becomes a side result** and the ωB97M-V energies stay off;
+**the author decides**. Run-to-run noise 11 % (not 5.5 %). All probe runs done, no label corrections, one GPU hang recovered. Not a fit: no parameter is
+chosen. — evidence: study README, `analyze.py`; every quoted number in the summary checked verbatim by the build — next: author's T6 decision; reboot, then
+the SC-3 density test (queue 11 is done, GPU free).
 
 2026-11-25 — B2c built (author approved steps 1–3 and the trend tables) — ucmd-builder branch `b2c` (from `b2a`, not pushed,
 worktree `ucmd-builder-b2c`): molecule files, ruler, ⟨P⟩ over the rows with a value, NPT cell per frame, notebook with a page per result
