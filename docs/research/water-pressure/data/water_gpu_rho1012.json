@@ -1,0 +1,54 @@
+{
+ "T displayed (on-step, all dof)": [
+  297.7756991949581,
+  0.4524418702107403
+ ],
+ "T configurational, translation of molecules": [
+  303.6033718008143,
+  1.2732467883901253
+ ],
+ "T configurational, rotation of molecules": [
+  303.6539663197316,
+  1.076380342647911
+ ],
+ "T internal motion, half-step (virial theorem)": [
+  297.36214644754506,
+  5.1113966926620185
+ ],
+ "P ideal, molecule centres at T set": [
+  1389.8601504834426,
+  0.0
+ ],
+ "P Coulomb (molecular)": [
+  -41945.116716566576,
+  34.77747512399164
+ ],
+ "P LJ within cutoff (molecular)": [
+  40884.739645006,
+  72.0381605192022
+ ],
+ "P LJ tail": [
+  -285.4022726064589,
+  0.0
+ ],
+ "P molecular, sum (kinetic at T set)": [
+  44.080806316418375,
+  45.00009833920735
+ ],
+ "P molecular, sum (kinetic at T conf trans)": [
+  69.45485229916949,
+  45.00009833920735
+ ],
+ "P atomic, on-step KE (thermo) + atomic virial": [
+  46.152466575512165,
+  65.23287608973371
+ ],
+ "P atomic - P molecular(T set), internal motion": [
+  2.0716602590938193,
+  51.6676927745057
+ ],
+ "P logged by the run, same frames": [
+  67.62473809335634,
+  44.82485965809711
+ ]
+}

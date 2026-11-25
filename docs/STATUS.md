@@ -213,6 +213,16 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — water pressure, cause found (no new runs) — at 1.012 g/cm³ the excess comes from the 1 fs step with flexible
+bonds, in two parts: **(1)** the CPU logs the atomic pressure, about 127 bar below the molecular one of the GPU; by one
+definition both engines agree (CPU about 109, GPU 122.6 ± 11.9 bar at 298.16 K), and the engine's sum is right (0.24 bar,
+frame by frame). **(2)** the thermostat holds the on-step kinetic energy, so the liquid is warmer than displayed: water
++6.5 K (runs 5.0–8.2), electrolyte M1 +3.4 ± 0.5 K (configurational temperatures), worth about 72 bar in water. 49 ± 12 bar remain. Wu's 1.012
+fits the atomic pressure (inference). Open: the 0.5 fs excess (+2.9 ± 0.8 K) is above Δt² (+1.5). T6: what was known when the
+functional rule was read is corrected. ucmd-engine `e25-constraints` and `s012-pair-overrides` pushed; CI red on both, because
+`UMBRELLA_REF` (da27ef7) predates the fixtures (s012) or a spec 0.1.1 test fails (e25, red since 21 November) — evidence:
+`docs/research/water-pressure/` — next: author: fix order (README, recommendation); SC-1 decides on the step; move `UMBRELLA_REF`.
+
 2026-11-25 — SC-6 and SC-8 done; author: SC-3 option B, SC-4 grid — **SC-8:** the second reading of the Landesfeind
 SI agrees with the ledger; Figure S1, digitized, reproduces the fit (1.414, 0.0900, −0.00109, R² 0.9972). The
 reference is good to about ±0.6 %, so it cannot separate M0 (+0.2 %) from M1 (+1.1 %); the plotted points
