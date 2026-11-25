@@ -330,3 +330,71 @@ def test_the_worker_leaves_the_study_lock_to_the_driver(env) -> None:
     job = env["spool"].submit(kind="study", needs="cpu", study="2026-01-01_s")
     make_worker(env).study_command(job)
     assert lock.exists()
+
+
+# A stand-in for the study driver: counts the SIGTERMs it gets (a second one makes the real driver
+# kill the engine without its stop checkpoint) and has a child of its own, like the engine.
+COUNTER = """
+import os, signal, subprocess, sys, time
+from pathlib import Path
+log, name = Path(sys.argv[1]), sys.argv[2]
+got = []
+def on_term(*_):
+    got.append(1)
+    with log.open("a") as fh:
+        fh.write(name + "\\n")
+signal.signal(signal.SIGTERM, on_term)
+child = None
+if name == "driver":
+    child = subprocess.Popen([sys.executable, __file__, str(log), "engine"])
+(log.parent / (name + ".pid")).write_text(str(os.getpid()))
+t0 = time.time()
+while time.time() - t0 < 30 and not got:
+    time.sleep(0.05)
+time.sleep(1.0)  # "writing the stop checkpoint": a second signal would arrive in here
+if child is not None:
+    child.send_signal(signal.SIGKILL)
+    child.wait()
+"""
+
+
+@pytest.mark.parametrize(
+    "script",
+    [
+        # a wrapper that forwards the signal and waits, like SC-3's run_cpu.sh
+        '"$PY" "$C" "$LOG" driver & p=$!; trap \'kill -TERM $p\' TERM; wait $p; wait $p',
+        # a wrapper without a trap: it dies, its driver is left behind
+        '"$PY" "$C" "$LOG" driver; true',
+        # exec: the driver itself is the job
+        'exec "$PY" "$C" "$LOG" driver',
+    ],
+    ids=["forwarding-wrapper", "plain-wrapper", "exec"],
+)
+def test_a_stop_reaches_the_driver_exactly_once_and_never_its_engine(
+    env, monkeypatch, script
+) -> None:
+    import time
+
+    monkeypatch.setattr(qworker, "HEARTBEAT_S", 0.0)
+    counter = env["tmp"] / "counter.py"
+    counter.write_text(COUNTER)
+    log = env["tmp"] / "signals.log"
+    line = f'PY="{sys.executable}"; C="{counter}"; LOG="{log}"; {script}'
+    j = env["spool"].submit(kind="command", needs="cpu", argv=["bash", "-c", line])
+    worker = make_worker(env, allow_command=True)
+
+    def cancel_when_started():
+        for _ in range(200):
+            if (env["tmp"] / "engine.pid").exists() and (env["tmp"] / "driver.pid").exists():
+                time.sleep(0.2)
+                env["spool"].cancel(j["id"])
+                return
+            time.sleep(0.05)
+
+    threading.Thread(target=cancel_when_started, daemon=True).start()
+    worker.step()
+    for name in ("driver", "engine"):
+        pid = int((env["tmp"] / f"{name}.pid").read_text())
+        assert not _alive(pid), f"{name} survived"
+    assert log.read_text().split() == ["driver"]
+    assert env["spool"].get(j["id"])["state"] == "cancelled"

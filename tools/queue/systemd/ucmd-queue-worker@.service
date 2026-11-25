@@ -11,6 +11,8 @@ After=ucmd-queue-server.service
 WorkingDirectory=%h/UnitcellMD
 ExecStart=/usr/bin/python3 tools/queue/ucmd_queue.py work --worker %i
 Restart=on-failure
+# only the worker gets the SIGTERM; it stops its job itself (one signal, never to the engine)
+KillMode=mixed
 TimeoutStopSec=240
 
 [Install]

@@ -77,6 +77,20 @@ def signal_group(pgid: int, sig: int) -> bool:
     return True
 
 
+def group_roots(pgid: int) -> list[int]:
+    """Living members of a process group whose parent is not in the group: the process the job
+    started as, and any it left behind when it died."""
+    members: dict[int, int] = {}  # pid -> parent pid
+    for stat in Path("/proc").glob("[0-9]*/stat"):
+        try:
+            fields = stat.read_text().rsplit(")", 1)[1].split()
+        except OSError:
+            continue
+        if fields[0] != "Z" and int(fields[2]) == pgid:
+            members[int(stat.parent.name)] = int(fields[1])
+    return sorted(pid for pid, parent in members.items() if parent not in members)
+
+
 class Worker:
     def __init__(
         self,
@@ -96,6 +110,7 @@ class Worker:
         self.name = cfg["name"]
         self.stop_requested = False
         self.stopping = False
+        self.signalled: set[int] = set()
         self.child: subprocess.Popen | None = None
         self.study_in_progress: Path | None = None
 
@@ -115,8 +130,8 @@ class Worker:
         self.stop_child()
 
     def stop_child(self) -> None:
-        """Graceful: a study driver checkpoints the engine; a command and everything it started
-        (its process group) get SIGTERM."""
+        """Graceful: a study driver checkpoints the engine; a command gets one SIGTERM and passes
+        it on itself (see signal_orphans for what it leaves behind)."""
         if self.child is None or self.child.poll() is not None:
             return
         self.stopping = True
@@ -127,7 +142,8 @@ class Worker:
                 check=False, capture_output=True,
             )  # fmt: skip
         else:
-            signal_group(self.child.pid, signal.SIGTERM)
+            self.signalled = set()
+            self.signal_orphans()
 
     def serve(self, once: bool = False) -> None:
         signal.signal(signal.SIGTERM, self.request_stop)
@@ -218,10 +234,25 @@ class Worker:
         self.child, self.study_in_progress = None, None
         self.report(job, code, cancelled, released)
 
+    def signal_orphans(self) -> None:
+        """SIGTERM, once each, to the roots of the job's process group. Never the whole group: a
+        study driver takes a second SIGTERM as "kill the engine now" (no stop checkpoint), and an
+        engine must only hear from its driver."""
+        for pid in group_roots(self.child.pid):
+            if pid not in self.signalled:
+                self.signalled.add(pid)
+                try:
+                    os.kill(pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
+
     def wait_child(self) -> None:
         """Wait for the job to end; after a stop, for everything in its process group."""
         deadline = time.time() + STOP_WAIT_S
         while self.child.poll() is None or (self.stopping and signal_group(self.child.pid, 0)):
+            if self.stopping and self.study_in_progress is None:
+                self.child.poll()  # reap, so that what it left behind shows up as orphaned
+                self.signal_orphans()
             if time.time() > deadline:
                 self.log(f"worker {self.name}: the job does not stop; killing it")
                 signal_group(self.child.pid, signal.SIGKILL)
