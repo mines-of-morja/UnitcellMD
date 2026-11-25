@@ -236,6 +236,10 @@ Step 4 (side by side) not approved.
 the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
 base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.
 
+2026-11-25 — SC-3 density test running (after the reboot, author) — queue jobs `…baf5` (CPU arms B and A, 6 × 1 ns,
+2.85 ns/day on 8 threads, about 2 days) and `…ed84` (GPU arm, conformance 8.5·10⁻⁸ / 8.0·10⁻⁸); the run scripts pass the
+queue's SIGTERM on (`9ed60f9`). Nothing is read before all nine runs are done — next: `analyze.py`.
+
 2026-11-25 — SC-3 question 3a built, density test planned, SC-4 confirmed — spec 0.1.3 (opt-in column
 `pressure_molecular_bar`, not tagged) and engine `f291a40` on `sc3-molecular-pressure` (not pushed): ucmd-md 40 passed, 1 ignored;
 bridge 37 passed on CPU platforms; validator 66; the two `ucmd-io` contract tests still fail as on the base branch. SC-3 test 2:
