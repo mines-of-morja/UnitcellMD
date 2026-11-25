@@ -251,8 +251,13 @@ Output in `T6/t6_functional_choice.json`; DFT rows in `tools/qm/results/t6_dimer
 - ωB97X-D ranks first on the largest error, but misses the EC − EMC condition by 0.046 kcal/mol.
 - **The rule's reading:** the condition decides which functionals can be chosen, and the ranking
   picks among them. This is how the selection script implements Amendment 1 together with the
-  plan's "if none reproduces …". That reading was fixed before the results; it is stated here
-  because the best-ranked functional is not the one chosen.
+  plan's "if none reproduces …". It is stated here because the best-ranked functional is not the
+  one chosen.
+- **What was known when the reading was fixed** (corrected 2026-11-25; until then this section said
+  "that reading was fixed before the results"): the script was committed at 23:17Z (80d8542),
+  before the M06-2X and the ωB97M-V//ωB97X-D results were read. The ωB97X-D values of EC and EMC
+  had been seen before (Amendment 3, 22:31Z). They give EC − EMC = −5.19 kcal/mol, so the miss of
+  ωB97X-D by 0.046 kcal/mol was already known. The choice itself is unchanged.
 - **Pattern:** all three bind more strongly than MP2 (every error is negative). ωB97M-V and
   M06-2X do so by 2–4.4 kcal/mol, nearly uniformly across the four solvents. That shift largely
   cancels in the EC − EMC difference, which is the quantity the exchange energies of stage 2
