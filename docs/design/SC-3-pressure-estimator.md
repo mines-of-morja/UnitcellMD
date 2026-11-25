@@ -1,6 +1,7 @@
 # SC-3: atomic pressure of flexible molecules at finite timestep (design note, for approval)
 
-- **Status:** **option B approved by the author 2026-11-25.** No engine change made yet. The session
+- **Status:** **option B approved by the author 2026-11-25.** The barostat half is coded on ucmd-engine
+  branch `sc3-molecular-pressure` (not pushed, not merged); the pressure column waits for question 3. The session
   looking for the cause of the water pressure writes no engine code. No new runs before the reboot of that day. Evidence: `docs/tasks/2026-11-24-sanity-check/README.md`.
 
 ## The effect
@@ -48,12 +49,51 @@ CPU cost: about 2.7 ns/day for 1536 atoms on 8 threads; runs wait until Psi4 (`t
 1. A, B or C? → **B** (author, 2026-11-25).
 2. May test 2 run on the CPU (about 2 days for 3 × 1 ns)? → not before the reboot of 2026-11-25; asked again after it.
 
-## Limits of option B (2026-11-25, from the session working on the water pressure; its numbers are preliminary)
+## Limits of option B (`docs/research/water-pressure/README.md`, 2026-11-25, other session)
 
-- B removes the on-step bias of the **estimator**. It does not touch a liquid that is too warm at 1 fs (configurational
-  temperatures above the displayed one: water about +6 to +8 K, M1 electrolyte about +3.6 K). So B must not be reported
-  as removing the whole excess pressure; SC-1 tests the other part.
-- Its direct atomic − molecular difference on stored GPU frames is −15 ± 53 bar (ρ = 1.000): not contradicting
-  −129 ± 9, too noisy to confirm it.
+- B removes the on-step bias of the **estimator** only. The liquid is also warmer than displayed at 1 fs (configurational
+  temperatures: water +6.5 K, electrolyte M1 +3.4 ± 0.5 K), worth about 72 bar in water; 49 ± 12 bar remain. B must not be
+  reported as removing the whole excess. SC-1 (1 fs against 0.5 fs) tests this part.
+- CPU and GPU agree once both use the molecular definition (about 109 and 122.6 ± 11.9 bar at 1.012 g/cm³).
 - Wu 2006 ran leapfrog at 1 fs with a Melchionna barostat. If that used the atomic pressure (inferred, not stated in the
-  paper), B moves our CPU density away from Wu's 1.012 g/cm³. Test 2 has to report this, not judge B by it.
+  paper), B moves our CPU density away from Wu's 1.012 g/cm³. Test 2 reports this and is not judged by it.
+
+## Implementation (2026-11-25, branch `sc3-molecular-pressure` from `e25-constraints`)
+
+- **Barostat:** every group of atoms connected by bonds or constraints is shifted with its centre of mass, and the
+  barostat's pressure and virial are the molecular ones of that move. Single atoms and atoms that nothing connects are scaled on
+  their own, so systems without bonds (argon, the NaCl and Kob–Andersen fixtures) do not change.
+- **Why groups and not molecule types:** the spec allows a type with several unconnected atoms; the first version moved those
+  as one body and failed the existing ideal-gas test. The test was right and is unchanged.
+- **Tests (written first; two of them failed on the old code):**
+  - barostat virial against −dE/dε of the move: −346.541807 and −346.541807 kJ/mol (old code −19 529);
+  - free stiff dimers, NVE: barostat pressure = Σ M V²/(3V) to 5·10⁻¹⁵ at every step; atomic minus molecular −2.12 bar at
+    1 fs and −10.01 bar at 2 fs against −2.09 and −10.00 from Σ Δt²F²/(4m)/(3V);
+  - NPT of stiff dimers: range of the conserved quantity 0.151 kJ/mol (molecular), 0.159 (atomic): no worse.
+- **Changes** every flexible NPT run on the CPU (not bitwise comparable with older versions). It supersedes "atomic scaling"
+  of E2.7 §2 and extends E2.5 §2 to molecules without constraints.
+- **Not shown:** any effect on the density. That is test 2, which has not run.
+
+## Question 3, new: the pressure column needs a spec decision
+
+Option B as written above includes the pressure column. That column is defined in the tagged spec: P = (Σ m v⊗v + W)/V
+(units.md §4), and `pressure_bar` is the trace / 3 of `pressure_tensor` (run-config.md). It therefore stays atomic for now. Until this is
+decided, a flexible CPU run under NPT at 1 fs will show a mean `pressure_bar` **below its target** by the bias (water about 129 bar,
+electrolyte about 62 bar, the latter an estimate), although the barostat holds the molecular pressure at the target.
+
+| | change | for | against |
+|---|---|---|---|
+| **3a** | add a column `pressure_molecular_bar` (spec addition, like 0.1.1) | nothing changes meaning; Green–Kubo tensor untouched; both visible | two columns |
+| 3b | redefine `pressure_bar` as molecular | one number | changes a tagged definition; no longer the trace of the tensor |
+| 3c | leave it, document it | no spec change | easily misread |
+
+The bridge already writes the **molecular** pressure into `pressure_bar` (documented in `openmm_backend.py`), so the column means
+different things on CPU and GPU today. **Recommendation: 3a.**
+
+## Checks
+
+- Commit on `sc3-molecular-pressure`; fmt, clippy (`-D warnings`), architecture check and `--no-default-features` build pass. Full
+  workspace tests: everything passes except two `ucmd-io` contract tests, which fail in the same way on `e25-constraints` without this change:
+  that branch predates spec 0.1.2 (`pair_overrides`) and reads the workspace's newer fixtures. With the spec commit that CI pins
+  (`da27ef7`) all three contract tests pass.
+- Run `cargo test -p ucmd-md the_barostat_ bonded_groups npt_with` (about 2 minutes) to repeat the numbers above.

@@ -213,6 +213,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — SC-3 option B, barostat half — ucmd-engine branch `sc3-molecular-pressure` (from `e25-constraints`, not pushed): C-rescale
+scales atoms connected by bonds or constraints by their centre of mass, with the molecular pressure and virial. Free stiff
+dimers: atomic − molecular −2.12 bar (1 fs) and −10.01 bar (2 fs) against −2.09 and −10.00 predicted. The pressure **column** stays
+atomic, because `spec/units.md` §4 defines it. No density effect measured, no runs. — evidence:
+`docs/design/SC-3-pressure-estimator.md`; tests of ucmd-md 40 passed, 1 ignored; two `ucmd-io` contract tests fail on this branch and on its
+base alike (spec 0.1.2 fixtures) — next: author: question 3 (3a recommended); tests 1–2 after the reboot.
+
 2026-11-25 — water pressure, cause found (no new runs) — at 1.012 g/cm³ the excess comes from the 1 fs step with flexible
 bonds, in two parts: **(1)** the CPU logs the atomic pressure, about 127 bar below the molecular one of the GPU; by one
 definition both engines agree (CPU about 109, GPU 122.6 ± 11.9 bar at 298.16 K), and the engine's sum is right (0.24 bar,
