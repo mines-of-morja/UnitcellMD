@@ -213,7 +213,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
-2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c-results-view.md` waits for
+2026-11-25 — B2c built (author approved steps 1–3 and the trend tables) — ucmd-builder branch `b2c` (from `b2a`, not pushed,
+worktree `ucmd-builder-b2c`): molecule files, ruler, ⟨P⟩ over the rows with a value, NPT cell per frame, notebook with a page per result
+table; here `tools/study/ucmd_table.py`, the scan's `analyze.py` writes `tables/` (checked on synthetic numbers only, the scan was not read) —
+evidence: `validation/b2c/REPORT.md` there, 229 tests — next: the author's hands-on test (testing.md §9a); open: spec does not say that
+`pressure_bar` may be `nan` in thermo rows; step 4 (side by side) not approved.
+
+2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c.md` waits for
 the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
 base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.
 

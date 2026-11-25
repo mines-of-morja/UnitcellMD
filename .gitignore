@@ -16,6 +16,7 @@ __pycache__/
 /studies/*/systems/
 /studies/*/runs/
 /studies/*/views/
+/studies/*/tables/
 /studies/*/logs/
 /studies/*/INDEX.md
 /studies/*/index.json
