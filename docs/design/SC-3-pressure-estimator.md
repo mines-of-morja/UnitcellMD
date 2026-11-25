@@ -1,7 +1,7 @@
 # SC-3: atomic pressure of flexible molecules at finite timestep (design note, for approval)
 
 - **Status:** **option B approved by the author 2026-11-25.** The barostat half is coded on ucmd-engine
-  branch `sc3-molecular-pressure` (not pushed, not merged); the pressure column waits for question 3. The session
+  branch `sc3-molecular-pressure` (not pushed, not merged); question 3 is decided (3a) and built. The session
   looking for the cause of the water pressure writes no engine code. No new runs before the reboot of that day. Evidence: `docs/tasks/2026-11-24-sanity-check/README.md`.
 
 ## The effect
@@ -47,7 +47,8 @@ CPU cost: about 2.7 ns/day for 1536 atoms on 8 threads; runs wait until Psi4 (`t
 ## Questions for the author
 
 1. A, B or C? → **B** (author, 2026-11-25).
-2. May test 2 run on the CPU (about 2 days for 3 × 1 ns)? → not before the reboot of 2026-11-25; asked again after it.
+2. May test 2 run on the CPU? → **yes, right after the reboot of 2026-11-25** (author, the same day). Plan, criteria and analysis:
+   `studies/2026-11-25_water-npt-cpu-molecular/` (both CPU arms need 6 × 1 ns, about 2.2 days; GPU arm about 1 h).
 
 ## Limits of option B (`docs/research/water-pressure/README.md`, 2026-11-25, other session)
 
@@ -74,7 +75,12 @@ CPU cost: about 2.7 ns/day for 1536 atoms on 8 threads; runs wait until Psi4 (`t
   of E2.7 §2 and extends E2.5 §2 to molecules without constraints.
 - **Not shown:** any effect on the density. That is test 2, which has not run.
 
-## Question 3, new: the pressure column needs a spec decision
+## Question 3: the pressure column needs a spec decision → **3a** (author, 2026-11-25)
+
+**Built the same day:** spec 0.1.3 (`[output.thermo] pressure_molecular`, off by default, defined in units.md §4; not tagged) and
+engine commit `f291a40`. Off by default keeps the thermo tables and restart fingerprints of older runs. CPU tests as
+under "Checks"; bridge 37 passed on CPU platforms. On the GPU bridge both columns hold the same (molecular) value. H5MD
+observables are unchanged. The text below is the question as asked.
 
 Option B as written above includes the pressure column. That column is defined in the tagged spec: P = (Σ m v⊗v + W)/V
 (units.md §4), and `pressure_bar` is the trace / 3 of `pressure_tensor` (run-config.md). It therefore stays atomic for now. Until this is
