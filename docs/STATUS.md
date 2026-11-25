@@ -223,8 +223,8 @@ the SC-3 density test (queue 11 is done, GPU free).
 2026-11-25 — B2c built (author approved steps 1–3 and the trend tables) — ucmd-builder branch `b2c` (from `b2a`, not pushed,
 worktree `ucmd-builder-b2c`): molecule files, ruler, ⟨P⟩ over the rows with a value, NPT cell per frame, notebook with a page per result
 table; here `tools/study/ucmd_table.py`, the scan's `analyze.py` writes `tables/` (checked on synthetic numbers only, the scan was not read) —
-evidence: `validation/b2c/REPORT.md` there, 229 tests — next: the author's hands-on test (testing.md §9a). Pushed on 2026-11-25 (author); CI: GUI job green,
-headless jobs red on Packmol 100.x, as on `b2a` (fix: builder `54b2e29`, pull request 2). `nan` in `pressure_bar` is in spec 0.1.3 (author).
+evidence: `validation/b2c/REPORT.md` there, 229 tests — next: the author's hands-on test (testing.md §9a). Pushed on 2026-11-25 (author) with the Packmol limit
+(`5009206`, a copy of `54b2e29`); CI green (3 jobs). The scan's real tables open in the GUI (18 and 18 rows). `nan` in `pressure_bar` is in spec 0.1.3 (author).
 Step 4 (side by side) not approved.
 
 2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c.md` waits for
