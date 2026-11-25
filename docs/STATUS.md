@@ -213,6 +213,10 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c-results-view.md` waits for
+the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
+base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.
+
 2026-11-25 — SC-3 option B, barostat half — ucmd-engine branch `sc3-molecular-pressure` (from `e25-constraints`, not pushed): C-rescale
 scales atoms connected by bonds or constraints by their centre of mass, with the molecular pressure and virial. Free stiff
 dimers: atomic − molecular −2.12 bar (1 fs) and −10.01 bar (2 fs) against −2.09 and −10.00 predicted. The pressure **column** stays

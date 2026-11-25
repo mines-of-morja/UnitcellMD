@@ -244,6 +244,16 @@ less counterpoise, and the energy weight of the fit.
   four Li–O distances of n = 4 are 1.9391 Å (four equal ones at the start, too); n = 4 converged in 20 steps.
 - **Hold:** the single points have not started.
 
+**Correction and disclosure (2026-11-25, 11:57Z), by the session that wrote Amendment 5:**
+- **n = 3:** 147 optimizer steps, not 64. After step 83 Psi4 found new near-linear angles, caught
+  that itself (`AlgError: Linear bends detected`) and continued from the same geometry with new
+  internal coordinates; the step counter restarted, and 64 is the count after that. Largest atom
+  move around the restart 0.03 Å. The final geometry and the convergence statement are unaffected.
+- **Seen:** until today this session had read no cluster energy. While looking for a geometry block
+  in the output of n = 4, it printed the ωB97X-D/def2-SVP total energies of steps 1–3 of n = 4
+  by accident, after Amendment 5 was written; the author's message gave it the Li–O ranges
+  above. No ΔE_n was formed.
+
 ## Results
 
 ### Stage 1a — functional (2026-11-22, 23:48Z)
