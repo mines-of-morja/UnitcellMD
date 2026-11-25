@@ -84,6 +84,12 @@ def _validate(path: Path, with_system: bool, report: Report) -> None:
                 "the pressure tensor needs a fully periodic system",
                 "/output/thermo/pressure_tensor",
             )
+        if _lookup(doc, ("output", "thermo", "pressure_molecular")) and not all(periodicity):
+            raise Invalid(
+                "E_INCOMPATIBLE",
+                "the molecular pressure needs a fully periodic system",
+                "/output/thermo/pressure_molecular",
+            )
         if "barostat" in doc and not all(periodicity):
             raise Invalid("E_INCOMPATIBLE", "a barostat needs a fully periodic system", "/barostat")
         if doc.get("momentum", {}).get("remove_angular") and any(periodicity):

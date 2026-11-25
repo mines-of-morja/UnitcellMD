@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.3 — 2026-11-25 (approved by the author, SC-3 question 3a; not yet tagged)
+
+Backwards compatible: every older file stays valid and means the same. Readers without 0.1.3 reject
+a run configuration that uses the new key (unknown key, `E_SCHEMA`), so they fail closed.
+
+- units: the molecular pressure is defined (§4). The definition of `pressure_bar` is unchanged.
+- run-config: `[output.thermo] pressure_molecular` (bool, default false) adds the column
+  `pressure_molecular_bar` to the thermo table.
+- fixtures: `runs/argon-pressure-molecular.toml`, `runs/invalid/pressure-molecular-not-bool.toml`.
+
 ## 0.1.2 — 2026-11-22 (decided by the author's delegation, ADR 0015; not yet tagged)
 
 Backwards compatible: every 0.1.0 and 0.1.1 file stays valid and means the same. Readers without

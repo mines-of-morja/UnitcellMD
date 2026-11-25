@@ -137,7 +137,7 @@ Every provider documents its keys, with unit suffixes.
 |---|---|
 | `directory` | relative path, default `"out"` |
 | `[output.trajectory]` | `file`, `every` (steps), `velocities` (bool), `forces` (bool), `precision` (`"float64"` default, or `"float32"`); format in trajectory-h5md.md |
-| `[output.thermo]` | `file`, `every`; tab-separated table: step, time_ps, energies, temperature_K, pressure_bar, volume_nm3, conserved_energy_kjmol. Since 0.1.1: `pressure_tensor` (bool, default false), see below |
+| `[output.thermo]` | `file`, `every`; tab-separated table: step, time_ps, energies, temperature_K, pressure_bar, volume_nm3, conserved_energy_kjmol. Since 0.1.1: `pressure_tensor` (bool, default false); since 0.1.3: `pressure_molecular` (bool, default false), see below |
 | `[output.checkpoint]` | `file`, `every`; see checkpoint.md |
 
 **Pressure tensor in the thermo table (since 0.1.1).** `pressure_tensor = true` adds six
@@ -152,6 +152,12 @@ It is for Green–Kubo viscosity, which needs the off-diagonal components every 
 H5MD observable `pressure_tensor` comes only at the trajectory interval. It needs a periodic
 cell and a virial from every provider. A backend that cannot compute the tensor refuses the run
 (`E_UNSUPPORTED`) instead of writing anything else.
+
+**Molecular pressure in the thermo table (since 0.1.3).** `pressure_molecular = true` adds the
+column `pressure_molecular_bar`, the molecular pressure of units.md §4. It stands after all other
+columns, the tensor included. It needs a periodic cell and a virial from every provider (or
+another way to compute it). A backend that cannot compute it refuses the run (`E_UNSUPPORTED`); a
+backend that computes the pressure only at some rows writes `nan` in the others. `pressure_bar` keeps its meaning.
 
 ## 3. Validation
 

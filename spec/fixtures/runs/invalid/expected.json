@@ -4,5 +4,6 @@
   "langevin-with-vv.toml": "E_INCOMPATIBLE",
   "no-providers.toml": "E_SCHEMA",
   "not-toml.toml": "E_TOML",
+  "pressure-molecular-not-bool.toml": "E_SCHEMA",
   "pressure-tensor-not-bool.toml": "E_SCHEMA"
 }
