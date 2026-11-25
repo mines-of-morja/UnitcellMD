@@ -213,6 +213,11 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-25 — results summary of 25 November, preliminary scan — `docs/research/summary_261125/` (build.py, template, quotes pinned to 9ef66f0;
+output `out1/` not in git): sensitivity scan on 13 of 15 runs (`data/scan.json`, preliminary: no verdict yet), T6 geometries, the 1 fs finding,
+densities, open questions, corrections. ζ and ε(EMC) move κ_NE by the reading rule, σ(Li⁺) is not resolved (so far). Noise per run 12 % (not 5.5 %).
+PDF not sent (decision 12). — evidence: every quoted number checked verbatim by the build — next: last two runs, rebuild, then the author decides on T6.
+
 2026-11-25 — B2c built (author approved steps 1–3 and the trend tables) — ucmd-builder branch `b2c` (from `b2a`, not pushed,
 worktree `ucmd-builder-b2c`): molecule files, ruler, ⟨P⟩ over the rows with a value, NPT cell per frame, notebook with a page per result
 table; here `tools/study/ucmd_table.py`, the scan's `analyze.py` writes `tables/` (checked on synthetic numbers only, the scan was not read) —

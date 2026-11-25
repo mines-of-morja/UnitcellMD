@@ -1,0 +1,130 @@
+{
+ "level": "wB97X-D/def2-SVP, geometries only",
+ "clusters": [
+  {
+   "cluster": "li_ec0_emc4",
+   "n_ec": 0,
+   "opt_coordinates": "both",
+   "steps": 77,
+   "wall_h": 8.79,
+   "li_o": [
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.9537
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.9836
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.9292
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.9204
+    }
+   ]
+  },
+  {
+   "cluster": "li_ec1_emc3",
+   "n_ec": 1,
+   "opt_coordinates": "both",
+   "steps": 85,
+   "wall_h": 7.5,
+   "li_o": [
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 2.0227
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.891
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.8984
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 2.0106
+    }
+   ]
+  },
+  {
+   "cluster": "li_ec2_emc2",
+   "n_ec": 2,
+   "opt_coordinates": "both",
+   "steps": 171,
+   "wall_h": 15.69,
+   "li_o": [
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 1.9112
+    },
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 2.0081
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.8966
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 2.0206
+    }
+   ]
+  },
+  {
+   "cluster": "li_ec3_emc1",
+   "n_ec": 3,
+   "opt_coordinates": "both",
+   "steps": 147,
+   "wall_h": 9.58,
+   "li_o": [
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 1.9251
+    },
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 2.0004
+    },
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 1.9315
+    },
+    {
+     "solvent": "EMC",
+     "li_o_angstrom": 1.9562
+    }
+   ]
+  },
+  {
+   "cluster": "li_ec4_emc0",
+   "n_ec": 4,
+   "opt_coordinates": "both",
+   "steps": 20,
+   "wall_h": 1.07,
+   "li_o": [
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 1.9391
+    },
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 1.9391
+    },
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 1.9391
+    },
+    {
+     "solvent": "EC",
+     "li_o_angstrom": 1.9391
+    }
+   ]
+  }
+ ]
+}

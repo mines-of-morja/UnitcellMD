@@ -1,0 +1,176 @@
+{
+ "_about": "Numbers quoted from our own reports, checked verbatim by build.py at the pinned commit.",
+ "ref": "9ef66f0",
+ "quotes": {
+  "p_bias": {
+   "value": "about 127 bar",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "Two definitions of the pressure differ by about 127 bar"
+  },
+  "t_water": {
+   "value": "+6.5 ± 0.2",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| water, 1 fs, 5 runs (GPU and CPU) | +6.5 ± 0.2; the runs spread from 5.0 to 8.2 |"
+  },
+  "t_water_range": {
+   "value": "5.0 to 8.2",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| water, 1 fs, 5 runs (GPU and CPU) | +6.5 ± 0.2; the runs spread from 5.0 to 8.2 |"
+  },
+  "t_half": {
+   "value": "+2.9 ± 0.8",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| water, 0.5 fs, 2 runs | +2.9 ± 0.8 | +1.5 |"
+  },
+  "t_half_exp": {
+   "value": "+1.5",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| water, 0.5 fs, 2 runs | +2.9 ± 0.8 | +1.5 |"
+  },
+  "t_el": {
+   "value": "+3.4 ± 0.5",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| electrolyte M1, 1 M, 1 fs, 3 replicas | +3.4 ± 0.5 |"
+  },
+  "p_gpu": {
+   "value": "122.6 ± 11.9",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "The sum of these 300 frames is 69 ± 45 bar; the thermo log has ten times the samples and gives 122.6 ± 11.9"
+  },
+  "p_cpu_mol": {
+   "value": "109 bar",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "109 bar at 298.16 K (GPU: 122.6 ± 11.9)"
+  },
+  "p_temp": {
+   "value": "72 ± 2",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| excess temperature, 6.5 K × 11.2 bar/K (Wu's α_P and κ_T) | 72 ± 2 |"
+  },
+  "p_rest": {
+   "value": "49 ± 12",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| remainder: model, box size and what else the step changes | 49 ± 12 |"
+  },
+  "p_at_npt": {
+   "value": "1.6 ± 22 bar",
+   "path": "studies/2026-11-23_water-pressure-vs-density/README.md",
+   "context": "P(1.0072) = 1.6 ± 22 bar"
+  },
+  "dmc25": {
+   "value": "+2.3 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| DMC | 1.0633, **+2.3 %** | 1.0433, **+2.6 %** |"
+  },
+  "dmc40": {
+   "value": "+2.6 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| DMC | 1.0633, **+2.3 %** | 1.0433, **+2.6 %** |"
+  },
+  "emc25": {
+   "value": "+2.8 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| EMC | 1.0069, **+2.8 %** | not found |"
+  },
+  "mp25": {
+   "value": "+1.6 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| MP | 0.9103, +1.6 % |"
+  },
+  "pc25": {
+   "value": "−0.2 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| PC | 1.1993 ᵇ, −0.2 % |"
+  },
+  "ec39": {
+   "value": "−3.4 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| EC | supercooled, none | 1.3204 ᵃ, **−3.4 %** |"
+  },
+  "ec_m1": {
+   "value": "−0.2 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "M1's EC (1.3192 at 39 °C) is −0.2 % against 1.3214."
+  },
+  "lf_err": {
+   "value": "±0.6 %",
+   "path": "docs/research/landesfeind-density/README.md",
+   "context": "**The reference is known to about ±0.6 %, not better.**"
+  },
+  "lf_m0": {
+   "value": "+0.2 %",
+   "path": "docs/research/landesfeind-density/README.md",
+   "context": "M0 (1.184, +0.2 %) and M1 (1.195, +1.1 %)"
+  },
+  "lf_m1": {
+   "value": "+1.1 %",
+   "path": "docs/research/landesfeind-density/README.md",
+   "context": "M0 (1.184, +0.2 %) and M1 (1.195, +1.1 %)"
+  },
+  "s_x": {
+   "value": "0.96 kcal/mol",
+   "path": "docs/research/trials/T6-li-carbonyl-correction.md",
+   "context": "**0.96 kcal/mol**, floor 0.3"
+  },
+  "s_old": {
+   "value": "3.95 kcal/mol",
+   "path": "docs/research/trials/T6-li-carbonyl-correction.md",
+   "context": "s_E = 3.95 kcal/mol is replaced by n s_x for ΔE_n"
+  },
+  "p_cpu": {
+   "value": "26 ± 7 bar",
+   "path": "studies/2026-11-23_water-pressure-vs-density/README.md",
+   "context": "P(1.012) = 122.6 bar here against 26 ± 7 bar from the CPU engine's virial"
+  },
+  "nominal": {
+   "value": "1.202 g/cm³",
+   "path": "docs/research/trials/T3-density-protocol.md",
+   "context": "1.202 g/cm³ is the *nominal* density of the start box"
+  },
+  "m0_rho": {
+   "value": "1.184",
+   "path": "docs/research/landesfeind-density/README.md",
+   "context": "M0 (1.184, +0.2 %) and M1 (1.195, +1.1 %)"
+  },
+  "m1_rho": {
+   "value": "1.195",
+   "path": "docs/research/landesfeind-density/README.md",
+   "context": "M0 (1.184, +0.2 %) and M1 (1.195, +1.1 %)"
+  },
+  "noise_t2": {
+   "value": "5.5 %",
+   "path": "studies/2026-11-24_parameter-sensitivity-1M/README.md",
+   "context": "5.5 % with 1.5 ns skipped"
+  },
+  "steps_new": {
+   "value": "147",
+   "path": "docs/research/trials/T6-li-carbonyl-correction.md",
+   "context": "147 optimizer steps, not 64"
+  },
+  "steps_old": {
+   "value": "64",
+   "path": "docs/research/trials/T6-li-carbonyl-correction.md",
+   "context": "147 optimizer steps, not 64"
+  },
+  "emc_old": {
+   "value": "+2.9 %",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| EMC | 1.0069, **+2.8 %** | not found | +2.9 %, +1.2 % |"
+  },
+  "lost": {
+   "value": "69",
+   "path": "docs/research/trials/T6-li-carbonyl-correction.md",
+   "context": "Li⁺(EC)₂(EMC)₂ was lost at about step 69"
+  },
+  "grid": {
+   "value": "1.5 %",
+   "path": "docs/tasks.toml",
+   "context": "1.5 % provisional ('we will see')"
+  },
+  "sigma17": {
+   "value": "1.7 σ",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "0.5 fs gives +2.9 ± 0.8 K where +1.5 is expected (1.7 σ)"
+  }
+ }
+}
