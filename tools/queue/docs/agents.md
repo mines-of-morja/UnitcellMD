@@ -30,7 +30,8 @@ author, say why in `--note`), `--after JOB...` (start only after those are *done
 predecessor never releases the job), `--title`, `--note`. Commands run in the repository root.
 
 `--needs` is the resource tag, never a machine: `gpu-hip-mixed` (OpenMM HIP, mixed precision),
-`gpu-hip-double` (double precision, e.g. the water pressure work), `cpu`. The dashboard (tab Queue)
+`gpu-hip-double` (double precision, e.g. the water pressure work), `cpu`, `cpu-light` (a short CPU job for the second
+computer, so that it does not wait behind long `cpu` jobs). The dashboard (tab Queue)
 lists which workers provide which tags.
 
 ## Rules

@@ -53,6 +53,20 @@ folder is in the design, `docs/design/queue.md`, and not built.)
    To stop it gracefully press Ctrl-C: the running study checkpoints and the job goes back to the
    queue.
 
+## Only short command jobs (tag `cpu-light`), without the studies folder
+
+A client that runs only command jobs needs neither the mount nor SSH access: skip step 4, and use
+
+    provides      = ["cpu-light"]     # not "cpu": see below
+    allow_command = true
+
+- **Not `cpu`:** a running `cpu` job whose worker stops answering for two minutes is queued again, and a second machine
+  with that tag would take it, splitting one study over two machines or running it twice.
+- The job runs in the client's clone and its results stay there until they are fetched, so the code it needs
+  must be on GitHub and built on the client first.
+- Anyone with the token can run commands on every worker with `allow_command`. The token crosses the
+  network unencrypted: open the port for the client's address only, and never put the token in git or a chat.
+
 ## Notes
 
 - Replicas of one study should run on one machine type: results are reproducible per machine, not

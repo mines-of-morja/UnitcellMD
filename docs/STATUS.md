@@ -236,6 +236,11 @@ Step 4 (side by side) not approved.
 the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
 base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.
 
+2026-11-25 — second computer as a queue client, server side — the server listens on the LAN (token; the
+firewall still closed) and the tag `cpu-light` is for short command jobs there. Checked with a fresh clone of GitHub's `main` as client
+over the LAN address: 401 without token, one test command done, the running jobs untouched (not requeued) — next: author opens
+the firewall for the client; its session connects; then A1.7 (unitcellmd-ff) as `cpu-light`.
+
 2026-11-25 — SC-3 density test running (after the reboot, author) — queue jobs `…baf5` (CPU arms B and A, 6 × 1 ns,
 2.85 ns/day on 8 threads, about 2 days) and `…ed84` (GPU arm, conformance 8.5·10⁻⁸ / 8.0·10⁻⁸); the run scripts pass the
 queue's SIGTERM on (`9ed60f9`). Nothing is read before all nine runs are done — next: `analyze.py`.
