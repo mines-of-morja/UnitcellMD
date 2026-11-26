@@ -61,7 +61,8 @@ result = "Design note docs/design/SC-3-pressure-estimator.md: option B approved 
 [[task]]
 id = "SC-4"
 title = "Density over concentration and temperature (go/no-go)"
-state = "open"
+state = "claimed"
+claimed_by = "unitcellmd-c8"
 priority = 1
 needs = "gpu"
 author = true
