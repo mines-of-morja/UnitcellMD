@@ -213,6 +213,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — results summary of 26 November (author's request): densities and transport of every finished run against
+experiment — `docs/research/summary_261126/` (build.py, template, quoted.json; `out1/` not in git, PDF held under decision 12). 53 runs,
+182 ns. Densities: the 1 M electrolyte +0.2 to +1.3 % against the fit of Landesfeind (itself ±0.6 %), the M0 solvents up to +2.8 % / −3.4 %.
+κ: both models low by a factor 1.5–2.0 (M1 κ_NE 1.7); no model run meets ±15 %; one scan probe (ε(EMC) × 0.85, one run, κ_NE) falls inside,
+reported as a pointer to SC-7, not a model. t₊ (SOL) 0.19 ± 0.13 against 0.16: no test. SC-1 included as an addition (9eda5bd, analysed 27
+November). A1.7 LJ target: started on soricel 26 November 09:51 UTC, no report yet (asked 23:02 UTC). — evidence: build checks every quote
+verbatim and the README deviations against the computed ones — next: author reads the summary; A1.7 report from soricel.
+
 2026-11-27 — SC-1 done (unitcellmd-c8): the 1 fs step matters — density at 0.5 fs minus 1 fs, three seeds per arm: 1 M box
 +0.23 ± 0.04 %, pure EMC +0.31 ± 0.03 %, water +0.14 ± 0.05 % (1 SE), each beyond 2 SE and 0.1 %. D is lower at 0.5 fs by 6–13 %,
 not resolved per species. One GPU hang (EMC s1), continued from its checkpoint. So SC-4 and T4 need **0.5 fs or a multiple time

@@ -1,0 +1,76 @@
+{
+ "_about": "Numbers quoted from our own reports, checked verbatim by build.py at the pinned commit.",
+ "ref": "9eda5bd",
+ "quotes": {
+  "rho_ec_40": {
+   "value": "1.3204",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| EC | supercooled, none | 1.3204 ᵃ, **−3.4 %** | −3.5 % |"
+  },
+  "rho_pc_25": {
+   "value": "1.1993",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| PC | 1.1993 ᵇ, −0.2 % | 1.1831, −0.2 % | −0.6 %, −2.0 % |"
+  },
+  "rho_pc_40": {
+   "value": "1.1831",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| PC | 1.1993 ᵇ, −0.2 % | 1.1831, −0.2 % | −0.6 %, −2.0 % |"
+  },
+  "rho_dmc_25": {
+   "value": "1.0633",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| DMC | 1.0633, **+2.3 %** | 1.0433, **+2.6 %** | +1.7 %, +0.2 % |"
+  },
+  "rho_dmc_40": {
+   "value": "1.0433",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| DMC | 1.0633, **+2.3 %** | 1.0433, **+2.6 %** | +1.7 %, +0.2 % |"
+  },
+  "rho_emc_25": {
+   "value": "1.0069",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| EMC | 1.0069, **+2.8 %** | not found | +2.9 %, +1.2 % |"
+  },
+  "rho_mp_25": {
+   "value": "0.9103",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| MP | 0.9103, +1.6 % | 0.8910 ᵇ, +1.6 % | +1.1 %, −1.1 % |"
+  },
+  "rho_mp_40": {
+   "value": "0.8910",
+   "path": "docs/research/solvent-densities/README.md",
+   "context": "| MP | 0.9103, +1.6 % | 0.8910 ᵇ, +1.6 % | +1.1 %, −1.1 % |"
+  },
+  "lf_err": {
+   "value": "about ±0.6 %",
+   "path": "docs/research/landesfeind-density/README.md",
+   "context": "The reference is known to about ±0.6 %, not better."
+  },
+  "t_el": {
+   "value": "+3.4 ± 0.5",
+   "path": "docs/research/water-pressure/README.md",
+   "context": "| electrolyte M1, 1 M, 1 fs, 3 replicas | +3.4 ± 0.5 |"
+  },
+  "sc1_estimate": {
+   "value": "about 0.2–0.3 % low and D about 5–10 % high",
+   "path": "studies/2026-11-25_timestep-1M-0p5fs/README.md",
+   "context": "read the density about 0.2–0.3 % low and D about 5–10 % high against 0.5 fs"
+  },
+  "sc1_choice": {
+   "value": "0.5 fs or a multiple time step",
+   "path": "studies/2026-11-25_timestep-1M-0p5fs/README.md",
+   "context": "SC-4 and T4 need **0.5 fs or a multiple time step**; the\nauthor decides which."
+  },
+  "ionicity": {
+   "value": "0.90 ± 0.19",
+   "path": "docs/research/report/report.md",
+   "context": "| ionicity κ/κ_NE | 0.90 ± 0.19 | 21 % |"
+  },
+  "tp_time": {
+   "value": "about 300 ns",
+   "path": "docs/research/report/report.md",
+   "context": "- t₊ to 10 % needs about 300 ns."
+  }
+ }
+}
