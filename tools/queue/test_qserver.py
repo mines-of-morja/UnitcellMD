@@ -516,3 +516,14 @@ def test_the_cli_stops_continues_and_controls_a_worker(env, capsys, tmp_path) ->
     assert env["spool"].control("pc") == {"paused": True, "threads": 6}
     assert q.main(base + ["worker", "pc", "--use"]) == 0
     assert env["spool"].control("pc") == {"paused": False, "threads": 6}
+
+
+def test_a_command_job_cannot_be_submitted_over_http_even_with_the_token(env) -> None:
+    """Command jobs are argv lists that this machine's workers run: whoever could post one could
+    run anything here. The token is also held by other computers, so only the local spool (the CLI
+    on the server) takes them."""
+    code, err = call(
+        env["url"], "/api/jobs", {"kind": "command", "needs": "cpu", "argv": ["echo", "x"]}
+    )
+    assert code == 409 and "command" in err["error"]
+    assert env["spool"].jobs() == []

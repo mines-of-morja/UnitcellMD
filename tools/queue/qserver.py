@@ -7,7 +7,8 @@ Who may do what (docs/design/queue.md §1a):
     and only as `Content-Type: application/json` (a web page cannot send that to this server
     without a preflight, which is never answered). Without a configured token every POST is
     refused (503).
-  - A job is data: the server never executes anything and a worker runs only its own tools.
+  - The server never executes anything. Command jobs (argv lists that workers run) are refused
+    over HTTP: only the CLI on the server writes them, so a token cannot run programs.
 """
 
 from __future__ import annotations
@@ -171,6 +172,9 @@ def make_handler(cache, page: bytes, spool: Spool | None, registry: Registry, to
         def _route(self, path: str, body: dict):
             parts = [p for p in path.split("/") if p]
             if parts == ["api", "jobs"]:
+                # argv lists run on this machine's workers: only its own spool takes them
+                if body.get("kind") == "command":
+                    raise JobError("command jobs are submitted on the server machine only")
                 allowed = (
                     "kind", "needs", "title", "priority", "first", "study", "runs",
                     "argv", "after", "submitted_by", "note",

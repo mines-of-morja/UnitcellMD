@@ -43,7 +43,9 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
 - **A job is data, never a command.** `kind = run`: a package, a `run.toml`, an optional checkpoint;
   other kinds (`build`, `minimize`, `analyze`) are fixed verbs. The client runs only its own
   locally installed `ucmd`/`ucmd-build` on that data, with paths from its own machine profile. The
-  server cannot make a client execute arbitrary shell, so a stolen token cannot either.
+  server cannot make a client execute arbitrary shell. (Corrected 2026-11-27: a token holder could
+  submit *command* jobs for workers that allow them, which is program execution. The API now refuses
+  command jobs; they are written to the spool on the server machine only.)
 - **Transfer:** the client downloads the package and `run.toml` over HTTP, runs, uploads
   `thermo.tsv` and the checkpoint periodically and the trajectory at the end (resumable, streamed;
   trajectories are hundreds of MB). The server stores the result exactly where a local run

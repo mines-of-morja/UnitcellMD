@@ -64,7 +64,8 @@ the queue when the machine is needed otherwise (the game pause).
 ## From another computer
 
 On a machine that is not the server, put this in `~/.config/ucmd/queue.toml` and use the same
-commands (they go over HTTP with the token):
+commands (they go over HTTP with the token). Only **study** jobs can be submitted this way;
+command jobs are refused over the network:
 
     [client]
     server = "{{SERVER_URL}}"
