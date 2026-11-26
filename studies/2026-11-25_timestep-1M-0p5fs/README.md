@@ -85,7 +85,18 @@ All are lower at 0.5 fs, the direction predicted. None is resolved at 95 % on it
   1 → 0.5 fs step (0.035 %) if the bias goes as Δt². One run's spread is about 0.05 %.
 - **Halves:** the three 0.5 fs runs of the 1 M box all rise between their halves (+0.0008 to +0.0014 g/cm³). If they are
   still settling, the 0.5 fs density and the difference are underestimated. The 1 fs arm shows no common sign.
-- **Configurational temperatures:** not computed yet. They are a follow-up, CPU, through the queue.
+- **Configurational temperatures** (added 2026-11-27; `docs/research/timestep/tconf/`, `run_all.sh` and `combine.py`, 200 frames
+  per run). Configurational minus displayed T, mean of the seeds ± SE of the seeds:
+
+  | | 1 fs | 0.5 fs | 0.25 fs | expected (Δt²) |
+  |---|---|---|---|---|
+  | 1 M box | +3.7 ± 0.5 K | +1.7 ± 0.9 K | – | 3.4 → 0.9 K |
+  | pure EMC | +5.3 ± 1.6 K | −0.2 ± 0.6 K | – | – |
+  | water | +6.0 ± 0.6 K | +2.4 ± 1.0 K | +0.3 K (one run) | 6.5 → 1.6 → 0.4 K |
+
+  The excess shrinks with the step, as the shadow-Hamiltonian estimate says. The error of one run (jackknife, 1.3–1.7 K) is as large
+  as the 0.5 fs values, so the Δt² law is neither confirmed nor rejected. Computed after the result above and not part of the verdict.
+  This was planned for the queue, but ran by hand on the workstation at nice 19 (19 runs in under 20 min, beside SC-3's CPU job).
 
 **Provenance and the one interruption:** all 16 runs used `ucmd` 2ea7e82, bridge c2cc427, HIP (1 M and EMC mixed, water
 double). `emc_500_s1` at 1 fs hung on the GPU at 241 ps (telemetry, 2026-11-26 02:34 UTC). It was continued from its

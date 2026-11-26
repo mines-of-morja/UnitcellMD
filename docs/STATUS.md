@@ -213,6 +213,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — SC-4 running; SC-1 temperatures (unitcellmd-c8) — **SC-4** (density over c and T, model M1, author's grid and 1.5 %):
+`studies/2026-11-27_density-concentration-M1` (0.1, 2, 3 M at 20 °C) and `…-temperature-M1` (1 M at 10, 50 °C), 0.5 fs (SC-1; the
+author's 0.5 fs-or-RESPA choice is still open, and the runs stay valid under either), 3 ns from the measured settling time (0.25–0.5 ns);
+criterion, prediction (0.1 M likely fails) and tested `analyze.py` committed first; queue jobs `…3a35`, `…5c81`, about 8.5 h. The 1 M,
+20 °C point is SC-1's (+1.33 %). **SC-1 temperatures** (not judged): configurational minus displayed T, 1 fs → 0.5 fs: 1 M +3.7 → +1.7 K,
+EMC +5.3 → −0.2 K, water +6.0 → +2.4 K (0.25 fs +0.3 K). — evidence: the two READMEs, `docs/research/timestep/tconf/` — next: `analyze.py`
+of SC-4 when both jobs are done.
+
 2026-11-27 — results summary of 26 November (author's request): densities and transport of every finished run against
 experiment — `docs/research/summary_261126/` (build.py, template, quoted.json; `out1/` not in git, PDF held under decision 12). 53 runs,
 182 ns. Densities: the 1 M electrolyte +0.2 to +1.3 % against the fit of Landesfeind (itself ±0.6 %), the M0 solvents up to +2.8 % / −3.4 %.
