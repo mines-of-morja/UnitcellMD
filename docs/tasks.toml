@@ -17,7 +17,7 @@
 [[task]]
 id = "SC-1"
 title = "Timestep convergence: is the 1 fs liquid too warm?"
-state = "claimed"
+state = "done"
 claimed_by = "unitcellmd-c8"
 priority = 1
 needs = "gpu"
@@ -26,6 +26,8 @@ waits_for = "GPU free (sensitivity scan, queue 11); its base_s1..3 are the 1 fs 
 goal = "Compare 1 fs with 0.5 fs (0.25 fs for one short check) at otherwise identical settings: density and D of pure EMC and of the 1 M M1 box, and the density of SPC/Fw water. Prediction to test: 1 fs is about 3 K too warm, density about 0.3 % low, D a few % high."
 deliverable = "New study folder (README with criterion first); three seeds per system; results in its README. Velocity output (SC-2) is not needed for density and D."
 acceptance = "Density difference 1 fs to 0.5 fs given with its error from the seeds; verdict 'matters' if it exceeds 2 SE and 0.1 %. Says which timestep SC-4 and T4 use. H-bond constraints are NOT the test: they change the model (Lehnert used none) and need the author."
+
+result = "studies/2026-11-25_timestep-1M-0p5fs (README, Result): density at 0.5 fs minus 1 fs +0.23 +- 0.04 % (1 M), +0.31 +- 0.03 % (EMC), +0.14 +- 0.05 % (water), each matters by the criterion, so SC-4 and T4 need 0.5 fs or a multiple time step (author decides). D lower at 0.5 fs by 6-13 %, not resolved per species. Configurational temperatures still to compute."
 
 [[task]]
 id = "SC-2"

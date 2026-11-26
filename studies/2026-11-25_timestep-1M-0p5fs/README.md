@@ -57,3 +57,40 @@ Queue jobs (CLAUDE.md, "Compute jobs"); needs `2026-11-25_water-npt-gpu` finishe
     submit study 2026-11-25_timestep-emc-1fs --needs gpu-hip-mixed    (and …-emc-0p5fs, …-1M-0p5fs)
 
 Then `HDF5_USE_FILE_LOCKING=FALSE python3 analyze.py OUT.json`.
+
+## Result (2026-11-27, all 16 runs done; `analyze.py`, output `docs/research/timestep/sc1.json`)
+
+**The step matters in all three liquids.** By criterion 2, SC-4 and T4 need **0.5 fs or a multiple time step**; the
+author decides which.
+
+| System | ρ(0.5 fs) − ρ(1 fs) | 95 % interval | criterion 1 |
+|---|---|---|---|
+| 1 M box, 20 °C | +0.227 ± 0.039 % (+0.00271 g/cm³) | +0.12 to +0.33 % | **matters** |
+| pure EMC, 25 °C | +0.308 ± 0.030 % (+0.00319 g/cm³) | +0.23 to +0.39 % | **matters** |
+| water, 298.16 K | +0.141 ± 0.046 % (+0.00142 g/cm³) | +0.01 to +0.27 % | **matters** |
+
+± is 1 SE from the seeds. The prediction for the 1 M box was +0.2 %.
+
+**D, reported, not judged** (ln D(0.5) − ln D(1) as a percentage, ± 1 SE, 95 % interval):
+
+| | Li⁺ | PF₆⁻ | EC | EMC |
+|---|---|---|---|---|
+| 1 M box | −11 % (−0.116 ± 0.094; −31 to +16 %) | −13 % (−0.135 ± 0.099) | −8 % (−0.087 ± 0.036) | −9 % (−0.089 ± 0.065) |
+| pure EMC | | | | −6 % (−0.058 ± 0.021; −11 to 0 %) |
+
+All are lower at 0.5 fs, the direction predicted. None is resolved at 95 % on its own.
+
+**Not judged:**
+- **Water at 0.25 fs (one run):** 1.00896 g/cm³. That is 0.07 % above the 0.5 fs mean, against a quarter of the
+  1 → 0.5 fs step (0.035 %) if the bias goes as Δt². One run's spread is about 0.05 %.
+- **Halves:** the three 0.5 fs runs of the 1 M box all rise between their halves (+0.0008 to +0.0014 g/cm³). If they are
+  still settling, the 0.5 fs density and the difference are underestimated. The 1 fs arm shows no common sign.
+- **Configurational temperatures:** not computed yet. They are a follow-up, CPU, through the queue.
+
+**Provenance and the one interruption:** all 16 runs used `ucmd` 2ea7e82, bridge c2cc427, HIP (1 M and EMC mixed, water
+double). `emc_500_s1` at 1 fs hung on the GPU at 241 ps (telemetry, 2026-11-26 02:34 UTC). It was continued from its
+200 ps checkpoint by the driver, as criterion 5 provides. No run was dropped and no seed was added.
+
+**What this means for results at 1 fs (estimate, not tested):** T2, the 1 M sensitivity scan and the transport pilot
+read the density about 0.2–0.3 % low and D about 5–10 % high against 0.5 fs. Comparisons between models at the same
+step should largely cancel.

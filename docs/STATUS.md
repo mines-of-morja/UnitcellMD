@@ -213,6 +213,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — SC-1 done (unitcellmd-c8): the 1 fs step matters — density at 0.5 fs minus 1 fs, three seeds per arm: 1 M box
++0.23 ± 0.04 %, pure EMC +0.31 ± 0.03 %, water +0.14 ± 0.05 % (1 SE), each beyond 2 SE and 0.1 %. D is lower at 0.5 fs by 6–13 %,
+not resolved per species. One GPU hang (EMC s1), continued from its checkpoint. So SC-4 and T4 need **0.5 fs or a multiple time
+step; the author decides**. 1 fs results (T2, scan, pilot) read ρ about 0.2–0.3 % low and D about 5–10 % high (estimate). —
+evidence: `studies/2026-11-25_timestep-1M-0p5fs/README.md` (Result), `docs/research/timestep/sc1.json` — next: author: 0.5 fs or
+RESPA; configurational temperatures of the 16 runs (CPU, queue).
+
 2026-11-25 — queue after the reboot; pressure check (unitcellmd-9d) — server and workers started by hand (no
 service installed), GPU telemetry restarted. Two faults of the worker fixed: a stop now sends one SIGTERM to
 the job's top process and to what it orphans, never to the engine (before: engine hit directly, the driver
