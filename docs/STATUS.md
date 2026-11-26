@@ -213,6 +213,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — second computer online; controls for a shared computer (unitcellmd-9d) — `soricel-pc` ran the queue test
+job; its thermo table is byte-identical to the workstation's repeat (ADR 0010; study
+`2026-11-25_queue-client-test`). New: stop, continue, kill, "free this computer", CPU threads (tab Queue, CLI); the
+server refuses command jobs over HTTP (with the token they meant program execution on this machine). Not pushed
+(6d957d8, 15282c7). **Open, security:** soricel's SSH key allows SFTP with no folder limit, i.e. read and write of
+every file of the account. — evidence: 72 tests in `tools/queue`, buttons clicked in headless Chromium — next: the
+author on the push, the SSH limit, and which jobs soricel takes; e37 on the GTX 1660 (pass, with deviations)
+
 2026-11-27 — SC-4 running; SC-1 temperatures (unitcellmd-c8) — **SC-4** (density over c and T, model M1, author's grid and 1.5 %):
 `studies/2026-11-27_density-concentration-M1` (0.1, 2, 3 M at 20 °C) and `…-temperature-M1` (1 M at 10, 50 °C), 0.5 fs (SC-1; the
 author's 0.5 fs-or-RESPA choice is still open, and the runs stay valid under either), 3 ns from the measured settling time (0.25–0.5 ns);
