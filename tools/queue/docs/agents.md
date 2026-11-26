@@ -49,11 +49,16 @@ lists which workers provide which tags.
 
     python3 tools/queue/ucmd_queue.py jobs --all              # including finished ones
     python3 tools/queue/ucmd_queue.py priority JOB 5          # only queued jobs
-    python3 tools/queue/ucmd_queue.py cancel JOB              # a running job stops gracefully (checkpoint)
+    python3 tools/queue/ucmd_queue.py stop JOB                # checkpoint, then wait
+    python3 tools/queue/ucmd_queue.py continue JOB
+    python3 tools/queue/ucmd_queue.py cancel JOB              # ends for good (the dashboard's Kill)
+    python3 tools/queue/ucmd_queue.py worker NAME --free      # its owner needs the computer
+    python3 tools/queue/ucmd_queue.py worker NAME --use --threads 6
 
 States: `queued` → `claimed`/`running` (a worker holds it; it sends a heartbeat every 15 s) →
 `done` | `failed` | `cancelled`. A worker that stops answering for two minutes loses its job: it is
-queued again (`requeued` counts) and continues from the last checkpoint. A job is released back to
+queued again (`requeued` counts) and continues from the last checkpoint. A stopped or freed *command*
+job starts again from its beginning (only study jobs continue from checkpoints). A job is released back to
 the queue when the machine is needed otherwise (the game pause).
 
 ## From another computer
@@ -67,3 +72,6 @@ commands (they go over HTTP with the token):
 
 Without `[client]` the commands write into this machine's spool (`queue/`), which only the server's
 workers read.
+
+**A computer that is somebody's own** (a worker set to share it): its user comes first. Do not take
+"freed" off a worker you did not free, and do not raise its threads without being asked.

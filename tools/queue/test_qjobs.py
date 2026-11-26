@@ -77,9 +77,9 @@ def test_cancel_queued_and_running(spool) -> None:
     b = study_job(spool, "s_b")
     job = spool.claim(GPU)
     assert job["id"] == b["id"]
-    assert spool.heartbeat(b["id"], "gpu-a") == {"cancel": False}
+    assert spool.heartbeat(b["id"], "gpu-a") == {"cancel": False, "hold": False}
     spool.cancel(b["id"])
-    assert spool.heartbeat(b["id"], "gpu-a") == {"cancel": True}
+    assert spool.heartbeat(b["id"], "gpu-a") == {"cancel": True, "hold": False}
     spool.finish(b["id"], "gpu-a", "cancelled", None, "stopped by request")
     with pytest.raises(qj.JobError, match="already"):
         spool.cancel(b["id"])
@@ -135,3 +135,69 @@ def test_bad_submissions_are_refused(spool, kw, message) -> None:
 def test_job_ids_cannot_escape_the_spool(spool) -> None:
     with pytest.raises(qj.JobError):
         spool.get("../../etc/passwd")
+
+
+# --- stop / continue, and the controls of a worker --------------------------------------------
+
+
+def test_a_held_job_is_not_claimed_until_continued(spool) -> None:
+    j = study_job(spool)
+    assert spool.hold(j["id"])["held"] is True
+    assert spool.claim(GPU) is None
+    spool.resume(j["id"])
+    assert spool.claim(GPU)["id"] == j["id"]
+
+
+def test_stopping_a_running_job_asks_the_worker_and_keeps_it_held_after_release(spool) -> None:
+    j = study_job(spool)
+    spool.claim(GPU)
+    spool.hold(j["id"])
+    assert spool.heartbeat(j["id"], "gpu-a") == {"cancel": False, "hold": True}
+    spool.release(j["id"], "gpu-a", "stopped by request")
+    job = spool.get(j["id"])
+    assert job["state"] == "queued" and job["held"] is True and job["hold_requested"] is False
+    assert spool.claim(GPU) is None
+
+
+def test_continue_before_the_worker_reacted_withdraws_the_stop(spool) -> None:
+    j = study_job(spool)
+    spool.claim(GPU)
+    spool.hold(j["id"])
+    spool.resume(j["id"])
+    assert spool.heartbeat(j["id"], "gpu-a")["hold"] is False
+
+
+def test_a_finished_job_cannot_be_stopped(spool) -> None:
+    j = study_job(spool)
+    spool.cancel(j["id"])
+    with pytest.raises(qj.JobError, match="already"):
+        spool.hold(j["id"])
+
+
+def test_a_paused_worker_gets_nothing_and_others_still_do(spool) -> None:
+    study_job(spool)
+    spool.set_control("gpu-a", paused=True)
+    assert spool.claim(GPU) is None
+    assert spool.claim({**GPU, "name": "gpu-b"}) is not None
+    assert spool.control("gpu-a") == {"paused": True, "threads": None}
+    spool.set_control("gpu-a", paused=False)
+    assert spool.control("gpu-a")["paused"] is False
+
+
+def test_thread_control_is_kept_and_can_be_taken_back(spool) -> None:
+    spool.set_control("pc", threads=6)
+    spool.set_control("pc", paused=True)  # the other setting stays
+    assert spool.control("pc") == {"paused": True, "threads": 6}
+    spool.set_control("pc", threads=None)
+    assert spool.control("pc") == {"paused": True, "threads": None}
+
+
+@pytest.mark.parametrize("kw", [{"threads": 0}, {"threads": "6"}, {"threads": True}, {"paused": 1}])
+def test_bad_worker_controls_are_refused(spool, kw) -> None:
+    with pytest.raises(qj.JobError):
+        spool.set_control("pc", **kw)
+
+
+def test_worker_names_cannot_escape_the_spool(spool) -> None:
+    with pytest.raises(qj.JobError):
+        spool.set_control("../x", paused=True)

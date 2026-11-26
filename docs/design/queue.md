@@ -168,3 +168,20 @@ never a command, and nothing is started from it. Tasks for outside contributors 
   the next worker removes a stale lock file only after the server has requeued the job, so check
   for a leftover driver); `command` jobs trust whoever has the token, so enable `allow_command`
   only on machines you trust; a job cannot be edited, only cancelled and resubmitted.
+
+## 9. Stop, continue, kill, and sharing a computer (author's request, 2026-11-27)
+
+A worker may run on somebody's own computer: "if she needs it I must free it, but as long as she
+does not, it can even be fully used". Therefore:
+
+- **Per job:** `stop` (graceful, checkpoint; the job waits, `held`), `continue`, kill (= cancel).
+- **Per worker** (kept in `queue/workers/<name>.json`, set over `/api/workers/<name>/control`):
+  `paused` ("freed": the job is released to the queue, nothing new is claimed) and `threads`
+  (written into a copy of the job's machine profile; a running job is released and continues with
+  the new count). Workers learn both from the answers to hello, claim and heartbeat, so within one
+  heartbeat (15 s) and only while they can reach the server.
+- **In the page:** buttons in the tab Queue; the page asks for the token once and keeps it in the
+  browser. Everyone with the token can do everything; there are no per-user rights.
+- **Not covered:** the share of the GPU, memory, and anything outside the worker's job (WSL itself);
+  an owner without access to the server stops the worker process.
+

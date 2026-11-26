@@ -67,6 +67,21 @@ A client that runs only command jobs needs neither the mount nor SSH access: ski
 - Anyone with the token can run commands on every worker with `allow_command`. The token crosses the
   network unencrypted: open the port for the client's address only, and never put the token in git or a chat.
 
+## Sharing the computer with its owner
+
+The dashboard (tab Queue, from any machine with the token) has for each computer:
+
+- **Free this computer**: the running job writes a checkpoint and goes back to the queue, and the
+  computer gets no new job until **Use again**. A study continues where it stopped; a command job
+  starts again.
+- **CPU threads** ¼, ½ or all of the computer's threads for the next jobs; a running job restarts
+  from its checkpoint with the new count (results do not depend on it, ADR 0010). The start value is
+  `threads = N` in the `[[worker]]` entry. This limits the CPU engine; a GPU job's load on the GPU
+  is not limited by it.
+- The same from a terminal: `ucmd_queue.py worker <name> --free | --use | --threads N`.
+- Without the server (network down), stop the worker itself (Ctrl-C in its window): the job
+  checkpoints and is queued again two minutes later.
+
 ## Notes
 
 - Replicas of one study should run on one machine type: results are reproducible per machine, not

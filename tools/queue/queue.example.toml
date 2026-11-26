@@ -37,6 +37,7 @@ name = "workstation-gpu"
 provides = ["gpu-hip-mixed", "gpu-hip-double"]
 allow_command = true                  # run `command` jobs (argv lists) - only on machines you trust
 nice = 10
+# threads = 6                          # CPU threads per job (the dashboard can change it)
 container_image = "ucmd-openmm"       # take no job while a container of this image runs
 wait_for_queue_scripts = true         # ... or while a hand-written gpu-queue*.sh is alive
 # pause_process_regex = "[g]ame-launcher"   # stop gracefully and release the job while it runs

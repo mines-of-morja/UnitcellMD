@@ -142,6 +142,8 @@ class Spool:
                 "heartbeat_ts": None,
                 "progress": None,
                 "cancel_requested": False,
+                "held": False,
+                "hold_requested": False,
                 "requeued": 0,
                 "finished": None,
                 "exit": None,
@@ -168,13 +170,17 @@ class Spool:
                         heartbeat=None,
                         heartbeat_ts=None,
                         cancel_requested=False,
+                        held=job.get("held", False) or job.get("hold_requested", False),
+                        hold_requested=False,
                     )
                     self._write(job)
                     out.append(job["id"])
         return out
 
     def _eligible(self, job: dict, worker: dict, jobs: list[dict]) -> bool:
-        if job["state"] != "queued" or job["needs"] not in worker.get("provides", []):
+        if job["state"] != "queued" or job.get("held"):
+            return False
+        if job["needs"] not in worker.get("provides", []):
             return False
         if job["kind"] == "command" and not worker.get("allow_command"):
             return False
@@ -194,6 +200,8 @@ class Spool:
         """The best queued job this worker may take, now held by it; None if there is none."""
         self.requeue_stale()
         with self.locked():
+            if self.control(str(worker.get("name"))).get("paused"):
+                return None
             jobs = self.jobs()
             ready = [j for j in jobs if self._eligible(j, worker, jobs)]
             if not ready:
@@ -227,7 +235,10 @@ class Spool:
             if progress is not None:
                 job["progress"] = progress
             self._write(job)
-            return {"cancel": bool(job["cancel_requested"])}
+            return {
+                "cancel": bool(job["cancel_requested"]),
+                "hold": bool(job.get("hold_requested")),
+            }
 
     def finish(
         self, job_id: str, worker: str, state: str, exit_code: int | None, note: str
@@ -251,6 +262,8 @@ class Spool:
                 heartbeat=None,
                 heartbeat_ts=None,
                 cancel_requested=False,
+                held=job.get("held", False) or job.get("hold_requested", False),
+                hold_requested=False,
                 note=note,
             )
             self._write(job)
@@ -282,3 +295,59 @@ class Spool:
             job["priority"] = priority
             self._write(job)
             return job
+
+    def hold(self, job_id: str) -> dict:
+        """Stop: a queued job waits; a running one is stopped by its worker (checkpoint) and
+        then waits. `resume` continues it."""
+        with self.locked():
+            job = self.get(job_id)
+            if job["state"] == "queued":
+                job.update(held=True, note="stopped; waits for Continue")
+            elif job["state"] in ACTIVE:
+                job.update(hold_requested=True, note="stop requested")
+            else:
+                raise JobError(f"{job_id} is already {job['state']}")
+            self._write(job)
+            return job
+
+    def resume(self, job_id: str) -> dict:
+        with self.locked():
+            job = self.get(job_id)
+            if job["state"] in FINISHED:
+                raise JobError(f"{job_id} is already {job['state']}")
+            job.update(held=False, hold_requested=False, note="")
+            self._write(job)
+            return job
+
+    # -- controls of a worker: free its computer, limit its threads -------------------------
+    def _control_path(self, worker: str) -> Path:
+        if not NAME.match(worker or ""):
+            raise JobError(f"bad worker name {worker!r}")
+        return self.root / "workers" / f"{worker}.json"
+
+    def control(self, worker: str) -> dict:
+        """{paused, threads}; threads None: the worker's own setting."""
+        out = {"paused": False, "threads": None}
+        try:
+            out.update(json.loads(self._control_path(worker).read_text()))
+        except (OSError, JobError):
+            pass
+        return out
+
+    def set_control(self, worker: str, **kw) -> dict:
+        """`paused`: bool; `threads`: positive int, or None for the worker's own setting."""
+        path = self._control_path(worker)
+        if set(kw) - {"paused", "threads"}:
+            raise JobError("a worker has the controls 'paused' and 'threads'")
+        if "paused" in kw and not isinstance(kw["paused"], bool):
+            raise JobError("paused must be true or false")
+        t = kw.get("threads")
+        if t is not None and (isinstance(t, bool) or not isinstance(t, int) or not 1 <= t <= 1024):
+            raise JobError("threads must be a positive integer or null")
+        with self.locked():
+            new = {**self.control(worker), **kw}
+            path.parent.mkdir(exist_ok=True)
+            tmp = path.with_suffix(".tmp")
+            tmp.write_text(json.dumps(new) + "\n")
+            os.replace(tmp, path)
+        return new

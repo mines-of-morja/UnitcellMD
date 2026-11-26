@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
@@ -91,6 +92,14 @@ def group_roots(pgid: int) -> list[int]:
     return sorted(pid for pid, parent in members.items() if parent not in members)
 
 
+def with_threads(profile: str, threads: int) -> str:
+    """A machine profile (TOML text) with its top-level `threads` set; the rest unchanged."""
+    lines = profile.splitlines()
+    first_table = next((i for i, ln in enumerate(lines) if ln.lstrip().startswith("[")), len(lines))
+    top = [ln for ln in lines[:first_table] if not re.match(r"\s*threads\s*=", ln)]
+    return "\n".join([f"threads = {threads}", *top, *lines[first_table:]]) + "\n"
+
+
 class Worker:
     def __init__(
         self,
@@ -113,6 +122,13 @@ class Worker:
         self.signalled: set[int] = set()
         self.child: subprocess.Popen | None = None
         self.study_in_progress: Path | None = None
+        self.control: dict = {"paused": False, "threads": None}
+        self.job_threads: int | None = None
+
+    def threads(self) -> int | None:
+        """CPU threads for the next job: the dashboard's choice, else this config's, else None
+        (what the machine profile says)."""
+        return self.control.get("threads") or self.cfg.get("threads")
 
     # -- identity ----------------------------------------------------------------------------
     def identity(self) -> dict:
@@ -121,7 +137,12 @@ class Worker:
             "name": self.name,
             "provides": list(self.cfg.get("provides", [])),
             "allow_command": bool(self.cfg.get("allow_command", False)),
-            "info": {"cores": os.cpu_count(), "load1": round(load, 1), "host": os.uname().nodename},
+            "info": {
+                "cores": os.cpu_count(),
+                "load1": round(load, 1),
+                "host": os.uname().nodename,
+                "threads": self.threads(),
+            },
         }
 
     # -- main loop ---------------------------------------------------------------------------
@@ -167,10 +188,21 @@ class Worker:
         """One poll: announce, and take a job if nothing local stands in the way."""
         busy = self.guard() or self.paused()
         if busy:
-            self.api.post("/api/workers/hello", {"worker": {**self.identity(), "info": {
-                **self.identity()["info"], "waiting": busy}}})  # fmt: skip
+            me = self.identity()
+            me["info"]["waiting"] = busy
+            self.control = self.api.post("/api/workers/hello", {"worker": me}).get(
+                "control", self.control
+            )
             return False
-        job = self.api.post("/api/claim", {"worker": self.identity()})["job"]
+        # the controls first, so that the claim already reports the thread count it will use
+        self.control = self.api.post("/api/workers/hello", {"worker": self.identity()}).get(
+            "control", self.control
+        )
+        if self.control.get("paused"):
+            return False
+        answer = self.api.post("/api/claim", {"worker": self.identity()})
+        self.control = answer.get("control", self.control)
+        job = answer["job"]
         if job is None:
             return False
         self.log(f"worker {self.name}: took {job['id']} ({job['kind']}: {job['title']})")
@@ -183,6 +215,7 @@ class Worker:
 
     def run_job(self, job: dict) -> None:
         jid = job["id"]
+        self.job_threads = self.threads()
         if job["kind"] == "study":
             built = self.study_command(job)
         else:
@@ -225,8 +258,18 @@ class Worker:
                         self.stop_child()
                         break
                     continue  # a missed heartbeat is not fatal; the timeout is two minutes
+                self.control = answer.get("control", self.control)
                 if answer.get("cancel"):
                     cancelled = True
+                    self.stop_child()
+                    break
+                if answer.get("hold"):
+                    released = "stopped by request"
+                elif self.control.get("paused"):
+                    released = "the computer was freed"
+                elif self.threads() != self.job_threads:
+                    released = f"to continue with {self.threads()} threads"
+                if released:
                     self.stop_child()
                     break
             self.wait_child()
@@ -260,14 +303,30 @@ class Worker:
             time.sleep(0.1)
         self.child.wait()
 
+    def environment(self, needs: str) -> dict:
+        """The job's environment: the machine profile of its tag, with the thread count if one
+        is set (a copy of the profile; results do not depend on it, ADR 0010)."""
+        env = dict(os.environ)
+        profile = self.tag_settings(needs).get("profile")
+        base = Path(os.path.expanduser(profile)) if profile else None
+        threads = self.job_threads
+        if threads:
+            current = base or env.get("UCMD_MACHINE_PROFILE")
+            current = Path(current) if current else Path.home() / ".config/ucmd/machine.toml"
+            text = current.read_text() if current.is_file() else ""
+            self.logs.mkdir(parents=True, exist_ok=True)
+            base = self.logs / f"profile-{self.name}-{needs}.toml"
+            base.write_text(with_threads(text, threads))
+        if base:
+            env["UCMD_MACHINE_PROFILE"] = str(base)
+        return env
+
     def study_command(self, job: dict):
         study = self.studies_dir / job["study"]
         if not (study / "study.toml").is_file():
             return f"no study {job['study']} under {self.studies_dir} (mount the server's studies folder)"
         settings = self.tag_settings(job["needs"])
-        env = dict(os.environ)
-        if settings.get("profile"):
-            env["UCMD_MACHINE_PROFILE"] = os.path.expanduser(settings["profile"])
+        env = self.environment(job["needs"])
         cmd = [
             sys.executable, str(self.repo / "tools/study/ucmd_study.py"), "run", str(study),
             "--retry-failed", "--stall-minutes", str(self.cfg.get("stall_minutes", 10)),
@@ -283,10 +342,7 @@ class Worker:
     def command_command(self, job: dict):
         if not self.cfg.get("allow_command"):
             return "this worker does not run command jobs"
-        env = dict(os.environ)
-        settings = self.tag_settings(job["needs"])
-        if settings.get("profile"):
-            env["UCMD_MACHINE_PROFILE"] = os.path.expanduser(settings["profile"])
+        env = self.environment(job["needs"])
         return list(job["argv"]), env, self.repo, self.logs / f"{job['id']}.log", None
 
     # -- reporting ---------------------------------------------------------------------------

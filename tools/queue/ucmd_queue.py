@@ -698,6 +698,15 @@ class LocalBackend:
     def priority(self, job_id: str, priority: int) -> dict:
         return self.spool.set_priority(job_id, priority)
 
+    def stop(self, job_id: str) -> dict:
+        return self.spool.hold(job_id)
+
+    def resume(self, job_id: str) -> dict:
+        return self.spool.resume(job_id)
+
+    def control(self, worker: str, **kw) -> dict:
+        return self.spool.set_control(worker, **kw)
+
 
 class HttpBackend:
     def __init__(self, api: Api) -> None:
@@ -715,6 +724,15 @@ class HttpBackend:
     def priority(self, job_id: str, priority: int) -> dict:
         return self.api.post(f"/api/jobs/{job_id}/priority", {"priority": priority})
 
+    def stop(self, job_id: str) -> dict:
+        return self.api.post(f"/api/jobs/{job_id}/hold", {})
+
+    def resume(self, job_id: str) -> dict:
+        return self.api.post(f"/api/jobs/{job_id}/resume", {})
+
+    def control(self, worker: str, **kw) -> dict:
+        return self.api.post(f"/api/workers/{worker}/control", kw)
+
 
 def job_line(j: dict) -> str:
     what = (
@@ -723,7 +741,8 @@ def job_line(j: dict) -> str:
         else (" ".join(j["argv"] or []))
     )
     who = f" on {j['claimed_by']}" if j.get("claimed_by") else ""
-    return f"{j['id']}  {j['state']:9s} p{j['priority']:<3d} {j['needs']:14s} {what[:70]}{who}"
+    state = "stopped" if j["state"] == "queued" and j.get("held") else j["state"]
+    return f"{j['id']}  {state:9s} p{j['priority']:<3d} {j['needs']:14s} {what[:70]}{who}"
 
 
 def cmd_client(cfg: dict, args) -> int:
@@ -760,6 +779,19 @@ def cmd_client(cfg: dict, args) -> int:
                 print(job_line(j))
             if not jobs:
                 print("no jobs" if args.all else "no open jobs (--all shows finished ones)")
+        elif args.command == "stop":
+            print(job_line(be.stop(args.job)))
+        elif args.command == "continue":
+            print(job_line(be.resume(args.job)))
+        elif args.command == "worker":
+            kw = {}
+            if args.free or args.use:
+                kw["paused"] = bool(args.free)
+            if args.threads is not None:
+                kw["threads"] = args.threads or None
+            c = be.control(args.name, **kw)
+            use = "freed (takes no job)" if c["paused"] else "in use by the queue"
+            print(f"{args.name}: {use}, threads: {c['threads'] or 'its own setting'}")
         elif args.command == "cancel":
             print(job_line(be.cancel(args.job)))
         elif args.command == "priority":
@@ -833,6 +865,17 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("jobs", help="list jobs")
     client(p)
     p.add_argument("--all", action="store_true")
+    for verb, text in (("stop", "stop a job (checkpoint); it waits"), ("continue", "continue it")):
+        p = sub.add_parser(verb, help=text)
+        client(p)
+        p.add_argument("job")
+    p = sub.add_parser("worker", help="free a worker's computer, use it again, set its threads")
+    client(p)
+    p.add_argument("name")
+    group = p.add_mutually_exclusive_group()
+    group.add_argument("--free", action="store_true", help="stop its job and give it no new one")
+    group.add_argument("--use", action="store_true", help="let it take jobs again")
+    p.add_argument("--threads", type=int, default=None, help="CPU threads per job; 0: its own")
     p = sub.add_parser("cancel", help="cancel a job (a running one stops gracefully)")
     client(p)
     p.add_argument("job")
@@ -841,7 +884,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("job")
     p.add_argument("value", type=int)
     args = ap.parse_args(argv)
-    if args.command in ("jobs", "cancel", "priority"):
+    if args.command in ("jobs", "cancel", "priority", "stop", "continue", "worker"):
         args.as_ = None
     cfg = load_config(args.config)
     if args.command == "state":

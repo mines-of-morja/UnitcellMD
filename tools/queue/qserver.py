@@ -2,7 +2,8 @@
 
 Who may do what (docs/design/queue.md §1a):
   - GET (page, state, jobs, docs): this machine without a token; any other machine with the token.
-  - POST (submit, cancel, claim, heartbeat, finish, release): only with the token, from anywhere,
+  - POST (submit, cancel, hold, resume, claim, heartbeat, finish, release, worker
+    controls): only with the token, from anywhere,
     and only as `Content-Type: application/json` (a web page cannot send that to this server
     without a preflight, which is never answered). Without a configured token every POST is
     refused (503).
@@ -56,6 +57,7 @@ class Registry:
             out.append(
                 {
                     **{k: v for k, v in w.items() if k != "last_seen_ts"},
+                    "control": spool.control(w["name"]) if spool is not None else None,
                     "job": held.get(w["name"]),
                     "age_s": round(age, 1),
                     "online": age <= ONLINE_S,
@@ -156,7 +158,11 @@ def make_handler(cache, page: bytes, spool: Spool | None, registry: Registry, to
             if spool is None:
                 return self._json(503, {"error": "this server has no spool"})
             try:
-                self._json(200, self._route(self.path.split("?", 1)[0], body))
+                path = self.path.split("?", 1)[0]
+                answer = self._route(path, body)
+                if path.endswith(("/hold", "/resume", "/cancel", "/priority", "/control")):
+                    cache.refresh()  # the page shows the change at its next look
+                self._json(200, answer)
             except JobError as exc:
                 self._json(409, {"error": str(exc)})
             except (KeyError, TypeError) as exc:
@@ -176,21 +182,30 @@ def make_handler(cache, page: bytes, spool: Spool | None, registry: Registry, to
                 job = spool.claim(worker)
                 if job:
                     registry.seen(worker, job["id"])
-                return {"job": job}
+                return {"job": job, "control": spool.control(worker["name"])}
             if parts == ["api", "workers", "hello"]:
                 registry.seen(body["worker"])
-                return {"ok": True}
+                return {"ok": True, "control": spool.control(body["worker"]["name"])}
+            if len(parts) == 4 and parts[:2] == ["api", "workers"] and parts[3] == "control":
+                return spool.set_control(
+                    parts[2], **{k: v for k, v in body.items() if k in ("paused", "threads")}
+                )
             if len(parts) == 4 and parts[:2] == ["api", "jobs"]:
                 job_id, action = parts[2], parts[3]
                 if action == "cancel":
                     return spool.cancel(job_id)
+                if action == "hold":
+                    return spool.hold(job_id)
+                if action == "resume":
+                    return spool.resume(job_id)
                 if action == "priority":
                     return spool.set_priority(job_id, body["priority"])
                 worker = body["worker"]
                 registry.seen(worker, job_id)
                 name = worker["name"]
                 if action == "heartbeat":
-                    return spool.heartbeat(job_id, name, body.get("progress"))
+                    answer = spool.heartbeat(job_id, name, body.get("progress"))
+                    return {**answer, "control": spool.control(name)}
                 if action == "finish":
                     return spool.finish(
                         job_id, name, body["state"], body.get("exit"), str(body.get("note", ""))

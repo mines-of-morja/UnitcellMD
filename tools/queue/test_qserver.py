@@ -7,6 +7,7 @@ import os
 import stat
 import sys
 import threading
+import tomllib
 import urllib.error
 import urllib.request
 from http.server import ThreadingHTTPServer
@@ -130,9 +131,9 @@ def test_submit_claim_heartbeat_cancel_finish_over_http(env) -> None:
     worker = {"name": "w1", "provides": ["cpu"]}
     code, claim = call(url, "/api/claim", {"worker": worker})
     assert claim["job"]["id"] == job["id"]
-    assert call(url, f"/api/jobs/{job['id']}/heartbeat", {"worker": worker})[1] == {"cancel": False}
+    assert call(url, f"/api/jobs/{job['id']}/heartbeat", {"worker": worker})[1]["cancel"] is False
     call(url, f"/api/jobs/{job['id']}/cancel", {})
-    assert call(url, f"/api/jobs/{job['id']}/heartbeat", {"worker": worker})[1] == {"cancel": True}
+    assert call(url, f"/api/jobs/{job['id']}/heartbeat", {"worker": worker})[1]["cancel"] is True
     other = {"name": "w2", "provides": ["cpu"]}
     code, err = call(url, f"/api/jobs/{job['id']}/finish", {"worker": other, "state": "done"})
     assert code == 409 and "not held" in err["error"]
@@ -398,3 +399,120 @@ def test_a_stop_reaches_the_driver_exactly_once_and_never_its_engine(
         assert not _alive(pid), f"{name} survived"
     assert log.read_text().split() == ["driver"]
     assert env["spool"].get(j["id"])["state"] == "cancelled"
+
+
+# --- stop / continue / free the computer, end to end ------------------------------------------
+
+
+def test_stop_continue_and_worker_control_over_http(env) -> None:
+    url = env["url"]
+    job = call(url, "/api/jobs", {"kind": "study", "needs": "cpu", "study": "2026-01-01_s"})[1]
+    assert call(url, f"/api/jobs/{job['id']}/hold", {})[1]["held"] is True
+    worker = {"name": "pc", "provides": ["cpu"], "info": {"cores": 12}}
+    assert call(url, "/api/claim", {"worker": worker})[1]["job"] is None
+    call(url, f"/api/jobs/{job['id']}/resume", {})
+    got = call(url, "/api/workers/pc/control", {"paused": True, "threads": 6})[1]
+    assert got == {"paused": True, "threads": 6}
+    claim = call(url, "/api/claim", {"worker": worker})[1]
+    assert claim["job"] is None and claim["control"] == {"paused": True, "threads": 6}
+    assert call(url, "/api/workers/hello", {"worker": worker})[1]["control"]["paused"] is True
+    env["cache"].refresh()
+    (w,) = env["cache"].snapshot()["workers"]
+    assert w["control"] == {"paused": True, "threads": 6}
+    assert call(url, "/api/workers/pc/control", {"paused": True}, token=None)[0] == 401
+
+
+def _later(fn) -> None:
+    threading.Thread(target=fn, daemon=True).start()
+
+
+def _when_running(env, job_id: str, action) -> None:
+    import time
+
+    def wait():
+        for _ in range(200):
+            if env["spool"].get(job_id)["state"] == "running":
+                action()
+                return
+            time.sleep(0.05)
+
+    _later(wait)
+
+
+SLEEP = [sys.executable, "-c", "import time; time.sleep(30)"]
+
+
+def test_stop_releases_a_running_job_and_it_waits_for_continue(env, monkeypatch) -> None:
+    monkeypatch.setattr(qworker, "HEARTBEAT_S", 0.0)
+    j = env["spool"].submit(kind="command", needs="cpu", argv=SLEEP)
+    worker = make_worker(env, allow_command=True)
+    _when_running(env, j["id"], lambda: env["spool"].hold(j["id"]))
+    worker.step()
+    job = env["spool"].get(j["id"])
+    assert job["state"] == "queued" and job["held"] is True, job
+    assert worker.step() is False
+
+
+def test_freeing_the_computer_stops_the_job_and_takes_no_new_one(env, monkeypatch) -> None:
+    monkeypatch.setattr(qworker, "HEARTBEAT_S", 0.0)
+    j = env["spool"].submit(kind="command", needs="cpu", argv=SLEEP)
+    worker = make_worker(env, allow_command=True)
+    _when_running(env, j["id"], lambda: env["spool"].set_control("w1", paused=True))
+    worker.step()
+    job = env["spool"].get(j["id"])
+    assert job["state"] == "queued" and job["held"] is False and "freed" in job["note"], job
+    assert worker.step() is False  # still paused
+
+
+def test_a_changed_thread_count_restarts_the_job_with_the_new_one(env, monkeypatch) -> None:
+    monkeypatch.setattr(qworker, "HEARTBEAT_S", 0.0)
+    out = env["tmp"] / "profile-seen.txt"
+    code = (
+        "import os, pathlib, time;"
+        f"p = pathlib.Path({str(out)!r});"
+        "t = open(os.environ['UCMD_MACHINE_PROFILE']).read();"
+        "first = not p.exists(); p.open('a').write(t + '---\\n');"
+        "time.sleep(30 if first else 0)"
+    )
+    base = env["tmp"] / "machine.toml"
+    base.write_text('threads = 8\n[executables]\nucmd = "/x/ucmd"\n')
+    j = env["spool"].submit(kind="command", needs="cpu", argv=[sys.executable, "-c", code])
+    worker = make_worker(env, allow_command=True, threads=3, tags={"cpu": {"profile": str(base)}})
+    _when_running(env, j["id"], lambda: env["spool"].set_control("w1", threads=6))
+    worker.step()
+    assert env["spool"].get(j["id"])["state"] == "queued"  # released to start again
+    assert worker.step() is True
+    assert env["spool"].get(j["id"])["state"] == "done"
+    first, second = out.read_text().split("---\n")[:2]
+    assert tomllib.loads(first)["threads"] == 3 and tomllib.loads(second)["threads"] == 6
+    assert tomllib.loads(second)["executables"]["ucmd"] == "/x/ucmd"  # the rest is kept
+
+
+@pytest.mark.parametrize(
+    "text",
+    ["threads = 8\n[a]\nthreads = 1\n", "# c\n[a]\nthreads = 1\n", "scratch = 'x'\n"],
+)
+def test_profile_with_threads_sets_only_the_top_level_key(text) -> None:
+    new = qworker.with_threads(text, 4)
+    doc = tomllib.loads(new)
+    assert doc["threads"] == 4
+    old = tomllib.loads(text)
+    old.pop("threads", None)
+    doc.pop("threads")
+    assert doc == old
+
+
+def test_the_cli_stops_continues_and_controls_a_worker(env, capsys, tmp_path) -> None:
+    cfg = tmp_path / "queue.toml"
+    cfg.write_text(f'[server]\nspool = "{env["spool"].root}"\n')
+    base = ["--config", str(cfg)]
+    j = env["spool"].submit(kind="study", needs="cpu", study="2026-01-01_s")
+    assert q.main(base + ["stop", j["id"]]) == 0
+    assert env["spool"].get(j["id"])["held"] is True
+    assert "stopped" in capsys.readouterr().out
+    assert q.main(base + ["continue", j["id"]]) == 0
+    assert env["spool"].get(j["id"])["held"] is False
+    assert q.main(base + ["worker", "pc", "--free", "--threads", "6"]) == 0
+    assert env["spool"].control("pc") == {"paused": True, "threads": 6}
+    assert q.main(base + ["worker", "pc", "--use"]) == 0
+    assert env["spool"].control("pc") == {"paused": False, "threads": 6}

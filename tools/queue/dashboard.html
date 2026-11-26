@@ -29,7 +29,7 @@ h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: v
   border: 1px solid var(--line); color: var(--muted); }
 .tag.busy, .tag.running, .tag.active, .tag.claimed, .tag.open { color: var(--acc); border-color: var(--acc); }
 .tag.idle, .tag.done { color: var(--ok); border-color: var(--ok); }
-.tag.paused, .tag.waiting, .tag.stopped, .tag.pending, .tag.blocked { color: var(--warn); border-color: var(--warn); }
+.tag.freed, .tag.stopping, .tag.paused, .tag.waiting, .tag.stopped, .tag.pending, .tag.blocked { color: var(--warn); border-color: var(--warn); }
 .tag.orphan, .tag.failed, .tag.unreachable, .tag.unscheduled { color: var(--bad); border-color: var(--bad); }
 .bar { height: 8px; border-radius: 4px; background: var(--bar); overflow: hidden; margin: 6px 0 2px; }
 .bar > i { display: block; height: 100%; background: var(--acc); }
@@ -47,6 +47,11 @@ nav { display: flex; gap: 4px; margin: 12px 0 4px; border-bottom: 1px solid var(
 nav button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted);
   font: inherit; padding: 6px 12px; cursor: pointer; }
 nav button.on { color: var(--fg); border-bottom-color: var(--acc); }
+button.act { font: inherit; font-size: 12px; padding: 2px 9px; margin: 2px 2px 0 0; cursor: pointer;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--card); color: var(--fg); }
+button.act:hover { border-color: var(--acc); }
+button.act.on { background: var(--acc); border-color: var(--acc); color: var(--card); }
+button.act.danger { color: var(--bad); }
 .doc { max-width: 800px; }
 .doc h1 { font-size: 18px; margin: 16px 0 8px; }
 .doc h2 { margin-top: 20px; }
@@ -157,16 +162,40 @@ function tasks(list) {
   }).join("") + "</table>";
 }
 
+const act = (label, attrs, cls) => `<button class="act ${cls || ""}" ${Object.entries(attrs)
+  .map(([k, v]) => `data-${k}="${esc(v)}"`).join(" ")}>${esc(label)}</button>`;
+
 function workers(list) {
   if (!list || !list.length) return '<div class="empty">no worker has connected yet (tab Connect)</div>';
-  return `<table><tr><th>worker</th><th>provides</th><th>state</th><th>holds</th><th>host</th></tr>` +
-    list.map((w) => `<tr><td class="mono">${esc(w.name)}</td><td>${esc((w.provides || []).join(", "))}
-      ${w.allow_command ? '<span class="sub">(commands)</span>' : ""}</td>
-      <td>${tag(w.online ? "active" : "unreachable", w.online ? "online" : "silent " + dur(w.age_s))}
-        ${w.info && w.info.waiting ? `<div class="sub">waiting: ${esc(w.info.waiting)}</div>` : ""}</td>
-      <td class="mono">${esc(w.job || "")}</td>
-      <td class="sub">${esc(w.info && w.info.host || "")} ${w.info && w.info.cores ? "· " + w.info.cores + " cores, load " + w.info.load1 : ""}</td></tr>`).join("") +
-    "</table>";
+  return `<table><tr><th>worker</th><th>provides</th><th>state</th><th>holds</th><th>CPU threads</th><th></th></tr>` +
+    list.map((w) => {
+      const info = w.info || {}, control = w.control || {};
+      const cores = info.cores || 0;
+      const threads = control.threads || info.threads;  // the choice shows before the worker reports it
+      const state = control.paused ? tag("freed", "freed")
+        : tag(w.online ? "active" : "unreachable", w.online ? "online" : "silent " + dur(w.age_s));
+      const shares = [["¼", 0.25], ["½", 0.5], ["all", 1]].map(([label, f]) => {
+        const n = Math.max(1, Math.round(cores * f));
+        return cores ? act(label, {act: "threads", worker: w.name, value: n},
+                           threads === n ? "on" : "") : "";
+      }).join("");
+      return `<tr><td class="mono">${esc(w.name)}<div class="sub">${esc(info.host || "")}
+          ${cores ? "· " + cores + " threads, load " + info.load1 : ""}</div></td>
+        <td>${esc((w.provides || []).join(", "))}${w.allow_command ? '<div class="sub">(commands)</div>' : ""}</td>
+        <td>${state}${control.paused && w.job ? '<div class="sub">stopping its job …</div>' : ""}
+          ${info.waiting ? `<div class="sub">waiting: ${esc(info.waiting)}</div>` : ""}</td>
+        <td class="mono">${esc(w.job || "")}</td>
+        <td>${threads ? threads : '<span class="sub">profile</span>'}<div>${shares}</div></td>
+        <td>${control.paused ? act("Use again", {act: "use", worker: w.name})
+                             : act("Free this computer", {act: "free", worker: w.name}, "danger")}</td></tr>`;
+    }).join("") + "</table>";
+}
+
+function jobButtons(j) {
+  if (!["queued", "claimed", "running"].includes(j.state)) return "";
+  const stopped = j.held || j.hold_requested;
+  return (stopped ? act("Continue", {act: "resume", job: j.id}) : act("Stop", {act: "hold", job: j.id})) +
+    act("Kill", {act: "cancel", job: j.id, title: j.title}, "danger");
 }
 
 function jobs(list) {
@@ -174,7 +203,7 @@ function jobs(list) {
   const order = {running: 0, claimed: 0, queued: 1};
   const rows = [...list].sort((a, b) => ((order[a.state] ?? 2) - (order[b.state] ?? 2)) ||
     (b.priority - a.priority) || (a.submitted_ts - b.submitted_ts));
-  return `<table><tr><th>job</th><th>what</th><th>state</th><th class="num">prio</th><th>needs</th><th>by</th></tr>` +
+  return `<table><tr><th>job</th><th>what</th><th>state</th><th class="num">prio</th><th>needs</th><th>by</th><th></th></tr>` +
     rows.map((j) => {
       const what = j.study ? j.study + (j.runs ? " · " + j.runs.join(", ") : "") : (j.argv || []).join(" ");
       const p = j.progress;
@@ -183,14 +212,19 @@ function jobs(list) {
       return `<tr><td class="mono">${esc(j.id)}</td>
         <td><b>${esc(j.title)}</b><div class="sub mono">${esc(what.slice(0, 120))}</div>${prog}
           ${j.note ? `<div class="sub">${esc(j.note)}</div>` : ""}</td>
-        <td>${tag(j.state)}${j.claimed_by ? `<div class="sub">${esc(j.claimed_by)}</div>` : ""}
+        <td>${tag(j.state === "queued" && j.held ? "stopped" : j.hold_requested ? "stopping"
+              : j.cancel_requested ? "stopping" : j.state)}${j.claimed_by ? `<div class="sub">${esc(j.claimed_by)}</div>` : ""}
           ${j.requeued ? `<div class="sub">requeued ${j.requeued}×</div>` : ""}</td>
-        <td class="num">${j.priority}</td><td>${esc(j.needs)}</td><td class="sub">${esc(j.submitted_by)}</td></tr>`;
+        <td class="num">${j.priority}</td><td>${esc(j.needs)}</td><td class="sub">${esc(j.submitted_by)}</td>
+        <td>${jobButtons(j)}</td></tr>`;
     }).join("") + "</table>";
 }
 
 function queueTab(d) {
-  return `<h2>Jobs</h2>${jobs(d.jobs)}<h2>Workers</h2>${workers(d.workers)}`;
+  return `<h2>Computers</h2>${workers(d.workers)}<h2>Jobs</h2>${jobs(d.jobs)}
+    <p class="sub">Stop: the job writes a checkpoint and waits until Continue. Kill: the job ends for good.
+    Free this computer: its job stops and goes back to the queue, and it gets no new one. A button takes up
+    to 15 s to reach a computer.</p>`;
 }
 
 function md(src) {
@@ -278,6 +312,46 @@ async function refresh() {
     document.getElementById("stamp").innerHTML = `<span class="err">no answer from the server: ${esc(e)}</span>`;
   }
 }
+// Buttons change things, so they need the server's token; it is asked for once and kept in this browser.
+function token(forget) {
+  const key = "ucmd-queue-token";
+  try {
+    if (forget) { localStorage.removeItem(key); return null; }
+    let t = localStorage.getItem(key);
+    if (!t) {
+      t = (window.prompt("Queue token ([server] token on the server):") || "").trim();
+      if (t) localStorage.setItem(key, t);
+    }
+    return t || null;
+  } catch (e) {
+    return (window.prompt("Queue token:") || "").trim() || null;
+  }
+}
+
+async function post(path, body) {
+  const t = token();
+  if (!t) return;
+  const r = await fetch(path, {method: "POST", body: JSON.stringify(body),
+    headers: {"Content-Type": "application/json", "Authorization": "Bearer " + t}});
+  if (r.status === 401) { token(true); window.alert("The server refused the token; try again."); return; }
+  if (!r.ok) window.alert((await r.json().catch(() => ({}))).error || "refused: " + r.status);
+}
+
+document.getElementById("nodes").addEventListener("click", async (event) => {
+  const b = event.target.closest("button[data-act]");
+  if (!b) return;
+  const {act: what, job, worker, value, title} = b.dataset;
+  if (what === "cancel" && !window.confirm(`Kill "${title}"? It will not continue.`)) return;
+  try {
+    if (job) await post(`/api/jobs/${job}/${what}`, {});
+    else if (what === "threads") await post(`/api/workers/${worker}/control`, {threads: Number(value)});
+    else await post(`/api/workers/${worker}/control`, {paused: what === "free"});
+  } catch (e) {
+    window.alert("no answer from the server: " + e);
+  }
+  refresh();
+});
+
 drawTabs();
 refresh();
 setInterval(() => { if (tab !== "connect" && tab !== "agents") refresh(); }, 5000);
