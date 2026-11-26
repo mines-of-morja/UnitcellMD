@@ -293,6 +293,23 @@ ucmd-builder/.venv/bin/ucmd-build gui studies/2026-11-24_parameter-sensitivity-1
 | 4 | **Open run…** on a finished GPU run of the scan | ⟨P⟩ has a value and says how many rows have one; the box changes during *Play* |
 | 5 | **File → Open tables…** (after `analyze.py` has run) | one tab per table; the columns of the plot can be changed; *Reload*; tabs close, the 3D view does not |
 
+## 9b. One window (branch `b2d` of ucmd-builder)
+
+From the workspace folder (it shares the builder's environment):
+
+```sh
+PYTHONPATH=$PWD/ucmd-builder-b2d/src ucmd-builder/.venv/bin/ucmd-build gui
+```
+
+| Step | What to do | Expected |
+|---|---|---|
+| 1 | Make the window small, then large; *View → Reset layout* | it follows; nothing is cut off at 900 × 600 |
+| 2 | *Project → Folder…* the workspace; unfold the sensitivity study; double-click a run | 3D view with the playback bar below it; tab *Plots*; the title names the run |
+| 3 | *Plots → Tables of the study*; in *Sensitivity: runs* double-click a row | that run opens |
+| 4 | Drop an `.xyz` file or a run folder on the window; *Open ▾* lists it next time | it opens; *Recent* keeps it after a restart, with the window's size and panels |
+| 5 | Tab *Queue*: *Connect* (http://127.0.0.1:8765) | resources, running runs and jobs; double-click a running run opens it; nothing can be changed there |
+| 6 | Open a package, *Run…* while the queue runs a CPU job | the GUI asks first |
+
 ## Coming next
 
 - **The barostat (E2.7)**, so that the density comes from NPT as in Lehnert's protocol.

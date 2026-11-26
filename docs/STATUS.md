@@ -244,6 +244,14 @@ its tests committed before any run) and its EMC and water arms: 1 fs against 0.5
 five queue jobs, about 14 h of GPU after SC-3's GPU arm. 1 fs references: `base_s1..3` of the scan and SC-3's arm G. No result yet. —
 evidence: study README; 10 tests; `analyze.py` gives the known 1 M densities — next: when the jobs are done, `analyze.py`.
 
+2026-11-26 — B2d built (author approved the design 2026-11-25: one adaptive window, read-only queue page, all five
+steps) — ucmd-builder branch `b2d` (from `b2c`; not pushed, not merged; worktree `ucmd-builder-b2d`): resizing fixed
+(minimum 874 × 1042 → about 600 × 440 px), plots as a page, playback under the 3D view, one Open with drag and drop and
+recent files, kept layout (`~/.config/ucmd/gui.json`), project panel with studies, links from table rows to runs, runs read
+in a thread (pause 0.31 → 0.03 s, memory 1054 → 356 MB), read-only Queue page (ADR 0016) — evidence:
+`validation/b2d/REPORT.md` there, 310 tests, 156 GUI tests also with the real 3D widget — next: author's hands-on test
+(testing.md §9b), then push and merge order of b2a → b2c → b2d.
+
 2026-11-25 — sensitivity scan complete (15 of 15), summary of 25 November rebuilt — `docs/research/summary_261125/` (build.py, template,
 `data/scan.json` final; `out1/` not in git, PDF not sent, decision 12). **Reading rule:** `zeta` (exponent −3.6 ± 0.5) and `epsEMC` (−4.0 ± 0.6) move
 κ_NE; `sigmaLi` is not resolved (−0.09 ± 0.14 in ln κ_NE over the range), so by the rule **T6 becomes a side result** and the ωB97M-V energies stay off;
