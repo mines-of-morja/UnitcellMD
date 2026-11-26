@@ -255,8 +255,10 @@ steps) — ucmd-builder branch `b2d` (from `b2c`; not pushed, not merged; worktr
 (minimum 874 × 1042 → about 600 × 440 px), plots as a page, playback under the 3D view, one Open with drag and drop and
 recent files, kept layout (`~/.config/ucmd/gui.json`), project panel with studies, links from table rows to runs, runs read
 in a thread (pause 0.31 → 0.03 s, memory 1054 → 356 MB), read-only Queue page (ADR 0016) — evidence:
-`validation/b2d/REPORT.md` there, 310 tests, 156 GUI tests also with the real 3D widget — next: author's hands-on test
-(testing.md §9b), then push and merge order of b2a → b2c → b2d.
+`validation/b2d/REPORT.md` there, 310 tests, 156 GUI tests also with the real 3D widget. **Merged 2026-11-27 (author):**
+ucmd-builder `main` = `df352a7` (b1, b2a, b2c, b2d, s012-pair-overrides and pull request 2: spec 0.1.2 pin, Packmol below 100),
+CI green on all three jobs; pull request 2 closed; the shared checkout `ucmd-builder` is on `main`. Not merged: ucmd-engine (its
+`main` lacks b2a and every later branch; author to decide) — next: author's hands-on test (testing.md §9b).
 
 2026-11-25 — sensitivity scan complete (15 of 15), summary of 25 November rebuilt — `docs/research/summary_261125/` (build.py, template,
 `data/scan.json` final; `out1/` not in git, PDF not sent, decision 12). **Reading rule:** `zeta` (exponent −3.6 ± 0.5) and `epsEMC` (−4.0 ± 0.6) move

@@ -293,12 +293,10 @@ ucmd-builder/.venv/bin/ucmd-build gui studies/2026-11-24_parameter-sensitivity-1
 | 4 | **Open run…** on a finished GPU run of the scan | ⟨P⟩ has a value and says how many rows have one; the box changes during *Play* |
 | 5 | **File → Open tables…** (after `analyze.py` has run) | one tab per table; the columns of the plot can be changed; *Reload*; tabs close, the 3D view does not |
 
-## 9b. One window (branch `b2d` of ucmd-builder)
-
-From the workspace folder (it shares the builder's environment):
+## 9b. One window (`main` of ucmd-builder, since 2026-11-27)
 
 ```sh
-PYTHONPATH=$PWD/ucmd-builder-b2d/src ucmd-builder/.venv/bin/ucmd-build gui
+ucmd-builder/start-gui.sh            # also with paths: runs, studies, .xyz, .tsv, recipes
 ```
 
 | Step | What to do | Expected |
