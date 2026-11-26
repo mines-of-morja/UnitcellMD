@@ -33,6 +33,7 @@ ROOT = HERE.parents[2]
 R = ROOT / "docs/research"
 OUT = HERE / "out1"
 SC1_REF = "9eda5bd"  # SC-1 result commit (sc1.json and README "Result")
+A17_REF = "1045065"  # ucmd-analysis: A1.7 target 1, result.json and REPORT.md
 # validated categorical palette (dataviz validator, light surface): M0, M1, water
 BLUE, ORANGE, AQUA = "#2a78d6", "#eb6834", "#1baf7a"
 INK, MUTED, GRID, BAND = "#1f1f1e", "#6b6a63", "#e4e3de", "#efeee9"
@@ -217,6 +218,21 @@ v["w_d"], v["w_d_wu"] = pm(dw["mean"], dw["sem"]), f(wt["Ds_1e-5_cm2_s"]["value"
 v["w_d_exp_box"] = f(fs["D_expected_in_wu_box"])
 v["w_eta"], v["w_eta_wu"] = pm(eta["mean"], eta["sem"], 3), f(wt["eta_cP_at_300.2_K"]["value"])
 v["w_eta_inacc"] = f(wt["eta_cP_at_300.2_K"]["inaccuracy"])
+
+# A1.7 target 1 (ucmd-analysis, pinned commit)
+a17 = json.loads(subprocess.run(["git", "-C", str(ROOT / "ucmd-analysis"), "show", f"{A17_REF}:validation/a17-lj/result.json"],
+                                capture_output=True, text=True, check=True).stdout)  # fmt: skip
+c17 = a17["criterion"]
+v["a17_verdict"], v["a17_value"], v["a17_diff"], v["a17_bound"] = c17["verdict"], pm(c17["value"], c17["se"], 4), sf(c17["difference"], 4), f(c17["bound"], 4)
+v["a17_dmu"] = pm(*a17["npt"]["dmu_dlnx"]["matrix_0.2"], 3)
+v["a17_nvt"] = f(a17["nvt_minus_npt_in_se"], 2)
+v["a17_ref"] = A17_REF
+src = subprocess.run(["git", "-C", str(ROOT / "ucmd-analysis"), "show", f"{A17_REF}:validation/a17-lj/analyze.py"],
+                     capture_output=True, text=True, check=True).stdout  # fmt: skip
+line = next(x for x in src.splitlines() if x.startswith("TARGET, TARGET_ERR = "))
+tgt, tgt_err = (float(x) for x in line.split("=")[1].split("#")[0].split(","))
+v["a17_target"] = pm(tgt, tgt_err, 3)
+v["a17_word"] = {"pass": "passed", "FAIL": "failed"}.get(c17["verdict"], c17["verdict"])
 
 # runs behind the numbers (study indexes, local)
 STUDIES = [
