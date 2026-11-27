@@ -182,7 +182,8 @@ acceptance = "rho0 with error from seeds against the Landesfeind fit at c = 0 an
 [[task]]
 id = "V-5"
 title = "Literature note on the papers added 2026-11-27 (viscosity, diffusion, density, charge scaling)"
-state = "open"
+state = "claimed"
+claimed_by = "agent-literature"
 priority = 2
 needs = "none"
 author = false
