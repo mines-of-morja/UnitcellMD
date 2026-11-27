@@ -234,6 +234,67 @@ tgt, tgt_err = (float(x) for x in line.split("=")[1].split("#")[0].split(","))
 v["a17_target"] = pm(tgt, tgt_err, 3)
 v["a17_word"] = {"pass": "passed", "FAIL": "failed"}.get(c17["verdict"], c17["verdict"])
 
+# ---------------------------------------------------------------- against the literature (section 6, added 27 November)
+DCT = R / "density-c-T"
+sc4 = json.loads((DCT / "sc4.json").read_text())
+av = json.loads((DCT / "apparent_volume.json").read_text())
+vz = json.loads((DCT / "v_phi_zeta.json").read_text())
+s3 = json.loads((DCT / "slope3M.json").read_text())
+v["sc4_slope"] = pm(sc4["drho_dc"]["value"], sc4["drho_dc"]["se"], 4)
+v["lf_slope"] = f(lf["p2"], 4)
+v["sc4_slope_def"] = f(100 * (1 - sc4["drho_dc"]["value"] / lf["p2"]), 0)
+v["sc4_dT"], v["lf_dT"] = f(1e3 * sc4["drho_dT"]["value"], 3), f(1e3 * lf["p3"], 2)
+pts = sc4["points"]
+v["sc4_01"], v["sc4_3"] = sf(pts["0.1 M, 20 C"]["dev_pct"], 1), sf(pts["3 M, 20 C"]["dev_pct"], 1)
+v["sc4_1"] = sf(pts["1 M, 20 C"]["dev_pct"], 1)
+v["vphi_exp"] = f(av["experiment"]["v_phi_cm3_mol"], 1)
+v["vphi_1"] = f(av["model"]["points"]["1 M, 20 C"]["v_phi_cm3_mol"], 1)
+v["vphi_3"] = f(av["model"]["points"]["3 M, 20 C"]["v_phi_cm3_mol"], 1)
+v["rho0_off"] = sf(av["model"]["rho0_vs_experiment_pct"], 1)
+dvz = {k: vz[k]["dv_phi_dzeta_cm3_mol"] for k in ("1M", "3M")}
+v["dvz_1"], v["dvz_3"] = f(dvz["1M"], 0), f(dvz["3M"], 0)
+zstar = {k: 0.75 + (vz["experiment_v_phi_cm3_mol"] - vz[k]["runs"]["0.75"]["v_phi_cm3_mol"]) / dvz[k] for k in dvz}
+v["zstar_1"], v["zstar_3"] = f(zstar["1M"], 2), f(zstar["3M"], 2)
+v["s3_ratio"] = f(s3["ratio_zeta"], 2)
+
+# Lehnert's boxes: the density their particle numbers imply at the target c (our arithmetic)
+aw = LIT["iupac_atomic_weights"]["value"]
+M_ = {"EC": 3 * aw["C"] + 4 * aw["H"] + 3 * aw["O"], "EMC": 4 * aw["C"] + 8 * aw["H"] + 3 * aw["O"],
+      "Li": aw["Li"], "PF6": aw["P"] + 6 * aw["F"]}  # fmt: skip
+t1s = LIT["lehnert2025_table_s1_ec_emc"]["value"]
+leh: list[tuple[float, float, float]] = []  # c, rho implied, deviation from the fit of [1] in %
+for i, c in enumerate(t1s["c_M"]):
+    mass = sum(t1s[s][i] * M_[s] for s in M_)  # g per mol of boxes
+    rho = mass * c / (1000 * t1s["Li"][i])  # g/cm3: box volume = N_pairs / (N_A c)
+    leh.append((c, rho, 100 * (rho / (lf["p1"] + lf["p2"] * c + lf["p3"] * 293.15) - 1)))
+cs, rs = [x[0] for x in leh], [x[1] for x in leh]
+cm, rm = st.fmean(cs), st.fmean(rs)
+leh_slope = sum((a - cm) * (b - rm) for a, b in zip(cs, rs)) / sum((a - cm) ** 2 for a in cs)
+v["leh_slope"] = f(leh_slope, 4)
+v["leh_3"] = sf(leh[-1][2], 1)
+v["leh_1"] = sf(next(x for x in leh if x[0] == 1.0)[2], 1)
+v["leh_pairs_1"] = str(t1s["Li"][t1s["c_M"].index(1.0)])
+v["leh_pair_pct"] = f(100 / t1s["Li"][t1s["c_M"].index(1.0)], 0)
+
+# Li+ shell against Lehnert's model and the DRS estimate
+lsh = LIT["lehnert2025_shell_fig_s10"]["value"]
+m1_runs = [r for r in t2["runs"].values() if r["model"] == "M1"]
+w2 = {k: st.fmean(r["within_0.516nm"][f"{k}:O:1"] for r in m1_runs) for k in ("EC", "EMC")}
+v["sh_l_ec"], v["sh_l_emc"] = f(lsh["EC"], 1), f(lsh["EMC"], 1)
+v["sh_l_share"] = f"{100 * lsh['EC'] / (lsh['EC'] + lsh['EMC']):.0f}"
+v["sh_ec"], v["sh_emc"] = f(w2["EC"], 2), f(w2["EMC"], 2)
+v["sh_share"] = f"{100 * w2['EC'] / (w2['EC'] + w2['EMC']):.0f}"
+m0_runs = [r for r in t2["runs"].values() if r["model"] == "M0"]
+w0 = {k: st.fmean(r["within_0.516nm"][f"{k}:O:1"] for r in m0_runs) for k in ("EC", "EMC")}
+v["sh_share_m0"] = f"{100 * w0['EC'] / (w0['EC'] + w0['EMC']):.0f}"
+v["m0_emc"], v["m0_dmc"] = sf(m0_devs["EMC, 25 °C"]), sf(m0_devs["DMC, 25 °C"])
+v["sh_first"] = f(st.fmean(r["first_shell_0.28nm"]["EC:O:1"] for r in m1_runs), 2)
+v["drs"] = pm(*t2["drs_bound"], 1)
+
+sea = LIT["saxe2025_seamm_table3"]["value"]
+v["sea_emc"] = sf(100 * (sea["EMC"][1] / sea["EMC"][0] - 1), 0)
+v["sea_dmc"] = sf(100 * (sea["DMC"][1] / sea["DMC"][0] - 1), 0)
+
 # runs behind the numbers (study indexes, local)
 STUDIES = [
     ("2026-11-17_solvent-densities-tail-on", "pure solvents, 25 and 40 °C"),
@@ -250,6 +311,9 @@ STUDIES = [
     ("2026-11-25_water-npt-gpu", "water, 1 fs (SC-1 reference)"),
     ("2026-11-25_timestep-water-0p5fs", "water, SC-1 at 0.5 fs"),
     ("2026-11-25_timestep-water-0p25fs", "water, SC-1 at 0.25 fs"),
+    ("2026-11-27_density-concentration-M1", "0.1, 2, 3 M, SC-4 (density over c)"),
+    ("2026-11-27_density-temperature-M1", "1 M at 10 and 50 °C, SC-4 (density over T)"),
+    ("2026-11-27_density-slope-3M", "3 M, ζ and EMC ε map"),
 ]
 rows, total_ns, total_runs = "", 0.0, 0
 for name, what in STUDIES:
@@ -321,6 +385,31 @@ ax.plot([], [], "D", ms=6, color=MUTED, label="κ (Onsager, all correlations)")
 ax.plot([], [], "o", ms=6, mfc="white", mec=MUTED, mew=1.6, label="κ_NE (no correlations)")
 ax.legend(frameon=False, fontsize=7.3, loc="lower left", bbox_to_anchor=(0.0, 1.08), ncol=4)
 v["fig_kappa"] = svg(fig)
+
+fig, ax = plt.subplots(figsize=(6.6, 2.6))
+ax.grid(axis="y", color=GRID, lw=0.6)
+LF_ERR = float(Q["quotes"]["lf_err"]["value"].split("±")[1].split()[0])  # the fit's own uncertainty, %
+ax.grid(axis="x", visible=False)
+ax.axhspan(-LF_ERR, LF_ERR, color=BAND, zorder=0, lw=0)
+ax.axhline(0, color=MUTED, lw=0.8)
+ax.plot(cs, [x[2] for x in leh], "s", ms=9, mfc="none", mec=MUTED, mew=1.5, zorder=5,
+        label="Lehnert 2025 boxes, implied (our arithmetic) [2]")  # fmt: skip
+own = sorted((p["c_mol_l"], p["dev_pct"]) for k, p in pts.items() if k.endswith("20 C"))
+ax.plot([x[0] for x in own], [x[1] for x in own], "o", ms=7, color=ORANGE, mec="white", mew=1.2, zorder=4,
+        label="this work, M1, NPT (SC-4)")  # fmt: skip
+for z, mk in (("zeta_0.65", "v"), ("zeta_0.85", "^")):
+    c3 = vz["3M"]["runs"][z.split("_")[1]]["c_mol_l"]
+    rho3 = s3["rho_3M"][z]
+    dev3 = 100 * (rho3 / (lf["p1"] + lf["p2"] * c3 + lf["p3"] * 293.15) - 1)
+    ax.plot(c3, dev3, mk, ms=6, mfc="white", mec=ORANGE, mew=1.5, zorder=4)
+    ax.annotate(f"ζ = {z.split('_')[1]}", (c3, dev3), xytext=(7, 0), textcoords="offset points", va="center",
+                fontsize=7.3, color=MUTED)  # fmt: skip
+ax.set_xlabel("LiPF₆ concentration c (mol/L), 20 °C")
+ax.set_ylabel("density − fit of [1] (%)")
+ax.set_xlim(0, 3.45)
+ax.text(2.05, LF_ERR + 0.05, f"±{LF_ERR:g} % (uncertainty of the fit)", fontsize=7.3, color=MUTED, va="bottom")
+ax.legend(frameon=False, fontsize=7.5, loc="lower left", bbox_to_anchor=(0.0, 1.0), ncol=2)
+v["fig_rho_c"] = svg(fig)
 
 # ---------------------------------------------------------------- page
 git = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short=12", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()

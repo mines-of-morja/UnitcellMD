@@ -220,6 +220,18 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — summary of 26 November, section 6 "against the literature" (author: "what is new, what agrees, what disagrees") —
+Agrees: the direction of every error matches what others report for fixed-charge models (ions too slow; OPLS-type open-chain
+carbonates too dense; dρ/dT right). Disagrees: κ at ζ = 0.75 against Lehnert's model (same ions, other solvents, factor 1.5–2), the Li⁺
+shell (EC share 28 % against Lehnert's 47 % and the DRS estimate). **Candidates for new results** (not found in one day's search):
+the 1 M density check passes by cancellation; dρ/dc of the JJ06/CL&P ion model at ζ = 0.75 is 22 % short, and Lehnert's published
+particle numbers imply the same (0.0757, −2.0 % at 3 M; our arithmetic, Fig. 3); ζ cannot fix it (ζ ≈ 0.98 at 1 M, 1.12 at 3 M); so
+Lehnert's 3 M κ excess may partly be the volume error, which a 3 M run at the measured density can test. Ledger: Lehnert SI Table S1
+(checked against the VoR SI) and SEAMM Table 3 (preprint). Not read: Maiti 2023 full text and SI (publisher refused), Hou 2021,
+Ravikumar 2018, Dajnowicz 2022, Borodin & Smith 2009, Nyman 2008. — evidence: `docs/research/summary_261126/` (build checks every
+quote; `out1/` not in git, PDF held under decision 12) — next: author: which of the new simulations a–e to plan (each needs a study
+README with criterion first).
+
 2026-11-27 — queue controls verified on the second computer (unitcellmd-9d) — on `soricel-pc` a running job was
 freed, resumed, stopped, continued and moved to 3 threads and back; each action took effect, nothing computed while
 freed or stopped, and the thermo table after four restarts is byte-identical to the uninterrupted run's. Not

@@ -469,6 +469,83 @@
    "location": "SI Table IV (data, p. 6), SI Table XIII (fit, p. 10), SI Table XI (solubility); Eq. 3 (p. 044507-2); protocol Sec. II B (p. 044507-5: GROMACS 4.6.5, 2 fs, Nose-Hoover 1 ps, MTTK 2 ps, 0.9 nm, shifted potentials, PME 1e-6, 500 water)",
    "version_read": "VoR and SI (library PDFs, 2026-11-27)",
    "checked_vor": true
+  },
+  "lehnert2025_table_s1_ec_emc": {
+   "quantity": "particle numbers of the MD boxes for LiPF6 in EC:EMC (3:7 w:w), per target concentration c (mol/L); ion numbers tuned at 20 C until the simulated c matched the target ('most consistent particle numbers'); 0.1 M box has doubled solvent. Used to compute the densities these boxes imply (our arithmetic, not a published density)",
+   "value": {
+    "c_M": [
+     0.1,
+     0.5,
+     1.0,
+     1.5,
+     2.0,
+     2.5,
+     3.0
+    ],
+    "Li": [
+     9,
+     23,
+     47,
+     74,
+     103,
+     134,
+     168
+    ],
+    "PF6": [
+     9,
+     23,
+     47,
+     74,
+     103,
+     134,
+     168
+    ],
+    "EC": [
+     336,
+     168,
+     168,
+     168,
+     168,
+     168,
+     168
+    ],
+    "EMC": [
+     664,
+     332,
+     332,
+     332,
+     332,
+     332,
+     332
+    ]
+   },
+   "source": "L. Lehnert et al., J. Electrochem. Soc. 172, 050523 (2025), SI (CC BY 4.0)",
+   "doi": "10.1149/1945-7111/add381",
+   "location": "SI Table S1 (the 1.0 M row marked * as taken from Ringsby et al. 2021); text next to it on the tuning",
+   "version_read": "VoR (SI PDF in ../Lit, pdftotext, 2026-11-27)",
+   "checked_vor": true
+  },
+  "saxe2025_seamm_table3": {
+   "quantity": "pure-solvent densities at 25 C, experiment and MD (OPLS-AA solvents), g/cm3, as printed (two decimals): [experiment, MD]",
+   "value": {
+    "EC": [
+     1.32,
+     1.33
+    ],
+    "EMC": [
+     1.01,
+     1.03
+    ],
+    "DMC": [
+     1.07,
+     1.08
+    ]
+   },
+   "source": "P. Saxe et al., SEAMM: A Simulation Environment for Atomistic and Molecular Modeling, arXiv:2505.01400 v1 (2025)",
+   "doi": "10.48550/arXiv.2505.01400",
+   "location": "Section 6 (Example 3, battery materials), Table 3",
+   "version_read": "preprint (arXiv HTML v1, read by an agent 2026-11-27)",
+   "checked_vor": false
   }
  }
 }

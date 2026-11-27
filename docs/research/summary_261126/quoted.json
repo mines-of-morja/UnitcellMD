@@ -71,6 +71,16 @@
    "value": "about 300 ns",
    "path": "docs/research/report/report.md",
    "context": "- t₊ to 10 % needs about 300 ns."
+  },
+  "scan_zeta_exp": {
+   "value": "−3.6 ± 0.5",
+   "path": "studies/2026-11-24_parameter-sensitivity-1M/README.md",
+   "context": "| `zeta` | −3.6 ± 0.5 | −0.97 ± 0.14 | **moves** transport |"
+  },
+  "scan_eps_exp": {
+   "value": "−4.0 ± 0.6",
+   "path": "studies/2026-11-24_parameter-sensitivity-1M/README.md",
+   "context": "| `epsEMC` | −4.0 ± 0.6 | −0.84 ± 0.13 | **moves** transport |"
   }
  }
 }
