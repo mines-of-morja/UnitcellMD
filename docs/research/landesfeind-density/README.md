@@ -1,7 +1,8 @@
 # Second reading of the Landesfeind 2019 density fit (task SC-8)
 
 - **Label:** literature reading, 2026-11-25, from the authors' SI (Word file supplied by the author as
-  `../Lit/Landesfeind_2009_sup.docx`, sha256 `783c1829…d89e`; the title and the file's dates show it is the 2019 SI).
+  `../Lit/Landesfeind_2009_sup.docx`, sha256 `783c1829…d89e`; the title and the file's dates show it is the 2019 SI;
+  renamed 2026-11-27 to `../Lit/Landesfeind_2019_J._Electrochem._Soc._166_A3079_SI.docx`, same file).
 - **Script:** `digitize_fig_s1.py` (Figure S1 pixels against Eq. S1; the figure is not in this repo).
 
 ## Reading
