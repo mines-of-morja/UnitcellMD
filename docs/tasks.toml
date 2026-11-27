@@ -136,7 +136,8 @@ result = "Second reading agrees (docs/research/landesfeind-density/README.md); F
 [[task]]
 id = "V-1"
 title = "Model viscosity by Green-Kubo: pressure tensor from the GPU bridge"
-state = "open"
+state = "claimed"
+claimed_by = "agent-viscosity"
 priority = 1
 needs = "gpu"
 author = true
