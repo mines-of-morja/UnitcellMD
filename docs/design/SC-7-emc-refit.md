@@ -75,3 +75,35 @@ analysis for ΔH_vap, and a 2 × 2 solve with a test. No engine, spec or builder
 - **Q4, sources:** could you download Goldberg 2026 (CC BY, doi 10.1021/acs.jced.6c00429) and Oh 2018 into `../Lit`? ACS and
   ScienceDirect refuse automated downloads. Their uncertainties, purity and Antoine fit decide the tolerance in Q1.
 - **Q5, order:** SC-7 before the ion-model fit (§1)? Recommended.
+
+## 6. Amendment after step 0 (2026-11-27 afternoon; for approval)
+
+**Step 0 result** (`studies/2026-11-27_emc-dhvap-baseline`, Result): the current EMC has ΔH_vap = **53.17 ± 0.04 kJ/mol** at 1 fs,
+**12–13 kJ/mol (30 %) above** the 40–41 working range. The method was checked against the CPU engine and the trajectory
+(`docs/research/emc-literature/cohesion_split.py`). Per molecule the cohesion is LJ −37.7, Coulomb −14.6 kJ/mol, and
+intramolecular distortion gives back +1.6.
+
+What this changes:
+
+1. **The map in §4 is too narrow.** To first order the target needs ε × 0.66 (ε × 0.7 or so once the lower density is counted).
+   The density then falls, by roughly 2 % per 0.15 of ε (1 M scan), so σ probably has to go down, not up. Proposed instead,
+   still probe values only:
+   - step 1a: s_ε ∈ {0.85, 0.70} at s_σ = 1.00 (2 liquids, 2 gas phases), giving ΔH_vap(s_ε) and ρ(s_ε);
+   - step 1b: one σ point, s_σ = 0.98 at the s_ε of step 1a's interpolation, giving ∂ρ/∂s_σ and ∂ΔH/∂s_σ there;
+   - then the solve and the three-seed confirmation of §4. About 4 GPU hours, as before.
+2. **A uniform 30 % cut of every OPLS ε is not a small correction.** It would make EMC a new model, "OPLS-AA LJ × (s_σ, s_ε)
+   fitted to ρ and ΔH_vap", and its transferability is unknown. The held-out checks of §4.5 become more important, ρ(T) above
+   all. The other routes:
+   - **B** (only the carbonyl/ester O and C) concentrates the cut on fewer types. It is still under-determined (§3).
+   - **C** (RESP charges and a few LJ types) is the larger route.
+   - **Another published EMC model:** the agent search found no linear-carbonate model with stated density and ΔH_vap errors
+     (`docs/research/emc-literature/sc7-sources.md`, unchecked), so there is none to take over.
+3. **A cheap calibration of the conclusion (proposed, no new parameter):** DMC has a calorimetric ΔH_vap (NIST: 38.0 ± 0.2,
+   primary papers not read). The same LigParGen OPLS-AA route for DMC shows whether the over-cohesion is a property of the
+   carbonate types or of EMC alone. One liquid (GPU, ~30 min) and three gas runs (CPU) are needed.
+
+**Questions added:**
+
+- **Q6:** accept the wider map of item 1 (option A), knowing that the fit may land near ε × 0.7?
+- **Q7:** first the DMC calibration of item 3? Recommended: it costs half an hour of GPU and decides whether option A's
+  global factor is a fix for one molecule or a systematic correction of the carbonate types.

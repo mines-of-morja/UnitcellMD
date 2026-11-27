@@ -1,0 +1,275 @@
+{
+ "cross_check_gas_start": {
+  "openmm_kjmol": -32.79399335042969,
+  "engine_step0_kjmol": -32.79399335
+ },
+ "seeds": {
+  "1": {
+   "frames": [
+    {
+     "time_ps": 501.99999999504115,
+     "liquid_kjmol": -36074.13873121927,
+     "trajectory_kjmol": -36074.10546875,
+     "intra_per_molecule": -20.051569781525675,
+     "inter_per_molecule": -52.096707680912864,
+     "inter_coulomb_per_molecule": -14.6326237911387,
+     "inter_lj_per_molecule": -37.46408395080947
+    },
+    {
+     "time_ps": 687.9999999906429,
+     "liquid_kjmol": -36251.91648547168,
+     "trajectory_kjmol": -36251.87890625,
+     "intra_per_molecule": -19.77439928296766,
+     "inter_per_molecule": -52.7294336879757,
+     "inter_coulomb_per_molecule": -14.498989471575536,
+     "inter_lj_per_molecule": -38.23044415536507
+    },
+    {
+     "time_ps": 873.9999999862446,
+     "liquid_kjmol": -35857.51759304437,
+     "trajectory_kjmol": -35857.484375,
+     "intra_per_molecule": -19.670557311323474,
+     "inter_per_molecule": -52.04447787476528,
+     "inter_coulomb_per_molecule": -14.315830335209103,
+     "inter_lj_per_molecule": -37.728647600591444
+    },
+    {
+     "time_ps": 1059.9999999818463,
+     "liquid_kjmol": -36221.52669249098,
+     "trajectory_kjmol": -36221.4921875,
+     "intra_per_molecule": -20.28332311001182,
+     "inter_per_molecule": -52.159730274970144,
+     "inter_coulomb_per_molecule": -14.522234196028629,
+     "inter_lj_per_molecule": -37.63749607894144
+    },
+    {
+     "time_ps": 1245.999999977448,
+     "liquid_kjmol": -36500.36994811343,
+     "trajectory_kjmol": -36500.33984375,
+     "intra_per_molecule": -20.21104067102354,
+     "inter_per_molecule": -52.78969922520332,
+     "inter_coulomb_per_molecule": -14.702190517209674,
+     "inter_lj_per_molecule": -38.087508707993564
+    },
+    {
+     "time_ps": 1431.9999999730496,
+     "liquid_kjmol": -36641.381069951356,
+     "trajectory_kjmol": -36641.34765625,
+     "intra_per_molecule": -20.647362183964187,
+     "inter_per_molecule": -52.635399955938524,
+     "inter_coulomb_per_molecule": -14.59309707255404,
+     "inter_lj_per_molecule": -38.042302883384465
+    },
+    {
+     "time_ps": 1617.9999999686513,
+     "liquid_kjmol": -36298.205118307524,
+     "trajectory_kjmol": -36298.171875,
+     "intra_per_molecule": -20.83917007400606,
+     "inter_per_molecule": -51.75724016260899,
+     "inter_coulomb_per_molecule": -14.22296130919647,
+     "inter_lj_per_molecule": -37.534278853412374
+    },
+    {
+     "time_ps": 1803.999999964253,
+     "liquid_kjmol": -35948.22068621576,
+     "trajectory_kjmol": -35948.19140625,
+     "intra_per_molecule": -19.693866132015287,
+     "inter_per_molecule": -52.20257524041624,
+     "inter_coulomb_per_molecule": -14.72239018181528,
+     "inter_lj_per_molecule": -37.480185058601
+    }
+   ],
+   "mean": {
+    "intra_per_molecule": -20.146411068354713,
+    "inter_per_molecule": -52.301908012848884,
+    "inter_coulomb_per_molecule": -14.526289609340928,
+    "inter_lj_per_molecule": -37.77561841113735
+   },
+   "max_abs_recompute_minus_trajectory_kjmol": 0.03757922168006189
+  },
+  "2": {
+   "frames": [
+    {
+     "time_ps": 501.99999999504115,
+     "liquid_kjmol": -36001.67298357652,
+     "trajectory_kjmol": -36001.64453125,
+     "intra_per_molecule": -20.094880394196178,
+     "inter_per_molecule": -51.908465572956864,
+     "inter_coulomb_per_molecule": -14.497520550131085,
+     "inter_lj_per_molecule": -37.41094496179065
+    },
+    {
+     "time_ps": 687.9999999906429,
+     "liquid_kjmol": -36419.866127164845,
+     "trajectory_kjmol": -36419.83203125,
+     "intra_per_molecule": -20.589570315535646,
+     "inter_per_molecule": -52.250161938794044,
+     "inter_coulomb_per_molecule": -14.756782219486253,
+     "inter_lj_per_molecule": -37.49337971930782
+    },
+    {
+     "time_ps": 873.9999999862446,
+     "liquid_kjmol": -36599.958590404254,
+     "trajectory_kjmol": -36599.92578125,
+     "intra_per_molecule": -20.465315694676868,
+     "inter_per_molecule": -52.73460148613164,
+     "inter_coulomb_per_molecule": -14.679338841696227,
+     "inter_lj_per_molecule": -38.05526270547048
+    },
+    {
+     "time_ps": 1059.9999999818463,
+     "liquid_kjmol": -35955.362901959445,
+     "trajectory_kjmol": -35955.33203125,
+     "intra_per_molecule": -20.108391297353755,
+     "inter_per_molecule": -51.80233450656514,
+     "inter_coulomb_per_molecule": -14.249653193130696,
+     "inter_lj_per_molecule": -37.55268131343444
+    },
+    {
+     "time_ps": 1245.999999977448,
+     "liquid_kjmol": -36837.996303360494,
+     "trajectory_kjmol": -36837.96484375,
+     "intra_per_molecule": -20.95305142387797,
+     "inter_per_molecule": -52.722941182843016,
+     "inter_coulomb_per_molecule": -14.989920701973286,
+     "inter_lj_per_molecule": -37.733020480869655
+    },
+    {
+     "time_ps": 1431.9999999730496,
+     "liquid_kjmol": -35984.9550741406,
+     "trajectory_kjmol": -35984.921875,
+     "intra_per_molecule": -20.36711755541135,
+     "inter_per_molecule": -51.60279259286985,
+     "inter_coulomb_per_molecule": -14.639992496385705,
+     "inter_lj_per_molecule": -36.962800096484116
+    },
+    {
+     "time_ps": 1617.9999999686513,
+     "liquid_kjmol": -36647.3818955702,
+     "trajectory_kjmol": -36647.35546875,
+     "intra_per_molecule": -21.02368113293713,
+     "inter_per_molecule": -52.27108265820328,
+     "inter_coulomb_per_molecule": -14.643420817074745,
+     "inter_lj_per_molecule": -37.627661841128486
+    },
+    {
+     "time_ps": 1803.999999964253,
+     "liquid_kjmol": -36249.11044740974,
+     "trajectory_kjmol": -36249.078125,
+     "intra_per_molecule": -20.41461776319084,
+     "inter_per_molecule": -52.08360313162864,
+     "inter_coulomb_per_molecule": -14.477365356107388,
+     "inter_lj_per_molecule": -37.60623777552134
+    }
+   ],
+   "mean": {
+    "intra_per_molecule": -20.50207819714747,
+    "inter_per_molecule": -52.17199788374906,
+    "inter_coulomb_per_molecule": -14.616749271998174,
+    "inter_lj_per_molecule": -37.555248611750876
+   },
+   "max_abs_recompute_minus_trajectory_kjmol": 0.03409591484523844
+  },
+  "3": {
+   "frames": [
+    {
+     "time_ps": 501.99999999504115,
+     "liquid_kjmol": -36192.272798994316,
+     "trajectory_kjmol": -36192.2421875,
+     "intra_per_molecule": -20.22210030948323,
+     "inter_per_molecule": -52.1624452885054,
+     "inter_coulomb_per_molecule": -14.600978705301255,
+     "inter_lj_per_molecule": -37.561466644239424
+    },
+    {
+     "time_ps": 687.9999999906429,
+     "liquid_kjmol": -36098.08893916053,
+     "trajectory_kjmol": -36098.0546875,
+     "intra_per_molecule": -19.784616515010338,
+     "inter_per_molecule": -52.411561363310724,
+     "inter_coulomb_per_molecule": -14.368777878390771,
+     "inter_lj_per_molecule": -38.04278348492002
+    },
+    {
+     "time_ps": 873.9999999862446,
+     "liquid_kjmol": -36027.462676721356,
+     "trajectory_kjmol": -36027.4296875,
+     "intra_per_molecule": -19.863696331034166,
+     "inter_per_molecule": -52.19122902240854,
+     "inter_coulomb_per_molecule": -14.583577541731444,
+     "inter_lj_per_molecule": -37.60765148067714
+    },
+    {
+     "time_ps": 1059.9999999818463,
+     "liquid_kjmol": -36460.34548239116,
+     "trajectory_kjmol": -36460.3046875,
+     "intra_per_molecule": -20.45708351711381,
+     "inter_per_molecule": -52.46360744766851,
+     "inter_coulomb_per_molecule": -14.634830631325443,
+     "inter_lj_per_molecule": -37.828776816342895
+    },
+    {
+     "time_ps": 1245.999999977448,
+     "liquid_kjmol": -35940.279720187216,
+     "trajectory_kjmol": -35940.24609375,
+     "intra_per_molecule": -20.028375046687554,
+     "inter_per_molecule": -51.85218439368688,
+     "inter_coulomb_per_molecule": -14.51853938275257,
+     "inter_lj_per_molecule": -37.333645010934305
+    },
+    {
+     "time_ps": 1431.9999999730496,
+     "liquid_kjmol": -36359.594984047464,
+     "trajectory_kjmol": -36359.56640625,
+     "intra_per_molecule": -20.19238918007568,
+     "inter_per_molecule": -52.526800788019244,
+     "inter_coulomb_per_molecule": -14.629269201893461,
+     "inter_lj_per_molecule": -37.897531586125886
+    },
+    {
+     "time_ps": 1617.9999999686513,
+     "liquid_kjmol": -35839.42258103932,
+     "trajectory_kjmol": -35839.38671875,
+     "intra_per_molecule": -19.65333192463771,
+     "inter_per_molecule": -52.02551323744093,
+     "inter_coulomb_per_molecule": -14.440531322506752,
+     "inter_lj_per_molecule": -37.58498185389908
+    },
+    {
+     "time_ps": 1803.999999964253,
+     "liquid_kjmol": -36186.72309185807,
+     "trajectory_kjmol": -36186.69140625,
+     "intra_per_molecule": -20.13184605572628,
+     "inter_per_molecule": -52.241600127989855,
+     "inter_coulomb_per_molecule": -14.309589307954068,
+     "inter_lj_per_molecule": -37.93201082003572
+    }
+   ],
+   "mean": {
+    "intra_per_molecule": -20.041679859971097,
+    "inter_per_molecule": -52.23436770862876,
+    "inter_coulomb_per_molecule": -14.51076174648197,
+    "inter_lj_per_molecule": -37.723605962146806
+   },
+   "max_abs_recompute_minus_trajectory_kjmol": 0.04079489115974866
+  }
+ },
+ "mean_over_seeds": {
+  "intra_per_molecule": {
+   "mean": -20.23005637515776,
+   "se": 0.13933061428526028
+  },
+  "inter_per_molecule": {
+   "mean": -52.236091201742234,
+   "se": 0.0375117236432716
+  },
+  "inter_coulomb_per_molecule": {
+   "mean": -14.551266875940357,
+   "se": 0.0330466174585045
+  },
+  "inter_lj_per_molecule": {
+   "mean": -37.68482432834501,
+   "se": 0.06650494583277546
+  }
+ }
+}
