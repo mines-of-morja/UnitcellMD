@@ -300,6 +300,18 @@ its tests committed before any run) and its EMC and water arms: 1 fs against 0.5
 five queue jobs, about 14 h of GPU after SC-3's GPU arm. 1 fs references: `base_s1..3` of the scan and SC-3's arm G. No result yet. —
 evidence: study README; 10 tests; `analyze.py` gives the known 1 M densities — next: when the jobs are done, `analyze.py`.
 
+2026-11-27 — engine branches merged into ucmd-engine `main` (author: "merge the engine, carefully") — `main` = `36b2837`, a
+fast-forward from `dae89ab` (i-PI provider): b2a, e27-barostat, e37-openmm, e29-pressure-tensor, e37-identity, e25-constraints
+(with 014c104), sc2-bridge-velocities, sc3-molecular-pressure, s012-pair-overrides, ucmd-ff-provider. Resolved: the bridge's LJ
+force combines the tail-correction class weights with the pair-override tables (classes = atom types with overrides; new test:
+OpenMM's tail −4.0e-7 of the exact one for Kob–Andersen, single point 2.7e-8); the provider list holds i-PI and ucmd-ff; **ucmd-ff
+now refuses packages with pair overrides** (v0.1.0 has no per-pair table; it would have used the combination rule silently); CI
+pinned to umbrella `0e7befc` (spec 0.1.3) instead of `da27ef7` — evidence: fmt, clippy, architecture, no-default-features, 137
+tests + 2 slow ones, bridge 46 tests (fresh venv, validator 0.1.3), `validation/argon` re-run (all criteria pass), CI green (rust,
+bridge). The shared checkout `ucmd-engine` is on `main` and built; the other engine worktrees and the machine profiles are
+unchanged, so no running or queued job changed engine — next: worktrees on merged branches can be removed when their sessions are
+done; the next study that builds its engine from `main` gets the molecular C-rescale barostat (SC-3 option B).
+
 2026-11-26 — B2d built (author approved the design 2026-11-25: one adaptive window, read-only queue page, all five
 steps) — ucmd-builder branch `b2d` (from `b2c`; not pushed, not merged; worktree `ucmd-builder-b2d`): resizing fixed
 (minimum 874 × 1042 → about 600 × 440 px), plots as a page, playback under the 3D view, one Open with drag and drop and
@@ -307,8 +319,8 @@ recent files, kept layout (`~/.config/ucmd/gui.json`), project panel with studie
 in a thread (pause 0.31 → 0.03 s, memory 1054 → 356 MB), read-only Queue page (ADR 0016) — evidence:
 `validation/b2d/REPORT.md` there, 310 tests, 156 GUI tests also with the real 3D widget. **Merged 2026-11-27 (author):**
 ucmd-builder `main` = `df352a7` (b1, b2a, b2c, b2d, s012-pair-overrides and pull request 2: spec 0.1.2 pin, Packmol below 100),
-CI green on all three jobs; pull request 2 closed; the shared checkout `ucmd-builder` is on `main`. Not merged: ucmd-engine (its
-`main` lacks b2a and every later branch; author to decide) — next: author's hands-on test (testing.md §9b).
+CI green on all three jobs; pull request 2 closed; the shared checkout `ucmd-builder` is on `main` — next: author's hands-on test
+(testing.md §9b).
 
 2026-11-25 — sensitivity scan complete (15 of 15), summary of 25 November rebuilt — `docs/research/summary_261125/` (build.py, template,
 `data/scan.json` final; `out1/` not in git, PDF not sent, decision 12). **Reading rule:** `zeta` (exponent −3.6 ± 0.5) and `epsEMC` (−4.0 ± 0.6) move
