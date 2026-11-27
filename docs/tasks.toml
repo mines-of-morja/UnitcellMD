@@ -130,3 +130,74 @@ deliverable = "Second reading compared with the ledger entry landesfeind2019_den
 acceptance = "Agreement or correction recorded in the ledger."
 
 result = "Second reading agrees (docs/research/landesfeind-density/README.md); Fig. S1 reproduces the fit. Reference good to about 0.6 %; 0 C lies outside the plotted points."
+
+# ---- 2026-11-28: after Jo's feedback; plan in docs/research/priorities-2026-11-28.md ----
+
+[[task]]
+id = "V-1"
+title = "Model viscosity by Green-Kubo: pressure tensor from the GPU bridge"
+state = "open"
+priority = 1
+needs = "gpu"
+author = true
+waits_for = "queue job j20261127-103816-ded7 (bench_tensor.py, cost of one tensor on the GPU)"
+goal = "eta of the model is the unknown behind T4, the Yeh-Hummer correction of D and kappa_NE (Jo's feedback section 1) and the reading of SC-7 (EMC 30 % over-cohesive). The GPU backend refuses pressure_tensor (spec 0.1.1). OpenMM 8.5 MonteCarloFlexibleBarostat.computeCurrentPressure gives all six components (T4 amendment)."
+deliverable = "(1) Design note: bridge fills the six tensor columns; sampling interval from the benchmark; atomic or molecular virial (SC-3: atomic is biased at 1 fs). (2) After approval, test-first: bridge tensor equals the CPU engine's on single points. (3) Study: Green-Kubo eta of pure EMC and of the 1 M M1 box, README with criterion first."
+acceptance = "Tensor agrees with the CPU engine within a tolerance fixed in the design. eta reported with its error from independent runs and compared with Logan 2018 (EC:EMC 3:7, molal, convert with the density) and Gruber 2026 (band). eta is a test quantity: no parameter is chosen from it."
+
+[[task]]
+id = "V-2"
+title = "Box-size series of the 1 M box: D at infinite size and eta without new code"
+state = "open"
+priority = 1
+needs = "gpu"
+author = false
+goal = "Jo's feedback section 1: D and kappa_NE are not corrected for the 4.3 nm box. D against 1/L at three box sizes gives D at infinite size and, from the slope (xi kT / 6 pi eta), an estimate of eta that checks V-1. It also shows whether the collective kappa depends on box size."
+deliverable = "Study folder: 1 M M1 box, 20 C, NPT then NVT at the NPT volume, three sizes (about 1x, 2x, 4x the atoms), seeds per size from the measured noise (scan: 11 % per run in kappa_NE); README with question, protocol, analysis and criterion before the first run; analyze.py with tests."
+acceptance = "D_inf per species with error; eta from the slope with error, stated next to V-1; corrected kappa_NE and kappa/kappa_NE. The cost estimate in the README before submitting to the queue."
+
+[[task]]
+id = "V-3"
+title = "Thermodynamic consistency: integrator or thermostat/barostat coupling?"
+state = "open"
+priority = 2
+needs = "gpu"
+author = false
+after = ["SC-1"]
+goal = "Configurational minus kinetic T is +3.7 K at 1 fs and +1.7 K at 0.5 fs (1 M box); pure dt^2 scaling predicts about +0.9 K at 0.5 fs. Jo (section 2): the time-step bias and the warm liquid are one effect. The author asks whether thermostat and barostat interfere."
+deliverable = "Short runs of the 1 M M1 box: (a) NVE from an equilibrated NPT state at 0.5 and 1 fs (no thermostat, no barostat), kinetic and configurational T and energy drift; (b) the same NVT with a weaker and a stronger thermostat coupling; (c) one exploratory run with X-H constraints (model change: label it, the author decides any use). Include SC-3's atomic-minus-molecular pressure."
+acceptance = "Says which part of the T offset is the integrator and which, if any, the coupling, with errors. Ends with one bias row for the summary instead of two. No tolerance loosened; no model change adopted without the author."
+
+[[task]]
+id = "V-4"
+title = "Salt-free M1 solvent (EC:EMC 3:7) density at 20 C"
+state = "open"
+priority = 2
+needs = "gpu"
+author = false
+goal = "Jo's feedback section 3a: the c = 0 intercept (+3.2 %) is extrapolated, and V_phi depends on it steeply (0.5 % in rho0 moves V_phi by 4.6 cm3/mol at 1 M). Ideal mixing of the pure-solvent errors predicts about +2.1 to +2.4 %."
+deliverable = "Study: M1 solvent without salt, NPT, 20 C, 0.5 fs, three seeds, SC-4's settling criterion; README with criterion first. Recompute V_phi at 0.1, 1, 2, 3 M with the measured rho0."
+acceptance = "rho0 with error from seeds against the Landesfeind fit at c = 0 and against ideal mixing; V_phi table updated; states which V_phi the zeta extrapolation uses (Jo section 5)."
+
+[[task]]
+id = "V-5"
+title = "Literature note on the papers added 2026-11-27 (viscosity, diffusion, density, charge scaling)"
+state = "open"
+priority = 2
+needs = "none"
+author = false
+goal = "Eleven papers were added to ../Lit (Maiti 2023, Borodin 2009, Hou 2021, Ravikumar 2018, Dajnowicz 2022, Nyman 2008, Bergstrom 2021 SI, Gruber 2026 SI CSV, Doherty 2017, Fan 2025, plus older ones renamed). Several report model and measured eta, D and rho."
+deliverable = "docs/research/literature-2026-11-28/README.md: per paper, force field, charge scaling, time step and constraints, finite-size treatment, model eta/D/rho/kappa against experiment, with table or page. Ledger entries (publication.md rule 3) for every number we will compare with: Logan 2018 eta, Gruber 2026 eta/rho, Nyman 2008 rho, measured D (pfg-NMR) if any. Update section 6 claims that a paper already covers."
+acceptance = "Each number has table/page and version read. Says which section-6 'not found' claims survive. Missing papers listed for the author (Yeh-Hummer 2004, Shao 2020, Eastwood 2010, Kohagen 2016, Duboue-Dijon 2020, pfg-NMR refs 29 and 35 of Landesfeind 2019)."
+
+[[task]]
+id = "V-6"
+title = "Successor of the 26 November summary with Jo's corrections"
+state = "open"
+priority = 3
+needs = "none"
+author = false
+after = ["V-2", "V-3", "V-4"]
+goal = "Jo's feedback: finite-size row of the bias table is wrong for kappa_NE; time-step and +3.4 K rows are one bias; zeta at 1 M uses which V_phi (0.95 vs 0.98); Fig. 3 crossing points; Lehnert's implied densities rest on an assumption; t+ reference good to about 0.1 only."
+deliverable = "docs/research/summary_2611xx/ (dated successor; 261126 stays unchanged), every correction listed with its old text, numbers from scripts."
+acceptance = "Every point of Jo's sections 1-5 answered: corrected, or kept with a reason."

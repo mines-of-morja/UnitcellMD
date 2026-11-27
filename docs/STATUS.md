@@ -220,6 +220,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-28 — priorities after Jo's feedback on the 26 November summary — the model's viscosity is the unknown behind T4, the
+Yeh–Hummer correction of D and κ_NE (Jo: +30 to +60 % on κ_NE for η 7 to 3.5 mPa s) and the reading of SC-7 (EMC 30 %
+over-cohesive). Tasks V-1 (Green–Kubo η, GPU pressure tensor, design first) and V-2 (box-size series, no new code) in parallel;
+V-3 thermodynamic consistency (NVE and coupling test of the +3.7/+1.7 K offset; the author asked whether thermostat and barostat
+interfere); V-4 salt-free solvent; V-5 literature note on the new papers; V-6 corrected summary. Jo's "own group" data are
+the published Gruber 2026 SI (in ../Lit). — evidence: `docs/research/priorities-2026-11-28.md`, `docs/tasks.toml` — next:
+agents claim V-1 to V-5; author: SC-7 Q1–Q7, whether Jo's feedback file goes into git.
+
 2026-11-27 — summary of 26 November, section 6 "against the literature" (author: "what is new, what agrees, what disagrees") —
 Agrees: the direction of every error matches what others report for fixed-charge models (ions too slow; OPLS-type open-chain
 carbonates too dense; dρ/dT right). Disagrees: κ at ζ = 0.75 against Lehnert's model (same ions, other solvents, factor 1.5–2), the Li⁺
