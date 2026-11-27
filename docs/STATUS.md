@@ -75,6 +75,13 @@ Last update: 2026-11-13.
   - the barostat E2.7 first after B2a; forced restarts recorded in the H5MD provenance;
   - the B2a design with every recommendation, including a graceful stop of `ucmd run`.
 
+- **2026-11-27** (after SC-1 and SC-4):
+  - time step 1 fs for the flexible models, with SC-1's measured band (ADR 0017);
+  - SC-7 (EMC refit): go ahead with the proposal (design doc first);
+  - the ion model: find which interactions describe the ions well enough (research, then a plan);
+  - T4: the 25 % margin is approved;
+  - push `main`.
+
 ## Decisions taken by the agent (to review)
 
 - The E2 core implementation choices are in [gate-e2-core.md §4](gates/gate-e2-core.md).
@@ -212,6 +219,16 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-27 — author's decisions on SC-1/SC-4 recorded; T4 route; SC-7 and ion-model research started (unitcellmd-c8) —
+**1 fs** from now on (ADR 0017: half the cost, Lehnert's protocol; densities 0.2–0.3 % low and D 5–10 % high against 0.5 fs
+as a stated band; the final model gets one 0.5 fs check). **T4:** margin approved; blocked because the GPU backend refuses the
+pressure tensor. OpenMM 8.5's `MonteCarloFlexibleBarostat.computeCurrentPressure` gives all six components, so the bridge
+could fill spec 0.1.1's columns; step 0 (`docs/research/viscosity/bench_tensor.py`, queue job ded7, measurement only) times it
+on the GPU. On OpenMM's CPU platform one tensor costs 5.5 scalar pressures. **SC-7** claimed: sources being read (Dougassa
+2014 itself, a second ΔH_vap source, EMC density over T). **Ion model:** literature on apparent molar volumes of LiPF₆ and on
+interaction models that get electrostriction and mobility together. — evidence: ADR 0017, T4 amendment — next: the 3 M map
+(about 14:15), the benchmark, SC-7 design doc, ion-model plan.
 
 2026-11-27 — A1.7 target 2 planned and queued (NaCl in SPC/E, Joung–Cheatham; author: "yes, add it to the queue") — the six new
 papers in `../Lit` renamed by author and year (Joung 2008, Berendsen 1987, Mester 2015 + SI, Benavides 2016 + SI). Builder: set

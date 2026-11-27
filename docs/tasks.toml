@@ -106,12 +106,13 @@ result = "Approved and applied 2026-11-25 as dated corrections (old text kept): 
 [[task]]
 id = "SC-7"
 title = "Refit EMC to density and dH_vap (not to transport)"
-state = "blocked"
+state = "claimed"
+claimed_by = "unitcellmd-c8"
 priority = 3
 needs = "gpu"
 author = true
 after = ["SC-1", "SC-5"]
-waits_for = "author: new physical parameters; reading of the sensitivity scan"
+waits_for = "author: approval of the design doc (go-ahead for the proposal given 2026-11-27)"
 goal = "LigParGen EMC is 2.8 % too dense at 25 C (SC-5), and no measured dH_vap of EMC was found and takes part in the too-slow ions. Strategy step M2. The scan's epsEMC runs are a map only: no parameter is picked from them."
 deliverable = "Proposal: targets, fitted parameters, sources, held-out checks; design doc before any run."
 acceptance = "Every parameter has a source; targets fixed before fitting; kappa, t+ and D never used."
