@@ -10,3 +10,8 @@
   3. The `thermo.tsv` of the interrupted run equals that of an uninterrupted run of the same `run.toml` here (CPU
      reference backend: bit-identical, also across a restart; CLAUDE.md invariant 8, ADR 0010). A difference is reported,
      not explained away.
+
+## Result (2026-11-27)
+
+Check 1 passed (`cpu-reference, 6 threads, AMD Ryzen 5 4500`, 735.8 s, `done`). Checks 2 and 3 were not exercised in
+this run (nobody used the controls); they were done in `2026-11-27_queue-controls-test-interrupted`.

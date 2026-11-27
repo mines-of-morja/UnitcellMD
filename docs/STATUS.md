@@ -220,6 +220,12 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — queue controls verified on the second computer (unitcellmd-9d) — on `soricel-pc` a running job was
+freed, resumed, stopped, continued and moved to 3 threads and back; each action took effect, nothing computed while
+freed or stopped, and the thermo table after four restarts is byte-identical to the uninterrupted run's. Not
+exercised: Kill on a running job, the page buttons against her worker (the command line was used). — evidence:
+`studies/2026-11-27_queue-controls-test{,-interrupted}` — next: SC-7 step 0 runs there now (c8's study)
+
 2026-11-27 — 3 M density map done; PF₆⁻ size map queued (unitcellmd-c8) — ζ 0.65 → 0.85 raises the 3 M density by 0.036 g/cm³,
 2.05 times the 1 M effect ("scales with the salt" by the rule, on the line). As apparent molar volume (model 70.6 at 1 M, 72.3 cm³/mol
 at 3 M against 55.7): dV_φ/dζ is −74 at 1 M but −45 cm³/mol at 3 M, so ζ alone would need ζ > 1 at 3 M; it cannot fix the slope and

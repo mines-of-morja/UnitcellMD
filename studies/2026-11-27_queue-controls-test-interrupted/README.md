@@ -10,3 +10,18 @@
   2. Every restart continues from a checkpoint and the job ends `done`.
   3. `thermo.tsv`, one row per step, equals that of the uninterrupted run (bit-identical, also across restarts and thread
      counts). A difference is reported, not explained away.
+
+## Result (2026-11-27): all three checks passed
+
+| Action | Reached after | While not running |
+|---|---|---|
+| free | 15 s (released at step 3 400) | step unchanged for 60 s |
+| use again | continued from the checkpoint | |
+| stop | 15 s (held at step 6 800) | step unchanged for 60 s |
+| continue | continued from the checkpoint | |
+| 3 threads, then 6 | restarted with each count (`run.log`) | |
+
+- Four stops and restarts (after steps 3 424, 6 859, 9 111, 10 470), job `done`.
+- `thermo.tsv` is byte-identical to the uninterrupted run: 201 rows, SHA-256
+  `8308835dfd7f97c4a42fe6078520c1f872cdf5f651e7c4b8f2d098020378b63b` for both.
+- Kill was not exercised on a running job.
