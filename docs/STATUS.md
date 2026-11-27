@@ -238,6 +238,16 @@ freed or stopped, and the thermo table after four restarts is byte-identical to 
 exercised: Kill on a running job, the page buttons against her worker (the command line was used). — evidence:
 `studies/2026-11-27_queue-controls-test{,-interrupted}` — next: SC-7 step 0 runs there now (c8's study)
 
+2026-11-27 — SC-7 step 0: **EMC is 30 % over-cohesive**; DMC calibration queued (unitcellmd-c8) — ΔH_vap of the current EMC
+(LigParGen OPLS-AA) is **53.17 ± 0.04 kJ/mol** at 1 fs against the 40–41 working range (prediction was 1–4 above; failed). The
+method is checked: OpenMM equals the engine on the gas start energy, recomputed liquid frames are within 0.04 kJ/mol of the
+stored ones. Per molecule the cohesion is LJ −37.7, Coulomb −14.6, intramolecular distortion +1.6 kJ/mol, so the excess must come
+mostly out of ε (first order ε × 0.66), outside the design's map. Design amended (§6: wider map, Q6; DMC calibration, Q7). DMC
+uses the same LJ types and has a calorimetric ΔH_vap (38.0); its gas phase is queued on soricel (job 5e04, CPU only, the liquid
+exists). Not used, but consistent: the ions' slowness (T4) and D's exponent −4 on EMC ε. — evidence:
+`studies/2026-11-27_emc-dhvap-baseline` (Result), `docs/research/emc-literature/{dhvap_baseline,cohesion_split}.json` — next:
+the DMC reading; author: SC-7 Q1–Q7.
+
 2026-11-27 — 3 M density map done; PF₆⁻ size map queued (unitcellmd-c8) — ζ 0.65 → 0.85 raises the 3 M density by 0.036 g/cm³,
 2.05 times the 1 M effect ("scales with the salt" by the rule, on the line). As apparent molar volume (model 70.6 at 1 M, 72.3 cm³/mol
 at 3 M against 55.7): dV_φ/dζ is −74 at 1 M but −45 cm³/mol at 3 M, so ζ alone would need ζ > 1 at 3 M; it cannot fix the slope and
