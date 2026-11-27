@@ -55,3 +55,31 @@ at 3 M at 1 fs. SC-1 adds about +0.25 % at 0.5 fs, so **0.1 M is expected to fai
     submit study 2026-11-27_density-temperature-M1 --needs gpu-hip-mixed
 
 Then `python3 analyze.py OUT.json`.
+
+## Result (2026-11-27, all 5 runs done, no hang; `analyze.py`, output `docs/research/density-c-T/sc4.json`)
+
+**No-go.** Three of six points are outside 1.5 %; every point has settled (halves within 0.17 %).
+
+| Point | ρ (g/cm³) | c of the box (M) | fit | deviation | verdict |
+|---|---|---|---|---|---|
+| 0.1 M, 20 °C | 1.1306 | 0.102 | 1.0997 | +2.81 % | FAIL |
+| 1 M, 20 °C (SC-1) | 1.1970 | 0.996 | 1.1813 | +1.33 % | pass |
+| 2 M, 20 °C | 1.2690 | 2.011 | 1.2738 | −0.38 % | pass |
+| 3 M, 20 °C | 1.3365 | 2.999 | 1.3639 | −2.01 % | FAIL |
+| 1 M, 10 °C | 1.2077 | 1.005 | 1.1930 | +1.24 % | pass |
+| 1 M, 50 °C | 1.1645 | 0.969 | 1.1461 | +1.61 % | FAIL |
+
+- **dρ/dc = 0.0710 ± 0.0009** g/cm³ per M against 0.0912: 22 % too small.
+- **dρ/dT = −0.001081 ± 0.000001** g/cm³ per K against −0.00109: right.
+
+**Reading** (the task's own rule: "a slope means the ion model, an offset the solvent"):
+- **Both are wrong, and they cancel near 1 M.** Near zero salt the model is +2.8 % too dense, which is the solvent. It is close to
+  the predicted +2.4 % and to the +2.8 % of pure LigParGen EMC at 25 °C (SC-5). Each mole of salt then adds too little density,
+  which is the ions. So the +1.3 % at 1 M is a cancellation, and 3 M comes out at −2.0 % (predicted −0.5 %).
+- **50 °C** fails by 0.11 % over the limit. The temperature slope is right, so this is the same offset as at 20 °C (+1.3 %) plus
+  noise and the fit's own scatter. Taken alone it says nothing new.
+- **Prediction against outcome:** 0.1 M failed as predicted. 3 M is 1.5 % lower than predicted, because the ideal-mixing estimate
+  could not know the slope.
+
+**Next (exploration, queued 2026-11-27):** `studies/2026-11-27_density-slope-3M`, does ζ's density effect grow with the salt? No
+parameter is chosen from it.

@@ -213,6 +213,14 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — SC-4 done: **no-go**; follow-up map queued; EMC literature (unitcellmd-c8) — 0.1 M +2.81 %, 3 M −2.01 %, 1 M at 50 °C
++1.61 % fail; 2 M and 1 M at 10/20 °C pass. dρ/dc 0.0710 ± 0.0009 against 0.0912 (22 % low), dρ/dT right. So the solvent is too dense
+(+2.8 % near c = 0, as pure EMC) and the salt adds too little density; they cancel near 1 M. Map `studies/2026-11-27_density-slope-3M`
+queued (ζ 0.65/0.85 and EMC ε × 0.85 on the 3 M box, the scan's probe values; does ζ's density effect scale with the salt?). Literature
+(agent, unchecked): no measured Δ_vap H of EMC; one vapour-pressure set (Dougassa 2014, via ThermoML) gives about 40.7 kJ/mol; Logan 2018
+viscosities read for T4. — evidence: SC-4 README (Result), `docs/research/density-c-T/sc4.json`, `docs/research/emc-literature/README.md` —
+next: the map's `analyze.py`; author: SC-7 and the ion model.
+
 2026-11-27 — second computer online; controls for a shared computer (unitcellmd-9d) — `soricel-pc` ran the queue test
 job; its thermo table is byte-identical to the workstation's repeat (ADR 0010; study
 `2026-11-25_queue-client-test`). New: stop, continue, kill, "free this computer", CPU threads (tab Queue, CLI); the
