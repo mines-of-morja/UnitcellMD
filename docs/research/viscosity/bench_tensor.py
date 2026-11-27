@@ -39,7 +39,6 @@ def main() -> int:
 
     import openmm as mm
     from openmm import unit
-
     from ucmd_bridge.model import NonbondedSettings, build_system
     from ucmd_bridge.openmm_backend import read_plan
     from ucmd_bridge.package import load
@@ -79,7 +78,7 @@ def main() -> int:
         return times, values
 
     bar = unit.bar
-    to_bar = lambda q: [float(x.value_in_unit(bar)) for x in q]  # noqa: E731
+    to_bar = lambda q: [float(x.value_in_unit(bar)) for x in q]
     ta, va = per_call(lambda c: to_bar(flex_atomic.computeCurrentPressure(c)))
     tr, vr = per_call(lambda c: to_bar(flex_rigid.computeCurrentPressure(c)))
     ts, vs = per_call(lambda c: float(scalar.computeCurrentPressure(c).value_in_unit(bar)))
