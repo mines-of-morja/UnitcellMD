@@ -213,6 +213,15 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — A1.7 target 2 planned and queued (NaCl in SPC/E, Joung–Cheatham; author: "yes, add it to the queue") — the six new
+papers in `../Lit` renamed by author and year (Joung 2008, Berendsen 1987, Mester 2015 + SI, Benavides 2016 + SI). Builder: set
+`nacl-jc-spce` and the printed LJ forms Rmin/2 and A/B (branch `claude/a17-nacl-spce`, 5f2bcae, local; 328 tests). Reference: Γ = 1 +
+dlnγ/dln m from Mester's SI Table IV and fit (ledger `mester2015_jc_spce_lngamma`): 1.078 ± 0.029, 1.389 ± 0.075, 1.760 ± 0.146 at 1,
+2, 3 mol/kg. Study `studies/2026-11-27_a17-nacl-jc-spce` (4000 water at 1, 2, 3 mol/kg; 2000 at 3 as a size check; Mester's protocol;
+42 ns each), plan and criterion committed first (670175d); queue job `j20261127-103254-9aef` (gpu-hip-mixed), behind
+`2026-11-27_density-slope-3M`. Nothing judged — evidence: study README, `reference.py`, 3 tests; 300-step CPU plumbing run refused as
+it should — next: `analyze.py` when the four runs are done.
+
 2026-11-27 — SC-4 done: **no-go**; follow-up map queued; EMC literature (unitcellmd-c8) — 0.1 M +2.81 %, 3 M −2.01 %, 1 M at 50 °C
 +1.61 % fail; 2 M and 1 M at 10/20 °C pass. dρ/dc 0.0710 ± 0.0009 against 0.0912 (22 % low), dρ/dT right. So the solvent is too dense
 (+2.8 % near c = 0, as pure EMC) and the salt adds too little density; they cancel near 1 M. Map `studies/2026-11-27_density-slope-3M`
