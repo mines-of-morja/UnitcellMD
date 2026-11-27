@@ -369,6 +369,106 @@
    "location": "pure methyl propanoate, vibrating tube; https://trc.nist.gov/ThermoML/10.1016/j.jct.2004.12.014.xml, sha256 b5f6f3f67e1e1faf (2026-11-25)",
    "version_read": "NIST ThermoML (curated copy of the paper's table), paper not read",
    "checked_vor": false
+  },
+  "mester2015_jc_spce_lngamma": {
+   "quantity": "mean ionic activity coefficient ln(gamma) (molality scale) of NaCl in SPC/E water with Joung-Cheatham ions (SPC/E column), 298.15 K, 1 bar, from MD free-energy insertion of an ion pair (GROMACS 4.6.5); with the system volumes and the fit of their Eq. 3: ln(gamma) = ln(10) (-A sqrt(m)/(1 + B sqrt(m)) + b m + C m^2 + D m^3)",
+   "value": {
+    "table_IV": {
+     "N_NaCl": [
+      1,
+      1,
+      5,
+      9,
+      18,
+      27,
+      36,
+      45,
+      54
+     ],
+     "N_water": [
+      5000,
+      1000,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500,
+      500
+     ],
+     "m_mol_per_kg": [
+      0.01,
+      0.06,
+      0.56,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      6.0
+     ],
+     "V_nm3": [
+      149.84,
+      29.98,
+      15.08,
+      15.18,
+      15.43,
+      15.73,
+      16.04,
+      16.39,
+      16.75
+     ],
+     "mu_ex_NaCl_kJ_mol": [
+      -742.3,
+      -743.1,
+      -743.3,
+      -743.1,
+      -742.7,
+      -741.3,
+      -739.9,
+      -738.3,
+      -737.1
+     ],
+     "ln_gamma": [
+      -0.138,
+      -0.29,
+      -0.34,
+      -0.31,
+      -0.24,
+      0.03,
+      0.28,
+      0.6,
+      0.82
+     ],
+     "ln_gamma_err": [
+      0.006,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05
+     ]
+    },
+    "table_XIII_this_work": {
+     "A": 0.5677,
+     "B": 1.8508,
+     "b": 0.026026,
+     "C": 0.0242095,
+     "D": -0.0019281
+    },
+    "uncertainty": "68.3 % confidence; V to better than 0.01 nm3",
+    "solubility_mol_per_kg": 3.59,
+    "solubility_err": 0.04,
+    "note": "The main text prints A = -0.5108 for Moucka's fit with -A sqrt(m) in Eq. 3; Table XIII prints A > 0 for both fits. A > 0 with -A sqrt(m) reproduces Table IV (checked: m = 1, 3, 6 give -0.35, 0.02, 0.83 against -0.31, 0.03, 0.82)."
+   },
+   "source": "Z. Mester, A. Z. Panagiotopoulos, J. Chem. Phys. 142, 044507 (2015), and its supplementary material",
+   "doi": "10.1063/1.4906320",
+   "location": "SI Table IV (data, p. 6), SI Table XIII (fit, p. 10), SI Table XI (solubility); Eq. 3 (p. 044507-2); protocol Sec. II B (p. 044507-5: GROMACS 4.6.5, 2 fs, Nose-Hoover 1 ps, MTTK 2 ps, 0.9 nm, shifted potentials, PME 1e-6, 500 water)",
+   "version_read": "VoR and SI (library PDFs, 2026-11-27)",
+   "checked_vor": true
   }
  }
 }

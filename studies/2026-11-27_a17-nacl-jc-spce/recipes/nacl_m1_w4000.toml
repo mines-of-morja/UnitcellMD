@@ -1,0 +1,37 @@
+# A1.7 target 2 (README.md): 4000 SPC/E water and 72 NaCl, 1 mol/kg, 8 times
+# the composition of Mester & Panagiotopoulos 2015 (SI Table IV: 9 NaCl in 500 water).
+# Built with ucmd-builder branch claude/a17-nacl-spce (set nacl-jc-spce), see make_packages.sh.
+format = "ucmd-build"
+version = "0.1"
+name = "nacl_m1_w4000"
+seed = 271
+
+[forcefield]
+source = "library"
+set = "nacl-jc-spce"
+
+[[component]]
+name = "Na"
+molecule = { library = "Na" }
+count = 72
+
+[[component]]
+name = "Cl"
+molecule = { library = "Cl" }
+count = 72
+
+[[component]]
+name = "water"
+molecule = { library = "water" }
+count = 4000
+
+[box]
+# cube of the volume 121.4400 nm3: Mester & Panagiotopoulos 2015, SI Table IV: <V> = 15.18 nm3 for 9 NaCl in 500 water, scaled by 4000/500 (packing start only; NPT sets the volume)
+length_nm = 4.9521
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2
+
+[velocities]
+temperature_K = 298.15

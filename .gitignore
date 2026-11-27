@@ -30,3 +30,6 @@ __pycache__/
 
 # Job queue spool (docs/design/queue.md): local state
 /queue/
+/studies/2026-11-27_a17-nacl-jc-spce/packages/
+/studies/2026-11-27_a17-nacl-jc-spce/work/
+/studies/2026-11-27_a17-nacl-jc-spce/result.json
