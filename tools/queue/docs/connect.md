@@ -82,6 +82,12 @@ The dashboard (tab Queue, from any machine with the token) has for each computer
 - Without the server (network down), stop the worker itself (Ctrl-C in its window): the job
   checkpoints and is queued again two minutes later.
 
+## Updating a client
+
+**Unmount the studies folder before any git command** in the client's clone: a `git pull` with the
+mount in place writes into the server's studies folder. Order: stop the worker (Ctrl-C), unmount
+`<clone>/studies`, `git pull`, mount again, start the worker.
+
 ## Notes
 
 - Replicas of one study should run on one machine type: results are reproducible per machine, not

@@ -187,3 +187,22 @@ does not, it can even be fully used". Therefore:
 - **Not covered:** the share of the GPU, memory, and anything outside the worker's job (WSL itself);
   an owner without access to the server stops the worker process.
 
+## 10. Clients that are not fully trusted, and clients over the Internet (open; author's question 2026-11-27)
+
+Today a client is trusted completely. Its SSH key gives SFTP without a folder limit (read and write of
+the whole account), and even limited to `studies/` it could change plans and scripts that this machine
+runs later. The shared token lets any holder stop, kill and submit study jobs.
+
+Proposal, in this order:
+
+1. **Now, for the LAN client:** run its `sftp-server` in a sandbox (`bwrap` in the key's forced
+   command) that shows `studies/` only, read-only except the result folders. Not built or tried.
+2. **Before any other client:** no file system access at all. The client downloads a job bundle
+   (package, `run.toml`, checkpoint) and uploads the results; the server accepts only the files of
+   that job, with size limits. One token per client, limited to claiming its tags and reporting its
+   own jobs; the author's token stays here. No client runs scripts from the server: study jobs only.
+3. **Over the Internet:** only through a VPN (WireGuard or Tailscale); never an open port.
+4. **Trusting results:** repeat a sample of each client's runs here. CPU runs are bit-identical
+   across machines (ADR 0010; shown for `soricel-pc`), so the check is exact; GPU results can only
+   be checked statistically. Provenance records which computer ran what.
+
