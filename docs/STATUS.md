@@ -220,6 +220,13 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-27 — 3 M density map done; PF₆⁻ size map queued (unitcellmd-c8) — ζ 0.65 → 0.85 raises the 3 M density by 0.036 g/cm³,
+2.05 times the 1 M effect ("scales with the salt" by the rule, on the line). As apparent molar volume (model 70.6 at 1 M, 72.3 cm³/mol
+at 3 M against 55.7): dV_φ/dζ is −74 at 1 M but −45 cm³/mol at 3 M, so ζ alone would need ζ > 1 at 3 M; it cannot fix the slope and
+it slows the ions. EMC ε × 0.85: −0.022 g/cm³ at 3 M, 0.89 of the 1 M change. PF₆⁻ σ × 0.95 / × 1.05 on the 3 M box submitted (job
+1c5d, after the tensor benchmark). — evidence: `studies/2026-11-27_density-slope-3M` (Result), `docs/research/density-c-T/v_phi_zeta.json`
+— next: PF₆⁻ map, literature (agents resumed after a rate limit), SC-7 design doc.
+
 2026-11-27 — author's decisions on SC-1/SC-4 recorded; T4 route; SC-7 and ion-model research started (unitcellmd-c8) —
 **1 fs** from now on (ADR 0017: half the cost, Lehnert's protocol; densities 0.2–0.3 % low and D 5–10 % high against 0.5 fs
 as a stated band; the final model gets one 0.5 fs check). **T4:** margin approved; blocked because the GPU backend refuses the
