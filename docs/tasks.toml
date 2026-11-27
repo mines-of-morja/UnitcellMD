@@ -148,7 +148,8 @@ acceptance = "Tensor agrees with the CPU engine within a tolerance fixed in the 
 [[task]]
 id = "V-2"
 title = "Box-size series of the 1 M box: D at infinite size and eta without new code"
-state = "open"
+state = "claimed"
+claimed_by = "unitcellmd-40"
 priority = 1
 needs = "gpu"
 author = false
