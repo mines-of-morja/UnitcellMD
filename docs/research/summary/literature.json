@@ -91,8 +91,8 @@
    "doi": "10.1016/j.jct.2014.07.004",
    "location": "Table 2 (p. 54, EMC block, columns 'exptl' and 'calcd' of 10 p_sat); Table 3 (p. 55, Antoine coefficients, equation (13) ln(p/kPa) = A - B/(T/K + C)); Table 1 (p. 51): EMC Aldrich, mole fraction 0.9999, water < 10e-6; uncertainties u(T) = 0.1 K, u(p) = 0.05 p + 0.1 kPa (footnote b of Table 2)",
    "version_read": "author PDF in ../Lit, 2026-11-28",
-   "checked_vor": false,
-   "note": "The paper is about methane solubility; the vapour pressures are a by-product. The Antoine constants (calcd column) are from Zhang et al. 2010 (ref. 57, entry zhang2010_table1_emc_boiling_point), not fitted to these data; they are the same numbers as Zhang's log10 constants times ln 10. Derived by us with tools/thermo/goldberg_dh.py (not printed): a straight-line fit of ln p against 1/T over the 13 measured points gives Delta_vap H = 40.69 +/- 0.57 kJ/mol (mean over 277.96 to 333.15 K, 1 SE of the slope) and p(298.15 K) = 3.40 kPa; the measured point at 298.15 K is 3.658 kPa. Goldberg's Antoine gives 40.35 kJ/mol and 3.437 kPa. No enthalpy of vaporization of EMC is printed in the paper. Single reading; second reading outstanding."
+   "checked_vor": true,
+   "note": "The paper is about methane solubility; the vapour pressures are a by-product. The Antoine constants (calcd column) are from Zhang et al. 2010 (ref. 57, entry zhang2010_table1_emc_boiling_point), not fitted to these data; they are the same numbers as Zhang's log10 constants times ln 10. Derived by us with tools/thermo/goldberg_dh.py (not printed): a straight-line fit of ln p against 1/T over the 13 measured points gives Delta_vap H = 40.69 +/- 0.57 kJ/mol (mean over 277.96 to 333.15 K, 1 SE of the slope) and p(298.15 K) = 3.40 kPa; the measured point at 298.15 K is 3.658 kPa. Goldberg's Antoine gives 40.35 kJ/mol and 3.437 kPa. No enthalpy of vaporization of EMC is printed in the paper. Second reading 2026-11-28: all values agree."
   },
   "landesfeind2019_density_fit_ec_emc_3_7": {
    "quantity": "electrolyte density fit rho = p1 + p2*c + p3*T in g/cm3, c in mol/L, T in K, LiPF6 in EC:EMC 3:7 w:w, 0-50 C, 0.1-3 M",
@@ -120,8 +120,8 @@
    "doi": "10.1149/2.1531704jes",
    "location": "Abstract; Results and Discussion, text next to Fig. 2b and Fig. 4; solvent permittivity estimates (50, 33, 18 for EC:DMC 7:3, EC:DMC 1:1, EC:EMC 3:7) are the authors' estimates from literature data on EC:EMC blends, not measurements",
    "version_read": "VoR (PDF in the Johannes literature library), 2026-11-28",
-   "checked_vor": false,
-   "note": "Ion pairing, not the composition of the Li+ shell. The two-species picture (free ion or ion pair) is the authors' assumption. Gives no Raman coordination number for EC:EMC; this issue stays open for that quantity. Single reading, second reading outstanding."
+   "checked_vor": true,
+   "note": "Ion pairing, not the composition of the Li+ shell. The two-species picture (free ion or ion pair) is the authors' assumption. Gives no Raman coordination number for EC:EMC; this issue stays open for that quantity. Second reading 2026-11-28: all printed values agree."
   },
   "marcus2004_single_ion_volumes_pc_25C": {
    "quantity": "standard partial molar volumes of single ions in propylene carbonate at 25 C, TATB/TPTB scale, cm3/mol, uncertainty +-2; and the salt value they derive from",
