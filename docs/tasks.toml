@@ -32,11 +32,11 @@ result = "studies/2026-11-25_timestep-1M-0p5fs (README, Result): density at 0.5 
 [[task]]
 id = "SC-2"
 title = "Bridge: write velocities to the trajectory"
-state = "blocked"
+state = "open"
 priority = 2
 needs = "gpu"
 author = false
-waits_for = "GPU free: label check of velocities on HIP; then the author merges"
+waits_for = "the HIP label check, run with the A1.5-GK short run (A1.5-green-kubo.md section 7 Q2); needs the GPU worker on engine main (delegated-2026-11-28.md, step G)"
 goal = "run.toml allows [output.trajectory] velocities = true (spec/run-config.md); no code in the OpenMM bridge handles it, so the temperature of molecule centres cannot be measured on the GPU. Check first whether the option is silently ignored: that would break invariant 7 (errors propagate)."
 deliverable = "Branch from e25-constraints in its own worktree (not ucmd-engine-scan): velocities in canonical order after identity correction, full-step; same for `forces` or a clear refusal."
 acceptance = "Test first: CPU and bridge velocities agree for an identical short NVE run; the option is never silently ignored. No merge before the scan ends."
@@ -107,12 +107,12 @@ result = "Approved and applied 2026-11-25 as dated corrections (old text kept): 
 id = "SC-7"
 title = "Refit EMC to density and dH_vap (not to transport)"
 state = "claimed"
-claimed_by = "unitcellmd-c8"
+claimed_by = "unitcellmd-b4"
 priority = 3
 needs = "gpu"
 author = true
 after = ["SC-1", "SC-5"]
-waits_for = "author: approval of the design doc (go-ahead for the proposal given 2026-11-27)"
+waits_for = "design approved by the author 2026-11-28 (recommendations; SC-7-emc-refit.md section 7); DMC read (shared, r = 0.97). Before the first fit: Q1 conditions (script, ledger, Goldberg 2026 read: the author downloads it, Q4). GPU behind the V tasks"
 goal = "LigParGen EMC is 2.8 % too dense at 25 C (SC-5), and no measured dH_vap of EMC was found and takes part in the too-slow ions. Strategy step M2. The scan's epsEMC runs are a map only: no parameter is picked from them."
 deliverable = "Proposal: targets, fitted parameters, sources, held-out checks; design doc before any run."
 acceptance = "Every parameter has a source; targets fixed before fitting; kappa, t+ and D never used."

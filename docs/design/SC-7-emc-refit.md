@@ -1,9 +1,16 @@
-# SC-7 — Refit the EMC Lennard-Jones parameters to density and ΔH_vap (design, for approval)
+# SC-7 — Refit the EMC Lennard-Jones parameters to density and ΔH_vap (design, approved 2026-11-28)
 
-- **Status:** proposal, 2026-11-27 (unitcellmd-c8). The author said "go ahead" for SC-7; this note needs approval before
-  any fitting run.
-  - **2026-11-28:** the questions are decided by the agent under the author's delegation (§7). SC-7 "can wait" (author),
-    so no fit run starts. Step 0 (the current model's ΔH_vap, no new parameter) runs already: `studies/2026-11-27_emc-dhvap-baseline`.
+- **Status:** proposal, 2026-11-27 (unitcellmd-c8). The author said "go ahead" for SC-7.
+  - **Approved by the author 2026-11-28:** "for SC-7 I take the recommendations".
+    - That is Q1 (c) 40.5 ± 1.0 kJ/mol, Q2 option A, Q3 fit at 1 fs, Q5 SC-7 before the ion model, Q6 the wider map, and
+      Q7 the DMC calibration first (done: r = 0.97, shared).
+    - Q4, downloading Goldberg 2026 and Oh 2018, is the author's action and still open.
+    - The same choices had been written up shortly before by the agent "decisions" under the delegation of that morning.
+      Its §7 stays as the record of the reasons; the decisions are the author's.
+  - **Fit runs** follow the order at the end of §7. They need the conditions of Q1 first: the derivation script and ledger
+    entries committed, and Goldberg 2026 read (Q4). On the GPU they queue behind the V tasks, the author's priority of
+    2026-11-28.
+  - Step 0 (the current model's ΔH_vap, no new parameter) is done: `studies/2026-11-27_emc-dhvap-baseline`.
 - **Task:** `docs/tasks.toml` SC-7. Acceptance there: every parameter has a source; targets fixed before fitting; κ, t₊ and D
   never used.
 
@@ -77,8 +84,8 @@ analysis for ΔH_vap, and a 2 × 2 solve with a test. No engine, spec or builder
 - **Q4, sources:** could you download Goldberg 2026 (CC BY, doi 10.1021/acs.jced.6c00429) and Oh 2018 into `../Lit`? ACS and
   ScienceDirect refuse automated downloads. Their uncertainties, purity and Antoine fit decide the tolerance in Q1.
 - **Q5, order:** SC-7 before the ion-model fit (§1)? Recommended.
-- **Decided 2026-11-28 by agent decisions under the author's delegation** (reasons and what would change each item in
-  §7):
+- **Decided 2026-11-28 by the author** ("I take the recommendations"; recorded first by agent decisions under the
+  delegation; reasons and what would change each item in §7):
   - Q1 (c), 40.5 ± 1.0 kJ/mol, with conditions before the first fit;
   - Q2 option A, subject to Q7;
   - Q3 at 1 fs;
@@ -116,18 +123,16 @@ What this changes:
 - **Q6:** accept the wider map of item 1 (option A), knowing that the fit may land near ε × 0.7?
 - **Q7:** first the DMC calibration of item 3? Recommended: it costs half an hour of GPU and decides whether option A's
   global factor is a fix for one molecule or a systematic correction of the carbonate types.
-- **Decided 2026-11-28 by agent decisions under the author's delegation** (§7):
+- **Decided 2026-11-28 by the author** ("I take the recommendations"; §7):
   - Q6 yes, the wider map;
   - Q7 yes, the DMC reading first, with what each outcome means. It was answered the same day: r = 0.97, the
     over-cohesion is shared by the carbonate types, and DMC becomes the held-out test.
 
-  No fit run is submitted while SC-7 "can wait".
+## 7. Decisions of 2026-11-28 (the author's; reasons written by agent decisions)
 
-## 7. Decisions of 2026-11-28 (agent decisions, under the author's delegation)
-
-The author delegated SC-7's open questions on 2026-11-28 and said SC-7 "can wait". These decisions fix the plan. They
-start nothing: no fit run is submitted. This agent did not touch the DMC calibration jobs or the task's claim. The
-author may overrule any item.
+The author first delegated SC-7's open questions on 2026-11-28 and said SC-7 "can wait". Agent decisions wrote the choices
+below with their reasons. The same day the author took the recommendations, which are these choices, so they are the
+author's decisions. They start nothing by themselves: fit runs follow the order at the end of this section.
 
 - **Q1, decided: (c) ΔH_vap(EMC, 298.15 K) = 40.5 ± 1.0 kJ/mol. Acceptance |ΔH_vap − 40.5| ≤ 1.0 at 1 fs.**
   - **Reason:** the band covers (a) and (b). It also says how weak the target is: no calorimetric or transpiration value
@@ -212,7 +217,7 @@ author may overrule any item.
     - What this does not settle: whether the factors fitted on EMC also give DMC's density. That is what the held-out
       test is for.
 
-**Order when the author lifts "can wait":**
+**Order of the fit (approved; on the GPU behind the V tasks):**
 1. Q7's reading: done 2026-11-28, shared (r = 0.97);
 2. the conditions of Q1;
 3. step 1a, then 1b;

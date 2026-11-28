@@ -8,7 +8,8 @@ make the decision".
   - E2.5 §6 and E2.7 §7 (agent "consistency");
   - V-1 (agent "viscosity");
   - V-2 and V-4 (agent "finite-size");
-  - V-5 (agent "literature").
+  - V-5 (agent "literature");
+  - SC-7, which the author decided personally on 2026-11-28 ("for SC-7 I take the recommendations").
 
 ## 1. The decisions
 
@@ -21,12 +22,7 @@ make the decision".
 | same | Q4: velocities in `Trajectory` | **optional field**, as built (PR #5) | one reader keeps the frames aligned | yes |
 | [E2.9](../design/E2.9.md) P8 | CPU speed target | **none; E2.8 stays deferred.** One benchmark measurement before the software paper | the GPU does production; speed work risks ADR 0010 | yes |
 | [E3.7](../design/E3.7.md) Q3 | spec text for `[backend]`, exit codes, restart records, XYZ | **new 0.1.4, documentation only, after tagging 0.1.3** ([ADR 0018](0018-spec-releases-and-pins.md)) | 0.1.1 is closed inside `spec-v0.1.2`; 0.1.3 is pinned by CI | yes, until tagged |
-| [SC-7](../design/SC-7-emc-refit.md) §7 | Q1: ΔH_vap target | **40.5 ± 1.0 kJ/mol**, with conditions before the first fit (script and ledger committed, Goldberg read) | covers (a) and (b) and states how weak the target is; sources unchecked (§5 below) | yes, before a fit |
-| same | Q2: parameters | **option A** (s_σ, s_ε on all EMC types) | exactly determined; Q7 says the excess is shared by the carbonate types | yes |
-| same | Q3: step | **fit at 1 fs** | production step (ADR 0017); a refit if the step changes | yes |
-| same | Q5: order | **SC-7 before the ion model** | ion terms couple to EMC's types through the combination rule | yes |
-| same | Q6: map | **the wider map** (s_ε 0.85 / 0.70, then s_σ 0.98) | step 0 needs about ε × 0.7 | yes |
-| same | Q7: DMC first | **yes; answered the same day: r = 0.97, shared.** DMC becomes the held-out test of the factors | the over-cohesion is a property of the types, not of EMC alone | yes |
+| [SC-7](../design/SC-7-emc-refit.md) §5–§6 | Q1–Q7 | **Decided by the author 2026-11-28 ("for SC-7 I take the recommendations"), not delegated.** The orchestrator records it in the design doc. | — | — |
 | [queue](../design/queue.md) §6 | defaults of §8 | **confirmed**: integer priority; no automatic preemption (manual by stop/continue); one known client; **no always-on services** for now | the data disk needs a manual check after a crash | yes |
 | same | §10: client security | **in order:** token rotation and soricel's key in a `bwrap` SFTP sandbox; a guard for study scripts and per-client tokens; copy-based clients before any further client; VPN only; repeats of client results ([ADR 0019](0019-queue-client-trust.md)) | closes the whole-account access first, the cheapest step | yes |
 | same | step 4: SLURM | **deferred** | no cluster account; nothing could test it | yes |
@@ -163,18 +159,15 @@ wherever testing.md still says `git switch b1` or `b2a`.
 - **sudo, `~/.ssh`, tokens, machine config:** A, B, D, G.
 - **Stopping or cancelling queue jobs:** none is needed.
 - **Physical parameters:**
-  - SC-7's ΔH_vap target (40.5 ± 1.0) cites Goldberg 2026 (raw data read, paper not), Dougassa 2014 (ThermoML only)
-    and Franke 2025 (read).
-  - The DMC calibration cites Kozlova 2008 and Steele 1997 (NIST WebBook only).
-  - All of this is in `docs/research/emc-literature/sc7-sources.md`, an unchecked agent note. Nothing is fitted until
-    the conditions of SC-7 §7 Q1 are met.
-  - No new parameter value was chosen here.
+  - No parameter value was chosen here.
+  - SC-7 (including its ΔH_vap target) was decided by the author, not under this delegation.
+  - Its sources are still unchecked: Goldberg 2026 (raw data read, paper not), Dougassa 2014 (ThermoML only), and
+    Kozlova 2008 and Steele 1997 for DMC (NIST WebBook only). See `docs/research/emc-literature/sc7-sources.md`.
 
 ## 6. Task changes proposed (for the orchestrator to apply in `docs/tasks.toml`)
 
 - **SC-2:** state `blocked` → `open`. `waits_for` = "the HIP label check, run as part of the A1.5-GK short run
   (A1.5-green-kubo.md §7 Q2); needs the GPU worker on engine main (delegated-2026-11-28.md §2 G)". The merge is done
   (engine `main`, 2026-11-27).
-- **SC-7:** claim unchanged. `waits_for` = "design decided 2026-11-28 under delegation (SC-7-emc-refit.md §7), DMC
-  calibration read (shared, r = 0.97); waits for: the author lifting 'can wait', the Q1 conditions (derivation script,
-  ledger, Goldberg 2026 read)".
+- **SC-7:** decided by the author 2026-11-28 (recommendations). The orchestrator records it, and the task entry is
+  the orchestrator's.
