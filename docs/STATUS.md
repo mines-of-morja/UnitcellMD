@@ -393,6 +393,37 @@ evidence: `validation/b2c/REPORT.md` there, 229 tests — next: the author's han
 (`5009206`, a copy of `54b2e29`); CI green (3 jobs). The scan's real tables open in the GUI (18 and 18 rows). `nan` in `pressure_bar` is in spec 0.1.3 (author).
 Step 4 (side by side) not approved.
 
+2026-11-25 — UnitcellMD#2: Su 2019 with SI, Uchida 2021 with SI and Morita 1998 read from `../Lit` —
+four ledger entries with `checked_vor` true (Su 2019 replaced, three new), tables compared with the
+page images. New `docs/research/li-shell/ec_preference.py` puts experiments and T2 on one scale: EC
+preference P (1 = solvent composition): DOSY 1.41 ± 0.11 (EC:EMC), Raman 1.6–2.1 (EC/DMC), M0 0.25,
+M1 0.58 (0.28 nm, 1 M). Raman at x_EC 0.355: 1.73 EC per Li⁺ (M1 0.97, dielectric bound 2.2).
+Caveats in `docs/research/li-shell-experiments.md`: no Raman number for EC:EMC; the size of α in DOSY
+rests on toluene (the viscosity in its place gives negative α); ¹⁷O NMR disagrees. T6's rule is
+unchanged; T6 also reports P and the Raman count (Amendment 6, author approved). — evidence: the
+output of the script — next: T6 stage 3 reports both.
+
+2026-11-25 — open GitHub issues worked on (branches, not merged) — **ucmd-analysis#1** (branch
+`claude/1-t-plus-frames`): t₊ in COM, SOL and VOL as decided in ADR 0013; the pilot reproduces trial
+T1 block by block (largest difference 3e-15); 40 tests. **ucmd-builder#1** (branch
+`claude/1-spec-validator-pin`, from `s012-pair-overrides`): UCMD_SPEC_DIR workaround removed, pin on
+the new tag `spec-v0.1.2`; 188 tests.
+Found there: the builder's CI is red since 2026-11-17 because fresh installs take Packmol 100.x,
+which gives different positions for the same seed (21.2.3 does not); pinned below 100.
+**UnitcellMD#2, #3:** ledger entries (n_D of five solvents, 37 of 37 values equal to the NIST
+ThermoML records; NMR ratios of Su 2018/2019; Raman band positions) and
+`docs/research/li-shell-experiments.md` with the gaps: no Raman coordination number for EC:EMC, one
+source each for n_D of EMC and EC, none for EC:EMC. **ucmd-analysis#3:** design note
+`docs/design/A1.7-tdf.md` (TDF from structure factors; EC and EMC must not be lumped; Lehnert's TDF
+is twice Newman's), approved for code, synthetic tests and the LJ target; code on branch
+`claude/3-thermodynamic-factor`, 16 tests; the 20 ns pilot is refused (slowest mode 3.9 ns), no
+value reported. **ucmd-analysis#2:** Green–Kubo check approved as proposed, on branch
+`claude/2-green-kubo`; both forms agree to 0.1 % over the same lags on synthetic data, the default
+Einstein window is too noisy to test anything. All in draft pull requests (ucmd-analysis #4–#6,
+ucmd-builder #2, UnitcellMD #12); tag `spec-v0.1.2` made (the changelog still says "not yet
+tagged"). — evidence: tests and scripts named above; CI — next: author: review of the pull
+requests; LJ target when Psi4 has finished; real Green–Kubo table after SC-2.
+
 2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c.md` waits for
 the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
 base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.

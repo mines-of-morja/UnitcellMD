@@ -1219,8 +1219,42 @@
   "goldberg2026_table3_emc_vapour_pressure": {
    "quantity": "vapour pressure of pure EMC, measured with a dynamic recirculating still (16 points); EMC purity 98.30 % (GC, Carl Roth, Table 2)",
    "value": {
-    "p_kPa": [2.52, 5.00, 7.49, 9.99, 14.97, 19.98, 24.97, 29.99, 34.96, 39.98, 49.97, 59.99, 69.97, 79.95, 89.95, 101.29],
-    "T_K": [292.66, 305.42, 313.51, 319.70, 328.60, 335.49, 340.62, 345.64, 349.64, 353.30, 359.54, 364.86, 369.49, 373.63, 377.36, 380.61]
+    "p_kPa": [
+     2.52,
+     5.0,
+     7.49,
+     9.99,
+     14.97,
+     19.98,
+     24.97,
+     29.99,
+     34.96,
+     39.98,
+     49.97,
+     59.99,
+     69.97,
+     79.95,
+     89.95,
+     101.29
+    ],
+    "T_K": [
+     292.66,
+     305.42,
+     313.51,
+     319.7,
+     328.6,
+     335.49,
+     340.62,
+     345.64,
+     349.64,
+     353.3,
+     359.54,
+     364.86,
+     369.49,
+     373.63,
+     377.36,
+     380.61
+    ]
    },
    "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY; raw data doi 10.25532/OPARA-1547",
    "doi": "10.1021/acs.jced.6c00429",
@@ -1234,7 +1268,7 @@
    "value": {
     "A": 9.3661,
     "B": 1433.59,
-    "C": -52.250
+    "C": -52.25
    },
    "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY",
    "doi": "10.1021/acs.jced.6c00429",
@@ -1290,7 +1324,15 @@
     "T_b_table1_K": 381.057,
     "T_measured_101.3kPa_K": 381.25,
     "p_correlation_at_381.25K_kPa": 102.6,
-    "antoine_ref7": {"A": 6.4308, "B": 1466.437, "C": -49.461, "T_range_K": [317.56, 546.79]}
+    "antoine_ref7": {
+     "A": 6.4308,
+     "B": 1466.437,
+     "C": -49.461,
+     "T_range_K": [
+      317.56,
+      546.79
+     ]
+    }
    },
    "source": "X. Zhang, J. Zuo, C. Jian, J. Chem. Eng. Data 55, 4896 (2010)",
    "doi": "10.1021/je100494z",
@@ -1298,6 +1340,549 @@
    "version_read": "VoR (PDF in ../Lit), 2026-11-28",
    "checked_vor": true,
    "note": "The Antoine constants are not from this work (cited correlation, ref. 7), so they are not an independent EMC vapour-pressure measurement. Their valid range (317.56 K and above) excludes 298.15 K. Second reading 2026-11-28 by an independent pass over the extracted text: numbers and pages agree."
+  },
+  "nD_oh2018_dmc_emc_ec": {
+   "quantity": "refractive index n_D of DMC and EMC at 25 C and of EC at 45 C (above its melting point, about 36 C, so a stable liquid), sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "298.15": 1.3662
+     },
+     "EMC": {
+      "298.15": 1.3754
+     },
+     "EC": {
+      "318.15": 1.4172
+     }
+    },
+    "stated_expanded_uncertainty": 0.0004,
+    "temperature_unit": "K",
+    "note": "only source found for EMC and for EC. Samples 99 % (supplier), dried on molecular sieve. Its DMC density at 25 C (1060.87 kg/m3) is 0.23 % below three other values, (task SC-5), so the sample purity is in question; its DMC n_D agrees with four other sources within 0.0004"
+   },
+   "source": "H. Y. Oh, J.-E. Gu, S.-J. Park, Fluid Phase Equilib. 473, 138 (2018)",
+   "doi": "10.1016/j.fluid.2018.05.033",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1016/j.fluid.2018.05.033.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_comelli2006_dmc_dec_pc": {
+   "quantity": "refractive index n_D of DMC, DEC and PC at 25 and 35 C, sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "298.15": 1.3666,
+      "308.15": 1.3623
+     },
+     "DEC": {
+      "298.15": 1.3829,
+      "308.15": 1.378
+     },
+     "PC": {
+      "298.15": 1.4199,
+      "308.15": 1.4166
+     }
+    },
+    "stated_expanded_uncertainty": 0.0004,
+    "temperature_unit": "K"
+   },
+   "source": "F. Comelli, R. Francesconi, A. Bigi, K. Rubini, J. Chem. Eng. Data 51, 665 (2006)",
+   "doi": "10.1021/je050444g",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1021/je050444g.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_comelli2010_dmc_dec_pc": {
+   "quantity": "refractive index n_D of DMC, DEC and PC at 20 and 40 C, sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "293.15": 1.3689,
+      "313.15": 1.3604
+     },
+     "DEC": {
+      "293.15": 1.3858,
+      "313.15": 1.3764
+     },
+     "PC": {
+      "293.15": 1.4223,
+      "313.15": 1.4149
+     }
+    },
+    "stated_expanded_uncertainty": {
+     "DMC": 0.0006,
+     "DEC": 0.0007,
+     "PC": 0.0006
+    },
+    "temperature_unit": "K"
+   },
+   "source": "F. Comelli, A. Bigi, D. Vitalini, K. Rubini, J. Chem. Eng. Data 55, 205 (2010)",
+   "doi": "10.1021/je900307z",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1021/je900307z.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_arbad2006_dmc_dec_pc": {
+   "quantity": "refractive index n_D of DMC, DEC and PC at 25 C, sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "298.15": 1.366
+     },
+     "DEC": {
+      "298.15": 1.383
+     },
+     "PC": {
+      "298.15": 1.4203
+     }
+    },
+    "stated_expanded_uncertainty": 0.0008,
+    "temperature_unit": "K"
+   },
+   "source": "B. R. Arbad, M. K. Lande, N. N. Wankhede, D. S. Wankhede, J. Chem. Eng. Data 51, 68 (2006)",
+   "doi": "10.1021/je050183a",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1021/je050183a.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_mali2017_dmc": {
+   "quantity": "refractive index n_D of DMC at 20 and 25 C, sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "293.15": 1.3688,
+      "298.15": 1.3664
+     }
+    },
+    "stated_expanded_uncertainty": {
+     "293.15": 0.0004,
+     "298.15": 0.00042
+    },
+    "temperature_unit": "K"
+   },
+   "source": "N. A. Mali, S. S. Yadav, P. D. Ghuge, S. S. Joshi, J. Chem. Eng. Data 62, 4356 (2017)",
+   "doi": "10.1021/acs.jced.7b00704",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1021/acs.jced.7b00704.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_kim2010_dmc": {
+   "quantity": "refractive index n_D of DMC at 25 C, sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "298.15": 1.36647
+     }
+    },
+    "stated_expanded_uncertainty": 0.00064,
+    "temperature_unit": "K"
+   },
+   "source": "H.-D. Kim, I.-C. Hwang, S.-J. Park, J. Chem. Eng. Data 55, 2474 (2010)",
+   "doi": "10.1021/je9008624",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1021/je9008624.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_ottani2004_dmc_dec_40C": {
+   "quantity": "refractive index n_D of DMC and DEC at 40 C, sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "313.15": 1.359
+     },
+     "DEC": {
+      "313.15": 1.3754
+     }
+    },
+    "stated_expanded_uncertainty": 0.0001,
+    "temperature_unit": "K",
+    "note": "0.0014 (DMC) and 0.0010 (DEC) below Comelli 2010 at the same temperature, about ten times the uncertainty stated here; method code in the record: REFRACT"
+   },
+   "source": "S. Ottani, D. Vitalini, F. Comelli, C. Castellari, J. Chem. Eng. Data 49, 148 (2004)",
+   "doi": "10.1021/je034159d",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1021/je034159d.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_narendra2016_dec": {
+   "quantity": "refractive index n_D of DEC, 25 to 50 C, sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DEC": {
+      "298.15": 1.3825,
+      "303.15": 1.3802,
+      "308.15": 1.3779,
+      "313.15": 1.3756,
+      "318.15": 1.3733,
+      "323.15": 1.371
+     }
+    },
+    "stated_expanded_uncertainty": 0.0016,
+    "temperature_unit": "K",
+    "note": "equal steps of 0.0023 per 5 K, so possibly smoothed values"
+   },
+   "source": "K. Narendra, T. S. Krishna, B. Sudhamsa, M. SarathBabu, R. Dey, J. Chem. Thermodyn. 103, 17 (2016)",
+   "doi": "10.1016/j.jct.2016.08.001",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1016/j.jct.2016.08.001.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "nD_moosavi2016_dmc": {
+   "quantity": "refractive index n_D of DMC, 20 to 50 C (recorded, not recommended), sodium D line (589 nm), liquid, Abbe refractometry unless noted, ~101 kPa",
+   "value": {
+    "nD": {
+     "DMC": {
+      "293.15": 1.3699,
+      "298.15": 1.3661,
+      "303.15": 1.3652,
+      "308.15": [
+       1.3643,
+       1.3644
+      ],
+      "313.15": 1.3624,
+      "318.15": 1.3622,
+      "323.15": 1.3591
+     }
+    },
+    "stated_expanded_uncertainty": 0.019,
+    "temperature_unit": "K",
+    "note": "irregular in T and a stated uncertainty of 0.019; not for use in zeta"
+   },
+   "source": "M. Moosavi, A. Motahari, A. Vahid, V. Akbar, A. A. Rostami, A. Omrani, J. Chem. Eng. Data 61, 1981 (2016)",
+   "doi": "10.1021/acs.jced.5b00830",
+   "location": "ThermoML record https://trc.nist.gov/ThermoML/10.1021/acs.jced.5b00830.html (pure-component refractive index)",
+   "version_read": "NIST ThermoML archive record of the paper (the paper itself not read)",
+   "checked_vor": false
+  },
+  "raman_phelan2025_bands_ec_emc": {
+   "quantity": "Raman band positions in LiPF6 in EC:EMC (3:7 v:v), 0.5-4 mol per kg of solvent: free and Li+-bound EC and EMC, and PF6-, cm-1. No coordination number is derived from the Raman spectra; bound and free band areas are not printed",
+   "value": {
+    "EC_free": [
+     715,
+     893
+    ],
+    "EC_bound": [
+     730,
+     904
+    ],
+    "EMC_free": [
+     928,
+     937
+    ],
+    "EMC_bound": 946,
+    "PF6": 741,
+    "statement": "free EC and EMC bands 'almost completely suppressed at 3.0 m'",
+    "laser_nm": 785,
+    "temperature": "not stated in the methods"
+   },
+   "source": "C. Phelan, A. Bhandari, J. Singh, M. Fraser, E. Bjoerklund, J. Swallow, P. Bencok, C. Grey, Z. Goodwin, C. Skylaris, R. Weatherup, ChemRxiv preprint, version 1 (2025), not peer-reviewed",
+   "doi": "10.26434/chemrxiv-2025-k903g",
+   "location": "Results, 'Effect of salt concentration on coordination and activity', p. 7; Raman methods p. 19",
+   "version_read": "preprint (version 1, 8 December 2025)",
+   "checked_vor": false
+  },
+  "nmr_su2018_dosy_ec_emc_dmc": {
+   "quantity": "coordination ratio alpha (fraction of each solvent bound to Li+) and Li+ coordination number, LiPF6:EC:EMC:DMC 1:3:3:3 (molar), from internally referenced 1H/7Li DOSY NMR (toluene as reference)",
+   "value": {
+    "alpha_EC": 0.61,
+    "alpha_EC_err": 0.01,
+    "alpha_EMC": 0.37,
+    "alpha_EMC_err": 0.01,
+    "alpha_DMC": 0.42,
+    "alpha_DMC_err": 0.01,
+    "coordination_number": 4.2,
+    "coordination_number_err": 0.1,
+    "temperature": "not stated in the accepted manuscript",
+    "error_basis": "2 % typical error of diffusion NMR (Table 1, note b)"
+   },
+   "source": "C.-C. Su, M. He, R. Amine, Z. Chen, K. Amine, J. Phys. Chem. Lett. 9 (2018), issue 13",
+   "doi": "10.1021/acs.jpclett.8b01359",
+   "location": "Table 2; definition of alpha Eqs. 2-5 (manuscript p. 7-8)",
+   "version_read": "AM (OSTI 1474141)",
+   "checked_vor": false
+  },
+  "nmr_su2018_dosy_emc": {
+   "quantity": "coordination ratio alpha of EMC and Li+ coordination number in LiPF6:EMC 1:12, 1:8, 1:4 (molar), DOSY NMR, and alpha from FTIR (C=O band, 1748 free / 1715 bound cm-1)",
+   "value": {
+    "1:12": {
+     "alpha": 0.45,
+     "alpha_err": 0.01,
+     "CN": 5.4,
+     "CN_err": 0.1,
+     "alpha_FTIR": 0.46
+    },
+    "1:8": {
+     "alpha": 0.56,
+     "alpha_err": 0.01,
+     "CN": 4.5,
+     "CN_err": 0.1,
+     "alpha_FTIR": 0.57
+    },
+    "1:4": {
+     "alpha": 0.74,
+     "alpha_err": 0.02,
+     "CN": 3.0,
+     "CN_err": 0.1,
+     "alpha_FTIR": 0.72
+    }
+   },
+   "source": "C.-C. Su et al., J. Phys. Chem. Lett. 9 (2018), issue 13",
+   "doi": "10.1021/acs.jpclett.8b01359",
+   "location": "Table 1",
+   "version_read": "AM (OSTI 1474141)",
+   "checked_vor": false
+  },
+  "nmr_su2019_dosy_ec_emc": {
+   "quantity": "1:4:4 LiPF6:EC:EMC (molar): self-diffusion coefficients without and with salt, fraction alpha of each solvent bound to Li+ and Li+ coordination number, internally referenced 1H/7Li DOSY NMR (toluene as reference); chi = alpha_solvent/alpha_EMC for EC, PC, DMC in the same 1:4:4 mixtures. The only NMR value found for LiPF6 in EC and EMC without a third solvent",
+   "value": {
+    "D_unit": "1e-10 m2/s",
+    "neat_1_1": {
+     "D_toluene": 9.76,
+     "D_EC": 8.93,
+     "D_EMC": 9.0
+    },
+    "LiPF6_1_4_4": {
+     "D_toluene": 3.6,
+     "D_EC": 1.97,
+     "D_EMC": 2.37,
+     "D_Li": 1.33
+    },
+    "alpha_EC": 0.68,
+    "alpha_EMC": 0.48,
+    "coordination_number": 4.61,
+    "chi": {
+     "EC": 1.41,
+     "PC": 1.46,
+     "DMC": 1.02,
+     "EMC": 1.0
+    },
+    "temperature": "not stated (300 MHz spectrometer, no temperature in the SI methods)",
+    "uncertainty": "not printed",
+    "diffusion_time_ms": 200
+   },
+   "source": "C.-C. Su, M. He, R. Amine, T. Rojas, L. Cheng, A. T. Ngo, K. Amine, Energy Environ. Sci. 12, 1249 (2019) and its SI",
+   "doi": "10.1039/c9ee00141g",
+   "location": "SI Table S7 (p. 19), SI Table S13 (p. 21, chi; also article Fig. 2); definition SI p. 5-7; diffusion time SI p. 4. The coordination number uses unrounded alpha: recomputed from the printed D: alpha 0.674 and 0.477, number 4.61, chi 1.41. The toluene content of the samples is not stated",
+   "version_read": "VoR and SI (library PDFs)",
+   "checked_vor": true
+  },
+  "raman_morita1998_ec_dmc": {
+   "quantity": "apparent solvation number per Li+ of EC and DMC, LiPF6 in EC:DMC (50:50 by volume), Raman (C-O stretch, EC at 900, DMC at 920 cm-1); bound/free band areas with equal scattering factors assumed",
+   "value": {
+    "c_LiPF6_mol_per_L": [
+     1.5,
+     1.0,
+     0.5
+    ],
+    "I_r_EC": [
+     0.54,
+     0.42,
+     0.22
+    ],
+    "I_r_DMC": [
+     0.3,
+     0.19,
+     0.1
+    ],
+    "N_EC": [
+     2.6,
+     3.0,
+     3.2
+    ],
+    "N_DMC": [
+     1.3,
+     1.1,
+     1.2
+    ],
+    "density_EC_g_cm3": 1.32,
+    "density_DMC_g_cm3": 1.06,
+    "temperature_K": 298,
+    "temperature_err_K": 5
+   },
+   "source": "M. Morita, Y. Asai, N. Yoshimoto, M. Ishikawa, J. Chem. Soc., Faraday Trans. 94, 3451 (1998)",
+   "doi": "10.1039/a806278a",
+   "location": "Table 2 (D) and (E), p. 3455; densities Table 1, p. 3452 (EC at 313 K); methods p. 3452; Eqs. 1, 3, 4. Total 4.4-3.9 (p. 3454). The cis-trans conformer of DMC is not analysed; the article assumes the scattering factor does not change on binding. Uchida 2021 (p. 10879) quotes Borodin's reassessment with activity ratios at 1 mol/L: EC 2.8, DMC 1.2 (second-hand)",
+   "version_read": "VoR (library PDF)",
+   "checked_vor": true
+  },
+  "raman_uchida2021_ec_dmc": {
+   "quantity": "average number of EC and DMC (cis-cis and cis-trans conformer) bound to Li+, per Li+ in the solution (ion pairs included), 1.0 mol/kg LiPF6 in EC:DMC against the mole fraction x_EC of EC in the solvent; Raman, areas corrected with activity ratios bound/free from quantum chemistry (Borodin)",
+   "value": {
+    "x_EC": [
+     0,
+     0.129,
+     0.248,
+     0.355,
+     0.476,
+     0.569,
+     0.672
+    ],
+    "n_DMC_ct": [
+     0.76,
+     0.71,
+     0.56,
+     0.35,
+     0.24,
+     0.18,
+     0.11
+    ],
+    "n_DMC_cc": [
+     2.12,
+     1.89,
+     1.64,
+     1.43,
+     1.14,
+     0.93,
+     0.69
+    ],
+    "n_EC": [
+     0,
+     0.82,
+     1.43,
+     1.73,
+     2.1,
+     2.34,
+     2.61
+    ],
+    "solvent_per_Li": 11.205,
+    "activity_ratio": {
+     "EC": 1.18,
+     "DMC_cc": 1.01,
+     "DMC_ct": 1.19
+    },
+    "bands_free_cm": {
+     "EC": 894,
+     "DMC_cc": 916,
+     "DMC_ct": 860
+    },
+    "bands_bound_cm": {
+     "EC": 904,
+     "DMC_cc": 934,
+     "DMC_ct": 873
+    },
+    "temperature": "room temperature",
+    "uncertainty": "not printed; mean of two runs"
+   },
+   "source": "S. Uchida, T. Kiyobayashi, Phys. Chem. Chem. Phys. 23, 10875 (2021) and its SI, CC BY-NC 3.0",
+   "doi": "10.1039/d1cp00967b",
+   "location": "SI Table S VII (p. 4); activity ratios and bands article Table 1 (p. 10878); solvent per Li Eq. 3 (p. 10877)",
+   "version_read": "VoR and SI (library PDFs)",
+   "checked_vor": true
+  },
+  "nmr_uchida2021_diffusion_ec_dmc": {
+   "quantity": "self-diffusion coefficients (PGSE-NMR) and viscosity at 298 K: EC:DMC without salt and with 1.0 mol/kg LiPF6, against the mole fraction x_EC",
+   "value": {
+    "D_unit": "1e-10 m2/s",
+    "viscosity_unit": "mPa s",
+    "temperature_K": 298,
+    "solvent": {
+     "x_EC": [
+      0,
+      0.123,
+      0.239,
+      0.356,
+      0.458,
+      0.564,
+      0.663
+     ],
+     "D_EC": [
+      null,
+      18.6,
+      16.1,
+      13.8,
+      12.0,
+      10.2,
+      9.04
+     ],
+     "D_DMC": [
+      24.8,
+      20.6,
+      17.8,
+      15.4,
+      13.5,
+      11.4,
+      10.1
+     ],
+     "x_EC_viscosity": [
+      0,
+      0.122,
+      0.238,
+      0.352,
+      0.46,
+      0.551,
+      0.656
+     ],
+     "viscosity": [
+      0.57,
+      0.75,
+      0.82,
+      1.01,
+      1.16,
+      1.36,
+      1.52
+     ]
+    },
+    "LiPF6": {
+     "x_EC": [
+      0,
+      0.129,
+      0.248,
+      0.355,
+      0.476,
+      0.569,
+      0.672
+     ],
+     "D_Li": [
+      3.76,
+      3.1,
+      2.58,
+      2.25,
+      1.85,
+      1.72,
+      1.41
+     ],
+     "D_PF6": [
+      4.43,
+      3.96,
+      3.49,
+      3.17,
+      2.76,
+      2.64,
+      2.29
+     ],
+     "D_EC": [
+      null,
+      5.86,
+      5.0,
+      4.22,
+      3.83,
+      3.53,
+      2.97
+     ],
+     "D_DMC": [
+      9.42,
+      7.66,
+      6.56,
+      5.74,
+      4.64,
+      4.37,
+      3.44
+     ],
+     "viscosity": [
+      1.6,
+      2.03,
+      2.68,
+      3.26,
+      4.19,
+      4.98,
+      5.69
+     ]
+    }
+   },
+   "source": "S. Uchida, T. Kiyobayashi, Phys. Chem. Chem. Phys. 23, 10875 (2021) and its SI, CC BY-NC 3.0",
+   "doi": "10.1039/d1cp00967b",
+   "location": "SI Table S IV (p. 3) and Table S II (p. 2). The SI also has density (S I), conductivity (S III) and the same for LiFSA, not entered here",
+   "version_read": "VoR and SI (library PDFs)",
+   "checked_vor": true
   }
  }
 }
