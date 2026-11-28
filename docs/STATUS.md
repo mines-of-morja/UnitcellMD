@@ -47,6 +47,10 @@ Last update: 2026-11-13.
 
 ## Decisions by the author
 
+- **2026-11-28, Gates B1a and B2a:** approved after the author's hands-on tests ("sind getestet und passt"); no change requested.
+  - The branches `b1`, `b2a` are already in ucmd-builder `main`; the "waiting for the author" item 1 (hands-on, gates) is closed.
+  - The author named no change, so gate-b2a.md §6 Q1 and Q4 and the deviations of gate-b1a.md §3 stay as built.
+
 - **2026-11-11:**
   - units nm/ps/amu/kJ mol⁻¹ (ADR 0001);
   - GitHub hosting;
