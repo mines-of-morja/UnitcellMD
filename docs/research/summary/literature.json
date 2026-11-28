@@ -1186,6 +1186,89 @@
    "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
    "checked_vor": true,
    "note": "EC:DMC, not EC:EMC. A structural cross-check of the EC share of the Li+ shell next to the DRS estimate (self2024_drs_free_ec)."
+  },
+  "goldberg2026_table3_emc_vapour_pressure": {
+   "quantity": "vapour pressure of pure EMC, measured with a dynamic recirculating still (16 points); EMC purity 98.30 % (GC, Carl Roth, Table 2)",
+   "value": {
+    "p_kPa": [2.52, 5.00, 7.49, 9.99, 14.97, 19.98, 24.97, 29.99, 34.96, 39.98, 49.97, 59.99, 69.97, 79.95, 89.95, 101.29],
+    "T_K": [292.66, 305.42, 313.51, 319.70, 328.60, 335.49, 340.62, 345.64, 349.64, 353.30, 359.54, 364.86, 369.49, 373.63, 377.36, 380.61]
+   },
+   "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY; raw data doi 10.25532/OPARA-1547",
+   "doi": "10.1021/acs.jced.6c00429",
+   "location": "Table 3 (p. 4761, EMC columns); chemicals Table 2 (p. 4757); standard uncertainties u_p = 0.35 kPa and u_T = 0.06 K under Table 3",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "The authors state that the residuals against the Antoine fit scatter about one order of magnitude more than the GUM-based pressure uncertainty, so u_p = 0.35 kPa is a lower bound. Second reading 2026-11-28 by an independent pass over the extracted text: numbers and pages agree."
+  },
+  "goldberg2026_table4_antoine_emc": {
+   "quantity": "Antoine parameters of EMC, log10(p) = A - B/(T + C), p in Pa, T in K, fitted to the authors' points together with literature points screened with Cook's distance (D > 4/N); data points accepted/excluded 24/4; fitted range 292.7 to 380.6 K and 2.52 to 101.3 kPa; AARD in p 1.04 %",
+   "value": {
+    "A": 9.3661,
+    "B": 1433.59,
+    "C": -52.250
+   },
+   "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY",
+   "doi": "10.1021/acs.jced.6c00429",
+   "location": "Table 4 (p. 4762); screening procedure in 'Vapor Pressure Correlation' (p. 4758); no enthalpy of vaporization is printed in the paper",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Derived by us from these three numbers (not printed): p(298.15 K) = 3.437 kPa, and from d ln p/dT with the ideal-gas Clausius-Clapeyron relation, Delta_vap H(298.15 K) = R ln10 B T^2/(T+C)^2 = 40.35 kJ/mol, T_b(101.325 kPa) = 381.03 K (measured 380.61 K at 101.29 kPa). 298.15 K lies inside the fitted range (292.7 to 380.6 K) but only 5.5 K above its lowest point (the lowest measured EMC point is 2.52 kPa at 292.66 K). The script is tools/thermo/goldberg_dh.py. The authors use the same relation (Eq. 13) for the interaction energy in their UNIQUAC model. Second reading 2026-11-28 by an independent pass over the extracted text: numbers and pages agree."
+  },
+  "goldberg2026_table4_antoine_dmc": {
+   "quantity": "Antoine parameters of DMC, log10(p) = A - B/(T + C), p in Pa, T in K, same fit as the EMC entry; data points accepted/excluded 154/29; fitted range 285.8 to 428.2 K and 3.85 to 566.5 kPa; AARD in p 0.41 %",
+   "value": {
+    "A": 9.4256,
+    "B": 1406.12,
+    "C": -45.145
+   },
+   "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY",
+   "doi": "10.1021/acs.jced.6c00429",
+   "location": "Table 4 (p. 4762), DMC row",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Held-out reference for SC-7 (same factors applied to DMC). Derived by us with tools/thermo/goldberg_dh.py (not printed in the paper): p(298.15 K) = 7.378 kPa, Delta_vap H(298.15 K) = 37.38 kJ/mol, i.e. 0.64 kJ/mol below Kozlova 2008 (38.02 +/- 0.19, entry kozlova2008_table1_dmc_dhvap). Second reading 2026-11-28 by an independent pass over the extracted text: numbers and pages agree."
+  },
+  "oh2018_table1_emc_density_nd": {
+   "quantity": "density and refractive index n_D of pure EMC at 298.15 K and 101.3 kPa",
+   "value": {
+    "rho_g_cm3": 1.00688,
+    "n_D": 1.3754,
+    "T_K": 298.15
+   },
+   "source": "H. Y. Oh, J.-E. Gu, S.-J. Park, Fluid Phase Equilib. 473, 138 (2018)",
+   "doi": "10.1016/j.fluid.2018.05.033",
+   "location": "Table 1 (p. 139), EMC row, 'Exp.' columns; standard uncertainties u(rho) = 6e-5 g/cm3, u(n_D) = 1.5e-4, u(T) = 0.01 K (rho) and 0.05 K (n_D) from the table footnotes; GC purity > 99.9 wt%, water 41 ppm",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Single temperature only, so this is no n_D(T) source for issue 3. The Ref. columns are empty for EMC (no literature comparison value). The pure-EMC end of Table 4 (p. 142) was not read. Second reading 2026-11-28 by an independent pass over the extracted text: numbers and pages agree."
+  },
+  "kozlova2008_table1_dmc_dhvap": {
+   "quantity": "enthalpy of vaporization of DMC at 298.15 K from transpiration vapour pressures, 274.2 to 304.1 K (EMC is not measured in this paper)",
+   "value": {
+    "dH_vap_kJ_mol": 38.02,
+    "u_kJ_mol": 0.19
+   },
+   "source": "S. A. Kozlova, V. N. Emel'yanenko, M. Georgieva, S. P. Verevkin, Y. Chernyak, B. Schaeffner, A. Boerner, J. Chem. Thermodyn. 40, 1136 (2008)",
+   "doi": "10.1016/j.jct.2008.02.012",
+   "location": "Table 1 (DMC block header, 'This work' row in Table 2); the DEC value of the same paper is 44.35 +/- 0.22 kJ/mol",
+   "version_read": "author PDF in ../Lit, 2026-11-28",
+   "checked_vor": true,
+   "note": "DMC reference point for the SC-7 check of the Goldberg route (DMC from Goldberg Antoine minus this value). Not an EMC value. Page numbers of the tables not recorded. Second reading 2026-11-28 by an independent pass over the extracted text: numbers and pages agree."
+  },
+  "zhang2010_table1_emc_boiling_point": {
+   "quantity": "boiling point T_b of EMC (Table 1, 'Tb/K') and measured boiling temperature of pure EMC at 101.3 kPa (Table 3), plus the Antoine constants quoted from ref. 7 of the paper, a 2008 master's thesis by Y. Jiaquan, National Central University, Taiwan (Table 2, log10(p/kPa) = A - B/(T/K + C))",
+   "value": {
+    "T_b_table1_K": 381.057,
+    "T_measured_101.3kPa_K": 381.25,
+    "p_correlation_at_381.25K_kPa": 102.6,
+    "antoine_ref7": {"A": 6.4308, "B": 1466.437, "C": -49.461, "T_range_K": [317.56, 546.79]}
+   },
+   "source": "X. Zhang, J. Zuo, C. Jian, J. Chem. Eng. Data 55, 4896 (2010)",
+   "doi": "10.1021/je100494z",
+   "location": "Tables 1, 2 and 3 (p. 4896); EMC mass fraction 0.999 (Hebei Chaoyang Chemical Co.), GLC without observable impurities",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "The Antoine constants are not from this work (cited correlation, ref. 7), so they are not an independent EMC vapour-pressure measurement. Their valid range (317.56 K and above) excludes 298.15 K. Second reading 2026-11-28 by an independent pass over the extracted text: numbers and pages agree."
   }
  }
 }
