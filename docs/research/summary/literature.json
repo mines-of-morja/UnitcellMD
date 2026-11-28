@@ -1213,6 +1213,48 @@
    "version_read": "VoR (PDF in ../Lit), 2026-11-28",
    "checked_vor": false,
    "note": "Derived by us from these three numbers (not printed): p(298.15 K) = 3.437 kPa, and from d ln p/dT with the ideal-gas Clausius-Clapeyron relation, Delta_vap H(298.15 K) = R ln10 B T^2/(T+C)^2 = 40.35 kJ/mol, T_b(101.325 kPa) = 381.03 K (measured 380.61 K at 101.29 kPa). 298.15 K lies outside the fitted range, so these are extrapolations of about 5 K. The authors use the same relation (Eq. 13) for the interaction energy in their UNIQUAC model. Single reading; second reading outstanding."
+  },
+  "oh2018_table1_emc_density_nd": {
+   "quantity": "density and refractive index n_D of pure EMC at 298.15 K and 101.3 kPa",
+   "value": {
+    "rho_g_cm3": 1.00688,
+    "n_D": 1.3754,
+    "T_K": 298.15
+   },
+   "source": "H. Y. Oh, J.-E. Gu, S.-J. Park, Fluid Phase Equilib. 473, 138 (2018)",
+   "doi": "10.1016/j.fluid.2018.05.033",
+   "location": "Table 1 (p. 139), EMC row, 'Exp.' columns; standard uncertainties u(rho) = 6e-5 g/cm3, u(n_D) = 1.5e-4, u(T) = 0.01 K (rho) and 0.05 K (n_D) from the table footnotes; GC purity > 99.9 wt%, water 41 ppm",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": false,
+   "note": "Single temperature only, so this is no n_D(T) source for issue 3. The Ref. columns are empty for EMC (no literature comparison value). The pure-EMC end of Table 4 (p. 142) was not read. Single reading; second reading outstanding."
+  },
+  "kozlova2008_table1_dmc_dhvap": {
+   "quantity": "enthalpy of vaporization of DMC at 298.15 K from transpiration vapour pressures, 274.2 to 304.1 K (EMC is not measured in this paper)",
+   "value": {
+    "dH_vap_kJ_mol": 38.02,
+    "u_kJ_mol": 0.19
+   },
+   "source": "S. A. Kozlova, V. N. Emel'yanenko, M. Georgieva, S. P. Verevkin, Y. Chernyak, B. Schaeffner, A. Boerner, J. Chem. Thermodyn. 40, 1136 (2008)",
+   "doi": "10.1016/j.jct.2008.02.012",
+   "location": "Table 1 (DMC block header, 'This work' row in Table 2); the DEC value of the same paper is 44.35 +/- 0.22 kJ/mol",
+   "version_read": "author PDF in ../Lit, 2026-11-28",
+   "checked_vor": false,
+   "note": "DMC reference point for the SC-7 check of the Goldberg route (DMC from Goldberg Antoine minus this value). Not an EMC value. Page numbers of the tables not recorded. Single reading; second reading outstanding."
+  },
+  "zhang2010_table1_emc_boiling_point": {
+   "quantity": "normal boiling point T_b of EMC (Table 1) and measured boiling temperature of pure EMC at 101.3 kPa (Table 3), plus the Antoine constants quoted from the authors' ref. 7 (Table 2, log10(p/kPa) = A - B/(T/K + C))",
+   "value": {
+    "T_b_table1_K": 381.057,
+    "T_measured_101.3kPa_K": 381.25,
+    "p_correlation_at_381.25K_kPa": 102.6,
+    "antoine_ref7": {"A": 6.4308, "B": 1466.437, "C": -49.461, "T_range_K": [317.56, 546.79]}
+   },
+   "source": "X. Zhang, J. Zuo, C. Jian, J. Chem. Eng. Data 55, 4896 (2010)",
+   "doi": "10.1021/je100494z",
+   "location": "Tables 1, 2 and 3 (p. 4896); EMC mass fraction 0.999 (Hebei Chaoyang Chemical Co.), GLC without observable impurities",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": false,
+   "note": "The Antoine constants are not from this work (cited correlation, ref. 7), so they are not an independent EMC vapour-pressure measurement. Their valid range (317.56 K and above) excludes 298.15 K. Single reading; second reading outstanding."
   }
  }
 }
