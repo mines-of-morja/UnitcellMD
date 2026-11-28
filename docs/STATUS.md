@@ -81,6 +81,12 @@ Last update: 2026-11-13.
   - the ion model: find which interactions describe the ions well enough (research, then a plan);
   - T4: the 25 % margin is approved;
   - push `main`.
+- **2026-11-28** (after Jo's feedback on the 26 November summary):
+  - the open design decisions are delegated to agents ("let agents make the decision"); each is recorded in its doc as
+    "decided under the author's delegation" and listed in `docs/decisions/delegated-2026-11-28.md`, open to overrule;
+  - viscosity first: extend the engine (GPU pressure tensor), agents may submit short computations;
+  - A1.7 NaCl job (9aef) stopped with a checkpoint for the V work; it continues Saturday 28 Nov 22:00 CET (agreed with
+    unitcellmd-40); the DMC gas job (5e04) cancelled, soricel-pc being offline.
 
 ## Decisions taken by the agent (to review)
 
@@ -219,6 +225,14 @@ Last update: 2026-11-13.
 
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
+
+2026-11-28 — agents on Jo's feedback; tensor benchmark; PF₆⁻ size map read (unitcellmd-b4, formerly c8) — five agents:
+viscosity (V-1), finite-size (V-2, V-4), consistency (V-3, E2.5 §6, E2.7 §7), literature (V-5), decisions (the other open
+design questions); unitcellmd-40 prepared V-6 (`docs/research/summary_261126-corrections/`) and closed Lehnert's box volumes
+without a run. **Tensor benchmark (ded7):** 1 M box, HIP mixed: 0.40 ms/step, full OpenMM tensor 7.7 ms (double 18 ms), so
+the GPU route of V-1 is affordable. **PF₆⁻ σ × 0.95 at 3 M** removes 5.4 of the 16.2 cm³/mol excess V_φ (0.34, "part", as
+predicted); linear; the excess is to be recomputed with V-4's measured ρ0. — evidence: `docs/research/viscosity/bench/`,
+`studies/2026-11-27_pf6-size-3M` (Result) — next: the agents' reports; NaCl continues 22:00 CET.
 
 2026-11-28 — priorities after Jo's feedback on the 26 November summary — the model's viscosity is the unknown behind T4, the
 Yeh–Hummer correction of D and κ_NE (Jo: +30 to +60 % on κ_NE for η 7 to 3.5 mPa s) and the reading of SC-7 (EMC 30 %
