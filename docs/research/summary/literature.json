@@ -1186,6 +1186,33 @@
    "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
    "checked_vor": true,
    "note": "EC:DMC, not EC:EMC. A structural cross-check of the EC share of the Li+ shell next to the DRS estimate (self2024_drs_free_ec)."
+  },
+  "goldberg2026_table3_emc_vapour_pressure": {
+   "quantity": "vapour pressure of pure EMC, measured with a dynamic recirculating still (16 points); EMC purity 98.30 % (GC, Carl Roth, Table 2)",
+   "value": {
+    "p_kPa": [2.52, 5.00, 7.49, 9.99, 14.97, 19.98, 24.97, 29.99, 34.96, 39.98, 49.97, 59.99, 69.97, 79.95, 89.95, 101.29],
+    "T_K": [292.66, 305.42, 313.51, 319.70, 328.60, 335.49, 340.62, 345.64, 349.64, 353.30, 359.54, 364.86, 369.49, 373.63, 377.36, 380.61]
+   },
+   "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY; raw data doi 10.25532/OPARA-1547",
+   "doi": "10.1021/acs.jced.6c00429",
+   "location": "Table 3 (p. 4761, EMC columns); chemicals Table 2 (p. 4757); standard uncertainties u_p = 0.35 kPa and u_T = 0.06 K under Table 3",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": false,
+   "note": "The authors state that the residuals against the Antoine fit scatter about one order of magnitude more than the GUM-based pressure uncertainty, so u_p = 0.35 kPa is a lower bound. Single reading; second reading outstanding."
+  },
+  "goldberg2026_table4_antoine_emc": {
+   "quantity": "Antoine parameters of EMC, log10(p) = A - B/(T + C), p in Pa, T in K, fitted to the authors' points together with literature points screened with Cook's distance (D > 4/N); data points accepted/excluded 24/4; fitted range 292.7 to 380.6 K and 2.52 to 101.3 kPa; AARD in p 1.04 %",
+   "value": {
+    "A": 9.3661,
+    "B": 1433.59,
+    "C": -52.250
+   },
+   "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY",
+   "doi": "10.1021/acs.jced.6c00429",
+   "location": "Table 4 (p. 4762); screening procedure in 'Vapor Pressure Correlation' (p. 4758); no enthalpy of vaporization is printed in the paper",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": false,
+   "note": "Derived by us from these three numbers (not printed): p(298.15 K) = 3.437 kPa, and from d ln p/dT with the ideal-gas Clausius-Clapeyron relation, Delta_vap H(298.15 K) = R ln10 B T^2/(T+C)^2 = 40.35 kJ/mol, T_b(101.325 kPa) = 381.03 K (measured 380.61 K at 101.29 kPa). 298.15 K lies outside the fitted range, so these are extrapolations of about 5 K. The authors use the same relation (Eq. 13) for the interaction energy in their UNIQUAC model. Single reading; second reading outstanding."
   }
  }
 }
