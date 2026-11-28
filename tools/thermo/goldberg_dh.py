@@ -31,6 +31,23 @@ ANTOINE = {
 # Kozlova et al., J. Chem. Thermodyn. 40, 1136 (2008), Table 1: transpiration, 274.2 to 304.1 K
 KOZLOVA_DMC_DH = (38.02, 0.19)  # kJ/mol
 
+# Dougassa et al., J. Chem. Thermodyn. 79, 49 (2014), Table 2, EMC: T/K and the printed 10*p/kPa
+DOUGASSA_EMC_T = [277.96, 282.06, 283.15, 288.15, 293.15, 298.15, 303.15, 308.15, 310.74, 314.83, 323.15, 328.15, 333.15]
+DOUGASSA_EMC_TEN_P = [9.58, 12.85, 15.16, 20.08, 24.39, 36.58, 45.34, 58.01, 67.39, 78.85, 122.81, 152.58, 182.84]
+
+
+def line_fit_dh(t_k: list[float], p_kpa: list[float]) -> tuple[float, float, float]:
+    """Straight line of ln p against 1/T: (dH in kJ/mol, its standard error, p at 298.15 K in kPa)."""
+    x = [1.0 / t for t in t_k]
+    y = [math.log(p) for p in p_kpa]
+    n = len(x)
+    xm, ym = sum(x) / n, sum(y) / n
+    sxx = sum((xi - xm) ** 2 for xi in x)
+    slope = sum((xi - xm) * (yi - ym) for xi, yi in zip(x, y)) / sxx
+    icpt = ym - slope * xm
+    s = math.sqrt(sum((yi - icpt - slope * xi) ** 2 for xi, yi in zip(x, y)) / (n - 2))
+    return -slope * R / 1000.0, s / math.sqrt(sxx) * R / 1000.0, math.exp(icpt + slope / 298.15)
+
 
 def pressure_pa(solvent: str, t_k: float) -> float:
     a, b, c, _, _ = ANTOINE[solvent]
@@ -65,6 +82,8 @@ def main(argv: list[str]) -> int:
         f"DMC check at 298.15 K: Goldberg route minus Kozlova ({KOZLOVA_DMC_DH[0]} +/- "
         f"{KOZLOVA_DMC_DH[1]}) = {d:+.2f} kJ/mol"
     )
+    dh, se, p298 = line_fit_dh(DOUGASSA_EMC_T, [v / 10.0 for v in DOUGASSA_EMC_TEN_P])
+    print(f"EMC, line fit of Dougassa 2014 (13 points): dH_vap = {dh:.2f} +/- {se:.2f} kJ/mol, p(298.15 K) = {p298:.3f} kPa")
     return 0
 
 

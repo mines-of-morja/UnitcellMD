@@ -37,3 +37,17 @@ def test_range_flags():
     assert g.in_range("EMC", 298.15)
     assert g.in_range("DMC", 298.15)
     assert not g.in_range("EMC", 290.0)
+
+
+def test_line_fit_recovers_exact_antoine():
+    t = [290.0, 300.0, 310.0, 320.0]
+    p = [g.pressure_pa('EMC', x) / 1000 for x in t]
+    dh, _, _ = g.line_fit_dh(t, p)
+    assert dh == pytest.approx(g.dh_vap_kj_mol('EMC', 305.0), rel=2e-3)
+
+
+def test_dougassa_line_fit():
+    dh, se, p298 = g.line_fit_dh(g.DOUGASSA_EMC_T, [v / 10 for v in g.DOUGASSA_EMC_TEN_P])
+    assert dh == pytest.approx(40.69, abs=0.01)
+    assert se == pytest.approx(0.57, abs=0.01)
+    assert p298 == pytest.approx(3.399, abs=0.002)

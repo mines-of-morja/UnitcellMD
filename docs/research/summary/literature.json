@@ -79,6 +79,21 @@
    "version_read": "VoR (SI)",
    "checked_vor": true
   },
+  "dougassa2014_table2_emc_vapour_pressure": {
+   "quantity": "vapour pressure of pure EMC measured by the isochoric saturation technique, 13 points; the table columns are printed as 10*p/kPa",
+   "value": {
+    "T_K": [277.96, 282.06, 283.15, 288.15, 293.15, 298.15, 303.15, 308.15, 310.74, 314.83, 323.15, 328.15, 333.15],
+    "ten_p_exptl_kPa": [9.58, 12.85, 15.16, 20.08, 24.39, 36.58, 45.34, 58.01, 67.39, 78.85, 122.81, 152.58, 182.84],
+    "ten_p_calcd_kPa": [10.307, 13.371, 14.310, 19.368, 25.891, 34.208, 44.704, 57.819, 65.790, 80.317, 118.238, 147.533, 182.654],
+    "antoine_ln_p_kPa": {"A": 14.8075, "B": 3376.60, "C": -49.46}
+   },
+   "source": "Y. R. Dougassa, J. Jacquemin, L. El Ouatani, C. Tessier, M. Anouti, J. Chem. Thermodyn. 79, 49 (2014)",
+   "doi": "10.1016/j.jct.2014.07.004",
+   "location": "Table 2 (p. 54, EMC block, columns 'exptl' and 'calcd' of 10 p_sat); Table 3 (p. 55, Antoine coefficients, equation (13) ln(p/kPa) = A - B/(T/K + C)); Table 1 (p. 51): EMC Aldrich, mole fraction 0.9999, water < 10e-6; uncertainties u(T) = 0.1 K, u(p) = 0.05 p + 0.1 kPa (footnote b of Table 2)",
+   "version_read": "author PDF in ../Lit, 2026-11-28",
+   "checked_vor": false,
+   "note": "The paper is about methane solubility; the vapour pressures are a by-product. The Antoine constants (calcd column) are from Zhang et al. 2010 (ref. 57, entry zhang2010_table1_emc_boiling_point), not fitted to these data; they are the same numbers as Zhang's log10 constants times ln 10. Derived by us with tools/thermo/goldberg_dh.py (not printed): a straight-line fit of ln p against 1/T over the 13 measured points gives Delta_vap H = 40.69 +/- 0.57 kJ/mol (mean over 277.96 to 333.15 K, 1 SE of the slope) and p(298.15 K) = 3.40 kPa; the measured point at 298.15 K is 3.658 kPa. Goldberg's Antoine gives 40.35 kJ/mol and 3.437 kPa. No enthalpy of vaporization of EMC is printed in the paper. Single reading; second reading outstanding."
+  },
   "landesfeind2019_density_fit_ec_emc_3_7": {
    "quantity": "electrolyte density fit rho = p1 + p2*c + p3*T in g/cm3, c in mol/L, T in K, LiPF6 in EC:EMC 3:7 w:w, 0-50 C, 0.1-3 M",
    "value": {
