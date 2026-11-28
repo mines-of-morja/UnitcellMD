@@ -149,7 +149,8 @@ acceptance = "Tensor agrees with the CPU engine within a tolerance fixed in the 
 [[task]]
 id = "V-2"
 title = "Box-size series of the 1 M box: D at infinite size and eta without new code"
-state = "open"
+state = "claimed"
+claimed_by = "agent-finite-size"
 priority = 1
 needs = "gpu"
 author = false
@@ -173,7 +174,8 @@ acceptance = "Says which part of the T offset is the integrator and which, if an
 [[task]]
 id = "V-4"
 title = "Salt-free M1 solvent (EC:EMC 3:7) density at 20 C"
-state = "open"
+state = "claimed"
+claimed_by = "agent-finite-size"
 priority = 2
 needs = "gpu"
 author = false
