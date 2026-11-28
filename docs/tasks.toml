@@ -186,11 +186,12 @@ acceptance = "rho0 with error from seeds against the Landesfeind fit at c = 0 an
 [[task]]
 id = "V-5"
 title = "Literature note on the papers added 2026-11-27 (viscosity, diffusion, density, charge scaling)"
-state = "claimed"
+state = "done"
 claimed_by = "agent-literature"
 priority = 2
 needs = "none"
 author = false
+result = "docs/research/literature-2026-11-28/ (viscosity-transport.md, README.md, derived.py): 17 papers read; 15 ledger entries (Logan A21 transcription marked unchecked, its PDF is not in ../Lit). Measured eta at 1 M, 20 C 3.0-3.3 mPa s, labs differ 10-25 %; no pfg-NMR D for EC:EMC in ../Lit (Uchida 2021 EC:DMC nearest); only Borodin 2009 (and Fan 2025, Dajnowicz 2022) apply Yeh-Hummer with the model eta. Every 26 Nov section-6 'not found' claim survives, two with qualifications. Doherty 2017 did not refit LJ after scaling (ion-model README wrong there); 050901 PDF is Duboue-Dijon 2020. Missing-paper list in README section 5."
 goal = "Eleven papers were added to ../Lit (Maiti 2023, Borodin 2009, Hou 2021, Ravikumar 2018, Dajnowicz 2022, Nyman 2008, Bergstrom 2021 SI, Gruber 2026 SI CSV, Doherty 2017, Fan 2025, plus older ones renamed). Several report model and measured eta, D and rho."
 deliverable = "docs/research/literature-2026-11-28/README.md: per paper, force field, charge scaling, time step and constraints, finite-size treatment, model eta/D/rho/kappa against experiment, with table or page. Ledger entries (publication.md rule 3) for every number we will compare with: Logan 2018 eta, Gruber 2026 eta/rho, Nyman 2008 rho, measured D (pfg-NMR) if any. Update section 6 claims that a paper already covers."
 acceptance = "Each number has table/page and version read. Says which section-6 'not found' claims survive. Missing papers listed for the author (Yeh-Hummer 2004, Shao 2020, Eastwood 2010, Kohagen 2016, Duboue-Dijon 2020, pfg-NMR refs 29 and 35 of Landesfeind 2019)."
