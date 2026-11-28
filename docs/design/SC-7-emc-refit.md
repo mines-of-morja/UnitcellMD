@@ -1,7 +1,9 @@
 # SC-7 — Refit the EMC Lennard-Jones parameters to density and ΔH_vap (design, for approval)
 
 - **Status:** proposal, 2026-11-27 (unitcellmd-c8). The author said "go ahead" for SC-7; this note needs approval before
-  any fitting run. Step 0 (the current model's ΔH_vap, no new parameter) runs already: `studies/2026-11-27_emc-dhvap-baseline`.
+  any fitting run.
+  - **2026-11-28:** the questions are decided by the agent under the author's delegation (§7). SC-7 "can wait" (author),
+    so no fit run starts. Step 0 (the current model's ΔH_vap, no new parameter) runs already: `studies/2026-11-27_emc-dhvap-baseline`.
 - **Task:** `docs/tasks.toml` SC-7. Acceptance there: every parameter has a source; targets fixed before fitting; κ, t₊ and D
   never used.
 
@@ -75,6 +77,13 @@ analysis for ΔH_vap, and a 2 × 2 solve with a test. No engine, spec or builder
 - **Q4, sources:** could you download Goldberg 2026 (CC BY, doi 10.1021/acs.jced.6c00429) and Oh 2018 into `../Lit`? ACS and
   ScienceDirect refuse automated downloads. Their uncertainties, purity and Antoine fit decide the tolerance in Q1.
 - **Q5, order:** SC-7 before the ion-model fit (§1)? Recommended.
+- **Decided 2026-11-28 by agent decisions under the author's delegation** (reasons and what would change each item in
+  §7):
+  - Q1 (c), 40.5 ± 1.0 kJ/mol, with conditions before the first fit;
+  - Q2 option A, subject to Q7;
+  - Q3 at 1 fs;
+  - Q4 is the author's download;
+  - Q5 yes.
 
 ## 6. Amendment after step 0 (2026-11-27 afternoon; for approval)
 
@@ -107,3 +116,108 @@ What this changes:
 - **Q6:** accept the wider map of item 1 (option A), knowing that the fit may land near ε × 0.7?
 - **Q7:** first the DMC calibration of item 3? Recommended: it costs half an hour of GPU and decides whether option A's
   global factor is a fix for one molecule or a systematic correction of the carbonate types.
+- **Decided 2026-11-28 by agent decisions under the author's delegation** (§7):
+  - Q6 yes, the wider map;
+  - Q7 yes, the DMC reading first, with what each outcome means. It was answered the same day: r = 0.97, the
+    over-cohesion is shared by the carbonate types, and DMC becomes the held-out test.
+
+  No fit run is submitted while SC-7 "can wait".
+
+## 7. Decisions of 2026-11-28 (agent decisions, under the author's delegation)
+
+The author delegated SC-7's open questions on 2026-11-28 and said SC-7 "can wait". These decisions fix the plan. They
+start nothing: no fit run is submitted. This agent did not touch the DMC calibration jobs or the task's claim. The
+author may overrule any item.
+
+- **Q1, decided: (c) ΔH_vap(EMC, 298.15 K) = 40.5 ± 1.0 kJ/mol. Acceptance |ΔH_vap − 40.5| ≤ 1.0 at 1 fs.**
+  - **Reason:** the band covers (a) and (b). It also says how weak the target is: no calorimetric or transpiration value
+    of EMC exists. Against the model's present 53.2, a ±1 band is still sharp (2.5 % of the target), and choosing (a)
+    or (b) moves the fit by less than the band.
+  - **Sources and their state** (`docs/research/emc-literature/sc7-sources.md`, an agent note, **unchecked**):
+    - Goldberg, Herdegen, Braeuer, *J. Chem. Eng. Data* 71, 4756 (2026), raw data doi 10.25532/OPARA-1547:
+      Clausius–Clapeyron 39.9–40.2. Our own fit of the deposited data; **the paper is not read**, so its Antoine fit,
+      uncertainties and purity are unknown.
+    - Dougassa 2014 (*J. Chem. Thermodyn.* 79, 49): 40.7 ± 0.6, our own fit of the ThermoML record. **Paper not read.**
+    - Franke 2025 (*J. Electrochem. Soc.* 172, 070520) Table II: 40.7, read. It is calculated, and not independent of
+      Dougassa.
+    - The calibration of the Goldberg route on DMC (it reads 1–1.8 kJ/mol low) rests on Kozlova 2008 (38.0 ± 0.2) and
+      Steele 1997 (37.7 ± 0.2), both from the NIST WebBook. **Neither paper is read.**
+  - **Conditions before the first fit run** (publication rule 3):
+    - the Clausius–Clapeyron script is committed (it sits in an agent scratchpad today);
+    - ledger entries for every number above;
+    - a reading of Goldberg 2026 (Q4).
+
+    If that reading moves the centre or gives a wider uncertainty than ±1, the target is changed and dated here
+    **before** step 1 runs, never after a fit result.
+  - **What would change it:** a measured calorimetric or transpiration ΔH_vap of EMC; Goldberg's own Antoine fit or
+    uncertainties; a second reading that disagrees with the agent note.
+- **Q2, decided: option A** (s_σ and s_ε on all EMC LJ types; charges and bonded terms unchanged), **subject to Q7.**
+  Q7 is answered (r = 0.97, shared), so option A stands. The same factors are applied to DMC as the held-out test.
+  - **Reason:** two targets fix two factors exactly. B is under-determined: no second precise ρ(T) of EMC exists. C is
+    strategy M2 and waits for the QM method decision.
+  - The result is a new model, named "LigParGen OPLS-AA LJ × (s_σ, s_ε), fitted to ρ and ΔH_vap" (§6 item 2), and it is
+    reported as such.
+  - **What would change it:** the reading of Q7 (below), or held-out checks that fail (ρ(T), the solvent density at
+    c → 0). Then B or C is designed instead.
+- **Q3, decided: fit at 1 fs** (ADR 0017).
+  - **Reason:** the model is used at 1 fs. A fit at 0.5 fs would miss its own target in production by the known band
+    (about −0.3 % in ρ). The final model's 0.5 fs check (ADR 0017 item 4) states the band.
+  - **What would change it:** a change of the production step or constraints by the author (e.g. after V-3). Then the
+    fit is repeated at the new protocol, about 4 GPU hours.
+- **Q4: the author's action, not decided here.**
+  - Goldberg 2026 (CC BY, doi 10.1021/acs.jced.6c00429) and Oh 2018 (*Fluid Phase Equilib.*, doi
+    10.1016/j.fluid.2018.05.033) into `../Lit`. ACS and ScienceDirect refuse automated downloads.
+  - Useful too, optional: Dougassa 2014 (doi 10.1016/j.jct.2014.07.004) and Kozlova 2008 (doi 10.1016/j.jct.2008.02.012),
+    for the DMC reference used by the calibration.
+- **Q5, decided: SC-7 before the ion model.**
+  - **Reason:** the combination rule puts EMC's LJ types into every EMC–ion pair, so ion terms fitted now would be
+    fitted to the wrong solvent. `docs/research/priorities-2026-11-28.md` puts the solvent first too.
+  - **What would change it:** an ion-model route that does not use the combination rule for ion–solvent pairs (pair
+    overrides for every ion–solvent pair, ADR 0015). Even then the solvent offset (+2.8 % near c = 0) stays.
+- **Q6, decided: the wider map of §6 item 1** (step 1a: s_ε ∈ {0.85, 0.70} at s_σ = 1.00; step 1b: one point at
+  s_σ = 0.98 at the interpolated s_ε; then the solve and the three-seed confirmation of §4), knowing that the fit may land
+  near ε × 0.7.
+  - The values are probes, not parameters.
+  - The held-out checks of §4 item 5 are reported for any solution, in this order:
+    1. ρ(T);
+    2. DMC with the same factors (ρ and ΔH_vap, after Q7's result);
+    3. the 3:7 solvent at c → 0 (V-4 measures that point);
+    4. η against Logan 2018, once V-1 can run.
+  - **What would change it:** visible non-linearity, or a solution outside the map. Then one more map point is added
+    before solving, as §4 item 3 says.
+- **Q7, decided: the DMC calibration first.** Steps 1a and 1b wait for its reading, by the rule fixed in
+  `studies/2026-11-27_dmc-dhvap-calibration/README.md`:
+  - **r ≥ 0.6 (shared):** option A goes ahead. DMC with the same factors becomes a held-out test of whether they fix the
+    carbonate types, not only EMC.
+  - **0.3 < r < 0.6 (partly shared):** option A goes ahead. The report states that only part of the excess is shared
+    by the carbonate types, and B is kept as the next option.
+  - **r ≤ 0.3 (EMC's own):** no global LJ cut. EMC's charges and conformers are examined first, in a new design
+    section.
+  - **Reason:** it costs almost nothing (the liquid exists, the gas phase runs on a CPU), and it decides whether
+    option A is the right lever.
+  - **Answered by data, the same day** (`studies/2026-11-27_dmc-dhvap-calibration`, Result, commit 416aebc):
+    - LigParGen DMC, which uses the same OPLS-AA LJ types, gives ΔH_vap = 50.23 ± 0.03 kJ/mol at 1 fs. The
+      calorimetric value is 38.0 ± 0.2 (NIST table, primary papers not read, not in the ledger): an excess of
+      +12.2 kJ/mol (+32 %). EMC's excess is +12.7 (+31 %).
+    - r = 0.97 ≥ 0.6, so by the rule fixed before the runs **the over-cohesion is shared by the carbonate types.** The
+      prediction (r ≈ 0.7–1) held.
+    - So option A goes ahead (Q2), and the wider map stands (Q6). A global (s_σ, s_ε) is a correction of the carbonate
+      types, not a fix for one molecule.
+    - **DMC is the held-out test of the fitted factors:** they are applied unchanged to DMC, and its ρ and ΔH_vap are
+      reported against experiment. They are never fitted to DMC.
+    - The DMC reference must enter the ledger before it is used as a held-out test (Q4: Kozlova 2008 is useful for
+      that).
+    - DMC's excess rests on a calorimetric reference. EMC's own target, built on vapour pressures, is therefore not the
+      cause of EMC's excess.
+    - What this does not settle: whether the factors fitted on EMC also give DMC's density. That is what the held-out
+      test is for.
+
+**Order when the author lifts "can wait":**
+1. Q7's reading: done 2026-11-28, shared (r = 0.97);
+2. the conditions of Q1;
+3. step 1a, then 1b;
+4. the solve;
+5. the three-seed confirmation;
+6. the held-out checks.
+
+Each GPU step goes through the queue.

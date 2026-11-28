@@ -79,6 +79,13 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
 4. **Cluster executor (needs approval, A2.2).** `slurm` executor in `ucmd-launch` that turns a job
    into `sbatch`; the dashboard reads `squeue`. Scheduler-specific code stays in that layer.
 
+   **Decided 2026-11-28 by agent decisions under the author's delegation: deferred.**
+   - Reason: no cluster account exists, and the cluster was deferred on 2026-11-11 (ADR 0002).
+     A2.2 has not started, and a SLURM executor could not be tested anywhere.
+   - The queue's job model is file-based and has no host, so nothing built now blocks it.
+   - What would change it: an account on a cluster (e.g. through the JMU contact), and a study
+     that needs more than the workstation and soricel give. Then A2.2 starts with its own design.
+
 ## 3. The state document (step 1, `GET /api/state`, schema 1)
 
 ```
@@ -130,6 +137,37 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
    clients be allowed to take work while someone uses the client machine (a `nice`-level and a
    "pause when busy" rule like the game pause)?
 4. **Where it lives:** `tools/queue/` now; moves into `ucmd-launch` when A2.2 starts (ADR 0002.3).
+
+**Decided 2026-11-28 by agent decisions under the author's delegation: the §8 defaults are
+confirmed, and questions 3 and 5 now have answers.**
+
+1. **Priority:**
+   - an integer in the job, set at submit; `priority` changes it; `--first` for urgent work;
+   - the author overrides by CLI or HTTP. Page buttons for this are not needed.
+   - Reason: it works, and an agent can see and explain each job's place.
+2. **No automatic preemption:**
+   - cancel and the game pause stay;
+   - the per-job `stop`/`continue` of §9 is the manual preemption: the author holds the
+     running job, and it resumes from its checkpoint.
+   - Reason: a preempted GPU job costs a restart of the bridge and of the identity tracker.
+     Only a person can judge that the urgent job is worth it.
+3. **Clients:** now known.
+   - One client, `soricel-pc`: 6 threads, WSL2 Linux, a GTX 1660 SUPER (CUDA), on the LAN.
+   - The first form (`studies/` mounted over SSH) stays for this client only, behind the
+     limits of §10.
+   - Every further client uses the copy-based form (§10 item 2), which is not built yet.
+4. **Always on: no.** The server and workers stay started by hand. The systemd user units stay
+   examples.
+   - Reason: after a crash the workstation's data disk needs a manual check and remount before
+     anything writes to it. A service started at login could write into the wrong mount. The
+     GPU also needs a look after a hang.
+   - What would change it: a data disk that mounts reliably on its own. Then install the server
+     unit, and later the CPU worker; the GPU worker comes last.
+5. **Clients while their owner works:** yes, at `nice` 10, with *Free this computer* and the
+   thread control of §9.
+
+What would change these: a second person submitting jobs (then priorities need an owner), or a
+client that is often away (then heartbeat timeouts and copy-based results matter more).
 
 ## 7. Tasks (added 2026-11-24 at the author's request)
 
@@ -205,4 +243,51 @@ Proposal, in this order:
 4. **Trusting results:** repeat a sample of each client's runs here. CPU runs are bit-identical
    across machines (ADR 0010; shown for `soricel-pc`), so the check is exact; GPU results can only
    be checked statistically. Provenance records which computer ran what.
+
+**Decided 2026-11-28 by agent decisions under the author's delegation: the proposal, in this
+order** ([ADR 0019](../decisions/0019-queue-client-trust.md)). The steps outside the repo are
+the author's; they are listed in `docs/decisions/delegated-2026-11-28.md` §2.
+
+1. **Now: the token and soricel's key.** These two steps close the largest hole today: one
+   client key that reads and writes the whole account, including `~/.ssh` and the queue token.
+   - Rotate the queue token, because it appeared in an agent's tool output once.
+   - Limit soricel's key to `restrict`, `from="<its LAN address>"`, and a forced command that
+     runs `sftp-server` inside `bwrap` (installed: bubblewrap 0.12).
+   - The sandbox shows only `studies/`, read and write. The study driver writes more than the
+     result folders: `index.json`, `INDEX.md`, `views/`, lock files and `studies/CATALOG.md`.
+     A finer read-only split would therefore need binds per study, fixed when the share is
+     mounted, which is fragile.
+   - The integrity check of step 2 covers what the plain sandbox leaves open.
+   - Checked by the author from soricel before use:
+     - a listing of the home folder fails;
+     - the mount of `studies/` works;
+     - the queue test job runs again.
+2. **Next: code in `tools/queue`, test-first, by an agent session.**
+   - **(a) Integrity guard.** Before the workstation runs a script or an analysis of a study
+     that a client wrote into, the guard runs `git status --porcelain` on that study.
+     - Any tracked file that changed blocks the run.
+     - So does any untracked file outside `runs/` and the generated index files (a planted
+       `json.py` next to `analyze.py` would be imported).
+   - **(b) One token per client.** The token names the client.
+     - A client token may claim jobs for its tags, report on its own jobs, and free or throttle
+       only its own worker. It may not submit, cancel, reprioritise or control others.
+     - The author's token stays on the workstation.
+   - Reason: these are the two holes that remain after step 1.
+3. **Before any further client, and before any client the author does not control:** the
+   copy-based form of item 2 above.
+   - The client gets no file-system access; it downloads job bundles and uploads results.
+   - The server accepts only that job's files, with size limits, and only study jobs.
+   - soricel moves to it as well once it exists.
+4. **Over the Internet:** only through a VPN (WireGuard or Tailscale), never an open port.
+5. **Repeats of client results.**
+   - **CPU:** for each study a client runs, the workstation repeats a prefix of one run (its
+     first checkpoint interval, or at most 10⁴ steps) and compares `thermo.tsv` byte for byte.
+     A mismatch quarantines that client's results until it is explained.
+   - **GPU:** client results enter a production set only if one replica of the same study,
+     or a matched short run, is repeated on the workstation. It must agree by the criteria of
+     ADR 0012 §3. Exploration runs need no repeat.
+   - Reason: the CPU check is exact and cheap; the GPU check costs one replica in four.
+
+What would change it: a client the author does not control, or one outside the LAN (then step 3
+comes before any job), or a failed repeat (then that client stops until the cause is known).
 
