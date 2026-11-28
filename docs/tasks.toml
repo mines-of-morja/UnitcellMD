@@ -160,7 +160,8 @@ acceptance = "D_inf per species with error; eta from the slope with error, state
 [[task]]
 id = "V-3"
 title = "Thermodynamic consistency: integrator or thermostat/barostat coupling?"
-state = "open"
+state = "claimed"
+claimed_by = "agent-consistency"
 priority = 2
 needs = "gpu"
 author = false
