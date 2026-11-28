@@ -79,21 +79,6 @@
    "version_read": "VoR (SI)",
    "checked_vor": true
   },
-  "landesfeind2019_density_fit_ec_emc_3_7": {
-   "quantity": "electrolyte density fit rho = p1 + p2*c + p3*T in g/cm3, c in mol/L, T in K, LiPF6 in EC:EMC 3:7 w:w, 0-50 C, 0.1-3 M",
-   "value": {
-    "p1": 1.41,
-    "p2": 0.0912,
-    "p3": -0.00109,
-    "R2": 0.997
-   },
-   "source": "J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), SI",
-   "doi": "10.1149/2.0571912jes",
-   "location": "SI Eq. S1, Table S1 (95 % bounds 5 %, 3 %, 22 %)",
-   "version_read": "first reading: SI PDF from library; second reading 2026-11-25: authors' SI (Word file)",
-   "checked_vor": true,
-   "note": "Rounding of the printed parameters is +-0.0065 g/cm3 at 1 M, 20 C (worst case); the points of Fig. S1 scatter by 0.0066 g/cm3 (SD). Markers in Fig. S1 sit at 10-50 C and 0-3 M, the text says 0-50 C and 0.1-3 M. See docs/research/landesfeind-density/README.md."
-  },
   "dougassa2014_table2_emc_vapour_pressure": {
    "quantity": "vapour pressure of pure EMC measured by the isochoric saturation technique, 13 points; the table columns are printed as 10*p/kPa",
    "value": {
@@ -108,6 +93,21 @@
    "version_read": "author PDF in ../Lit, 2026-11-28",
    "checked_vor": false,
    "note": "The paper is about methane solubility; the vapour pressures are a by-product. The Antoine constants (calcd column) are from Zhang et al. 2010 (ref. 57, entry zhang2010_table1_emc_boiling_point), not fitted to these data; they are the same numbers as Zhang's log10 constants times ln 10. Derived by us with tools/thermo/goldberg_dh.py (not printed): a straight-line fit of ln p against 1/T over the 13 measured points gives Delta_vap H = 40.69 +/- 0.57 kJ/mol (mean over 277.96 to 333.15 K, 1 SE of the slope) and p(298.15 K) = 3.40 kPa; the measured point at 298.15 K is 3.658 kPa. Goldberg's Antoine gives 40.35 kJ/mol and 3.437 kPa. No enthalpy of vaporization of EMC is printed in the paper. Single reading; second reading outstanding."
+  },
+  "landesfeind2019_density_fit_ec_emc_3_7": {
+   "quantity": "electrolyte density fit rho = p1 + p2*c + p3*T in g/cm3, c in mol/L, T in K, LiPF6 in EC:EMC 3:7 w:w, 0-50 C, 0.1-3 M",
+   "value": {
+    "p1": 1.41,
+    "p2": 0.0912,
+    "p3": -0.00109,
+    "R2": 0.997
+   },
+   "source": "J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), SI",
+   "doi": "10.1149/2.0571912jes",
+   "location": "SI Eq. S1, Table S1 (95 % bounds 5 %, 3 %, 22 %)",
+   "version_read": "first reading: SI PDF from library; second reading 2026-11-25: authors' SI (Word file)",
+   "checked_vor": true,
+   "note": "Rounding of the printed parameters is +-0.0065 g/cm3 at 1 M, 20 C (worst case); the points of Fig. S1 scatter by 0.0066 g/cm3 (SD). Markers in Fig. S1 sit at 10-50 C and 0-3 M, the text says 0-50 C and 0.1-3 M. See docs/research/landesfeind-density/README.md."
   },
   "marcus2004_single_ion_volumes_pc_25C": {
    "quantity": "standard partial molar volumes of single ions in propylene carbonate at 25 C, TATB/TPTB scale, cm3/mol, uncertainty +-2; and the salt value they derive from",
