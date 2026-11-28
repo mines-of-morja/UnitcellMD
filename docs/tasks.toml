@@ -112,7 +112,7 @@ priority = 3
 needs = "gpu"
 author = true
 after = ["SC-1", "SC-5"]
-waits_for = "design approved by the author 2026-11-28 (recommendations; SC-7-emc-refit.md section 7); DMC read (shared, r = 0.97). Before the first fit: Q1 conditions. Done 2026-11-28 on branch jo/sc7-goldberg-2026 (merge pending): Goldberg 2026 read and entered in the ledger (second reading done), derivation script tools/thermo/goldberg_dh.py committed (EMC 40.35, DMC 37.38 kJ/mol, DMC 0.64 below Kozlova 2008). Dougassa 2014 read and entered (single reading; line fit of its 13 EMC points gives 40.69 +/- 0.57 kJ/mol). GPU behind the V tasks"
+waits_for = "design approved by the author 2026-11-28 (recommendations; SC-7-emc-refit.md section 7); DMC read (shared, r = 0.97). Before the first fit: Q1 conditions. Done 2026-11-28 merged to main: Goldberg 2026 read and entered in the ledger (second reading done), derivation script tools/thermo/goldberg_dh.py committed (EMC 40.35, DMC 37.38 kJ/mol, DMC 0.64 below Kozlova 2008). Dougassa 2014 read and entered (second reading done; line fit of its 13 EMC points gives 40.69 +/- 0.57 kJ/mol). GPU behind the V tasks"
 goal = "LigParGen EMC is 2.8 % too dense at 25 C (SC-5), and no measured dH_vap of EMC was found and takes part in the too-slow ions. Strategy step M2. The scan's epsEMC runs are a map only: no parameter is picked from them."
 deliverable = "Proposal: targets, fitted parameters, sources, held-out checks; design doc before any run."
 acceptance = "Every parameter has a source; targets fixed before fitting; kappa, t+ and D never used."
