@@ -1,0 +1,94 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-28"
+question = "V-4: NPT density of the salt-free M1 solvent (EC:EMC 3:7 w:w; 168 EC Caleman 2012 + 332 EMC LigParGen), 20 C, 0.5 fs, 3 ns, three packing seeds; the c = 0 point of SC-4, against the Landesfeind 2019 fit and ideal mixing"
+requested_by = "task V-4 (docs/tasks.toml, Jo's feedback section 3a); planned by agent finite-size under the author's delegation of 2026-11-28"
+
+[systems]
+recipes = "recipes/*.toml"
+
+[scan]
+temperature_C = [20]
+priority = { system = ["m1_solvent_s1", "m1_solvent_s2", "m1_solvent_s3"] }
+
+[protocol]
+seed = 20261128
+
+[estimate]
+seconds_per_atom_per_run = 0.75
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+# SC-4 protocol unchanged (SC-1 1 M protocol at 0.5 fs, every interval the same in time as at 1 fs), 3 ns. Plan: README.md
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 0.5
+steps = 6000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 200
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.01325
+tau_ps = 1.0
+compressibility_per_bar = 4.5e-5
+every = 50
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 200
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 4000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 200000
