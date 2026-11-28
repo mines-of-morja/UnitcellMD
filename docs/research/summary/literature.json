@@ -1186,6 +1186,20 @@
    "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
    "checked_vor": true,
    "note": "EC:DMC, not EC:EMC. A structural cross-check of the EC share of the Li+ shell next to the DRS estimate (self2024_drs_free_ec)."
+  },
+  "krachkovskiy2017_ion_pairing_ec_emc": {
+   "quantity": "degree of ion pairing alpha (neutral ion aggregates / total salt) of LiPF6, from PFG-NMR diffusivities combined with conductivity (Eqs. 2 and 5). Printed values: 1 M LiPF6 in EC:EMC 3:7 (v/v), largest alpha 0.67 at 35 degC, lowest at 5 degC, monotonic in between (Fig. 4, only read qualitatively); 1 M LiPF6 in EC:DMC 1:1 (v/v) at 30 degC, 53 % ion pairs and 47 % free ions; alpha 43 % at 0.2 M in EC:DMC 1:1; abstract range 36 % to 67 % over all solutions studied",
+   "value": {
+    "EC_EMC_3_7_1M_35C_alpha": 0.67,
+    "EC_DMC_1_1_1M_30C_alpha": 0.53,
+    "EC_DMC_1_1_0.2M_30C_alpha": 0.43
+   },
+   "source": "S. A. Krachkovskiy, J. D. Bazak, S. Fraser, I. C. Halalay, G. R. Goward, J. Electrochem. Soc. 164, A912 (2017)",
+   "doi": "10.1149/2.1531704jes",
+   "location": "Abstract; Results and Discussion, text next to Fig. 2b and Fig. 4; solvent permittivity estimates (50, 33, 18 for EC:DMC 7:3, EC:DMC 1:1, EC:EMC 3:7) are the authors' estimates from literature data on EC:EMC blends, not measurements",
+   "version_read": "VoR (PDF in the Johannes literature library), 2026-11-28",
+   "checked_vor": false,
+   "note": "Ion pairing, not the composition of the Li+ shell. The two-species picture (free ion or ion pair) is the authors' assumption. Gives no Raman coordination number for EC:EMC; this issue stays open for that quantity. Single reading, second reading outstanding."
   }
  }
 }
