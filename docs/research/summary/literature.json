@@ -546,6 +546,573 @@
    "location": "Section 6 (Example 3, battery materials), Table 3",
    "version_read": "preprint (arXiv HTML v1, read by an agent 2026-11-27)",
    "checked_vor": false
+  },
+  "logan2018a21_eta_ec_emc_3_7": {
+   "quantity": "dynamic viscosity of LiPF6 in EC:EMC 30:70 w:w, salt-free and 1.0 mol/kg, Ostwald viscometer (+-2 % after interpolation, as stated in Logan A3350); and pure EMC at 25 C quoted by Logan from Barthel & Gores",
+   "value": {
+    "T_C": [
+     10,
+     20,
+     30,
+     40
+    ],
+    "0 m_cP": [
+     1.3,
+     1.11,
+     0.97,
+     0.87
+    ],
+    "1.0 m_cP": [
+     3.88,
+     3.05,
+     2.47,
+     2.06
+    ],
+    "EMC_25C_cP": 0.65
+   },
+   "source": "E. R. Logan, E. M. Tonita, K. L. Gering, J. Li, X. Ma, L. Y. Beaulieu, J. R. Dahn, J. Electrochem. Soc. 165, A21 (2018)",
+   "doi": "10.1149/2.0271802jes",
+   "location": "Tables II-V (mixtures) and Table I (EMC), as transcribed in docs/research/emc-literature/README.md",
+   "version_read": "NOT read in V-5: transcribed by an agent of session unitcellmd-c8 (2026-11-27) from the open-access PDF; that PDF is not in ../Lit (the Logan file there is A3350, which shows these data only as figures)",
+   "checked_vor": false,
+   "note": "Two readings of the same Logan data disagree by about 8 %: the Arrhenius fit that Lehnert 2025 made to them (lehnert2025_table_s8_eta_fit_logan) gives 3.30 cP at 1.0 m, 20 C, against 3.05 here, and is 5-8 % higher at every T. Read the A21 tables before any comparison. 1.0 mol/kg is about 1.04 mol/L (Bergstrom 2021 Table I)."
+  },
+  "lehnert2025_table_s8_eta_fit_logan": {
+   "quantity": "Arrhenius fit eta = eta0 exp(Ea/(R T)) that Lehnert et al. made to Logan's measured viscosities of LiPF6 in EC:EMC 3:7 w:w (their SI ref. [46] = Logan et al., J. Electrochem. Soc. 165, A3350 (2018)), molal concentrations, used for their Stokes-Einstein radius",
+   "value": {
+    "c_m": [
+     0.5,
+     1.0,
+     1.5,
+     2.0
+    ],
+    "eta0_cP": [
+     0.009175,
+     0.004414,
+     0.001256,
+     0.0006016
+    ],
+    "Ea_J_per_mol": [
+     13000.0,
+     16130.0,
+     20790.0,
+     24040.0
+    ]
+   },
+   "source": "L. Lehnert et al., J. Electrochem. Soc. 172, 050523 (2025), SI (CC BY 4.0)",
+   "doi": "10.1149/1945-7111/add381",
+   "location": "SI Table S8 and Fig. S13a, Section S1.9 (p. S12-S13); the fit range is c <= 2.0 m and T >= 10 C",
+   "version_read": "VoR (SI PDF in ../Lit, pdftotext, 2026-11-28)",
+   "checked_vor": true,
+   "note": "A fit, not data. Evaluated (derived.py, ours): 1.0 m gives 4.17, 3.30, 2.96, 2.66, 2.16 cP at 10, 20, 25, 30, 40 C."
+  },
+  "gruber2026_si1_eta_rho_ec_dmc_emc_vc": {
+   "quantity": "dynamic viscosity (Stabinger SVM 3001, ASTM D7042) and density (oscillating U-tube of the same instrument) of commercial LiPF6 in EC:DMC:EMC 30:35:35 vol% with 1.5 wt% VC (E-Lyte), nominal mol/L; n = number of replicate eta/rho measurements",
+   "value": {
+    "c_M": [
+     0.25,
+     0.5,
+     0.75,
+     1.0,
+     1.2,
+     1.5,
+     1.75,
+     2.0,
+     2.5,
+     3.0
+    ],
+    "n": [
+     2,
+     2,
+     4,
+     2,
+     2,
+     2,
+     1,
+     2,
+     2,
+     2
+    ],
+    "eta_mPas_20C": [
+     1.39925,
+     1.8299,
+     2.33697,
+     3.15695,
+     3.9407,
+     5.74555,
+     7.9136,
+     12.0615,
+     23.7335,
+     53.977
+    ],
+    "rho_gcm3_20C": [
+     1.16623,
+     1.19072,
+     1.21125,
+     1.2349,
+     1.25106,
+     1.27886,
+     1.30023,
+     1.32435,
+     1.36045,
+     1.39941
+    ],
+    "eta_mPas_25C": [
+     1.28975,
+     1.67345,
+     2.11805,
+     2.83145,
+     3.5026,
+     5.02385,
+     6.8071,
+     10.1305,
+     19.147,
+     41.1635
+    ],
+    "rho_gcm3_25C": [
+     1.1604,
+     1.1849,
+     1.20543,
+     1.22916,
+     1.24534,
+     1.27359,
+     1.29455,
+     1.31869,
+     1.35482,
+     1.39387
+    ],
+    "1M_T_C": [
+     10,
+     15,
+     20,
+     25,
+     30,
+     40,
+     50
+    ],
+    "1M_eta_mPas": [
+     4.01655,
+     3.5461,
+     3.15695,
+     2.83145,
+     2.5561,
+     2.11885,
+     1.79155
+    ],
+    "1M_rho_gcm3": [
+     1.24643,
+     1.24064,
+     1.2349,
+     1.22916,
+     1.22343,
+     1.21197,
+     1.2005
+    ],
+    "3M_eta_mPas_50C": 14.6425
+   },
+   "source": "M. Gruber, D. Rutz, F. Hofmann, A. Weber, J. Electrochem. Soc. 173, 120518 (2026), SI1 (CSV), CC BY 4.0",
+   "doi": "10.1149/1945-7111/ae7d5b",
+   "location": "SI1.csv rows T_degC = 20 and 25, and c_mol_L = 1 (sha256 8c1318676a5252fd); method: Experimental section of the main text",
+   "version_read": "authors' supplementary data file (CSV in ../Lit) and the VoR main text (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "NOT EC:EMC 3:7: the solvent holds DMC and VC, so it is a plausibility band, not a target. No salt-free row in the file (0.25-3 M). Concentrations nominal. Reproduces Jo's section 6 (derived.py): drho/dc at 20 C 0.0916 (0.25-1 M), 0.0894 (1-2 M), 0.0804 (1.5-3 M); Ea(eta) 16.1 kJ/mol at 1 M, 15-25 C."
+  },
+  "bergstrom2021_table1_ec_emc_3_7_30C": {
+   "quantity": "LiPF6 in EC:EMC 3:7 w:w at 30 C: density (weighing 100 ul dispensed by a positive-displacement pipette, triplicate) and viscosity (EMS-1000s electromagnetically spinning viscometer, 1000 rpm, triplicate)",
+   "value": {
+    "molality_m": [
+     0.051,
+     0.101,
+     0.5,
+     1.001,
+     1.5
+    ],
+    "molarity_M": [
+     0.053,
+     0.105,
+     0.531,
+     1.043,
+     1.525
+    ],
+    "rho_gL": [
+     [
+      1040.6,
+      1.9
+     ],
+     [
+      1054.6,
+      2.5
+     ],
+     [
+      1143.3,
+      4.6
+     ],
+     [
+      1200.4,
+      2.3
+     ],
+     [
+      1248.3,
+      3.5
+     ]
+    ],
+    "eta_mPas": [
+     [
+      1.21,
+      0.02
+     ],
+     [
+      1.33,
+      0.02
+     ],
+     [
+      1.97,
+      0.03
+     ],
+     [
+      3.04,
+      0.02
+     ],
+     [
+      7.03,
+      0.01
+     ]
+    ]
+   },
+   "source": "H. K. Bergstrom, K. D. Fong, B. D. McCloskey, J. Electrochem. Soc. 168, 060543 (2021), CC BY 4.0",
+   "doi": "10.1149/1945-7111/ac0994",
+   "location": "Table I; methods in Materials (density, viscosity)",
+   "version_read": "VoR (open access PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Do not use the densities: they are -4.0 % (0.05 m) to +2.4 % (1.5 m) off Landesfeind's fit at 30 C, a slope of 0.141 g cm-3 M-1 against 0.0912 (derived.py). The viscosity at 1 m is 23 % above Logan's 30 C value as transcribed (2.47) and 14 % above Lehnert's fit of Logan (2.66): the measured eta of this electrolyte itself scatters by 10-25 %."
+  },
+  "nyman2008_partial_molar_volumes_ec_emc": {
+   "quantity": "partial molar volumes of LiPF6 and of the EC:EMC (3:7 w:w) solvent mixture, 25 C, from salt and solvent concentrations of the samples, 0-2 mol/dm3; found constant in that range",
+   "value": {
+    "V_LiPF6_cm3_per_mol": 59,
+    "V_solvent_cm3_per_mol": 87
+   },
+   "source": "A. Nyman, M. Behm, G. Lindbergh, Electrochim. Acta 53, 6356 (2008)",
+   "doi": "10.1016/j.electacta.2008.04.023",
+   "location": "Section 5, p. 6360 (text), Fig. 5; method in Section 2 (p. 6357)",
+   "version_read": "VoR (Elsevier PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Nyman report no density table. Implied by these volumes (ours, derived.py): rho0 = 1.135 g/cm3 from 98.70 g/mol over 87 cm3/mol, 4.6 % above Landesfeind's fit at 25 C (1.085), so V_solvent (two digits, or its definition) is not usable for rho0; drho/dc = M - V_LiPF6*rho0 = 0.085 to 0.088 g cm-3 M-1 (with rho0 = 1.135 or 1.085). V_LiPF6 = 59 is a second measured salt volume next to Landesfeind's 55.7."
+  },
+  "nyman2008_kappa_eq22_ec_emc_25C": {
+   "quantity": "ionic conductivity of LiPF6 in EC:EMC 3:7 w:w at 25 +- 1 C: polynomial kappa = A1 c^3 + A2 c^1.5 + A3 c (A in 10^-1 S dm^x mol^-y, c in mol/dm3, gives S/m), valid 0.2-2.0 mol/dm3, with 95 % intervals; and the stated maximum",
+   "value": {
+    "A1": [
+     1.297,
+     0.059
+    ],
+    "A2": [
+     -25.1,
+     0.44
+    ],
+    "A3": [
+     33.29,
+     0.39
+    ],
+    "max_mS_cm": 9.5,
+    "c_max_M": 1.0
+   },
+   "source": "Nyman, Behm, Lindbergh 2008",
+   "doi": "10.1016/j.electacta.2008.04.023",
+   "location": "Eq. 22 and Table 2 (p. 6361); maximum in the abstract and Fig. 6",
+   "version_read": "VoR (Elsevier PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "25 C, not 20 C. Eq. 22 at 1.0 M gives 0.949 S/m (ours), consistent with the stated 9.5 mS/cm."
+  },
+  "uchida2021_si_lipf6_ec_dmc_1molal": {
+   "quantity": "1.0 mol/kg LiPF6 in EC:DMC at x_EC (mole fraction of EC in the solvent): self-diffusion by PGSE NMR (7Li, 19F, 1H) at 298 K in 1e-10 m2/s; viscosity (cone-plate, Brookfield DV-IIT) in mPa s; density (pycnometer, 298 K, two decimals); conductivity at 298 K in mS/cm; and the salt-free solvents",
+   "value": {
+    "x_EC": [
+     0,
+     0.248,
+     0.355,
+     0.476
+    ],
+    "D_Li_298K": [
+     3.76,
+     2.58,
+     2.25,
+     1.85
+    ],
+    "D_PF6_298K": [
+     4.43,
+     3.49,
+     3.17,
+     2.76
+    ],
+    "D_EC_298K": [
+     null,
+     5.0,
+     4.22,
+     3.83
+    ],
+    "D_DMC_298K": [
+     9.42,
+     6.56,
+     5.74,
+     4.64
+    ],
+    "eta_288K": [
+     2.03,
+     3.4,
+     4.06,
+     5.21
+    ],
+    "eta_298K": [
+     1.6,
+     2.68,
+     3.26,
+     4.19
+    ],
+    "eta_308K": [
+     1.26,
+     2.2,
+     2.65,
+     3.35
+    ],
+    "rho_298K": [
+     1.18,
+     1.24,
+     1.27,
+     1.29
+    ],
+    "kappa_298K": [
+     7.2,
+     11.7,
+     12.1,
+     11.8
+    ],
+    "solvent_x_EC": [
+     0,
+     0.356
+    ],
+    "solvent_eta_298K": [
+     0.57,
+     1.01
+    ],
+    "solvent_D_DMC_298K": [
+     24.8,
+     15.4
+    ],
+    "solvent_D_EC_298K": [
+     null,
+     13.8
+    ],
+    "solvent_rho_298K": [
+     1.07,
+     1.16
+    ]
+   },
+   "source": "S. Uchida, T. Kiyobayashi, Phys. Chem. Chem. Phys. 23, 10875 (2021), ESI (CC BY-NC 3.0)",
+   "doi": "10.1039/d1cp00967b",
+   "location": "ESI Tables S I (density), S II (viscosity), S III (conductivity), S IV (diffusion); methods Section 2 of the main text",
+   "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "EC:DMC, not EC:EMC: no measured D of LiPF6 in EC:EMC 3:7 is in ../Lit. The salt-free rows have x_EC 0.352 (viscosity) and 0.356 (density, D) against 0.355 for the solution. Their eta at 318 and 328 K for x_EC = 0 (0.67, 0.54) drop out of trend; not used."
+  },
+  "borodin2009_table6_ec_dmc_pure": {
+   "quantity": "pure EC (313 K) and DMC (298 K): APPLE&P MD against experiment (in parentheses in the paper): density kg/m3, heat of vaporization kcal/mol, self-diffusion 1e-10 m2/s as D_MD + D_FSC (Yeh-Hummer/Dunweg-Kremer correction), viscosity cP; and the size of the correction in the electrolytes",
+   "value": {
+    "EC_313K": {
+     "rho": [
+      1302,
+      1321
+     ],
+     "dHvap_MD": 13.8,
+     "D_MD_plus_FSC": [
+      7.8,
+      1.2
+     ],
+     "D_exp": 8,
+     "eta": [
+      1.75,
+      1.85
+     ]
+    },
+    "DMC_298K": {
+     "rho": [
+      1040,
+      1057
+     ],
+     "dHvap": [
+      8.88,
+      9.01
+     ],
+     "D_MD_plus_FSC": [
+      22,
+      3.4
+     ],
+     "D_exp_303K": 26,
+     "eta": [
+      0.47,
+      0.59
+     ]
+    },
+    "FSC_electrolytes_percent": [
+     10,
+     16
+    ],
+    "ion_D_factor": [
+     1.11,
+     1.17
+    ]
+   },
+   "source": "O. Borodin, G. D. Smith, J. Phys. Chem. B 113, 1763 (2009)",
+   "doi": "10.1021/jp809614h",
+   "location": "Table 6 (p. 1768); finite-size correction Eq. 10 and text (p. 1773)",
+   "version_read": "VoR (ACS PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Experimental D and eta from Hayamizu et al. 1999 (their ref. 8), density from the CRC handbook, DMC dHvap from Steele 1997. No experimental dHvap is printed for EC."
+  },
+  "maiti2023_esi_table2_eta_applep": {
+   "quantity": "shear viscosity in cP of LiPF6 in EC:EMC (weight ratio given) from APPLE&P MD (Einstein relation, six pressure-tensor components averaged), at the stated T",
+   "value": {
+    "EC_EMC_24_76_0.45M": {
+     "T_C": [
+      50,
+      60,
+      70,
+      80
+     ],
+     "eta_cP": [
+      1.04,
+      0.81,
+      0.72,
+      0.63
+     ]
+    },
+    "EC_EMC_24_76_1.93M": {
+     "T_C": [
+      50,
+      60,
+      70,
+      80
+     ],
+     "eta_cP": [
+      3.64,
+      2.62,
+      2.25,
+      2.05
+     ]
+    },
+    "60C_EC_EMC_24_76": {
+     "c_M": [
+      0.208,
+      0.95,
+      1.4,
+      2.44
+     ],
+     "eta_cP": [
+      0.71,
+      1.22,
+      2.15,
+      3.97
+     ]
+    },
+    "60C_0.95M": {
+     "EC_wt_percent": [
+      0,
+      10,
+      40,
+      60,
+      76
+     ],
+     "eta_cP": [
+      0.825,
+      1.0,
+      1.63,
+      2.0,
+      2.7
+     ]
+    }
+   },
+   "source": "M. Maiti et al., Phys. Chem. Chem. Phys. 25, 20350 (2023), ESI",
+   "doi": "10.1039/d3cp01236k",
+   "location": "ESI Table 2 (p. 8; the ESI text calls it Table 4); pressure-tensor output interval in ESI 'Viscosity calculation' and Fig. S8 (p. 7, 11)",
+   "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Model values of the polarizable force field. The OPLS-AA and OPLS-AA x 0.8 viscosities appear only in Fig. 5a (0.95 M) and were not read off."
+  },
+  "hou2021_table_s4_kappa_gen2": {
+   "quantity": "measured ionic conductivity of 1.2 M LiPF6 in EC:EMC 3:7 w/w (Gen2), two readings and their linear correction to 25 C (error of meter and correction <= 0.2 mS/cm)",
+   "value": {
+    "readings_mS_cm_at_C": [
+     [
+      10.62,
+      33.3
+     ],
+     [
+      10.38,
+      30.9
+     ]
+    ],
+    "kappa_25C_mS_cm": 9.79
+   },
+   "source": "T. Hou, K. D. Fong, J. Wang, K. A. Persson, Chem. Sci. 12, 14740 (2021), ESI (CC BY-NC 4.0)",
+   "doi": "10.1039/d1sc04265c",
+   "location": "ESI Table S4 (p. 12); error statement p. 14743",
+   "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
+   "checked_vor": true
+  },
+  "ravikumar2018_box_size_d": {
+   "quantity": "model self-diffusion of Li+ and PF6- (P atom) in EC-LiPF6, 1.04 M, 330 K, NVE, CFF93/Soetens EC with full ion charges, in a box of 220 EC + 17 LiPF6 against 440 EC + 34 LiPF6",
+   "value": {
+    "D_Li_1e-10": [
+     0.4,
+     0.41
+    ],
+    "D_PF6_1e-10": [
+     0.67,
+     0.66
+    ]
+   },
+   "source": "B. Ravikumar, M. Mynam, B. Rai, J. Phys. Chem. C 122, 8173 (2018), SI",
+   "doi": "10.1021/acs.jpcc.8b02072",
+   "location": "SI Fig. S2 caption; main text p. 8175 ('vary only by 2 %')",
+   "version_read": "VoR main text and SI (PDFs in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Model numbers, quoted for finite-size practice only. Doubling the volume changes L by 1.26, so Yeh-Hummer predicts only a 21 % change of the correction itself; no error bars are given, so the test cannot exclude the correction."
+  },
+  "su2019_table_s7_dosy_ec_emc": {
+   "quantity": "1H/7Li DOSY self-diffusion (1e-10 m2/s) in EC:EMC 1:1 (molar) and in LiPF6:EC:EMC 1:4:4 (molar), both with toluene added as internal reference; temperature not stated",
+   "value": {
+    "EC_EMC_1_1": {
+     "D_tol": 9.76,
+     "D_EC": 8.93,
+     "D_EMC": 9.0
+    },
+    "LiPF6_EC_EMC_1_4_4": {
+     "D_tol": 3.6,
+     "D_EC": 1.97,
+     "D_EMC": 2.37,
+     "D_Li": 1.33
+    }
+   },
+   "source": "C.-C. Su, M. He, R. Amine, T. Rojas, L. Cheng, A. T. Ngo, K. Amine, Energy Environ. Sci. 12, 1249 (2019), ESI",
+   "doi": "10.1039/c9ee00141g",
+   "location": "ESI Table S7 (p. 19); DOSY method p. 4 of the ESI",
+   "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Not a target: toluene in the sample, EC-richer solvent, about 1.4 M (our estimate), T unknown. Only an order-of-magnitude check that Li+ diffuses at about 0.55-0.7 of the solvent."
+  },
+  "hou2021_quoted_solvent_viscosities": {
+   "quantity": "pure-solvent viscosities quoted (not measured) by Hou et al.: FEC at 298 K, EC at 313 K, EMC at 298 K, cP",
+   "value": {
+    "FEC_298K": 4.1,
+    "EC_313K": 1.9,
+    "EMC_298K": 0.65
+   },
+   "source": "T. Hou, K. D. Fong, J. Wang, K. A. Persson, Chem. Sci. 12, 14740 (2021), citing their refs. 73 (Xia et al., ChemistrySelect 2, 7353 (2017)) and 74 (Hagiyama et al., Chem. Lett. 37, 210 (2008))",
+   "doi": "10.1039/d1sc04265c",
+   "location": "p. 14747 (transport section, next to Fig. 5)",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Secondary quotations; the primary measurements were not read. Which of refs. 73-74 gives which value is not stated."
   }
  }
 }
