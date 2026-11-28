@@ -45,6 +45,16 @@ out["gruber_drho_dc_20C"] = {
     "1-2": round(rho20[2.0] - rho20[1.0], 4),
     "1.5-3": round((rho20[3.0] - rho20[1.5]) / 1.5, 4),
 }
+cs, rs = g["c_M"], g["rho_gcm3_20C"]
+n = len(cs)
+cm, rm = sum(cs) / n, sum(rs) / n
+slope = sum((c - cm) * (r - rm) for c, r in zip(cs, rs)) / sum((c - cm) ** 2 for c in cs)
+icpt = rm - slope * cm
+out["gruber_line_20C"] = {
+    "slope": round(slope, 4),
+    "intercept": round(icpt, 4),
+    "line_minus_data_percent": {str(c): round(100 * ((icpt + slope * c) / r - 1), 2) for c, r in zip(cs, rs)},
+}
 e1 = dict(zip(g["1M_T_C"], g["1M_eta_mPas"]))
 out["gruber_Ea_eta_1M_15_25C_kJ"] = round(
     R * math.log(e1[15] / e1[25]) / (1 / 288.15 - 1 / 298.15) / 1000, 2

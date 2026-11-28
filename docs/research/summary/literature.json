@@ -1113,6 +1113,79 @@
    "version_read": "VoR (PDF in ../Lit), 2026-11-28",
    "checked_vor": true,
    "note": "Secondary quotations; the primary measurements were not read. Which of refs. 73-74 gives which value is not stated."
+  },
+  "morita1998_table2_raman_solvation": {
+   "quantity": "apparent Li+ solvation numbers N_s from Raman side bands (EC ring deformation at 900 cm-1, DMC at 920 cm-1), LiPF6 in EC:DMC 50:50 by volume, room temperature; no correction for the change of Raman activity on binding",
+   "value": {
+    "c_M": [
+     0.5,
+     1.0,
+     1.5
+    ],
+    "N_EC": [
+     3.2,
+     3.0,
+     2.6
+    ],
+    "N_DMC": [
+     1.2,
+     1.1,
+     1.3
+    ]
+   },
+   "source": "M. Morita, Y. Asai, N. Yoshimoto, M. Ishikawa, J. Chem. Soc., Faraday Trans. 94, 3451 (1998)",
+   "doi": "not printed in the PDF; not looked up",
+   "location": "Table 2, rows D and E (p. 3454)",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "Borodin & Smith 2009 reanalyse such Raman data with computed Raman activities and find much less EC preference; Uchida 2021 applies that correction (uchida2021_table_s7_raman_solvation). Use Morita only together with that caveat."
+  },
+  "uchida2021_table_s7_raman_solvation": {
+   "quantity": "average Li+ solvation numbers from Raman with the Raman-activity correction of Borodin et al., 1.0 mol/kg LiPF6 in EC:DMC at x_EC (mole fraction of EC in the solvent), room temperature",
+   "value": {
+    "x_EC": [
+     0,
+     0.129,
+     0.248,
+     0.355,
+     0.476,
+     0.569,
+     0.672
+    ],
+    "DMC_ct": [
+     0.76,
+     0.71,
+     0.56,
+     0.35,
+     0.24,
+     0.18,
+     0.11
+    ],
+    "DMC_cc": [
+     2.12,
+     1.89,
+     1.64,
+     1.43,
+     1.14,
+     0.93,
+     0.69
+    ],
+    "EC": [
+     0,
+     0.82,
+     1.43,
+     1.73,
+     2.1,
+     2.34,
+     2.61
+    ]
+   },
+   "source": "S. Uchida, T. Kiyobayashi, Phys. Chem. Chem. Phys. 23, 10875 (2021), ESI",
+   "doi": "10.1039/d1cp00967b",
+   "location": "ESI Table S VII (p. 4); method Section 2.3 of the main text",
+   "version_read": "VoR main text and ESI (PDFs in ../Lit), 2026-11-28",
+   "checked_vor": true,
+   "note": "EC:DMC, not EC:EMC. A structural cross-check of the EC share of the Li+ shell next to the DRS estimate (self2024_drs_free_ec)."
   }
  }
 }
