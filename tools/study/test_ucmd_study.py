@@ -311,3 +311,13 @@ def test_a_study_from_ready_packages_skips_build_and_minimization(study: Path) -
     status = json.loads((study / "systems/box_1.0M/status.json").read_text())
     assert status["state"] == "minimized" and status["package"] == "packages/box_1.0M.ucsys"
     assert json.loads((study / "runs/box_1.0M/T-10C/status.json").read_text())["state"] == "done"
+
+
+def test_only_runs_the_named_runs_and_refuses_unknown_ones(study: Path) -> None:
+    """`--only` is how a queue job hands one run (or a few) to a machine."""
+    assert us.main(["run", str(study), "--nice", "0", "--only", "mixb_1.0M/T20C"]) == 0
+    index = json.loads((study / "index.json").read_text())
+    assert index["counts"] == {"done": 1, "pending": 5}
+    assert json.loads((study / "runs/mixb_1.0M/T20C/status.json").read_text())["state"] == "done"
+    with pytest.raises(SystemExit, match="not in the plan"):
+        us.main(["run", str(study), "--only", "nope/T20C"])

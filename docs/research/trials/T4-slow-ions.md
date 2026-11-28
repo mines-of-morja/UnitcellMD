@@ -27,3 +27,22 @@ model choice; still, nothing is fitted to it here):
 3. Pure EMC right but 1 M too high: the excess comes from the ions; cause (b), M3 first.
 The 25 % margin is a proposal for the author; it is wider than the expected statistical error of
 Green–Kubo viscosity (10–20 %).
+
+## Amendment 2026-11-27 (author: margin approved; time step 1 fs)
+
+- **The 25 % margin is approved** ("lets try the 25 % margin"). The decision rule above stands
+  as written.
+- **Time step:** 1 fs (ADR 0017). SC-1 puts D about 5–10 % high at 1 fs against 0.5 fs; the
+  viscosity is expected to shift by a similar amount the other way, well inside the 25 %
+  margin, and is reported with that band.
+- **What blocks the runs:** the GPU backend refuses `pressure_tensor` (spec 0.1.1), because
+  OpenMM has no virial. The CPU engine computes the tensor, but runs the 1 M box at about
+  1.2 ns/day (70 ms per step on 16 threads, `validation/m2a`), too slow for Green–Kubo.
+- **Route found:** OpenMM 8.5's `MonteCarloFlexibleBarostat.computeCurrentPressure` returns
+  all six tensor components (finite-difference derivatives of the energy with respect to the
+  box matrix; atomic virial with `scaleMoleculesAsRigid = false`). Implemented in the bridge,
+  it would let the GPU fill the six columns of spec 0.1.1 without a spec change.
+- **Step 0, measurement only:** `docs/research/viscosity/bench_tensor.py` (queue job, after the
+  3 M map) times one tensor against one MD step on the 1 M box and on pure EMC, in mixed and
+  double precision. The cost decides the sampling interval and whether the route is affordable.
+  The bridge change itself needs a design note and the author's approval (CLAUDE.md, phases).

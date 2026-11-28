@@ -1,0 +1,70 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-27"
+question = "The run of 2026-11-27_queue-controls-test again (same plan and seed), interrupted by free, stop and a thread change; the thermo table should equal the uninterrupted one"
+requested_by = "the author, 2026-11-27 (give her computer work)"
+
+[systems]
+packages = "../2026-11-25_water-npt-gpu/systems/spcfw_512_s1/minimized.ucsys"
+
+[scan]
+temperature_C = [25.01]
+
+[protocol]
+seed = 20261133
+
+[estimate]
+seconds_per_atom_per_run = 0.2
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+# The settings of 2026-11-20_water-spcfw-wu without the barostat (NVT), 20 ps.
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 20000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 100
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 0.9
+coulomb = "pme"
+ewald_tolerance = 1e-6
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 100
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 2000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 1000

@@ -1,0 +1,88 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file. Plan, reference and criterion: README.md (committed before any run).
+
+[study]
+created = "2026-11-27"
+question = "A1.7 target 2: does the structure-factor thermodynamic factor reproduce the published non-ideality of NaCl in SPC/E water (Joung-Cheatham ions)? 1 + dln(gamma)/dln(m) at 1, 2, 3 mol/kg against Mester & Panagiotopoulos 2015; NPT 298.15 K, 1 bar, 42 ns per system on the GPU"
+requested_by = "the author, 2026-11-27 (NaCl target approved: 'yes, add it to the queue'; papers put into ../Lit the same day)"
+
+[systems]
+# start packages: make_packages.sh (builder branch claude/a17-nacl-spce, minimized here)
+packages = "packages/*.ucsys"
+
+[scan]
+temperature_C = [25]
+
+# the strongest test first: 3 mol/kg, then down; the box-size check last
+[scan.priority]
+system = ["nacl_m3_w4000", "nacl_m2_w4000", "nacl_m1_w4000", "nacl_m3_w2000"]
+
+[protocol]
+seed = 20261127
+
+[estimate]
+seconds_per_atom_per_run = 2.0
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+# Mester & Panagiotopoulos 2015, p. 044507-5 (GROMACS 4.6.5): NPT, 298.15 K, 1 bar, velocity Verlet at
+# 2 fs, Nose-Hoover thermostat 1 ps, MTTK barostat 2 ps, LJ and Coulomb cut at 0.9 nm, potentials
+# shifted, PME with relative strength 1e-6 at the cutoff. Rigid SPC/E. No long-range dispersion
+# correction is mentioned, so none is used (an assumption, README.md). Differences: a Nose-Hoover
+# chain of 3 and C-rescale (the GPU bridge: Monte Carlo barostat) instead of MTTK, the same
+# ensemble; PME order 5 instead of 6. 42 ns; the first 2 ns are not analysed.
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 2.0
+steps = 21000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 1000
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 1.0
+chain_length = 3
+
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.0
+tau_ps = 2.0
+compressibility_per_bar = 4.5e-5
+every = 25
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 0.9
+lj_cutoff_mode = "potential-shift"
+coulomb = "pme"
+ewald_tolerance = 1e-6
+dispersion_correction = false
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 500
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 2500
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 500000

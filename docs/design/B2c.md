@@ -1,9 +1,16 @@
 # B2c design — looking at results in the GUI: molecules, optimizations, studies
 
-- **Status:** draft 2026-11-25, at the author's request ("where can I visualize the computations …
-  if not we should add the ability"). **Not approved, nothing in the GUI is built.** Outside the
+- **Status:** written 2026-11-25 at the author's request ("where can I visualize the computations …
+  if not we should add the ability"); **steps 1–3 and the trend tables (step 5) approved the same
+  day** and built on branch `b2c` of ucmd-builder (from `b2a`). Step 4 is not approved. Outside the
   PLAN.md order (it extends B2.2 and B2.6; B2b stays as it is).
-- **Built with this draft:** only `tools/qm/cluster_xyz.py` (DFT result → extended XYZ).
+  - **2026-11-28:** step 4 deferred by the agent under the author's delegation (§3).
+- **The author's answers (§5):** 1. in the builder GUI. 2. `analyze.py` may write tables without a
+  spec change; "add notebooks to the GUI that work like tabs, there trend tables should get a
+  notebook passed". Read as a tabbed area (as `ttk.Notebook`), one page per table, not as Jupyter
+  notebooks. 3. and 4. as proposed.
+- **Evidence:** `validation/b2c/REPORT.md` of ucmd-builder. DFT results come in through
+  `tools/qm/cluster_xyz.py`.
 
 ## 1. What works today, checked 2026-11-25
 
@@ -46,8 +53,26 @@
    of a picked Li⁺, sorted, with their molecule. No cutoff is involved.
 3. **The two defects of §1.**
 4. **Compare:** up to five molecule files side by side with linked cameras (for n = 0 … 4).
-5. **Study trends:** the GUI plots columns of a table written by the analysis (study folder,
-   `views/trends.tsv`, written by `analyze.py`). It computes no fit. Needs question 2.
+
+   **Decided 2026-11-28 by agent decisions under the author's delegation: deferred, not
+   rejected.**
+   - Reason:
+     - Its use was the five T6 clusters. After the sensitivity scan, T6 became a side result,
+       and its ωB97M-V energies stay off until the author decides T6.
+     - Step 1 already shows the five clusters one after another (the list above *Play*), so
+       they can be compared now.
+     - The author has not yet run the hands-on tests of steps 1–3 and of B2d (testing.md §9a,
+       §9b). Those tests should decide the next GUI work.
+     - The research tasks V-1 to V-4 come first.
+   - What would change it: the author asks for it after §9a, or T6 resumes with a structural
+     comparison of the clusters as a deliverable. Then step 4 is built on `main` of
+     ucmd-builder, in the one-window layout of B2d, with a screenshot for the author.
+5. **Study trends:** the middle of the window is a notebook. Its first page is the 3D view; every
+   result table gets a page (`gui/notebook.py`): the table, its notes, and points of chosen
+   columns. The analysis writes the tables with `tools/study/ucmd_table.py` into `<study>/tables/`
+   (git-ignored; not `views/`, which holds only links and is rebuilt, as an earlier draft said).
+   The format is one file, `# ucmd-table 1` in the first line, so a thermo table is never taken
+   for one. No fit is computed or drawn.
 
 ## 4. Acceptance tests (headless, no display)
 

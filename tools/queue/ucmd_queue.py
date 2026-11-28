@@ -1,11 +1,14 @@
 """Dashboard of this machine's compute queue: what runs, what waits, what comes next.
 
-    python3 tools/queue/ucmd_queue.py serve [--port 8765] [--config FILE]
-    python3 tools/queue/ucmd_queue.py state [--config FILE]       # the JSON once
+    ucmd_queue.py serve [--port 8765] [--bind ADDR]   # dashboard + job API (docs/design/queue.md)
+    ucmd_queue.py state                                # the dashboard state as JSON, once
+    ucmd_queue.py work [--worker NAME]                 # a worker: take jobs from the server
+    ucmd_queue.py submit study|command ... | jobs | cancel JOB | priority JOB N
 
-Read-only (docs/design/queue.md, step 1): it reads status.json / thermo.tsv of the studies, the
+The page only shows; jobs are changed with the CLI or the token-protected HTTP API
+(tools/queue/docs/agents.md). The dashboard reads status.json / thermo.tsv of the studies, the
 driver locks, a GPU telemetry file, the process list, `docker ps`, the queue scripts' log and the
-task file docs/tasks.toml, and changes nothing. Serves on 127.0.0.1 only. Machine-specific settings are in
+task file docs/tasks.toml, and changes nothing. Serves on 127.0.0.1 unless [server] bind and a token are set. Machine-specific settings are in
 ~/.config/ucmd/queue.toml (see queue.example.toml). Standard library only (Python >= 3.11).
 
 Units: time in s (ETA) or ps (simulated time); the pressure and everything else is not touched.
@@ -25,8 +28,13 @@ import time
 import tomllib
 import urllib.request
 from datetime import UTC, datetime
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from http.server import ThreadingHTTPServer
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from qjobs import ACTIVE, FINISHED, JobError, Spool
+from qserver import Registry, make_handler
+from qworker import Api, ServerError, Worker
 
 SCHEMA = 1
 HERE = Path(__file__).resolve().parent
@@ -511,8 +519,16 @@ def fetch_remote(remote: dict) -> dict:
 class Cache:
     """Collects in the background; requests only read the last result."""
 
-    def __init__(self, collector: Collector, remotes: list[dict], period_s: float) -> None:
+    def __init__(
+        self,
+        collector: Collector,
+        remotes: list[dict],
+        period_s: float,
+        spool: Spool | None = None,
+        registry: Registry | None = None,
+    ) -> None:
         self.collector, self.remotes, self.period_s = collector, remotes, period_s
+        self.spool, self.registry = spool, registry or Registry()
         self.lock = threading.Lock()
         self.doc: dict = {"schema": SCHEMA, "node": collector.node, "starting": True}
         self.remote_docs: list[dict] = []
@@ -527,6 +543,22 @@ class Cache:
                 "time": now_iso(),
                 "errors": [f"collector failed: {exc!r}"],
             }
+        if self.spool is not None:
+            try:
+                self.spool.requeue_stale()
+                jobs = self.spool.jobs()
+            except (OSError, ValueError) as exc:
+                jobs = []
+                doc.setdefault("errors", []).append(f"job spool: {exc}")
+            finished = [j for j in jobs if j["state"] in FINISHED][-15:]
+            doc["jobs"] = [j for j in jobs if j["state"] not in FINISHED] + finished
+            doc["workers"] = self.registry.snapshot(self.spool)
+            holders = {
+                j["study"]: j["claimed_by"] for j in jobs if j["state"] in ACTIVE and j["study"]
+            }
+            for r in doc.get("running", []):
+                if r.get("orphan") and r["study"] in holders:
+                    r["orphan"], r["worker"] = False, holders[r["study"]]  # a driver on a worker
         remote_docs = [fetch_remote(r) for r in self.remotes]
         with self.lock:
             self.doc, self.remote_docs = doc, remote_docs
@@ -541,59 +573,328 @@ class Cache:
             return {**self.doc, "remotes": self.remote_docs}
 
 
-def make_handler(cache: Cache, page: bytes):
-    class Handler(BaseHTTPRequestHandler):
-        def _send(self, code: int, body: bytes, ctype: str) -> None:
-            self.send_response(code)
-            self.send_header("Content-Type", ctype)
-            self.send_header("Content-Length", str(len(body)))
-            self.send_header("Cache-Control", "no-store")
-            self.end_headers()
-            self.wfile.write(body)
+# --- workers and clients ----------------------------------------------------------------------
 
-        def do_GET(self) -> None:
-            path = self.path.split("?", 1)[0]
-            if path in ("/", "/index.html"):
-                self._send(200, page, "text/html; charset=utf-8")
-            elif path == "/api/state":
-                self._send(200, json.dumps(cache.snapshot()).encode(), "application/json")
+
+def study_progress(study: Path) -> dict | None:
+    """The run of `study` that is running, with its step; for the worker's heartbeat."""
+    for status in sorted((study / "runs").glob("*/*/status.json")):
+        try:
+            if read_json(status).get("state") != "running":
+                continue
+        except (OSError, ValueError):
+            continue
+        d = status.parent
+        row = last_thermo_row(d / "out" / "thermo.tsv")
+        return {
+            "run": f"{d.parent.name}/{d.name}",
+            "step": row[0] if row else None,
+            "steps": run_steps(d / "run.toml"),
+            "time_ps": row[1] if row else None,
+        }
+    return None
+
+
+def make_guard(wcfg: dict, cfg: dict):
+    """Before taking a job: is somebody else on the resource? (None = free)"""
+
+    def guard() -> str | None:
+        image = wcfg.get("container_image")
+        if image:
+            holders = docker_holders(image, [])
+            if holders:
+                return f"{len(holders)} container(s) of {image} are running"
+        if wcfg.get("wait_for_queue_scripts"):
+            live = queue_scripts(cfg.get("queue_scripts", {}), process_table(), [])
+            if live:
+                return "queue script(s) alive: " + ", ".join(q["name"] for q in live)
+        return None
+
+    return guard
+
+
+def make_pause(wcfg: dict):
+    rx = re.compile(wcfg["pause_process_regex"]) if wcfg.get("pause_process_regex") else None
+
+    def paused() -> str | None:
+        if rx is None:
+            return None
+        for _, cmd in process_table():
+            if rx.search(cmd):
+                return "paused: " + cmd.split()[0].rsplit("/", 1)[-1] + " is running"
+        return None
+
+    return paused
+
+
+def token_of(cfg: dict, entry: dict | None = None) -> str | None:
+    return (
+        os.environ.get("UCMD_QUEUE_TOKEN")
+        or (entry or {}).get("token")
+        or cfg.get("server", {}).get("token")
+        or cfg.get("client", {}).get("token")
+    )
+
+
+def spool_of(cfg: dict) -> Spool:
+    root = cfg.get("server", {}).get("spool")
+    return Spool(expand(root) if root else REPO / "queue")
+
+
+def cmd_work(cfg: dict, name: str | None) -> int:
+    entries = cfg.get("worker", [])
+    entry = next((w for w in entries if name in (None, w.get("name"))), None)
+    if entry is None:
+        print(f"no [[worker]] {name or ''} in the config", file=sys.stderr)
+        return 2
+    token = token_of(cfg, entry)
+    if not token:
+        print("no token: set [server] token (or UCMD_QUEUE_TOKEN)", file=sys.stderr)
+        return 2
+    port = cfg.get("server", {}).get("port", 8765)
+    api = Api(entry.get("server", f"http://127.0.0.1:{port}"), token)
+    sd = entry.get("studies_dir") or cfg.get("node", {}).get("studies_dir")
+    studies_dir = expand(sd) if sd else REPO / "studies"
+    logs = (spool_of(cfg).root / "logs") if not entry.get("server") else REPO / "queue" / "logs"
+    worker = Worker(
+        entry,
+        api,
+        REPO,
+        studies_dir.resolve(),
+        logs,
+        make_guard(entry, cfg),
+        make_pause(entry),
+        study_progress,
+        log=lambda m: print(f"{now_iso()}  {m}", flush=True),
+    )
+    worker.serve()
+    return 0
+
+
+def backend(cfg: dict, args) -> object:
+    """Where agents put jobs: this machine's spool, or a server over HTTP."""
+    url = args.server or cfg.get("client", {}).get("server")
+    if not url:
+        return LocalBackend(spool_of(cfg))
+    token = args.token or token_of(cfg)
+    if not token:
+        raise SystemExit("no token for the server: [client] token, --token or UCMD_QUEUE_TOKEN")
+    return HttpBackend(Api(url, token))
+
+
+class LocalBackend:
+    def __init__(self, spool: Spool) -> None:
+        self.spool = spool
+
+    def submit(self, **kw) -> dict:
+        return self.spool.submit(**kw)
+
+    def jobs(self) -> list[dict]:
+        return self.spool.jobs()
+
+    def cancel(self, job_id: str) -> dict:
+        return self.spool.cancel(job_id)
+
+    def priority(self, job_id: str, priority: int) -> dict:
+        return self.spool.set_priority(job_id, priority)
+
+    def stop(self, job_id: str) -> dict:
+        return self.spool.hold(job_id)
+
+    def resume(self, job_id: str) -> dict:
+        return self.spool.resume(job_id)
+
+    def control(self, worker: str, **kw) -> dict:
+        return self.spool.set_control(worker, **kw)
+
+
+class HttpBackend:
+    def __init__(self, api: Api) -> None:
+        self.api = api
+
+    def submit(self, **kw) -> dict:
+        return self.api.post("/api/jobs", kw)
+
+    def jobs(self) -> list[dict]:
+        return self.api.get("/api/jobs")["jobs"]
+
+    def cancel(self, job_id: str) -> dict:
+        return self.api.post(f"/api/jobs/{job_id}/cancel", {})
+
+    def priority(self, job_id: str, priority: int) -> dict:
+        return self.api.post(f"/api/jobs/{job_id}/priority", {"priority": priority})
+
+    def stop(self, job_id: str) -> dict:
+        return self.api.post(f"/api/jobs/{job_id}/hold", {})
+
+    def resume(self, job_id: str) -> dict:
+        return self.api.post(f"/api/jobs/{job_id}/resume", {})
+
+    def control(self, worker: str, **kw) -> dict:
+        return self.api.post(f"/api/workers/{worker}/control", kw)
+
+
+def job_line(j: dict) -> str:
+    what = (
+        j["study"] + (" " + ",".join(j["runs"]) if j.get("runs") else "")
+        if j["study"]
+        else (" ".join(j["argv"] or []))
+    )
+    who = f" on {j['claimed_by']}" if j.get("claimed_by") else ""
+    state = "stopped" if j["state"] == "queued" and j.get("held") else j["state"]
+    return f"{j['id']}  {state:9s} p{j['priority']:<3d} {j['needs']:14s} {what[:70]}{who}"
+
+
+def cmd_client(cfg: dict, args) -> int:
+    be = backend(cfg, args)
+    who = (
+        args.as_
+        or os.environ.get("UCMD_QUEUE_AS")
+        or f"{os.environ.get('USER', '?')}@{os.uname().nodename}"
+    )
+    try:
+        if args.command == "submit":
+            kw = {
+                "kind": args.kind,
+                "needs": args.needs,
+                "title": args.title or "",
+                "priority": args.priority,
+                "first": args.first,
+                "after": args.after or [],
+                "submitted_by": who,
+                "note": args.note or "",
+            }
+            if args.kind == "study":
+                kw.update(study=args.study, runs=args.runs)
             else:
-                self._send(404, b"not found", "text/plain")
+                kw.update(argv=args.argv[1:] if args.argv[:1] == ["--"] else args.argv)
+            print(job_line(be.submit(**kw)))
+        elif args.command == "jobs":
+            jobs = be.jobs()
+            if not args.all:
+                jobs = [j for j in jobs if j["state"] not in FINISHED]
+            for j in sorted(
+                jobs, key=lambda j: (j["state"] != "running", -j["priority"], j["submitted"])
+            ):
+                print(job_line(j))
+            if not jobs:
+                print("no jobs" if args.all else "no open jobs (--all shows finished ones)")
+        elif args.command == "stop":
+            print(job_line(be.stop(args.job)))
+        elif args.command == "continue":
+            print(job_line(be.resume(args.job)))
+        elif args.command == "worker":
+            kw = {}
+            if args.free or args.use:
+                kw["paused"] = bool(args.free)
+            if args.threads is not None:
+                kw["threads"] = args.threads or None
+            c = be.control(args.name, **kw)
+            use = "freed (takes no job)" if c["paused"] else "in use by the queue"
+            print(f"{args.name}: {use}, threads: {c['threads'] or 'its own setting'}")
+        elif args.command == "cancel":
+            print(job_line(be.cancel(args.job)))
+        elif args.command == "priority":
+            print(job_line(be.priority(args.job, args.value)))
+    except (JobError, ServerError) as exc:
+        print(f"refused: {exc}", file=sys.stderr)
+        return 1
+    return 0
 
-        def _refuse(self) -> None:
-            self._send(405, b"read-only", "text/plain")
 
-        do_POST = do_PUT = do_DELETE = do_PATCH = _refuse
-
-        def log_message(self, fmt: str, *args) -> None:  # quiet
-            pass
-
-    return Handler
-
-
-def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    ap.add_argument("command", choices=["serve", "state"])
-    ap.add_argument("--port", type=int, default=8765)
-    ap.add_argument("--config", type=Path, default=None)
-    ap.add_argument("--period", type=float, default=10.0, help="seconds between collections")
-    args = ap.parse_args(argv)
-    cfg = load_config(args.config)
+def serve(cfg: dict, args) -> int:
+    server_cfg = cfg.get("server", {})
+    bind = args.bind or server_cfg.get("bind", "127.0.0.1")
+    port = args.port or server_cfg.get("port", 8765)
+    token = token_of({"server": server_cfg})
+    if bind not in ("127.0.0.1", "localhost", "::1") and not token:
+        print(
+            "refusing to listen beyond this machine without a token ([server] token)",
+            file=sys.stderr,
+        )
+        return 2
     collector = Collector(cfg)
-    if args.command == "state":
-        print(json.dumps(collector.collect(), indent=2))
-        return 0
-    cache = Cache(collector, cfg.get("remote", []), args.period)
+    spool, registry = spool_of(cfg), Registry()
+    cache = Cache(collector, cfg.get("remote", []), args.period, spool, registry)
     cache.refresh()
     threading.Thread(target=cache.loop, daemon=True).start()
     page = (HERE / "dashboard.html").read_bytes()
-    server = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler(cache, page))
-    print(f"queue dashboard on http://127.0.0.1:{args.port}  (read-only, Ctrl-C to stop)")
+    server = ThreadingHTTPServer((bind, port), make_handler(cache, page, spool, registry, token))
+    mode = "token set" if token else "no token: read-only"
+    print(f"queue server on http://{bind}:{port}  ({mode}; Ctrl-C to stop)")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         pass
     return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
+    ap.add_argument("--config", type=Path, default=None)
+    sub = ap.add_subparsers(dest="command", required=True)
+    p = sub.add_parser("serve", help="dashboard and job API")
+    p.add_argument("--port", type=int, default=None)
+    p.add_argument("--bind", default=None, help="address; default 127.0.0.1 (LAN needs a token)")
+    p.add_argument("--period", type=float, default=10.0, help="seconds between collections")
+    sub.add_parser("state", help="print the dashboard state once")
+    p = sub.add_parser("work", help="run as a worker: take jobs from the server")
+    p.add_argument("--worker", default=None, help="which [[worker]] of the config")
+
+    def client(p: argparse.ArgumentParser) -> None:
+        p.add_argument("--server", default=None, help="URL; default: this machine's spool")
+        p.add_argument("--token", default=None)
+
+    p = sub.add_parser("submit", help="queue a job")
+    client(p)
+    kinds = p.add_subparsers(dest="kind", required=True)
+    for kind in ("study", "command"):
+        k = kinds.add_parser(kind)
+        if kind == "study":
+            k.add_argument("study", help="folder name under studies/")
+            k.add_argument("--runs", nargs="+", metavar="ID", help="only these runs")
+        else:
+            k.add_argument("argv", nargs=argparse.REMAINDER, help="-- COMMAND ARGS...")
+        k.add_argument("--needs", required=True, help="resource tag: gpu-hip-mixed, cpu, ...")
+        k.add_argument("--priority", type=int, default=0, help="larger goes first (default 0)")
+        k.add_argument("--first", action="store_true", help="before everything queued")
+        k.add_argument("--after", nargs="+", metavar="JOB", help="start only after these are done")
+        k.add_argument("--title")
+        k.add_argument("--note")
+        k.add_argument("--as", dest="as_", help="who submits (a session name)")
+    p = sub.add_parser("jobs", help="list jobs")
+    client(p)
+    p.add_argument("--all", action="store_true")
+    for verb, text in (("stop", "stop a job (checkpoint); it waits"), ("continue", "continue it")):
+        p = sub.add_parser(verb, help=text)
+        client(p)
+        p.add_argument("job")
+    p = sub.add_parser("worker", help="free a worker's computer, use it again, set its threads")
+    client(p)
+    p.add_argument("name")
+    group = p.add_mutually_exclusive_group()
+    group.add_argument("--free", action="store_true", help="stop its job and give it no new one")
+    group.add_argument("--use", action="store_true", help="let it take jobs again")
+    p.add_argument("--threads", type=int, default=None, help="CPU threads per job; 0: its own")
+    p = sub.add_parser("cancel", help="cancel a job (a running one stops gracefully)")
+    client(p)
+    p.add_argument("job")
+    p = sub.add_parser("priority", help="change the priority of a queued job")
+    client(p)
+    p.add_argument("job")
+    p.add_argument("value", type=int)
+    args = ap.parse_args(argv)
+    if args.command in ("jobs", "cancel", "priority", "stop", "continue", "worker"):
+        args.as_ = None
+    cfg = load_config(args.config)
+    if args.command == "state":
+        print(json.dumps(Collector(cfg).collect(), indent=2))
+        return 0
+    if args.command == "serve":
+        return serve(cfg, args)
+    if args.command == "work":
+        return cmd_work(cfg, args.worker)
+    return cmd_client(cfg, args)
 
 
 if __name__ == "__main__":

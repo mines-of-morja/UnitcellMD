@@ -3,6 +3,9 @@
     HDF5_USE_FILE_LOCKING=FALSE ucmd-analysis/.venv/bin/python \
         studies/2026-11-24_parameter-sensitivity-1M/analyze.py OUT.json
 
+It also writes tables/runs.tsv and tables/trends.tsv for the GUI (File → Open tables…), from the
+same numbers; `analyze.py --tables-only OUT.json` writes them again without reading trajectories.
+
 Finished runs only; unfinished ones are listed. The first 1.5 ns are skipped. Trend of a quantity
 y: ln y = a + b ln x (least squares; the baselines enter as single points at x = 1), x = value /
 baseline value. The noise of ln y is the standard deviation over the baselines of this study and
@@ -28,6 +31,11 @@ T2 = ROOT / "studies/2026-11-21_trial-t2-ec-model-1M/runs"
 SKIP_PS = "1500"
 X0 = {"zeta": 0.75, "sigmaLi": 1.0, "epsEMC": 1.0}
 PARTNERS = {"EC": "EC:O:1", "EMC": "EMC:O:1", "PF6": "PF6:P"}
+sys.path.insert(0, str(ROOT / "tools/study"))
+from ucmd_table import write_table  # noqa: E402
+
+UNITS = {"kappa_NE": "S_per_m", "density": "g_cm3", "D_Li": "m2_per_s", "D_PF6": "m2_per_s",
+         "D_EC": "m2_per_s", "D_EMC": "m2_per_s"}  # fmt: skip
 TREND = ["kappa_NE", "D_Li", "D_PF6", "D_EC", "D_EMC", "density"]
 MATTERS_LN, MATTERS_SE = 0.2, 2.0  # README, reading rule
 
@@ -69,6 +77,28 @@ def trend(points: list[tuple[float, float]], sd_ln: float) -> dict:
             "matters": abs(change) >= MATTERS_LN and abs(change) >= MATTERS_SE * se * span}  # fmt: skip
 
 
+def write_tables(result: dict, folder: Path) -> None:
+    """The result as tables for the GUI; no number is computed here."""
+    runs = list(result["runs"].items())
+    rows = [(n, r["knob"], r["x"], r) for n, r in runs]
+    rows += [(n, "t2_m1 (older bridge)", 1.0, r) for n, r in result["t2_m1"].items()]
+    keys = [k for k in (runs[0][1] if runs else {}) if k not in ("knob", "x")]
+    names = [f"{k}_{UNITS[k]}" if k in UNITS else k for k in keys]
+    notes = ["One run per probe, 5 ns, the first 1.5 ns skipped. x = value / baseline value."]
+    if result["not_finished"]:
+        notes.append("PRELIMINARY, not finished: " + ", ".join(result["not_finished"]))
+    write_table(folder / "runs.tsv", "Sensitivity: runs", ["run", "knob", "x", *names],
+                [[n, knob, x, *(r[k] for k in keys)] for n, knob, x, r in rows], notes,
+                {"x": "x", "y": "kappa_NE_S_per_m", "group": "knob"} if runs else None)  # fmt: skip
+    columns = ["knob", "quantity", "exponent", "exponent_se", "ln_change_over_range",
+               "ln_change_se", "matters", "noise_sd_ln"]  # fmt: skip
+    write_table(folder / "trends.tsv", "Sensitivity: trends", columns,
+                [[knob, y, *(t[c] for c in columns[2:7]), result["noise_sd_ln"][y]]
+                 for knob, ys in result["trends"].items() for y, t in ys.items()],
+                ["ln y = a + exponent * ln x. The README's reading rule is about kappa_NE: not "
+                 "resolved is not the same as no effect.", *notes[1:]])  # fmt: skip
+
+
 def main(out_path: str) -> None:
     runs, missing = {}, []
     for pkg in sorted((HERE / "packages").glob("*.ucsys")):
@@ -96,6 +126,7 @@ def main(out_path: str) -> None:
             y: trend([(r["x"], r[y]) for r in pts], result["noise_sd_ln"][y]) for y in TREND
         }
     Path(out_path).write_text(json.dumps(result, indent=1) + "\n")
+    write_tables(result, HERE / "tables")
     print("not finished:", missing)
     for name, r in runs.items():
         print(f"{name:16s} kNE {r['kappa_NE']:.3f}  D_Li {r['D_Li'] * 1e11:.2f}  rho {r['density']:.4f}"
@@ -106,4 +137,7 @@ def main(out_path: str) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    if sys.argv[1] == "--tables-only":
+        write_tables(json.loads(Path(sys.argv[2]).read_text()), HERE / "tables")
+    else:
+        main(sys.argv[1])

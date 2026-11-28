@@ -274,6 +274,40 @@ For the tests: `.venv/bin/pip install -e '.[dev,gui-test]'` and `.venv/bin/pytes
   **Open package…** `ucmd-engine/examples/electrolyte/box.ucsys`; 500 solvent molecules keep
   the 1.4 nm cutoff (2 ps then take about 2.5 minutes).
 
+## 9a. Looking at results (branch `b2c` of ucmd-builder)
+
+From the workspace folder; `b2c` is checked out next to the builder and uses its environment:
+
+```sh
+export PYTHONPATH=$PWD/ucmd-builder-b2c/src
+ucmd-builder/.venv/bin/ucmd-build gui ~/.cache/ucmd-t6/view/*.final.xyz     # the DFT clusters
+ucmd-builder/.venv/bin/ucmd-build gui ~/.cache/ucmd-t6/view/li_ec2_emc2.path.xyz
+ucmd-builder/.venv/bin/ucmd-build gui studies/2026-11-24_parameter-sensitivity-1M/tables
+```
+
+| Step | What to do | Expected |
+|---|---|---|
+| 1 | Open the five clusters, change the list above *Play* | each has Li⁺ without bonds and four solvents |
+| 2 | Open a path, **Play** | the optimization moves; the label names the step |
+| 3 | **Ruler**: tick *Measure*, right-click Li⁺ and an O, then a third atom | distance in nm and Å, then an angle; the eight nearest O; values follow the frames |
+| 4 | **Open run…** on a finished GPU run of the scan | ⟨P⟩ has a value and says how many rows have one; the box changes during *Play* |
+| 5 | **File → Open tables…** (after `analyze.py` has run) | one tab per table; the columns of the plot can be changed; *Reload*; tabs close, the 3D view does not |
+
+## 9b. One window (`main` of ucmd-builder, since 2026-11-27)
+
+```sh
+ucmd-builder/start-gui.sh            # also with paths: runs, studies, .xyz, .tsv, recipes
+```
+
+| Step | What to do | Expected |
+|---|---|---|
+| 1 | Make the window small, then large; *View → Reset layout* | it follows; nothing is cut off at 900 × 600 |
+| 2 | *Project → Folder…* the workspace; unfold the sensitivity study; double-click a run | 3D view with the playback bar below it; tab *Plots*; the title names the run |
+| 3 | *Plots → Tables of the study*; in *Sensitivity: runs* double-click a row | that run opens |
+| 4 | Drop an `.xyz` file or a run folder on the window; *Open ▾* lists it next time | it opens; *Recent* keeps it after a restart, with the window's size and panels |
+| 5 | Tab *Queue*: *Connect* (http://127.0.0.1:8765) | resources, running runs and jobs; double-click a running run opens it; nothing can be changed there |
+| 6 | Open a package, *Run…* while the queue runs a CPU job | the GUI asks first |
+
 ## Coming next
 
 - **The barostat (E2.7)**, so that the density comes from NPT as in Lehnert's protocol.

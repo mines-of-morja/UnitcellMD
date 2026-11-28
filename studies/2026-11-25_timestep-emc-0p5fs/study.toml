@@ -1,0 +1,93 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-25"
+question = "SC-1: NPT density and D of pure EMC (500 molecules, LigParGen/OPLS-AA, 25 C, 1 atm) at 0.5 fs"
+requested_by = "task SC-1 (docs/tasks.toml, no author gate); author 2026-11-25: find the cause of the pressure, then look at a fix; continue after the reboot"
+
+[systems]
+recipes = "recipes/*.toml"
+
+[scan]
+temperature_C = [25]
+
+[protocol]
+seed = 20261130
+
+[estimate]
+seconds_per_atom_per_run = 0.7
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+[minimize_template]
+spec_version = "0.1.0"
+
+[minimize_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 1.0
+steps = 0
+seed = 1
+
+[[minimize_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+# Settings of the 1 M scan (T2 protocol), 2 ns. Plan: ../2026-11-25_timestep-1M-0p5fs/README.md
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 0.5
+steps = 4000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 200
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.01325
+tau_ps = 1.0
+compressibility_per_bar = 4.5e-5
+every = 50
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 200
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 4000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 200000

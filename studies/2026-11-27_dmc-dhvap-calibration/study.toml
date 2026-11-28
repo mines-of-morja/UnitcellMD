@@ -1,0 +1,58 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file. Plan and analysis: README.md.
+
+[study]
+created = "2026-11-27"
+question = "SC-7 calibration: the enthalpy of vaporization of the same LigParGen OPLS-AA carbonate model for DMC (calorimetric reference exists) at 25 C, gas phase of one molecule against the 2026-11-17 DMC liquid at 1 fs; a measurement, no new parameter"
+requested_by = "author 2026-11-27: SC-7 go ahead and continue; proposed in docs/design/SC-7-emc-refit.md section 6 item 3 (Q7) after step 0 found EMC 30 % over-cohesive"
+
+[systems]
+packages = "packages/*.ucsys"
+
+[scan]
+temperature_C = [25]
+
+[protocol]
+seed = 20261138
+
+[estimate]
+seconds_per_atom_per_run = 60.0
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "energy"
+
+[views]
+by-temperature = "{T}/{system}"
+
+# Gas phase as in the EC test: Langevin BAOAB, 1 fs (ADR 0017), friction 5/ps, 10 ns, no cutoff, direct Coulomb.
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "langevin-baoab"
+timestep_fs = 1.0
+steps = 10000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.thermostat]
+kind = "langevin"
+friction_per_ps = 5.0
+
+[[run_template.providers]]
+kind = "force-field"
+coulomb = "direct"
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 100
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 1000000

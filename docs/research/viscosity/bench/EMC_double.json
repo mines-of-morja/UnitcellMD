@@ -1,0 +1,41 @@
+{
+ "openmm": "8.5",
+ "platform": "HIP",
+ "precision": "double",
+ "package": "studies/2026-11-25_timestep-emc-0p5fs/systems/emc_500_s1/minimized.ucsys",
+ "n_atoms": 7500,
+ "ms_per_step_1fs": 1.4592397205001362,
+ "ms_per_tensor_atomic": {
+  "median": 17.768150500160118,
+  "max": 21.827452999787056
+ },
+ "ms_per_tensor_rigid": {
+  "median": 17.84371749999991,
+  "max": 21.275502999742457
+ },
+ "ms_per_scalar_molecular": {
+  "median": 3.871187499953521,
+  "max": 8.78320799984067
+ },
+ "tensor_atomic_bar": [
+  3652.374463349796,
+  3688.151716987985,
+  3649.9364988683205,
+  -42.46346785578483,
+  -3.805397799998689,
+  -4.145839735415405
+ ],
+ "tensor_rigid_bar": [
+  251.64901546532352,
+  219.25374145058467,
+  237.58196757647306,
+  -5.2644999986726475,
+  10.980420014277774,
+  4.551125491303292
+ ],
+ "scalar_molecular_bar": 39.74209584871359,
+ "trace_over_3_atomic_bar": 3663.487559735367,
+ "trace_over_3_rigid_bar": 236.16157483079374,
+ "repeat_spread_atomic_bar": 2.736674038338606,
+ "order": "XX YY ZZ XY XZ YZ"
+}

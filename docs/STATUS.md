@@ -75,6 +75,19 @@ Last update: 2026-11-13.
   - the barostat E2.7 first after B2a; forced restarts recorded in the H5MD provenance;
   - the B2a design with every recommendation, including a graceful stop of `ucmd run`.
 
+- **2026-11-27** (after SC-1 and SC-4):
+  - time step 1 fs for the flexible models, with SC-1's measured band (ADR 0017);
+  - SC-7 (EMC refit): go ahead with the proposal (design doc first);
+  - the ion model: find which interactions describe the ions well enough (research, then a plan);
+  - T4: the 25 % margin is approved;
+  - push `main`.
+- **2026-11-28** (after Jo's feedback on the 26 November summary):
+  - the open design decisions are delegated to agents ("let agents make the decision"); each is recorded in its doc as
+    "decided under the author's delegation" and listed in `docs/decisions/delegated-2026-11-28.md`, open to overrule;
+  - viscosity first: extend the engine (GPU pressure tensor), agents may submit short computations;
+  - A1.7 NaCl job (9aef) stopped with a checkpoint for the V work; it continues Saturday 28 Nov 22:00 CET (agreed with
+    unitcellmd-40); the DMC gas job (5e04) cancelled, soricel-pc being offline.
+
 ## Decisions taken by the agent (to review)
 
 - The E2 core implementation choices are in [gate-e2-core.md §4](gates/gate-e2-core.md).
@@ -213,6 +226,173 @@ Last update: 2026-11-13.
 <!-- Newest first. One entry per task:
 YYYY-MM-DD — <task ID> — <what changed> — evidence: <tests / report> — next: <task ID> -->
 
+2026-11-28 — agents on Jo's feedback; tensor benchmark; PF₆⁻ size map read (unitcellmd-b4, formerly c8) — five agents:
+viscosity (V-1), finite-size (V-2, V-4), consistency (V-3, E2.5 §6, E2.7 §7), literature (V-5), decisions (the other open
+design questions); unitcellmd-40 prepared V-6 (`docs/research/summary_261126-corrections/`) and closed Lehnert's box volumes
+without a run. **Tensor benchmark (ded7):** 1 M box, HIP mixed: 0.40 ms/step, full OpenMM tensor 7.7 ms (double 18 ms), so
+the GPU route of V-1 is affordable. **PF₆⁻ σ × 0.95 at 3 M** removes 5.4 of the 16.2 cm³/mol excess V_φ (0.34, "part", as
+predicted); linear; the excess is to be recomputed with V-4's measured ρ0. — evidence: `docs/research/viscosity/bench/`,
+`studies/2026-11-27_pf6-size-3M` (Result) — next: the agents' reports; NaCl continues 22:00 CET.
+
+2026-11-28 — priorities after Jo's feedback on the 26 November summary — the model's viscosity is the unknown behind T4, the
+Yeh–Hummer correction of D and κ_NE (Jo: +30 to +60 % on κ_NE for η 7 to 3.5 mPa s) and the reading of SC-7 (EMC 30 %
+over-cohesive). Tasks V-1 (Green–Kubo η, GPU pressure tensor, design first) and V-2 (box-size series, no new code) in parallel;
+V-3 thermodynamic consistency (NVE and coupling test of the +3.7/+1.7 K offset; the author asked whether thermostat and barostat
+interfere); V-4 salt-free solvent; V-5 literature note on the new papers; V-6 corrected summary. Jo's "own group" data are
+the published Gruber 2026 SI (in ../Lit). — evidence: `docs/research/priorities-2026-11-28.md`, `docs/tasks.toml` — next:
+agents claim V-1 to V-5; author: SC-7 Q1–Q7, whether Jo's feedback file goes into git.
+
+2026-11-27 — summary of 26 November, section 6 "against the literature" (author: "what is new, what agrees, what disagrees") —
+Agrees: the direction of every error matches what others report for fixed-charge models (ions too slow; OPLS-type open-chain
+carbonates too dense; dρ/dT right). Disagrees: κ at ζ = 0.75 against Lehnert's model (same ions, other solvents, factor 1.5–2), the Li⁺
+shell (EC share 28 % against Lehnert's 47 % and the DRS estimate). **Candidates for new results** (not found in one day's search):
+the 1 M density check passes by cancellation; dρ/dc of the JJ06/CL&P ion model at ζ = 0.75 is 22 % short, and Lehnert's published
+particle numbers imply the same (0.0757, −2.0 % at 3 M; our arithmetic, Fig. 3); ζ cannot fix it (ζ ≈ 0.98 at 1 M, 1.12 at 3 M); so
+Lehnert's 3 M κ excess may partly be the volume error, which a 3 M run at the measured density can test. Ledger: Lehnert SI Table S1
+(checked against the VoR SI) and SEAMM Table 3 (preprint). Not read: Maiti 2023 full text and SI (publisher refused), Hou 2021,
+Ravikumar 2018, Dajnowicz 2022, Borodin & Smith 2009, Nyman 2008. — evidence: `docs/research/summary_261126/` (build checks every
+quote; `out1/` not in git, PDF held under decision 12) — next: author: which of the new simulations a–e to plan (each needs a study
+README with criterion first).
+
+2026-11-27 — queue controls verified on the second computer (unitcellmd-9d) — on `soricel-pc` a running job was
+freed, resumed, stopped, continued and moved to 3 threads and back; each action took effect, nothing computed while
+freed or stopped, and the thermo table after four restarts is byte-identical to the uninterrupted run's. Not
+exercised: Kill on a running job, the page buttons against her worker (the command line was used). — evidence:
+`studies/2026-11-27_queue-controls-test{,-interrupted}` — next: SC-7 step 0 runs there now (c8's study)
+
+2026-11-27 — SC-7 step 0: **EMC is 30 % over-cohesive**; DMC calibration queued (unitcellmd-c8) — ΔH_vap of the current EMC
+(LigParGen OPLS-AA) is **53.17 ± 0.04 kJ/mol** at 1 fs against the 40–41 working range (prediction was 1–4 above; failed). The
+method is checked: OpenMM equals the engine on the gas start energy, recomputed liquid frames are within 0.04 kJ/mol of the
+stored ones. Per molecule the cohesion is LJ −37.7, Coulomb −14.6, intramolecular distortion +1.6 kJ/mol, so the excess must come
+mostly out of ε (first order ε × 0.66), outside the design's map. Design amended (§6: wider map, Q6; DMC calibration, Q7). DMC
+uses the same LJ types and has a calorimetric ΔH_vap (38.0); its gas phase is queued on soricel (job 5e04, CPU only, the liquid
+exists). Not used, but consistent: the ions' slowness (T4) and D's exponent −4 on EMC ε. — evidence:
+`studies/2026-11-27_emc-dhvap-baseline` (Result), `docs/research/emc-literature/{dhvap_baseline,cohesion_split}.json` — next:
+the DMC reading; author: SC-7 Q1–Q7.
+
+2026-11-27 — 3 M density map done; PF₆⁻ size map queued (unitcellmd-c8) — ζ 0.65 → 0.85 raises the 3 M density by 0.036 g/cm³,
+2.05 times the 1 M effect ("scales with the salt" by the rule, on the line). As apparent molar volume (model 70.6 at 1 M, 72.3 cm³/mol
+at 3 M against 55.7): dV_φ/dζ is −74 at 1 M but −45 cm³/mol at 3 M, so ζ alone would need ζ > 1 at 3 M; it cannot fix the slope and
+it slows the ions. EMC ε × 0.85: −0.022 g/cm³ at 3 M, 0.89 of the 1 M change. PF₆⁻ σ × 0.95 / × 1.05 on the 3 M box submitted (job
+1c5d, after the tensor benchmark). — evidence: `studies/2026-11-27_density-slope-3M` (Result), `docs/research/density-c-T/v_phi_zeta.json`
+— next: PF₆⁻ map, literature (agents resumed after a rate limit), SC-7 design doc.
+
+2026-11-27 — author's decisions on SC-1/SC-4 recorded; T4 route; SC-7 and ion-model research started (unitcellmd-c8) —
+**1 fs** from now on (ADR 0017: half the cost, Lehnert's protocol; densities 0.2–0.3 % low and D 5–10 % high against 0.5 fs
+as a stated band; the final model gets one 0.5 fs check). **T4:** margin approved; blocked because the GPU backend refuses the
+pressure tensor. OpenMM 8.5's `MonteCarloFlexibleBarostat.computeCurrentPressure` gives all six components, so the bridge
+could fill spec 0.1.1's columns; step 0 (`docs/research/viscosity/bench_tensor.py`, queue job ded7, measurement only) times it
+on the GPU. On OpenMM's CPU platform one tensor costs 5.5 scalar pressures. **SC-7** claimed: sources being read (Dougassa
+2014 itself, a second ΔH_vap source, EMC density over T). **Ion model:** literature on apparent molar volumes of LiPF₆ and on
+interaction models that get electrostriction and mobility together. — evidence: ADR 0017, T4 amendment — next: the 3 M map
+(about 14:15), the benchmark, SC-7 design doc, ion-model plan.
+
+2026-11-27 — A1.7 target 2 planned and queued (NaCl in SPC/E, Joung–Cheatham; author: "yes, add it to the queue") — the six new
+papers in `../Lit` renamed by author and year (Joung 2008, Berendsen 1987, Mester 2015 + SI, Benavides 2016 + SI). Builder: set
+`nacl-jc-spce` and the printed LJ forms Rmin/2 and A/B (branch `claude/a17-nacl-spce`, 5f2bcae, local; 328 tests). Reference: Γ = 1 +
+dlnγ/dln m from Mester's SI Table IV and fit (ledger `mester2015_jc_spce_lngamma`): 1.078 ± 0.029, 1.389 ± 0.075, 1.760 ± 0.146 at 1,
+2, 3 mol/kg. Study `studies/2026-11-27_a17-nacl-jc-spce` (4000 water at 1, 2, 3 mol/kg; 2000 at 3 as a size check; Mester's protocol;
+42 ns each), plan and criterion committed first (670175d); queue job `j20261127-103254-9aef` (gpu-hip-mixed), behind
+`2026-11-27_density-slope-3M`. Nothing judged — evidence: study README, `reference.py`, 3 tests; 300-step CPU plumbing run refused as
+it should — next: `analyze.py` when the four runs are done.
+
+2026-11-27 — SC-4 done: **no-go**; follow-up map queued; EMC literature (unitcellmd-c8) — 0.1 M +2.81 %, 3 M −2.01 %, 1 M at 50 °C
++1.61 % fail; 2 M and 1 M at 10/20 °C pass. dρ/dc 0.0710 ± 0.0009 against 0.0912 (22 % low), dρ/dT right. So the solvent is too dense
+(+2.8 % near c = 0, as pure EMC) and the salt adds too little density; they cancel near 1 M. Map `studies/2026-11-27_density-slope-3M`
+queued (ζ 0.65/0.85 and EMC ε × 0.85 on the 3 M box, the scan's probe values; does ζ's density effect scale with the salt?). Literature
+(agent, unchecked): no measured Δ_vap H of EMC; one vapour-pressure set (Dougassa 2014, via ThermoML) gives about 40.7 kJ/mol; Logan 2018
+viscosities read for T4. — evidence: SC-4 README (Result), `docs/research/density-c-T/sc4.json`, `docs/research/emc-literature/README.md` —
+next: the map's `analyze.py`; author: SC-7 and the ion model.
+
+2026-11-27 — second computer online; controls for a shared computer (unitcellmd-9d) — `soricel-pc` ran the queue test
+job; its thermo table is byte-identical to the workstation's repeat (ADR 0010; study
+`2026-11-25_queue-client-test`). New: stop, continue, kill, "free this computer", CPU threads (tab Queue, CLI); the
+server refuses command jobs over HTTP (with the token they meant program execution on this machine). Not pushed
+(6d957d8, 15282c7). **Open, security:** soricel's SSH key allows SFTP with no folder limit, i.e. read and write of
+every file of the account. — evidence: 72 tests in `tools/queue`, buttons clicked in headless Chromium — next: the
+author on the push, the SSH limit, and which jobs soricel takes; e37 on the GTX 1660 (pass, with deviations)
+
+2026-11-27 — SC-4 running; SC-1 temperatures (unitcellmd-c8) — **SC-4** (density over c and T, model M1, author's grid and 1.5 %):
+`studies/2026-11-27_density-concentration-M1` (0.1, 2, 3 M at 20 °C) and `…-temperature-M1` (1 M at 10, 50 °C), 0.5 fs (SC-1; the
+author's 0.5 fs-or-RESPA choice is still open, and the runs stay valid under either), 3 ns from the measured settling time (0.25–0.5 ns);
+criterion, prediction (0.1 M likely fails) and tested `analyze.py` committed first; queue jobs `…3a35`, `…5c81`, about 8.5 h. The 1 M,
+20 °C point is SC-1's (+1.33 %). **SC-1 temperatures** (not judged): configurational minus displayed T, 1 fs → 0.5 fs: 1 M +3.7 → +1.7 K,
+EMC +5.3 → −0.2 K, water +6.0 → +2.4 K (0.25 fs +0.3 K). — evidence: the two READMEs, `docs/research/timestep/tconf/` — next: `analyze.py`
+of SC-4 when both jobs are done.
+
+2026-11-27 — results summary of 26 November (author's request): densities and transport of every finished run against
+experiment — `docs/research/summary_261126/` (build.py, template, quoted.json; `out1/` not in git, PDF held under decision 12). 53 runs,
+182 ns. Densities: the 1 M electrolyte +0.2 to +1.3 % against the fit of Landesfeind (itself ±0.6 %), the M0 solvents up to +2.8 % / −3.4 %.
+κ: both models low by a factor 1.5–2.0 (M1 κ_NE 1.7); no model run meets ±15 %; one scan probe (ε(EMC) × 0.85, one run, κ_NE) falls inside,
+reported as a pointer to SC-7, not a model. t₊ (SOL) 0.19 ± 0.13 against 0.16: no test. SC-1 included as an addition (9eda5bd, analysed 27
+November). — evidence: build checks every quote verbatim and the README deviations against the computed ones — next: author reads the
+summary.
+
+2026-11-27 — A1.7 target 1 passed (binary LJ of Cheng 2022) — S⁰_AB −0.4373 ± 0.0017 against −0.439 ± 0.004 (allowed 0.0087); NVT
+agrees with NPT (0.23 SE); compressibility from S⁰ against volume fluctuations 0.6 SE. Ran on soricel-pc (4 threads, author approved the
+move) with engine b9f161e and ucmd-analysis 6d072a5 unchanged; finished 26 November 11:54 UTC, reported 23:03 UTC. Its non-ideal part is
+near zero (∂βμ/∂ln x = 0.998 ± 0.003), so the TDF of a non-ideal mixture is not tested — evidence: ucmd-analysis 1045065,
+`validation/a17-lj/REPORT.md` (PR #6) — next: author: the NaCl target (design §4.2, needs rigid SPC/E, E2.5), no electrolyte TDF before it.
+
+2026-11-27 — SC-1 done (unitcellmd-c8): the 1 fs step matters — density at 0.5 fs minus 1 fs, three seeds per arm: 1 M box
++0.23 ± 0.04 %, pure EMC +0.31 ± 0.03 %, water +0.14 ± 0.05 % (1 SE), each beyond 2 SE and 0.1 %. D is lower at 0.5 fs by 6–13 %,
+not resolved per species. One GPU hang (EMC s1), continued from its checkpoint. So SC-4 and T4 need **0.5 fs or a multiple time
+step; the author decides**. 1 fs results (T2, scan, pilot) read ρ about 0.2–0.3 % low and D about 5–10 % high (estimate). —
+evidence: `studies/2026-11-25_timestep-1M-0p5fs/README.md` (Result), `docs/research/timestep/sc1.json` — next: author: 0.5 fs or
+RESPA; configurational temperatures of the 16 runs (CPU, queue).
+
+2026-11-25 — queue after the reboot; pressure check (unitcellmd-9d) — server and workers started by hand (no
+service installed), GPU telemetry restarted. Two faults of the worker fixed: a stop now sends one SIGTERM to
+the job's top process and to what it orphans, never to the engine (before: engine hit directly, the driver
+twice behind a forwarding wrapper; found by unitcellmd-c8), and the worker no longer deletes `driver.pid`.
+**The workers started at 21:38 run the older code until restarted: do not cancel a running command job.**
+GPU check of the bridge pressure: probe = energy-only within 13 bar; the large drift of the old estimator
+was **not** reproduced outside the bridge (0 bar at 200 calls, ≤ 1.7 bar at 1000, against 28–98 bar). —
+evidence: 52 tests in `tools/queue`; `validation/openmm-pressure/REPORT.md` (ucmd-engine `e25-constraints`,
+014c104, not pushed) — next: restart the workers at an idle gap; if the mechanism matters, run the old
+bridge with and without `createCheckpoint`.
+
+2026-11-25 — SC-1 planned and queued (unitcellmd-c8) — `studies/2026-11-25_timestep-1M-0p5fs` (README with the criterion, analysis and
+its tests committed before any run) and its EMC and water arms: 1 fs against 0.5 fs, three seeds, plus one 0.25 fs water run;
+five queue jobs, about 14 h of GPU after SC-3's GPU arm. 1 fs references: `base_s1..3` of the scan and SC-3's arm G. No result yet. —
+evidence: study README; 10 tests; `analyze.py` gives the known 1 M densities — next: when the jobs are done, `analyze.py`.
+
+2026-11-27 — engine branches merged into ucmd-engine `main` (author: "merge the engine, carefully") — `main` = `36b2837`, a
+fast-forward from `dae89ab` (i-PI provider): b2a, e27-barostat, e37-openmm, e29-pressure-tensor, e37-identity, e25-constraints
+(with 014c104), sc2-bridge-velocities, sc3-molecular-pressure, s012-pair-overrides, ucmd-ff-provider. Resolved: the bridge's LJ
+force combines the tail-correction class weights with the pair-override tables (classes = atom types with overrides; new test:
+OpenMM's tail −4.0e-7 of the exact one for Kob–Andersen, single point 2.7e-8); the provider list holds i-PI and ucmd-ff; **ucmd-ff
+now refuses packages with pair overrides** (v0.1.0 has no per-pair table; it would have used the combination rule silently); CI
+pinned to umbrella `0e7befc` (spec 0.1.3) instead of `da27ef7` — evidence: fmt, clippy, architecture, no-default-features, 137
+tests + 2 slow ones, bridge 46 tests (fresh venv, validator 0.1.3), `validation/argon` re-run (all criteria pass), CI green (rust,
+bridge). The shared checkout `ucmd-engine` is on `main` and built; the other engine worktrees and the machine profiles are
+unchanged, so no running or queued job changed engine — next: worktrees on merged branches can be removed when their sessions are
+done; the next study that builds its engine from `main` gets the molecular C-rescale barostat (SC-3 option B).
+
+2026-11-26 — B2d built (author approved the design 2026-11-25: one adaptive window, read-only queue page, all five
+steps) — ucmd-builder branch `b2d` (from `b2c`; not pushed, not merged; worktree `ucmd-builder-b2d`): resizing fixed
+(minimum 874 × 1042 → about 600 × 440 px), plots as a page, playback under the 3D view, one Open with drag and drop and
+recent files, kept layout (`~/.config/ucmd/gui.json`), project panel with studies, links from table rows to runs, runs read
+in a thread (pause 0.31 → 0.03 s, memory 1054 → 356 MB), read-only Queue page (ADR 0016) — evidence:
+`validation/b2d/REPORT.md` there, 310 tests, 156 GUI tests also with the real 3D widget. **Merged 2026-11-27 (author):**
+ucmd-builder `main` = `df352a7` (b1, b2a, b2c, b2d, s012-pair-overrides and pull request 2: spec 0.1.2 pin, Packmol below 100),
+CI green on all three jobs; pull request 2 closed; the shared checkout `ucmd-builder` is on `main` — next: author's hands-on test
+(testing.md §9b).
+
+2026-11-25 — sensitivity scan complete (15 of 15), summary of 25 November rebuilt — `docs/research/summary_261125/` (build.py, template,
+`data/scan.json` final; `out1/` not in git, PDF not sent, decision 12). **Reading rule:** `zeta` (exponent −3.6 ± 0.5) and `epsEMC` (−4.0 ± 0.6) move
+κ_NE; `sigmaLi` is not resolved (−0.09 ± 0.14 in ln κ_NE over the range), so by the rule **T6 becomes a side result** and the ωB97M-V energies stay off;
+**the author decides**. Run-to-run noise 11 % (not 5.5 %). All probe runs done, no label corrections, one GPU hang recovered. Not a fit: no parameter is
+chosen. — evidence: study README, `analyze.py`; every quoted number in the summary checked verbatim by the build — next: author's T6 decision; reboot, then
+the SC-3 density test (queue 11 is done, GPU free).
+
+2026-11-25 — B2c built (author approved steps 1–3 and the trend tables) — ucmd-builder branch `b2c` (from `b2a`, not pushed,
+worktree `ucmd-builder-b2c`): molecule files, ruler, ⟨P⟩ over the rows with a value, NPT cell per frame, notebook with a page per result
+table; here `tools/study/ucmd_table.py`, the scan's `analyze.py` writes `tables/` (checked on synthetic numbers only, the scan was not read) —
+evidence: `validation/b2c/REPORT.md` there, 229 tests — next: the author's hands-on test (testing.md §9a). Pushed on 2026-11-25 (author) with the Packmol limit
+(`5009206`, a copy of `54b2e29`); CI green (3 jobs). The scan's real tables open in the GUI (18 and 18 rows). `nan` in `pressure_bar` is in spec 0.1.3 (author).
+Step 4 (side by side) not approved.
+
 2026-11-25 — UnitcellMD#2: Su 2019 with SI, Uchida 2021 with SI and Morita 1998 read from `../Lit` —
 four ledger entries with `checked_vor` true (Su 2019 replaced, three new), tables compared with the
 page images. New `docs/research/li-shell/ec_preference.py` puts experiments and T2 on one scale: EC
@@ -244,9 +424,25 @@ ucmd-builder #2, UnitcellMD #12); tag `spec-v0.1.2` made (the changelog still sa
 tagged"). — evidence: tests and scripts named above; CI — next: author: review of the pull
 requests; LJ target when Psi4 has finished; real Green–Kubo table after SC-2.
 
-2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c-results-view.md` waits for
+2026-11-25 — results in the GUI, design draft (B2c); DFT geometries as XYZ — `docs/design/B2c.md` waits for
 the author; `tools/qm/cluster_xyz.py` + 4 tests; T6 record: n = 3 took 147 steps, disclosure — evidence: tests green, the GUI opened scan run
 base_s1 — next: author's answers (B2c §5); GUI defects ⟨P⟩ nan, fixed NPT box.
+
+2026-11-25 — second computer as a queue client, server side — the server listens on the LAN (token; the
+firewall still closed) and the tag `cpu-light` is for short command jobs there. Checked with a fresh clone of GitHub's `main` as client
+over the LAN address: 401 without token, one test command done, the running jobs untouched (not requeued) — next: author opens
+the firewall for the client; its session connects; then A1.7 (unitcellmd-ff) as `cpu-light`.
+
+2026-11-25 — SC-3 density test running (after the reboot, author) — queue jobs `…baf5` (CPU arms B and A, 6 × 1 ns,
+2.85 ns/day on 8 threads, about 2 days) and `…ed84` (GPU arm, conformance 8.5·10⁻⁸ / 8.0·10⁻⁸); the run scripts pass the
+queue's SIGTERM on (`9ed60f9`). Nothing is read before all nine runs are done — next: `analyze.py`.
+
+2026-11-25 — SC-3 question 3a built, density test planned, SC-4 confirmed — spec 0.1.3 (opt-in column
+`pressure_molecular_bar`, not tagged) and engine `f291a40` on `sc3-molecular-pressure` (not pushed): ucmd-md 40 passed, 1 ignored;
+bridge 37 passed on CPU platforms; validator 66; the two `ucmd-io` contract tests still fail as on the base branch. SC-3 test 2:
+`studies/2026-11-25_water-npt-cpu-molecular` (criteria and analysis committed first), **nothing started**. Author: 3a; SC-4
+grid and 1.5 % (10 °C for 0 °C); density test right after the reboot that follows the GPU scan — next: after the reboot
+`run_cpu.sh` and, with the GPU free, `run_gpu.sh`.
 
 2026-11-25 — SC-3 option B, barostat half — ucmd-engine branch `sc3-molecular-pressure` (from `e25-constraints`, not pushed): C-rescale
 scales atoms connected by bonds or constraints by their centre of mass, with the molecular pressure and virial. Free stiff
@@ -290,6 +486,21 @@ matches the open 26 vs 123 bar gap. A density effect of it on the CPU is not sho
 `docs/tasks.toml`, shown read-only (queue.md §7); nothing was started. — evidence:
 `docs/tasks/2026-11-24-sanity-check/README.md`, tools/queue tests — next: SC-5 and SC-2 need no GPU;
 SC-1 after the sensitivity scan; author: SC-8 (Landesfeind SI).
+
+2026-11-25 — job queue built — `tools/queue/` (design `docs/design/queue.md` §8): job spool (`queue/`,
+files + one lock; priority, `--first`, `--after`, one job per study, silent worker → job requeued), the
+job API in the server (token for every POST; no token → loopback only), workers (`ucmd_queue.py work`:
+study jobs through the study driver with `--only`, command jobs only where allowed; guard against other
+GPU users and the game pause; graceful cancel), CLI for agents (`submit/jobs/cancel/priority`), tabs
+Queue, Connect a computer and For agents in the dashboard, the agent rules in CLAUDE.md. Clients on
+other computers work by mounting the server's `studies/` folder; copy-based clients are not built.
+`tools/study`: `--only ID...`. Workers are not running and nothing is installed as a service (example
+systemd units in `tools/queue/systemd/`); queued: the pressure check of the water bridge (needs a
+worker after the reboot). — evidence: 47 tests (spool ordering and claims, token/JSON rules, a worker
+running a study and a command job against a fake driver, cancel, guard, orphan logic); smoke test with the
+real server and the cpu worker (`echo` job done); the GPU worker declined a job while the scan held the
+GPU — next: the author starts the workers after the reboot; answers to the open questions of §6
+(clients, always-on, priority); copy-based clients if a computer without shared folder is added.
 
 2026-11-24 — queue dashboard, step 1 — `tools/queue/` (design `docs/design/queue.md`): a read-only page
 (`python3 tools/queue/ucmd_queue.py serve`, http://127.0.0.1:8765) showing the GPU and CPU, the run in

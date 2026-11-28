@@ -16,6 +16,7 @@ __pycache__/
 /studies/*/systems/
 /studies/*/runs/
 /studies/*/views/
+/studies/*/tables/
 /studies/*/logs/
 /studies/*/INDEX.md
 /studies/*/index.json
@@ -25,3 +26,13 @@ __pycache__/
 /studies/*/*/out*/
 /studies/2026-11-20_water-spcfw-cpu/gas/*.ucsys/
 /studies/2026-11-24_parameter-sensitivity-1M/packages/
+/studies/2026-11-27_density-slope-3M/packages/
+
+# Job queue spool (docs/design/queue.md): local state
+/queue/
+/studies/2026-11-27_a17-nacl-jc-spce/packages/
+/studies/2026-11-27_a17-nacl-jc-spce/work/
+/studies/2026-11-27_a17-nacl-jc-spce/result.json
+/studies/2026-11-27_pf6-size-3M/packages/
+/studies/2026-11-27_emc-dhvap-baseline/packages/
+/studies/2026-11-27_dmc-dhvap-calibration/packages/

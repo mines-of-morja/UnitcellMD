@@ -3,8 +3,9 @@
 - **Status:** draft 2026-11-24, written at the author's request ("a queuing system to optimize the
   usage … a lightweight dashboard to see what is in the queue, what is currently running and what
   should be computed next … later maybe larger clusters or another computer to send side tasks").
-  **Step 1 (the read-only dashboard) is built with this draft; steps 2–4 wait for the author's
-  review.** Direction given 2026-11-24: this workstation becomes the **server**, and clients on the
+  **Built 2026-11-25: step 1 (dashboard), step 2 (spool, scheduler, CLI) and step 3 in its first form
+  (workers on the LAN with the studies folder mounted, §8). Step 4 (SLURM) waits.** The open
+  questions of §6 are answered with defaults (§8); the author may overrule them. Direction given 2026-11-24: this workstation becomes the **server**, and clients on the
   same local network take tasks from it (§1a). This is outside the PLAN.md phase order (it prepares A2.2, `ucmd-launch`), done at the
   author's explicit request.
 - **Why:** today "the queue" is a set of hand-written shell scripts (`gpu-queue3.sh` … `11.sh`)
@@ -42,7 +43,9 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
 - **A job is data, never a command.** `kind = run`: a package, a `run.toml`, an optional checkpoint;
   other kinds (`build`, `minimize`, `analyze`) are fixed verbs. The client runs only its own
   locally installed `ucmd`/`ucmd-build` on that data, with paths from its own machine profile. The
-  server cannot make a client execute arbitrary shell, so a stolen token cannot either.
+  server cannot make a client execute arbitrary shell. (Corrected 2026-11-27: a token holder could
+  submit *command* jobs for workers that allow them, which is program execution. The API now refuses
+  command jobs; they are written to the spool on the server machine only.)
 - **Transfer:** the client downloads the package and `run.toml` over HTTP, runs, uploads
   `thermo.tsv` and the checkpoint periodically and the trajectory at the end (resumable, streamed;
   trajectories are hundreds of MB). The server stores the result exactly where a local run
@@ -75,6 +78,13 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
    the `[[remote]]` list of step 1 is then not needed.
 4. **Cluster executor (needs approval, A2.2).** `slurm` executor in `ucmd-launch` that turns a job
    into `sbatch`; the dashboard reads `squeue`. Scheduler-specific code stays in that layer.
+
+   **Decided 2026-11-28 by agent decisions under the author's delegation: deferred.**
+   - Reason: no cluster account exists, and the cluster was deferred on 2026-11-11 (ADR 0002).
+     A2.2 has not started, and a SLURM executor could not be tested anywhere.
+   - The queue's job model is file-based and has no host, so nothing built now blocks it.
+   - What would change it: an account on a cluster (e.g. through the JMU contact), and a study
+     that needs more than the workstation and soricel give. Then A2.2 starts with its own design.
 
 ## 3. The state document (step 1, `GET /api/state`, schema 1)
 
@@ -128,6 +138,37 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
    "pause when busy" rule like the game pause)?
 4. **Where it lives:** `tools/queue/` now; moves into `ucmd-launch` when A2.2 starts (ADR 0002.3).
 
+**Decided 2026-11-28 by agent decisions under the author's delegation: the §8 defaults are
+confirmed, and questions 3 and 5 now have answers.**
+
+1. **Priority:**
+   - an integer in the job, set at submit; `priority` changes it; `--first` for urgent work;
+   - the author overrides by CLI or HTTP. Page buttons for this are not needed.
+   - Reason: it works, and an agent can see and explain each job's place.
+2. **No automatic preemption:**
+   - cancel and the game pause stay;
+   - the per-job `stop`/`continue` of §9 is the manual preemption: the author holds the
+     running job, and it resumes from its checkpoint.
+   - Reason: a preempted GPU job costs a restart of the bridge and of the identity tracker.
+     Only a person can judge that the urgent job is worth it.
+3. **Clients:** now known.
+   - One client, `soricel-pc`: 6 threads, WSL2 Linux, a GTX 1660 SUPER (CUDA), on the LAN.
+   - The first form (`studies/` mounted over SSH) stays for this client only, behind the
+     limits of §10.
+   - Every further client uses the copy-based form (§10 item 2), which is not built yet.
+4. **Always on: no.** The server and workers stay started by hand. The systemd user units stay
+   examples.
+   - Reason: after a crash the workstation's data disk needs a manual check and remount before
+     anything writes to it. A service started at login could write into the wrong mount. The
+     GPU also needs a look after a hang.
+   - What would change it: a data disk that mounts reliably on its own. Then install the server
+     unit, and later the CPU worker; the GPU worker comes last.
+5. **Clients while their owner works:** yes, at `nice` 10, with *Free this computer* and the
+   thread control of §9.
+
+What would change these: a second person submitting jobs (then priorities need an owner), or a
+client that is often away (then heartbeat timeouts and copy-based results matter more).
+
 ## 7. Tasks (added 2026-11-24 at the author's request)
 
 `docs/tasks.toml` lists work that no queue will start by itself, for people and agents to take
@@ -135,3 +176,118 @@ copy (`rsync`/`scp`) and returns the output folder, so a remote node needs no sh
 document; claiming is an edit of the file. It is not the spool of step 2: a task is a description,
 never a command, and nothing is started from it. Tasks for outside contributors stay GitHub issues
 (CONTRIBUTING.md).
+
+## 8. What is built (2026-11-25) and what is not
+
+- **Spool** (`qjobs.py`): `queue/jobs/<id>.json`, one `flock`, atomic writes. States `queued →
+  claimed/running → done | failed | cancelled`; priority (larger first, then submit order),
+  `--first`, `--after` (needs *done*), one study job per study at a time, silent worker (two
+  minutes without heartbeat) → job back to `queued` with its place, release on pause.
+- **Server** (`qserver.py`, in `ucmd_queue.py serve`): page and state as before; `/api/jobs`,
+  `claim`, `heartbeat`, `finish`, `release`, `cancel`, `priority`. GET: this machine without token,
+  others with; POST: token and `application/json` always; without a token configured every POST
+  is refused and the server will not listen beyond 127.0.0.1. Docs for the tabs are served from
+  `tools/queue/docs/`.
+- **Worker** (`qworker.py`, `ucmd_queue.py work`): pull model of §1a. Job kinds: `study` (this
+  clone's study driver, `--only` the named runs, machine profile and engine per resource tag from
+  the worker's own config) and `command` (an argv list, only if the worker config allows it).
+  Local guard before taking a job (a container of the GPU image, a live hand-written queue
+  script), pause process (the game): graceful stop and release. Cancel: graceful stop, reported
+  `cancelled`.
+- **Clients** (first form): the client mounts the server's `studies/` folder over its own clone's
+  and the driver writes there, so no transfer protocol exists yet. **Not built:** copy-based
+  clients (package and checkpoint down, results up) for machines without a shared folder; pinning
+  an engine hash per job; per-job profile choice beyond the resource tag; HTTP upload of results;
+  submit and cancel buttons in the page (the page only shows; the CLI and HTTP API change things).
+- **Answers used for §6 until the author says otherwise:** priority = integer in the job, set at
+  submit, changed with `priority`; no preemption except cancel and the game pause (an urgent job
+  waits for the running one, or the author cancels it); second computer unknown, the client setup
+  is written for a Linux machine with SSH to the server; the server and workers are started by
+  hand, with example systemd user units in `tools/queue/systemd/` that nothing installs.
+- **Known limits:** a worker that dies leaves its study driver running (it holds the study lock;
+  the next worker removes a stale lock file only after the server has requeued the job, so check
+  for a leftover driver); `command` jobs trust whoever has the token, so enable `allow_command`
+  only on machines you trust; a job cannot be edited, only cancelled and resubmitted.
+
+## 9. Stop, continue, kill, and sharing a computer (author's request, 2026-11-27)
+
+A worker may run on somebody's own computer: "if she needs it I must free it, but as long as she
+does not, it can even be fully used". Therefore:
+
+- **Per job:** `stop` (graceful, checkpoint; the job waits, `held`), `continue`, kill (= cancel).
+- **Per worker** (kept in `queue/workers/<name>.json`, set over `/api/workers/<name>/control`):
+  `paused` ("freed": the job is released to the queue, nothing new is claimed) and `threads`
+  (written into a copy of the job's machine profile; a running job is released and continues with
+  the new count). Workers learn both from the answers to hello, claim and heartbeat, so within one
+  heartbeat (15 s) and only while they can reach the server.
+- **In the page:** buttons in the tab Queue; the page asks for the token once and keeps it in the
+  browser. Everyone with the token can do everything; there are no per-user rights.
+- **Not covered:** the share of the GPU, memory, and anything outside the worker's job (WSL itself);
+  an owner without access to the server stops the worker process.
+
+## 10. Clients that are not fully trusted, and clients over the Internet (open; author's question 2026-11-27)
+
+Today a client is trusted completely. Its SSH key gives SFTP without a folder limit (read and write of
+the whole account), and even limited to `studies/` it could change plans and scripts that this machine
+runs later. The shared token lets any holder stop, kill and submit study jobs.
+
+Proposal, in this order:
+
+1. **Now, for the LAN client:** run its `sftp-server` in a sandbox (`bwrap` in the key's forced
+   command) that shows `studies/` only, read-only except the result folders. Not built or tried.
+2. **Before any other client:** no file system access at all. The client downloads a job bundle
+   (package, `run.toml`, checkpoint) and uploads the results; the server accepts only the files of
+   that job, with size limits. One token per client, limited to claiming its tags and reporting its
+   own jobs; the author's token stays here. No client runs scripts from the server: study jobs only.
+3. **Over the Internet:** only through a VPN (WireGuard or Tailscale); never an open port.
+4. **Trusting results:** repeat a sample of each client's runs here. CPU runs are bit-identical
+   across machines (ADR 0010; shown for `soricel-pc`), so the check is exact; GPU results can only
+   be checked statistically. Provenance records which computer ran what.
+
+**Decided 2026-11-28 by agent decisions under the author's delegation: the proposal, in this
+order** ([ADR 0019](../decisions/0019-queue-client-trust.md)). The steps outside the repo are
+the author's; they are listed in `docs/decisions/delegated-2026-11-28.md` §2.
+
+1. **Now: the token and soricel's key.** These two steps close the largest hole today: one
+   client key that reads and writes the whole account, including `~/.ssh` and the queue token.
+   - Rotate the queue token, because it appeared in an agent's tool output once.
+   - Limit soricel's key to `restrict`, `from="<its LAN address>"`, and a forced command that
+     runs `sftp-server` inside `bwrap` (installed: bubblewrap 0.12).
+   - The sandbox shows only `studies/`, read and write. The study driver writes more than the
+     result folders: `index.json`, `INDEX.md`, `views/`, lock files and `studies/CATALOG.md`.
+     A finer read-only split would therefore need binds per study, fixed when the share is
+     mounted, which is fragile.
+   - The integrity check of step 2 covers what the plain sandbox leaves open.
+   - Checked by the author from soricel before use:
+     - a listing of the home folder fails;
+     - the mount of `studies/` works;
+     - the queue test job runs again.
+2. **Next: code in `tools/queue`, test-first, by an agent session.**
+   - **(a) Integrity guard.** Before the workstation runs a script or an analysis of a study
+     that a client wrote into, the guard runs `git status --porcelain` on that study.
+     - Any tracked file that changed blocks the run.
+     - So does any untracked file outside `runs/` and the generated index files (a planted
+       `json.py` next to `analyze.py` would be imported).
+   - **(b) One token per client.** The token names the client.
+     - A client token may claim jobs for its tags, report on its own jobs, and free or throttle
+       only its own worker. It may not submit, cancel, reprioritise or control others.
+     - The author's token stays on the workstation.
+   - Reason: these are the two holes that remain after step 1.
+3. **Before any further client, and before any client the author does not control:** the
+   copy-based form of item 2 above.
+   - The client gets no file-system access; it downloads job bundles and uploads results.
+   - The server accepts only that job's files, with size limits, and only study jobs.
+   - soricel moves to it as well once it exists.
+4. **Over the Internet:** only through a VPN (WireGuard or Tailscale), never an open port.
+5. **Repeats of client results.**
+   - **CPU:** for each study a client runs, the workstation repeats a prefix of one run (its
+     first checkpoint interval, or at most 10⁴ steps) and compares `thermo.tsv` byte for byte.
+     A mismatch quarantines that client's results until it is explained.
+   - **GPU:** client results enter a production set only if one replica of the same study,
+     or a matched short run, is repeated on the workstation. It must agree by the criteria of
+     ADR 0012 §3. Exploration runs need no repeat.
+   - Reason: the CPU check is exact and cheap; the GPU check costs one replica in four.
+
+What would change it: a client the author does not control, or one outside the LAN (then step 3
+comes before any job), or a failed repeat (then that client stops until the cause is known).
+

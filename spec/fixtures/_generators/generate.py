@@ -703,6 +703,16 @@ RUNS["argon-pressure-tensor.toml"] = (
     )
 )
 assert "pressure_tensor = true" in RUNS["argon-pressure-tensor.toml"]
+# 0.1.3: the molecular pressure in the thermo table (run-config.md §2)
+RUNS["argon-pressure-molecular.toml"] = (
+    RUNS["argon-nvt.toml"]
+    .replace('spec_version = "0.1.0"', 'spec_version = "0.1.3"', 1)
+    .replace(
+        '[output.thermo]\nfile = "thermo.tsv"\nevery = 10\n',
+        '[output.thermo]\nfile = "thermo.tsv"\nevery = 10\npressure_molecular = true\n',
+    )
+)
+assert "pressure_molecular = true" in RUNS["argon-pressure-molecular.toml"]
 
 INVALID_RUNS = {
     "not-toml.toml": ("E_TOML", 'spec_version = "0.1.0"\nsystem = \n'),
@@ -724,6 +734,12 @@ INVALID_RUNS = {
         "E_SCHEMA",
         RUNS["argon-pressure-tensor.toml"].replace(
             "pressure_tensor = true", 'pressure_tensor = "yes"'
+        ),
+    ),
+    "pressure-molecular-not-bool.toml": (
+        "E_SCHEMA",
+        RUNS["argon-pressure-molecular.toml"].replace(
+            "pressure_molecular = true", 'pressure_molecular = "yes"'
         ),
     ),
     "langevin-with-vv.toml": (

@@ -1,0 +1,113 @@
+studies/2026-11-24_parameter-sensitivity-1M/runs/base_s1/T20C/out 200
+  all                                        296.67 +- 1.21 K
+  molecules of 1 atoms                       299.67 +- 4.54 K
+  molecules of 7 atoms                       293.09 +- 3.21 K
+  molecules of 10 atoms                      295.42 +- 1.44 K
+  molecules of 15 atoms                      296.91 +- 1.28 K
+  T displayed                                293.10 +- 0.22 K
+  half-step minus on-step T (dt=1fs)           5.38 +- 0.01 K
+studies/2026-11-25_timestep-1M-0p5fs/runs/base_s1/T20C/out 200
+  all                                        293.06 +- 1.11 K
+  molecules of 1 atoms                       290.85 +- 5.62 K
+  molecules of 7 atoms                       294.45 +- 4.34 K
+  molecules of 10 atoms                      295.13 +- 1.92 K
+  molecules of 15 atoms                      292.57 +- 0.86 K
+  T displayed                                293.08 +- 0.20 K
+  half-step minus on-step T (dt=1fs)           5.27 +- 0.01 K
+studies/2026-11-25_timestep-emc-1fs/runs/emc_500_s1/T25C/out 200
+  all                                        300.30 +- 0.75 K
+  molecules of 15 atoms                      300.30 +- 0.75 K
+  T displayed                                297.99 +- 0.18 K
+  half-step minus on-step T (dt=1fs)           6.03 +- 0.01 K
+studies/2026-11-25_timestep-emc-0p5fs/runs/emc_500_s1/T25C/out 200
+  all                                        298.96 +- 0.60 K
+  molecules of 15 atoms                      298.96 +- 0.60 K
+  T displayed                                298.19 +- 0.22 K
+  half-step minus on-step T (dt=1fs)           5.87 +- 0.01 K
+studies/2026-11-25_water-npt-gpu/runs/spcfw_512_s1/T25.01C/out 200
+  all                                        303.12 +- 1.77 K
+  molecules of 3 atoms                       303.12 +- 1.77 K
+  T displayed                                298.27 +- 0.42 K
+  half-step minus on-step T (dt=1fs)           9.09 +- 0.02 K
+studies/2026-11-25_timestep-water-0p5fs/runs/spcfw_512_s1/T25.01C/out 200
+  all                                        302.02 +- 2.08 K
+  molecules of 3 atoms                       302.02 +- 2.08 K
+  T displayed                                298.70 +- 0.45 K
+  half-step minus on-step T (dt=1fs)           8.75 +- 0.02 K
+studies/2026-11-24_parameter-sensitivity-1M/runs/base_s2/T20C/out 200
+  all                                        297.51 +- 1.29 K
+  molecules of 1 atoms                       299.50 +- 3.38 K
+  molecules of 7 atoms                       297.38 +- 3.99 K
+  molecules of 10 atoms                      293.95 +- 2.32 K
+  molecules of 15 atoms                      298.46 +- 1.56 K
+  T displayed                                292.97 +- 0.19 K
+  half-step minus on-step T (dt=1fs)           5.40 +- 0.01 K
+studies/2026-11-25_timestep-1M-0p5fs/runs/base_s2/T20C/out 200
+  all                                        296.30 +- 1.01 K
+  molecules of 1 atoms                       293.28 +- 3.63 K
+  molecules of 7 atoms                       297.05 +- 4.30 K
+  molecules of 10 atoms                      295.48 +- 0.95 K
+  molecules of 15 atoms                      297.11 +- 1.48 K
+  T displayed                                293.49 +- 0.18 K
+  half-step minus on-step T (dt=1fs)           5.27 +- 0.01 K
+studies/2026-11-25_timestep-emc-1fs/runs/emc_500_s2/T25C/out 200
+  all                                        305.65 +- 2.07 K
+  molecules of 15 atoms                      305.65 +- 2.07 K
+  T displayed                                297.89 +- 0.19 K
+  half-step minus on-step T (dt=1fs)           6.05 +- 0.01 K
+studies/2026-11-25_timestep-emc-0p5fs/runs/emc_500_s2/T25C/out 200
+  all                                        298.42 +- 1.24 K
+  molecules of 15 atoms                      298.42 +- 1.24 K
+  T displayed                                298.53 +- 0.18 K
+  half-step minus on-step T (dt=1fs)           5.91 +- 0.01 K
+studies/2026-11-25_water-npt-gpu/runs/spcfw_512_s2/T25.01C/out 200
+  all                                        304.96 +- 1.62 K
+  molecules of 3 atoms                       304.96 +- 1.62 K
+  T displayed                                298.07 +- 0.44 K
+  half-step minus on-step T (dt=1fs)           9.12 +- 0.03 K
+studies/2026-11-25_timestep-water-0p5fs/runs/spcfw_512_s2/T25.01C/out 200
+  all                                        298.75 +- 1.95 K
+  molecules of 3 atoms                       298.75 +- 1.95 K
+  T displayed                                298.31 +- 0.44 K
+  half-step minus on-step T (dt=1fs)           8.70 +- 0.02 K
+studies/2026-11-24_parameter-sensitivity-1M/runs/base_s3/T20C/out 200
+  all                                        296.04 +- 1.52 K
+  molecules of 1 atoms                       300.50 +- 4.16 K
+  molecules of 7 atoms                       290.69 +- 4.64 K
+  molecules of 10 atoms                      296.32 +- 1.20 K
+  molecules of 15 atoms                      295.60 +- 2.02 K
+  T displayed                                293.15 +- 0.20 K
+  half-step minus on-step T (dt=1fs)           5.40 +- 0.01 K
+studies/2026-11-25_timestep-1M-0p5fs/runs/base_s3/T20C/out 200
+  all                                        295.19 +- 2.07 K
+  molecules of 1 atoms                       293.81 +- 5.33 K
+  molecules of 7 atoms                       296.51 +- 4.59 K
+  molecules of 10 atoms                      296.20 +- 2.04 K
+  molecules of 15 atoms                      294.96 +- 2.17 K
+  T displayed                                292.78 +- 0.19 K
+  half-step minus on-step T (dt=1fs)           5.26 +- 0.01 K
+studies/2026-11-25_timestep-emc-1fs/runs/emc_500_s3/T25C/out 200
+  all                                        304.05 +- 2.20 K
+  molecules of 15 atoms                      304.05 +- 2.20 K
+  T displayed                                298.23 +- 0.19 K
+  half-step minus on-step T (dt=1fs)           6.05 +- 0.01 K
+studies/2026-11-25_timestep-emc-0p5fs/runs/emc_500_s3/T25C/out 200
+  all                                        297.05 +- 2.45 K
+  molecules of 15 atoms                      297.05 +- 2.45 K
+  T displayed                                298.22 +- 0.20 K
+  half-step minus on-step T (dt=1fs)           5.89 +- 0.01 K
+studies/2026-11-25_water-npt-gpu/runs/spcfw_512_s3/T25.01C/out 200
+  all                                        304.82 +- 1.85 K
+  molecules of 3 atoms                       304.82 +- 1.85 K
+  T displayed                                298.56 +- 0.43 K
+  half-step minus on-step T (dt=1fs)           9.05 +- 0.02 K
+studies/2026-11-25_timestep-water-0p5fs/runs/spcfw_512_s3/T25.01C/out 200
+  all                                        301.98 +- 1.16 K
+  molecules of 3 atoms                       301.98 +- 1.16 K
+  T displayed                                298.51 +- 0.43 K
+  half-step minus on-step T (dt=1fs)           8.70 +- 0.03 K
+studies/2026-11-25_timestep-water-0p25fs/runs/spcfw_512_s1/T25.01C/out 200
+  all                                        298.76 +- 1.65 K
+  molecules of 3 atoms                       298.76 +- 1.65 K
+  T displayed                                298.51 +- 0.45 K
+  half-step minus on-step T (dt=1fs)           8.56 +- 0.02 K

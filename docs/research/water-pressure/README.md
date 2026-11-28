@@ -80,6 +80,11 @@ The sum of these 300 frames is 69 ± 45 bar; the thermo log has ten times the sa
 **Recommendation:** 1, as already approved, plus 2 as the test that decides. If SC-1 (1 fs against 0.5 fs, three seeds)
 confirms the temperature effect, build 3 as the permanent fix. Not 4: it corrects the number, not the cause.
 
+**SC-1 result (added 2026-11-27):** the test that decides was run. At 0.5 fs every density is higher than at 1 fs, by
++0.23 ± 0.04 % (1 M box), +0.31 ± 0.03 % (EMC) and +0.14 ± 0.05 % (water), each beyond the criterion
+(`studies/2026-11-25_timestep-1M-0p5fs`). So effect 2 is real in density. Building option 3 (RESPA) or moving to 0.5 fs is the
+author's choice; the temperatures themselves were not yet measured in these runs.
+
 ## Consequences for existing results (1 fs)
 
 - Water: the runs at 298.16 K describe about 304 K. ΔH_vap, D, ε and η carry that; agreement with Wu is like with like

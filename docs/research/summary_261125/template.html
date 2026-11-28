@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UnitcellMD results summary, 2026-11-25</title>
+<style>
+  @page { size: A4; margin: 14mm 16mm 13mm 16mm; }
+  :root { --ink: #1f1f1e; --muted: #6b6a63; --rule: #d9d8d2; --tint: #f3f2ee; --accent: #2a78d6; }
+  html { background: #ffffff; }
+  body { font-family: "Liberation Serif", "DejaVu Serif", serif; font-size: 9.8pt; line-height: 1.28;
+         color: var(--ink); background: #ffffff; margin: 0; }
+  h1, h2, h3, .sans, table, figcaption, .meta { font-family: "Noto Sans", "DejaVu Sans", sans-serif; }
+  h1 { font-size: 16.5pt; line-height: 1.2; margin: 0 0 4pt; font-weight: 700; }
+  .subtitle { font-size: 11pt; color: var(--muted); margin: 0 0 6pt; font-family: "Noto Sans", sans-serif; }
+  .meta { font-size: 8.5pt; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 6pt; margin-bottom: 10pt; }
+  h2 { font-size: 11.5pt; margin: 14pt 0 4pt; break-after: avoid; }
+  h3 { font-size: 10pt; margin: 9pt 0 2pt; break-after: avoid; }
+  p { margin: 0 0 5pt; }
+  ul { margin: 0 0 5pt; padding-left: 15pt; }
+  li { margin: 0 0 2.5pt; }
+  .box { background: var(--tint); border-left: 3px solid var(--accent); padding: 7pt 10pt 4pt; margin: 4pt 0 8pt; }
+  .box h2 { margin-top: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.3pt; margin: 4pt 0 7pt; }
+  tr { break-inside: avoid; }
+  table.keep { break-inside: auto; }
+  th, td { text-align: left; padding: 2.6pt 5pt; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; border-bottom: 1.2px solid var(--muted); }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  figure { margin: 6pt 0 8pt; break-inside: avoid; }
+  figure svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { font-size: 8.2pt; color: var(--ink); margin-top: 3pt; }
+  figcaption b { font-weight: 600; }
+  .two { display: flex; gap: 12pt; align-items: flex-start; }
+  .two > * { flex: 1; }
+  .note { font-size: 8.5pt; color: var(--muted); }
+  .refs { font-size: 8.1pt; padding-left: 14pt; }
+  .refs li { margin-bottom: 1.5pt; }
+  .draft { font-family: "Noto Sans", sans-serif; font-size: 8pt; color: #9a5b00; }
+</style>
+</head>
+<body>
+
+<h1>Open molecular dynamics for LiPF₆ carbonate electrolytes</h1>
+<p class="subtitle">Results and open questions on 25 November 2026</p>
+<div class="meta">Moritz Limbacher · UnitcellMD, github.com/mines-of-morja · ${date} · Working results, not peer reviewed; every
+result is exploration, not a production set. Updates the summary of 23 November. Built from commit ${build_id}. ${prelim}</div>
+
+<div class="box">
+<h2>Summary</h2>
+<ul>
+  <li><b>Aim, unchanged.</b> Predict κ, t₊ and D of LiPF₆ in EC:EMC from molecular dynamics and test them against Landesfeind &amp;
+    Gasteiger [1]. No parameter is fitted to transport data. No predictive model exists yet, so the κ criteria have not been applied.</li>
+  <li><b>Which parameters slow the ions?</b> ${prelim_word} scan at 1 M, 20 °C (section 1): the ion charge scale ζ and the EMC attraction ε change
+    the Nernst–Einstein κ (κ<sub>NE</sub>) far more than the size of Li⁺, whose effect is not resolved. This is a map, not a fit.</li>
+  <li><b>The Li⁺ clusters converged</b> (trial T6, section 2). The energies that would turn them into a correction are on hold. By the rule
+    fixed beforehand, they run only if the Li⁺ size moves transport; it does not, by that rule. The author decides.</li>
+  <li><b>The water pressure puzzle has a cause:</b> the 1 fs step with flexible bonds (section 3). The liquid is warmer than displayed, by
+    ${q_t_el} K in the electrolyte.</li>
+  <li><b>Densities were re-checked</b> (section 4). DMC fails ±2 %, which the 23 November summary had counted as passing.</li>
+</ul>
+</div>
+
+<h2>1. Sensitivity scan at 1 M, 20 °C</h2>
+<p>Model M1 (47 LiPF₆, 168 EC, 332 EMC, ζ = 0.75), NPT, 5 ns per run, first 1.5 ns skipped. Three knobs are varied, with four
+probes each, and three baselines are run. ${prelim} Plan, probes and reading rule were committed before any run. All ${n_total} runs are included.</p>
+<figure>
+${fig_scan}
+<figcaption><b>Fig. 1.</b> κ<sub>NE</sub> against each parameter (logarithmic scale). Blue: probes of this scan, one run each.
+Grey: baselines of this scan (filled) and the three M1 runs of trial T2 (open). Line: ln–ln fit. κ<sub>NE</sub> ignores ion correlations
+and is not the measured κ.</figcaption>
+</figure>
+<table class="keep">
+  <tr><th style="width:21%">Parameter</th><th class="n">exponent of κ<sub>NE</sub></th><th class="n">ln change over range</th><th class="n">exp. D(Li⁺)</th><th class="n">exp. D(EMC)</th>
+    <th class="n">density (g/cm³)</th><th class="n">EC in shell</th><th>rule</th></tr>
+  ${scan_rows}
+</table>
+<p class="note">Reading rule: a knob moves transport if ln κ<sub>NE</sub> changes by at least 0.2 over the range and by at least 2 SE. ${rule_line}
+Run-to-run noise of κ<sub>NE</sub>: ${noise_k} % per run (SD, pooled from the baselines and T2).</p>
+<ul>
+  <li><b>ζ and ε(EMC) move transport.</b> Smaller charges and weaker EMC attraction speed up the ions. ε(EMC) changes D of Li⁺ and EMC by
+    about the same exponent, which is what a change of the solvent's viscosity would do. The scan measures no viscosity, so trial T4 (viscosity or Li⁺
+    binding) is not decided by it.</li>
+  <li><b>σ(Li⁺) is not resolved.</b> ln κ<sub>NE</sub> changes by ${s_sigmaLi_change} ± ${s_sigmaLi_se} over the range; with 2 SE the data allow
+    ${s_sigmaLi_lo2} to ${s_sigmaLi_hi2}. That is not proof of no effect. The knob did change the shell: EC per Li⁺ went from
+    ${sig_ec_lo} to ${sig_ec_hi}. More EC in the shell did not visibly speed up or slow down the ions in this range.</li>
+  <li><b>ε(EMC) also moves the density,</b> down to ${emc_dens_lo} g/cm³ at the lowest probe, against ${q_m1_rho} for M1 and ${rho_lf} in the fit of [1].
+    The direction agrees with EMC being too dense on its own (section 4).</li>
+  <li><b>Noise is larger than expected.</b> The baselines of this scan range from ${k_base_lo} to ${k_base_hi} S/m, the T2 runs from ${t2_lo} to ${t2_hi} S/m.
+    One probe alone says little; the trends rest on several probes.</li>
+  <li><b>No parameter is chosen here.</b> Transport is never used to choose one (trials rule 2).</li>
+</ul>
+
+<h2>2. Li⁺ first-shell clusters (trial T6)</h2>
+<p>Li⁺(EC)<sub>n</sub>(EMC)<sub>4−n</sub>, ωB97X-D/def2-SVP geometries. The ωB97M-V energies that the fit needs are not computed.</p>
+<figure>
+${fig_t6}
+<figcaption><b>Fig. 2.</b> Li–O(carbonyl) distances. No frequencies were computed; a geometry may be a saddle point.</figcaption>
+</figure>
+<table class="keep">
+  <tr><th>Cluster</th><th class="n">steps</th><th class="n">h</th><th class="n">Li–O(EC) Å</th><th class="n">Li–O(EMC) Å</th></tr>
+  ${t6_rows}
+</table>
+<ul>
+  <li><b>Result.</b> All five converged and keep four carbonyl contacts (${t6_lo}–${t6_hi} Å). ${t6_steps_min} to ${t6_steps_max} optimizer steps; ${t6_wall} h of
+    wall time, shared with other work. The four distances in Li⁺(EC)<sub>4</sub> are equal, as in its start geometry; a symmetric saddle point is possible.</li>
+  <li><b>Amendment 5</b> (author-approved) changes the energy part: counterpoise only for n = 0 and 4, and the energies weigh
+    ${q_s_x} per exchanged solvent instead of ${q_s_old} for the total. Not applied yet.</li>
+  <li><b>A run was lost.</b> Holding the energies stopped a running optimization (n = 2, at about step ${q_lost}); it was restarted from its start file. On record in the trial.</li>
+</ul>
+
+<h2>3. The 1 fs time step and flexible bonds</h2>
+<p>At Wu's density, SPC/Fw water gave ${q_p_gpu} bar on the GPU and ${q_p_cpu} on the CPU, when about 1 bar was expected. Re-evaluating the stored frames
+(no new simulation) gives the cause:</p>
+<ul>
+  <li><b>Two definitions differ by ${q_p_bias}:</b> the CPU engine reports the atomic pressure, the GPU the molecular one. With the same definition the engines
+    agree: about ${q_p_cpu_mol} (CPU, 298.16 K) against ${q_p_gpu}. On the GPU, the NPT density is the 1 atm density of the NVT
+    (P = ${q_p_at_npt} at that density). Whether the CPU barostat's density is biased is not shown.</li>
+  <li><b>The liquid is warmer than displayed,</b> by ${q_t_water} K in water (runs ${q_t_water_range}) and ${q_t_el} K in the electrolyte. The thermostat holds the on-step
+    kinetic energy of all atoms, and the fast bonds show too little of it. So D and κ come out a little too high and the density a little too low;
+    the deficit of κ against experiment (M0: a factor ${kappa_ratio}) goes the other way and is not explained.</li>
+  <li><b>Open.</b> At 0.5 fs the excess is ${q_t_half} K where ${q_t_half_exp} K is expected (${q_sigma17}). Of the ${q_p_gpu} bar, ${q_p_temp} come from the temperature,
+    and ${q_p_rest} bar remain unexplained.</li>
+</ul>
+
+<h2>4. Densities</h2>
+<table class="keep">
+  <tr><th>Liquid</th><th class="n">deviation from measured</th><th>Standing</th></tr>
+  <tr><td>DMC (LigParGen)</td><td class="n">${q_dmc25} (25 °C), ${q_dmc40} (40 °C)</td><td><b>fails ±2 %</b>; earlier counted as passing</td></tr>
+  <tr><td>EMC (LigParGen)</td><td class="n">${q_emc25} (25 °C)</td><td><b>fails</b>; one source, no other temperature found</td></tr>
+  <tr><td>EC (LigParGen / M1)</td><td class="n">${q_ec39} / ${q_ec_m1} (39 °C)</td><td>M1 is close</td></tr>
+  <tr><td>PC, MP (LigParGen)</td><td class="n">${q_pc25}, ${q_mp25} (25 °C)</td><td>pass</td></tr>
+  <tr><td>Electrolyte, 1 M, 20 °C</td><td class="n">M0 ${q_lf_m0}, M1 ${q_lf_m1}</td><td>reference good to ${q_lf_err}; cannot separate M0 from M1</td></tr>
+</table>
+<p>The densities come from database records; the papers were not read. A second reading of the density fit of [1] agrees with the first. Lehnert's solvent table [2] mixes
+temperatures, so one column cannot be compared with one run temperature.</p>
+
+<h2>5. Where the project stands</h2>
+<table>
+  <tr><th style="width:30%">Question</th><th style="width:40%">Result today</th><th>Standing</th></tr>
+  <tr><td>EC in the first Li⁺ shell, 1 M</td><td>M0 ${ec_m0}, M1 ${ec_m1_shell}; dielectric bound ≤ ${bound} ± ${bound_err} [3]</td><td><b>improved, not reached</b></td></tr>
+  <tr><td>κ, 1 M, 20 °C</td><td>measured ${kappa_exp} S/m [1] (criterion ${kappa_lo}–${kappa_hi}); M0 ${kappa_m0}</td><td><b>too low; M1 not measured</b></td></tr>
+  <tr><td>t₊ (solvent frame)</td><td>M0 ${tp_sol}; measured ${tp_exp} [1]</td><td><b>frame settled, run too short</b></td></tr>
+  <tr><td>κ maximum, κ(T), thermodynamic factor</td><td>no runs</td><td><b>not started</b></td></tr>
+  <tr><td>Trials T3 (density), T4 (slow ions), T5 (charge scaling)</td><td>planned; T3 was corrected for a wrong density premise</td><td><b>not started</b></td></tr>
+</table>
+
+<h2>6. Open questions</h2>
+<table class="keep">
+  <tr><th style="width:26%">For the author to decide</th><th>What it is about</th></tr>
+  <tr><td>T6 energies</td><td>σ(Li⁺) does not move transport by the rule (not resolved is not the same as no effect). The rule then makes T6 a side result and the held energies are not run. The author decides.</td></tr>
+  <tr><td>EMC refit (SC-7)</td><td>Fit EMC to density and ΔH<sub>vap</sub>, never to transport. No measured ΔH<sub>vap</sub> of EMC was found, and the density against
+    temperature is missing.</td></tr>
+  <tr><td>Time step (SC-1)</td><td>1 fs against 0.5 fs (three seeds) is planned after the scan. It decides whether RESPA or 0.5 fs is needed.</td></tr>
+  <tr><td>Decided today (no longer open)</td><td>SC-3: a second, molecular pressure column (spec 0.1.3, not tagged). SC-4: grid and the ${q_grid} limit confirmed, 10 °C in place of 0 °C.
+    The density test of SC-3 runs after the reboot; its criteria are committed.</td></tr>
+  <tr><td>Engine CI and merges</td><td>CI is red on two branches: the pinned umbrella commit (UMBRELLA_REF) is old, and one spec 0.1.1 test fails. Open: spec 0.1.1/0.1.2 tags, merge order,
+    the Kob–Andersen test fixture (a published parameter set used without pre-approval).</td></tr>
+  <tr><td>GUI and gates</td><td>Hands-on test of the new result view (B2c), then gates B2a and B1a; the open questions of the queue design.</td></tr>
+</table>
+<table class="keep">
+  <tr><th style="width:26%">Physics</th><th>State</th></tr>
+  <tr><td>Why are the ions slow?</td><td>Solvent too viscous or Li⁺ bound too strongly: not decided (T4).</td></tr>
+  <tr><td>Why is EC missing?</td><td>M1 reaches ${frac_bound} % of the dielectric bound; no correction has been fitted (T6).</td></tr>
+  <tr><td>How should ζ be fixed?</td><td>A fit to κ is not allowed; the refractive-index route needs sourced values (T5).</td></tr>
+  <tr><td>Temperature excess</td><td>At 0.5 fs the excess is above the Δt² expectation (${q_t_half} K against ${q_t_half_exp} K, ${q_sigma17}); ${q_p_rest} bar of the water excess stay unexplained.</td></tr>
+  <tr><td>t₊ and κ precision</td><td>The runs are far too short to separate t₊ values.</td></tr>
+  <tr><td>Cluster geometries</td><td>No frequencies; minima not confirmed.</td></tr>
+</table>
+
+<h2>7. Corrections since 23 November</h2>
+<ul>
+  <li><b>DMC</b> was listed as within ±2 %; it fails at ${q_dmc25} and ${q_dmc40}. The EMC deviation is ${q_emc25} (earlier ${q_emc_old}).</li>
+  <li><b>The 1 M density comparison</b> used a nominal box density (${q_nominal}); the NPT boxes are ${q_m0_rho} (M0) and ${q_m1_rho} (M1) g/cm³.</li>
+  <li><b>The density reference</b> has been read twice; its accuracy is ${q_lf_err}.</li>
+  <li><b>Noise of κ<sub>NE</sub></b> is ${noise_k} %, not the ${q_noise_t2} that three T2 runs suggested.</li>
+  <li><b>Optimizer steps of n = 3</b> were ${q_steps_new}, not ${q_steps_old} (the counter restarted). The geometry is unaffected.</li>
+  <li><b>Two bugs in the GPU bridge.</b> Its pressure column drifted, because the estimate was taken from the stepping context (fixed on 23 November; temperatures,
+    energies and trajectories are not affected). And it silently ignored the velocity and force output options (fixed on a branch, not merged).</li>
+</ul>
+
+<h2>8. Next</h2>
+<ul>
+  <li><b>The author decides on T6</b> (section 6), now that the scan is complete.</li>
+  <li><b>After the reboot:</b> the SC-3 density test, then SC-1 (time step) and SC-4 (density over concentration and temperature), before any transport run.</li>
+  <li><b>Publication:</b> software paper for J. Chem. Inf. Model., not before May 2027. The PDF for the JMU contacts is held until the model meets the criteria.</li>
+</ul>
+
+<h2>Data, code and the use of AI</h2>
+<p>Generated by <span class="sans" style="font-size:8.6pt">docs/research/summary_261125/build.py</span>. Every result is computed from study or trial data, taken from the
+literature ledger, or checked verbatim against a committed report. The UnitcellMD software and this text were written by Claude Code (Anthropic) under the direction
+of the author, who set the requirements and confirmed the decisions named here as decided. No result was written or changed by a language model.</p>
+
+<h2>References</h2>
+<ol class="refs">
+  <li>J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), doi:10.1149/2.0571912jes.</li>
+  <li>L. Lehnert et al., J. Electrochem. Soc. 172, 050523 (2025), doi:10.1149/1945-7111/add381, and SI.</li>
+  <li>J. Self, N. T. Hahn, K. A. Persson, Energy Environ. Mater. 7, e12494 (2024), doi:10.1002/eem2.12494.</li>
+</ol>
+</body>
+</html>

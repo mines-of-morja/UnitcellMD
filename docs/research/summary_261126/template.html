@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UnitcellMD results summary, 2026-11-26</title>
+<style>
+  @page { size: A4; margin: 14mm 16mm 13mm 16mm; }
+  :root { --ink: #1f1f1e; --muted: #6b6a63; --rule: #d9d8d2; --tint: #f3f2ee; --accent: #2a78d6; }
+  html { background: #ffffff; }
+  body { font-family: "Liberation Serif", "DejaVu Serif", serif; font-size: 9.8pt; line-height: 1.28;
+         color: var(--ink); background: #ffffff; margin: 0; }
+  h1, h2, h3, .sans, table, figcaption, .meta { font-family: "Noto Sans", "DejaVu Sans", sans-serif; }
+  h1 { font-size: 16.5pt; line-height: 1.2; margin: 0 0 4pt; font-weight: 700; }
+  .subtitle { font-size: 11pt; color: var(--muted); margin: 0 0 6pt; font-family: "Noto Sans", sans-serif; }
+  .meta { font-size: 8.5pt; color: var(--muted); border-bottom: 1px solid var(--rule); padding-bottom: 6pt; margin-bottom: 10pt; }
+  h2 { font-size: 11.5pt; margin: 14pt 0 4pt; break-after: avoid; }
+  h3 { font-size: 10pt; margin: 9pt 0 2pt; break-after: avoid; }
+  p { margin: 0 0 5pt; }
+  ul { margin: 0 0 5pt; padding-left: 15pt; }
+  li { margin: 0 0 2.5pt; }
+  .box { background: var(--tint); border-left: 3px solid var(--accent); padding: 7pt 10pt 4pt; margin: 4pt 0 8pt; }
+  .box h2 { margin-top: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 8.3pt; margin: 4pt 0 7pt; }
+  tr { break-inside: avoid; }
+  table.keep { break-inside: auto; }
+  th, td { text-align: left; padding: 2.6pt 5pt; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-weight: 600; border-bottom: 1.2px solid var(--muted); }
+  td.n, th.n { text-align: right; white-space: nowrap; }
+  figure { margin: 6pt 0 8pt; break-inside: avoid; }
+  figure svg { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { font-size: 8.2pt; color: var(--ink); margin-top: 3pt; }
+  figcaption b { font-weight: 600; }
+  .two { display: flex; gap: 12pt; align-items: flex-start; }
+  .two > * { flex: 1; }
+  .note { font-size: 8.5pt; color: var(--muted); }
+  .refs { font-size: 8.1pt; padding-left: 14pt; }
+  .refs li { margin-bottom: 1.5pt; }
+  .draft { font-family: "Noto Sans", sans-serif; font-size: 8pt; color: #9a5b00; }
+</style>
+</head>
+<body>
+
+<h1>Open molecular dynamics for LiPF₆ carbonate electrolytes</h1>
+<p class="subtitle">Densities and transport against experiment: every finished run, 26 November 2026</p>
+<div class="meta">Moritz Limbacher · UnitcellMD, github.com/mines-of-morja · ${date} · Working results, not peer reviewed; every
+result is exploration, not a production set. Follows the summaries of 23 and 25 November. Built from commit ${build_id}.
+The time-step study SC-1 ran until 26 November and was analysed on 27 November (commit ${sc1_ref}); it is included as an addition.
+Section 6 (against the literature) was added on 27 November, with the density map over concentration (SC-4) and the 3 M map it uses.</div>
+
+<div class="box">
+<h2>Summary</h2>
+<ul>
+  <li><b>Densities: close, partly by cancellation.</b> All ${n_el} 1 M electrolyte estimates at 20 °C lie between ${el_lo} and ${el_hi} % of the
+  measured fit of [1], which is itself known to ${q_lf_err}. The pure solvents are off by more: the open-chain carbonates of the open
+  force field (M0) are up to ${m0_max_dense} % too dense, its EC ${m0_ec_light} % too light; the OPLS-AA EC of model M1 is right (${ec_m1_dev} %).</li>
+  <li><b>Conductivity: both models too low, by a factor of ${k_ratio_lo} to ${k_ratio_pilot}.</b> Measured κ at 1 M, 20 °C is ${k_exp} S/m [1]. The pilot (M0) gives
+  κ a factor ${k_ratio_pilot} lower. M1, the current model, gives κ<sub>NE</sub> a factor ${k_ratio_m1} lower, and κ<sub>NE</sub> ignores the ion correlations
+  that lower κ further. <b>No model run meets the ±15 % criterion.</b> One probe of the parameter scan, ${best_name}, reaches κ<sub>NE</sub> = ${best_k} S/m
+  (${best_frac} %, ${best_in_band} the band): one run, κ<sub>NE</sub> rather than κ, and a parameter changed only to map trends. It points at EMC (task SC-7), it is not a model.</li>
+  <li><b>The known biases point the same way.</b> The 1 fs step reads the density ${q_sc1_estimate} (estimate from SC-1); the liquid also
+  runs ${q_t_el} K warmer than displayed. Both make the simulated ions faster, so correcting them widens the κ gap.</li>
+  <li><b>Transference number: no test yet.</b> t₊ in the solvent frame is ${tp_sol} against ${tp_lf} measured [1]; the error is as large as the value.</li>
+  <li><b>Not compared yet:</b> self-diffusion (no measured value for this electrolyte in our ledger), viscosity of the electrolyte,
+  κ(T), the κ maximum, the thermodynamic factor. Nothing has been fitted to transport data.</li>
+  <li><b>Against the literature (section 6).</b> The direction of every error agrees with what others report for fixed-charge models:
+  ions too slow, linear carbonates too dense. We disagree with Lehnert's model [2] on κ and on the Li⁺ shell. <b>Possibly new:</b> the usual
+  1 M density check passes by cancellation. The ρ(c) slope of the standard scaled-charge ion model is ${sc4_slope_def} % too small, Lehnert's
+  published boxes imply the same, and the charge scale ζ cannot repair it. That suggests a second cause for the 3 M κ excess they report,
+  which can be tested.</li>
+</ul>
+</div>
+
+<h2>1. Densities</h2>
+${fig_density}
+<figure><figcaption><b>Fig. 1.</b> Simulated density against its reference, in percent. Pure solvents (M0, LigParGen) against measured densities at the
+run temperature; EC of M1 against 39 °C; the 1 M electrolyte against the measured density fit of [1] at 20 °C (its own uncertainty ${q_lf_err});
+water against the SPC/Fw model value of Wu [4], a check of the engine, not of the model. Bars: ±2 SE where an SE exists. Grey band: ±2 %.</figcaption></figure>
+
+<div class="two">
+<div>
+<h3>Pure solvents, model M0 (NPT 1 atm, 0.5 ns)</h3>
+<table>
+<tr><th>solvent</th><th class="n">ρ 25 °C</th><th class="n">vs measured</th><th class="n">ρ 40 °C</th><th class="n">vs measured</th></tr>
+${solvent_rows}
+</table>
+<p class="note">g/cm³. Measured values from NIST ThermoML records (papers not read), interpolated to the run temperature where needed.
+EC at 39 °C: M0 ${ec_m0_39} (${ec_m0_dev39} %), M1 ${ec_m1} (${ec_m1_dev} %) against ${ec_exp39}.</p>
+</div>
+<div>
+<h3>1 M LiPF₆ in EC:EMC 3:7 (w:w), 20 °C, 1 atm</h3>
+<table>
+<tr><th>run</th><th class="n">step</th><th class="n">runs</th><th class="n">ρ (g/cm³)</th><th class="n">vs fit [1]</th></tr>
+${el_rows}
+</table>
+<p class="note">Fit of [1] at 1 M, 20 °C: ${rho_lf} g/cm³. ± is the SE over independent runs (one run: block SE).</p>
+</div>
+</div>
+
+<ul>
+  <li><b>The electrolyte agrees, the solvents do not.</b> In M0 the too-dense EMC and the too-light EC cancel in the mixture. M1 corrects EC;
+  its electrolyte is then ${m1_el_dev} % denser than the fit, and at 0.5 fs a little more. With the reference good to ${q_lf_err}, this cannot separate the models.</li>
+  <li><b>The time step matters for density (SC-1, judged).</b> 0.5 fs minus 1 fs: 1 M box ${sc1_1M}, pure EMC ${sc1_EMC}, water ${sc1_water} (1 SE, three seeds each).
+  The consequence, ${q_sc1_choice}, is the author's decision.</li>
+  <li><b>Water</b> (engine check): ${w_rho} g/cm³ against ${w_rho_wu} for the same model [4] (${w_rho_dev} %), unexplained.</li>
+</ul>
+
+<h2>2. Transport</h2>
+${fig_kappa}
+<figure><figcaption><b>Fig. 2.</b> Conductivity at 1 M and 20 °C. Black line and grey band: the measured value of [1] (Eq. 15) and the ±15 % pass criterion.
+Diamonds: κ from the Onsager matrix (all ion correlations); open circles: Nernst–Einstein κ<sub>NE</sub> from self-diffusion only. Bars ±2 SE;
+the single scan probe carries the run-to-run noise of the scan (${noise_k} %).</figcaption></figure>
+
+<table>
+<tr><th>run</th><th>model</th><th>quantity</th><th class="n">runs</th><th class="n">S/m</th><th class="n">fraction of measured</th></tr>
+${k_rows}
+</table>
+<ul>
+  <li><b>The gap is in the mobilities, not in the correlations.</b> κ<sub>NE</sub> is already a factor ${k_ratio_m1} low, and the pilot's
+  κ/κ<sub>NE</sub> is ${q_ionicity}. The ions move too slowly.</li>
+  <li><b>The scan shows where the lever is</b> (25 November summary): the ion charge scale ζ and the EMC attraction ε move κ<sub>NE</sub>, the Li⁺ size
+  does not. The fastest probe, ${best_name}, gives ${best_k} S/m at a density ${best_rho_dev} % from the fit of [1]. Weaker EMC attraction would also lower
+  the density of pure EMC, which is too high, so the direction is consistent; whether EMC can be refitted that way is decided on density and ΔH<sub>vap</sub>
+  (SC-7), never on κ. This is a map, not a fit: no parameter is chosen from transport.</li>
+</ul>
+
+<div class="two">
+<div>
+<h3>Transference number t₊, 1 M, 20 °C</h3>
+<table>
+<tr><th>frame</th><th class="n">this work (M0 pilot)</th><th class="n">experiment</th><th class="n">Lehnert MD [2]</th></tr>
+<tr><td>solvent (SOL)</td><td class="n">${tp_sol}</td><td class="n">${tp_lf} (fit ${tp_lf_fit}) [1]</td><td class="n">${tp_l_sol}</td></tr>
+<tr><td>volume (VOL), two ion-volume conventions</td><td class="n">${tp_vol}</td><td class="n">${tp_l_vol_nmr} (eNMR) [2]</td><td class="n">${tp_l_vol_md}</td></tr>
+<tr><td>centre of mass</td><td class="n">${tp_com}</td><td class="n">—</td><td class="n">${tp_l_com}</td></tr>
+</table>
+<p class="note">One 20 ns run, 5 blocks. The SOL value is ${tp_sol_z} SE from the measured one: consistent, and not a test. A 10 % error needs ${q_tp_time}.</p>
+</div>
+<div>
+<h3>Self-diffusion, 10⁻¹¹ m²/s, 1 fs</h3>
+<table>
+<tr><th>runs</th><th class="n">Li⁺</th><th class="n">PF₆⁻</th><th class="n">EC</th><th class="n">EMC</th></tr>
+${d_rows}
+</table>
+<p class="note">Not corrected for box size. At 0.5 fs, D is ${sc1_d_lo} to ${sc1_d_hi} % different in the 1 M box (SC-1, reported, not judged).
+No measured D for LiPF₆ in EC:EMC is in our ledger, so these are not compared with experiment.</p>
+</div>
+</div>
+
+<p><b>The transport methods themselves check out on water</b> (SPC/Fw, against the same model in [4]): D = ${w_d} ·10⁻⁵ cm²/s in our box, against ${w_d_wu}
+reported and ${w_d_exp_box} expected in their smaller box (Yeh–Hummer, with our η); Green–Kubo η = ${w_eta} mPa s against ${w_eta_wu} ± ${w_eta_inacc}.</p>
+
+<h2>3. What is known to bias these numbers</h2>
+<table>
+<tr><th>effect</th><th>size</th><th>direction for the comparison</th></tr>
+<tr><td>1 fs step with flexible bonds (SC-1)</td><td>density ${sc1_1M} at 0.5 fs (1 M box); D ${sc1_d_lo} to ${sc1_d_hi} %</td><td>density slightly low, D high: the κ gap is larger at 0.5 fs</td></tr>
+<tr><td>liquid warmer than displayed</td><td>${q_t_el} K (electrolyte, M1)</td><td>D and κ slightly high: the κ gap is larger</td></tr>
+<tr><td>finite box (no Yeh–Hummer correction)</td><td>needs the electrolyte's viscosity, not measured</td><td>D too low; collective κ unaffected</td></tr>
+<tr><td>CPU barostat pressure (SC-3)</td><td>test running, not read</td><td>water densities on the CPU only</td></tr>
+</table>
+
+<h2>4. Not done yet</h2>
+<ul>
+  <li><b>κ(T) and the κ maximum against c</b> (decisions 7 and 9): no runs. They need a model that first passes at 1 M, 20 °C.</li>
+  <li><b>Thermodynamic factor: first known-answer test ${a17_word}</b> (binary Lennard-Jones mixture of Cheng 2022, run on the second computer, ucmd-analysis ${a17_ref}):
+  S⁰<sub>AB</sub> = ${a17_value} against ${a17_target} published, difference ${a17_diff} within the allowed ${a17_bound}; NVT agrees with NPT (${a17_nvt} SE). Its
+  non-ideal part is near zero (∂βμ/∂ln x = ${a17_dmu}), so it tests the method, not a thermodynamic factor. No electrolyte value before the NaCl
+  target passes too.</li>
+  <li><b>Electrolyte viscosity and measured self-diffusion</b> to compare with: neither is in the ledger yet.</li>
+</ul>
+
+<h2>6. Against the literature: what agrees, what disagrees, what may be new</h2>
+<p class="note">Literature searched on 27 November: web searches, plus the papers marked "read" in the right column (full text or the section
+concerned). "Not found" is the result of one day's search, not a review. Not read: the full text and SI of [6] (publisher refused), Hou et al.
+2021, Ravikumar et al. 2018, Dajnowicz et al. 2022, Borodin &amp; Smith 2009, Nyman et al. 2008. Any of them may already hold a result listed
+as new here. Every novelty claim must survive a systematic search before it goes into a paper.</p>
+
+${fig_rho_c}
+<figure><figcaption><b>Fig. 3.</b> Density of LiPF₆ in EC:EMC 3:7 at 20 °C over concentration, against the measured fit of [1] (grey band: its own
+uncertainty). Orange: model M1, NPT, one run per point (SC-4, 0.5 fs); open triangles: the same 3 M box with ζ = 0.65 and 0.85. Open grey squares: the
+densities that Lehnert's published particle numbers imply if each box sits exactly at its target concentration [2, SI Table S1] (our arithmetic;
+Lehnert report no densities; one ion pair of ${leh_pairs_1} is ${leh_pair_pct} % in c at 1 M). Both models cross the fit near 1–1.5 M and fall below it at 3 M, where the two points coincide.</figcaption></figure>
+
+<h3>Agrees</h3>
+<table class="keep">
+<tr><th>finding</th><th>this work</th><th>literature</th><th>how read</th></tr>
+<tr><td>OPLS-AA EC (Caleman) gives the right density</td><td>${ec_m1_dev} % at 39 °C (M1)</td><td>same model, same result [3]</td><td>SI, read</td></tr>
+<tr><td>open-chain carbonates of OPLS-type force fields are too dense</td><td>M0 (LigParGen): ${m0_emc} % EMC, ${m0_dmc} % DMC at 25 °C</td>
+  <td>OPLS-AA: ${sea_emc} % EMC, ${sea_dmc} % DMC (two printed decimals) [5]</td><td>preprint, read</td></tr>
+<tr><td>temperature slope of the electrolyte density</td><td>dρ/dT = ${sc4_dT} ×10⁻³ g cm⁻³ K⁻¹</td><td>${lf_dT} ×10⁻³ [1]</td><td>ledger</td></tr>
+<tr><td>non-polarizable models give too-slow ions</td><td>κ<sub>NE</sub> a factor ${k_ratio_m1} low (M1)</td>
+  <td>"dynamics largely underestimated" for the non-polarizable variants [6]; transport underestimated with the default (apparently unscaled) ion charges [5]</td>
+  <td>[6] abstract only; [5] read</td></tr>
+<tr><td>a lower density gives faster ions</td><td>lower ζ and weaker EMC attraction both lower ρ and raise κ<sub>NE</sub> (exponents ${q_scan_zeta_exp} and
+  ${q_scan_eps_exp})</td><td>density imposed on a 1 M EC:DMC box changes D several-fold [7]; scaling the charges lowers the density and speeds the dynamics [6]</td>
+  <td>[7] read; [6] SI excerpt only</td></tr>
+<tr><td>the methods reproduce published model values</td><td>water D and η, the thermodynamic-factor test, the t₊ frame identity (sections 2 and 4)</td>
+  <td>[4]; Cheng 2022; [2]</td><td>ledger</td></tr>
+</table>
+
+<h3>Disagrees</h3>
+<table class="keep">
+<tr><th>finding</th><th>this work</th><th>literature</th></tr>
+<tr><td><b>κ at ζ = 0.75</b></td><td>same Li⁺ and PF₆⁻ parameters, same ζ, other solvent parameters: κ or κ<sub>NE</sub> a factor ${k_ratio_lo} to ${k_ratio_pilot} low (runs of 5–20 ns; theirs 50–170 ns)</td>
+  <td>Lehnert's model meets κ below 2 M with ζ = 0.75, fitted to κ [2]</td></tr>
+<tr><td><b>Li⁺ shell</b>, within 0.516 nm, 1 M, 20 °C</td><td>M1: EC ${sh_ec}, EMC ${sh_emc} (EC share ${sh_share} %); EC in the first shell ${sh_first}</td>
+  <td>Lehnert's model: EC ${sh_l_ec}, EMC ${sh_l_emc} (${sh_l_share} %) [2, Fig. S10]. Dielectric spectroscopy: ${drs} bound EC per Li⁺ (our reading of [8])</td></tr>
+<tr><td><b>density over c</b></td><td>dρ/dc = ${sc4_slope} g cm⁻³ M⁻¹; ${sc4_01} % at 0.1 M, ${sc4_3} % at 3 M. Apparent molar volume of the salt
+  ${vphi_1} (1 M) and ${vphi_3} cm³/mol (3 M)</td><td>dρ/dc = ${lf_slope}; V<sub>φ</sub> = ${vphi_exp} cm³/mol [1]</td></tr>
+</table>
+<ul>
+  <li><b>κ: a ζ fitted to κ absorbs the solvent model.</b> With the same ions and ζ, the solvent parameters are the main difference between the two models and κ differs by a factor of about 2; the
+  EMC attraction moves κ<sub>NE</sub> as strongly as ζ does (exponents above). A ζ calibrated with one solvent parameter set does not carry over to another.</li>
+  <li><b>Shell:</b> Lehnert's counting rule for Fig. S10 was not compared with ours. Both models stay below the dielectric estimate, ours by more.
+  M0 → M1 changed only the EC parameters and moved the EC share from ${sh_share_m0} to ${sh_share} %, so the solvent model sets the shell.</li>
+</ul>
+
+<h3>Not found in the literature searched: candidates for new results</h3>
+<ol>
+  <li><b>The 1 M density check passes by cancellation.</b> The straight line through the model's points meets c = 0 ${rho0_off} % above the fit of [1]: the solvent is too dense, like its EMC. Each mole of salt then
+  adds ${sc4_slope_def} % too little density. The two cancel near 1 M (${sc4_1} %), and 3 M is ${sc4_3} %. Lehnert's boxes imply a similar slope,
+  ${leh_slope} against ${lf_slope} [1], and ${leh_3} % at 3 M (Fig. 3). The two models share the ion model (JJ06 Li⁺, CL&amp;P PF₆⁻, ζ = 0.75), not the solvent parameters, so the
+  slope belongs to the ions. [5] shows ρ(c) only as a figure, states agreement "especially at salt concentration &gt;0.5 M", and does not discuss the
+  slope. Not found: a carbonate paper that tests a scaled-charge model's ρ(c) over 0.1–3 M against experiment with numbers.</li>
+  <li><b>The charge scale cannot fix the salt volume.</b> dV<sub>φ</sub>/dζ = ${dvz_1} cm³/mol at 1 M but ${dvz_3} at 3 M. Reaching the measured
+  V<sub>φ</sub> would need ζ ≈ ${zstar_1} at 1 M but ${zstar_3} at 3 M, beyond full charge (linear extrapolation, an estimate). So the excess is in
+  ion size and packing, not only in missing electrostriction. This fits [5]: with ion charges that its text implies are unscaled, its densities agree from 0.5 M on. The physics is
+  known in water: scaled charges with the LJ of full-charge ions leave the ions too large, the reason for the ECC-R σ reduction [10] and for
+  refitting the ion LJ to solution densities in the Madrid-2019 model [9]. We found it shown for no carbonate.</li>
+  <li><b>A second explanation for the 3 M κ excess.</b> Lehnert write: "the MD simulations overestimate the conductivity for LiPF6 in EC:EMC and in
+  EC:DMC:PC at c = 3.0 M. This could originate from using a constant scaling factor ζ" [2]. Their 3 M box is ${leh_3} % too light by the arithmetic
+  above, and in both our scan and [7] lighter boxes have faster ions. Part of the excess may be the volume error, not the screening. Testable (a below).</li>
+  <li><b>A sensitivity map of transport.</b> ln κ<sub>NE</sub> against ln ζ has exponent ${q_scan_zeta_exp}, against the EMC ε ${q_scan_eps_exp};
+  Li⁺ σ is not resolved (section 2; 25 November summary). Not found: a published sensitivity of κ to the solvent LJ parameters of a carbonate.</li>
+  <li><b>The time-step bias of the common protocol.</b> At 1 fs with flexible bonds (the step of [2]) the density reads ${q_sc1_estimate}
+  against 0.5 fs (SC-1). That time-step errors exist is known in general; a number for this electrolyte was not found.</li>
+</ol>
+
+<h3>What we could simulate that would be new</h3>
+<ol type="a">
+  <li><b>3 M at the measured density.</b> κ of the present model at its own density and at the density of [1] (the question of trial T3, at 3 M). If κ
+  falls back toward experiment at the measured density, the volume error explains the excess; if not, the screening does. This needs the existing model
+  and long transport runs at 3 M.</li>
+  <li><b>The same ions in other solvents.</b> Density over c of the ion model in pure EMC and in PC against [11] and [12]. There the measured
+  V<sub>φ</sub> rises steeply with c in EMC and hardly at all in PC. This shows whether the volume error depends on the solvent. Density runs only, cheap.</li>
+  <li><b>The Madrid-2019 recipe for a carbonate.</b> Charges from the electronic continuum correction (ECC) plus a few pair LJ terms (PF₆⁻ F, Li⁺–O carbonyl) fitted to ρ(c,T) in two or three
+  solvents and to the Li⁺ shell, with κ, D, t₊ and η as predictions only. Not found for carbonates. The nearest are polarizable force fields [6] and the
+  density alignment of a machine-learned potential [13]. The engine and spec 0.1.2 already carry pair terms.</li>
+  <li><b>κ(c,T) and the κ maximum predicted, not fitted.</b> Lehnert fit ζ to κ [2]. A model fitted only to non-transport data that places the κ maximum
+  within ±0.2 M (decision 7) would be the result of the paper. In its absence a measured failure is a result too.</li>
+  <li><b>The thermodynamic factor of the electrolyte</b> against the measured one [1], after the NaCl known-answer test (section 4).</li>
+</ol>
+<p class="note">None of a–e chooses a parameter from κ, D or t₊. Physical parameters and pass criteria for b and c still need the author's approval.</p>
+
+<h2>7. Runs behind these numbers</h2>
+<table>
+<tr><th>what</th><th class="n">runs</th><th class="n">ns</th><th class="n">atoms</th><th>study</th></tr>
+${run_rows}
+</table>
+<p class="note">${total_runs} runs, ${total_ns} ns in all. Each study folder holds the plan, inputs and provenance. Earlier exploratory studies (one-ion shells, temperature
+scans of test boxes, the first pressure tests) are not used here.</p>
+
+<h3>References</h3>
+<ol class="refs">
+  <li>J. Landesfeind, H. A. Gasteiger, J. Electrochem. Soc. 166, A3079 (2019), doi:10.1149/2.0571912jes.</li>
+  <li>L. Lehnert et al., J. Electrochem. Soc. 172, 050523 (2025), doi:10.1149/1945-7111/add381, and SI.</li>
+  <li>C. Caleman et al., J. Chem. Theory Comput. 8, 61 (2012), SI (EC density at 39 °C).</li>
+  <li>Y. Wu, H. L. Tepper, G. A. Voth, J. Chem. Phys. 124, 024503 (2006), doi:10.1063/1.2136877.</li>
+  <li>P. Saxe et al., SEAMM: A Simulation Environment for Atomistic and Molecular Modeling, arXiv:2505.01400 (2025), Section 6 and Table 3 (preprint).</li>
+  <li>S. Maiti et al., Phys. Chem. Chem. Phys. 25, 20350 (2023), doi:10.1039/D3CP01236K (abstract and an SI excerpt only).</li>
+  <li>S. Han, Sci. Rep. 7, 46718 (2017), doi:10.1038/srep46718.</li>
+  <li>J. Self, N. T. Hahn, K. A. Persson, Energy Environ. Mater. 7, e12494 (2024), doi:10.1002/eem2.12494.</li>
+  <li>I. M. Zeron, J. L. F. Abascal, C. Vega, J. Chem. Phys. 151, 134504 (2019), doi:10.1063/1.5121392.</li>
+  <li>B. J. Kirby, P. Jungwirth, J. Phys. Chem. Lett. 10, 7531 (2019), doi:10.1021/acs.jpclett.9b02652, and the ECC-R papers cited there (not read).</li>
+  <li>A. Wang, T. Hou, M. Karanjavala, C. W. Monroe, Electrochim. Acta 358, 136688 (2020), doi:10.1016/j.electacta.2020.136688 (LiPF₆ in EMC).</li>
+  <li>T. Hou, C. W. Monroe, Electrochim. Acta 332, 135085 (2020), doi:10.1016/j.electacta.2019.135085 (LiPF₆ in PC).</li>
+  <li>S. Gong et al. (BAMBOO), arXiv:2404.07181 (density alignment of a machine-learned force field).</li>
+</ol>
+</body>
+</html>

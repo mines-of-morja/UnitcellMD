@@ -92,6 +92,17 @@ Derived values, for checking implementations:
   - Finite-difference checks probe the diagonal and the lower components (1,0), (2,0), (2,1).
     Those keep a lower-triangular cell lower-triangular.
 - **Pressure tensor:** P = (Σ_i m_i v_i ⊗ v_i + W)/V. The scalar pressure is p = tr(P)/3.
+- **Molecular pressure (since 0.1.3):** p_mol = tr(Σ_G M_G V_G ⊗ V_G + W_mol)/(3V), with
+  W_mol = W − Σ_G Σ_{i∈G} (r_i − R_G) ⊗ F_i.
+  - A group G is a set of atoms connected by bonds or constraints; an atom that nothing connects
+    is a group of its own. M_G is the mass, R_G and V_G are the centre-of-mass position and
+    velocity of the group, with the r_i of one group unwrapped.
+  - W and F_i are those of the force providers; constraint forces act within a group and cancel.
+  - It is conjugate to a scaling of the group centres. In equilibrium it has the same
+    average as p at Δt → 0. At finite Δt the average of p with the on-step velocities of velocity
+    Verlet is lower by ⟨Σ_i Δt² F_i²/(4 m_i)⟩/(3V), less the part of the group centres, for harmonic
+    internal motion.
+  - Without bonds and constraints p_mol = p.
 - **Kinetic energy:** K = Σ_i ½ m_i |v_i|².
 - **Temperature:** T = 2K/(N_dof·k_B), with N_dof = 3N − N_constraints − N_removed.
   N_removed = 3 if the centre-of-mass momentum is removed, plus 3 if the angular momentum is

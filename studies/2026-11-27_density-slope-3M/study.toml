@@ -1,0 +1,77 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-27"
+question = "After SC-4: which knob of the 1 M scan moves the 3 M density, i.e. the concentration slope? zeta 0.65 and 0.85, EMC epsilon x0.85, on the SC-4 3 M box, 0.5 fs, 3 ns; a map, not a fit"
+requested_by = "author 2026-11-27 morning: analyse what comes back, reason about it, submit more computations; probe values are those the author approved for the 1 M scan (2026-11-24)"
+
+[systems]
+packages = "packages/*.ucsys"
+
+[scan]
+temperature_C = [20]
+
+[protocol]
+seed = 20261135
+
+[estimate]
+seconds_per_atom_per_run = 1.2
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+# SC-1's 1 M protocol at 0.5 fs (every interval the same in time as at 1 fs), 3 ns. Plan: README.md
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 0.5
+steps = 6000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 200
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.01325
+tau_ps = 1.0
+compressibility_per_bar = 4.5e-5
+every = 50
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 200
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 4000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 200000

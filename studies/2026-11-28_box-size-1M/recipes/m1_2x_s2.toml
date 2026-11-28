@@ -1,0 +1,51 @@
+# V-2 (docs/tasks.toml): the 1 M box of trial T2, model M1, at 2x the atoms (box edge x1.26). Counts are
+# 2x Lehnert 2025 SI Table S1 (ucmd-builder/examples/EC/boxes.csv: 47 LiPF6, 168 EC, 332 EMC), so the composition and
+# the concentration are those of the 1x box: 14072 atoms. Force field exactly as T2 M1: EC from Caleman 2012 (OPLS-AA,
+# local explicit copy, see T2), EMC LigParGen, Li+ JJ06, PF6- CL&P, zeta 0.75. Packing seed 20261192 (replica 2).
+format = "ucmd-build"
+version = "0.1"
+name = "m1_2x_s2"
+description = "V-2, M1 1 M box at 2x: 94 LiPF6 (zeta 0.75) in 336 EC (OPLS-AA, Caleman 2012) + 664 EMC (LigParGen); packing seed 20261192"
+seed = 20261192
+
+[forcefield]
+source = "library"
+set = "opls-aa-carbonates"
+
+[[component]]
+name = "Li"
+molecule = { library = "Li" }
+count = 94
+charge_scale = 0.75
+
+[[component]]
+name = "PF6"
+molecule = { library = "PF6" }
+count = 94
+charge_scale = 0.75
+
+[[component]]
+name = "EC"
+molecule = { smiles = "O=C1OCCO1" }
+count = 336
+
+[component.forcefield]
+source = "gromacs-top"
+# relative to systems/<system>/, where the study driver builds its copy of this recipe
+file = "../../../2026-11-20_ec-opls-test/external/ec-oplsaa-explicit.itp"
+citations = [
+    { what = "EC: OPLS-AA atom types opls_771-777 with bonded types of oplsaaff.itp, topology 96-49-1.top", citation = "C. Caleman, P. J. van Maaren, M. Hong, J. S. Hub, L. T. Costa, D. van der Spoel, J. Chem. Theory Comput. 8, 61 (2012); files from virtualchemistry.org" },
+    { what = "OPLS-AA force field", citation = "W. L. Jorgensen, D. S. Maxwell, J. Tirado-Rives, J. Am. Chem. Soc. 118, 11225 (1996)" },
+]
+
+[[component]]
+name = "EMC"
+molecule = { library = "EMC" }
+count = 664
+
+[box]
+length_nm = 5.38
+
+[packing]
+method = "packmol"
+tolerance_nm = 0.2

@@ -131,7 +131,8 @@
           "properties": {
             "file": { "$ref": "#/$defs/relpath" },
             "every": { "type": "integer", "minimum": 1 },
-            "pressure_tensor": { "type": "boolean" }
+            "pressure_tensor": { "type": "boolean" },
+            "pressure_molecular": { "type": "boolean" }
           }
         },
         "checkpoint": {

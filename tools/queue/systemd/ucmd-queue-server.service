@@ -1,0 +1,14 @@
+# Example systemd user unit: the queue server and dashboard (not installed by anything).
+#   install:  cp tools/queue/systemd/ucmd-queue-*.service ~/.config/systemd/user/
+#             edit WorkingDirectory to the UnitcellMD folder of this machine
+#             systemctl --user daemon-reload && systemctl --user enable --now ucmd-queue-server
+[Unit]
+Description=UnitcellMD queue server and dashboard
+
+[Service]
+WorkingDirectory=%h/UnitcellMD
+ExecStart=/usr/bin/python3 tools/queue/ucmd_queue.py serve
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

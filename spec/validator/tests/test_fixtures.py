@@ -77,8 +77,11 @@ def test_invalid_run_config_reports_its_code(name) -> None:
     assert report.error is not None and report.error.code == INVALID_RUNS[name], report.error
 
 
-def test_pressure_tensor_needs_a_periodic_system(tmp_path: Path) -> None:
-    """0.1.1: [output.thermo] pressure_tensor on a non-periodic package is E_INCOMPATIBLE."""
+@pytest.mark.parametrize(
+    ("key", "version"), [("pressure_tensor", "0.1.1"), ("pressure_molecular", "0.1.3")]
+)
+def test_pressure_columns_need_a_periodic_system(tmp_path: Path, key: str, version: str) -> None:
+    """The optional pressure columns on a non-periodic package are E_INCOMPATIBLE."""
     text = (FIXTURES / "runs" / "harmonic-nve.toml").read_text()
     text = text.replace(
         '"../valid/harmonic-3d"',
@@ -86,10 +89,10 @@ def test_pressure_tensor_needs_a_periodic_system(tmp_path: Path) -> None:
     )
     text += (
         '\n[output]\ndirectory = "out"\n\n'
-        '[output.thermo]\nfile = "t.tsv"\nevery = 1\npressure_tensor = true\n'
+        f'[output.thermo]\nfile = "t.tsv"\nevery = 1\n{key} = true\n'
     )
     run = tmp_path / "run.toml"
-    run.write_text(text.replace('spec_version = "0.1.0"', 'spec_version = "0.1.1"'))
+    run.write_text(text.replace('spec_version = "0.1.0"', f'spec_version = "{version}"'))
     report = validate_run_config(run, with_system=True)
     assert report.error is not None and report.error.code == "E_INCOMPATIBLE"
-    assert report.error.location == "/output/thermo/pressure_tensor"
+    assert report.error.location == f"/output/thermo/{key}"

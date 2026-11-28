@@ -1,0 +1,17 @@
+# Minimization of a packed start (FIRE on the constraint manifold), the providers of the runs.
+spec_version = "0.1.0"
+system = "SYSTEM"
+
+[run]
+integrator = "velocity-verlet"
+timestep_fs = 2.0
+steps = 0
+seed = 1
+
+[[providers]]
+kind = "force-field"
+cutoff_nm = 0.9
+lj_cutoff_mode = "potential-shift"
+coulomb = "pme"
+ewald_tolerance = 1e-6
+dispersion_correction = false

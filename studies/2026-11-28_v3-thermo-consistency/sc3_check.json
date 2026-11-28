@@ -1,0 +1,21 @@
+{
+ "se_of_a_difference_g_cm3": 0.0005573538657082129,
+ "t95_6dof": 2.447,
+ "rho_A_minus_rho_B": {
+  "measured_g_cm3": 0.0051783262362059546,
+  "predicted_g_cm3": 0.005702578229017408,
+  "measured_minus_predicted_in_se": -0.9406088753781267,
+  "consistent_95": true
+ },
+ "rho_G_minus_rho_B": {
+  "measured_g_cm3": 0.0016733630424035084,
+  "predicted_g_cm3": 0.0012680654695719955,
+  "measured_minus_predicted_in_se": 0.7271817740359858,
+  "consistent_95": true
+ },
+ "gpu_molecular_pressure_bar": {
+  "measured": 36.12192713412905,
+  "se_3_seeds": 12.10324051165934,
+  "predicted": 29.163152758083296
+ }
+}

@@ -1,0 +1,77 @@
+# The plan of this study (ADR 0011). Read by tools/study/ucmd_study.py; paths are relative to
+# this file.
+
+[study]
+created = "2026-11-25"
+question = "SC-1: NPT density and D of the 1 M M1 box (20 C, 1 atm) at 0.5 fs, twin of base_s1..3 of 2026-11-24_parameter-sensitivity-1M (1 fs)"
+requested_by = "task SC-1 (docs/tasks.toml, no author gate); author 2026-11-25: find the cause of the pressure, then look at a fix; continue after the reboot"
+
+[systems]
+packages = "../2026-11-24_parameter-sensitivity-1M/packages/base_s*.ucsys"
+
+[scan]
+temperature_C = [20]
+
+[protocol]
+seed = 20261131
+
+[estimate]
+seconds_per_atom_per_run = 2.0
+
+[index]
+group_by = "T"
+row_by = "system"
+grid = "density"
+
+[views]
+by-temperature = "{T}/{system}"
+
+# The scan's protocol with half the step; every interval is the same in time. Plan: README.md
+[run_template]
+spec_version = "0.1.0"
+
+[run_template.run]
+integrator = "velocity-verlet"
+timestep_fs = 0.5
+steps = 10000000
+
+[run_template.velocities]
+generate = "maxwell-boltzmann"
+
+[run_template.momentum]
+remove_com_every = 200
+
+[run_template.thermostat]
+kind = "nose-hoover-chain"
+tau_ps = 0.1
+chain_length = 3
+
+[run_template.barostat]
+kind = "c-rescale"
+pressure_bar = 1.01325
+tau_ps = 1.0
+compressibility_per_bar = 4.5e-5
+every = 50
+
+[[run_template.providers]]
+kind = "force-field"
+cutoff_nm = 1.4
+coulomb = "pme"
+ewald_tolerance = 1e-5
+dispersion_correction = true
+
+[run_template.output]
+directory = "out"
+
+[run_template.output.thermo]
+file = "thermo.tsv"
+every = 200
+
+[run_template.output.trajectory]
+file = "trajectory.h5"
+every = 4000
+precision = "float32"
+
+[run_template.output.checkpoint]
+file = "checkpoint.ucchk"
+every = 200000
