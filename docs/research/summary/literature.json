@@ -1212,7 +1212,21 @@
    "location": "Table 4 (p. 4762); screening procedure in 'Vapor Pressure Correlation' (p. 4758); no enthalpy of vaporization is printed in the paper",
    "version_read": "VoR (PDF in ../Lit), 2026-11-28",
    "checked_vor": false,
-   "note": "Derived by us from these three numbers (not printed): p(298.15 K) = 3.437 kPa, and from d ln p/dT with the ideal-gas Clausius-Clapeyron relation, Delta_vap H(298.15 K) = R ln10 B T^2/(T+C)^2 = 40.35 kJ/mol, T_b(101.325 kPa) = 381.03 K (measured 380.61 K at 101.29 kPa). 298.15 K lies outside the fitted range, so these are extrapolations of about 5 K. The authors use the same relation (Eq. 13) for the interaction energy in their UNIQUAC model. Single reading; second reading outstanding."
+   "note": "Derived by us from these three numbers (not printed): p(298.15 K) = 3.437 kPa, and from d ln p/dT with the ideal-gas Clausius-Clapeyron relation, Delta_vap H(298.15 K) = R ln10 B T^2/(T+C)^2 = 40.35 kJ/mol, T_b(101.325 kPa) = 381.03 K (measured 380.61 K at 101.29 kPa). 298.15 K lies inside the fitted range (292.7 to 380.6 K) but only 5.5 K above its lowest point (the lowest measured EMC point is 2.52 kPa at 292.66 K). The script is tools/thermo/goldberg_dh.py. The authors use the same relation (Eq. 13) for the interaction energy in their UNIQUAC model. Single reading; second reading outstanding."
+  },
+  "goldberg2026_table4_antoine_dmc": {
+   "quantity": "Antoine parameters of DMC, log10(p) = A - B/(T + C), p in Pa, T in K, same fit as the EMC entry; data points accepted/excluded 154/29; fitted range 285.8 to 428.2 K and 3.85 to 566.5 kPa; AARD in p 0.41 %",
+   "value": {
+    "A": 9.4256,
+    "B": 1406.12,
+    "C": -45.145
+   },
+   "source": "T. Goldberg, V. Herdegen, A. S. Braeuer, J. Chem. Eng. Data 71, 4756 (2026), CC BY",
+   "doi": "10.1021/acs.jced.6c00429",
+   "location": "Table 4 (p. 4762), DMC row",
+   "version_read": "VoR (PDF in ../Lit), 2026-11-28",
+   "checked_vor": false,
+   "note": "Held-out reference for SC-7 (same factors applied to DMC). Derived by us with tools/thermo/goldberg_dh.py (not printed in the paper): p(298.15 K) = 7.378 kPa, Delta_vap H(298.15 K) = 37.38 kJ/mol, i.e. 0.64 kJ/mol below Kozlova 2008 (38.02 +/- 0.19, entry kozlova2008_table1_dmc_dhvap). Single reading; second reading outstanding."
   },
   "oh2018_table1_emc_density_nd": {
    "quantity": "density and refractive index n_D of pure EMC at 298.15 K and 101.3 kPa",
