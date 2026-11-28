@@ -172,6 +172,23 @@ leh = []
 for i, cc in enumerate(t1s["c_M"]):
     rho = sum(t1s[s][i] * M_[s] for s in M_) * cc / (1000 * t1s["Li"][i])
     leh.append((cc, 100 * (rho / (lf["p1"] + lf["p2"] * cc + lf["p3"] * T_K) - 1)))
+# Jo 3c / item (a): Lehnert SI S1.2 tuned the ion numbers by simulation at 20 C until c matched the target, so the
+# implied density is their model's own, up to the integer step. With the nearest count, |c_true/c_target - 1| <=
+# 1/(2 N_pairs), and rho_implied/rho_true = c_target/c_true; one full pair (1/N) is the bound if "most consistent"
+# was not the nearest.
+leh_err = []
+for i, cc in enumerate(t1s["c_M"]):
+    n = t1s["Li"][i]
+    leh_err.append({"c_M": cc, "pairs": n, "dev_pct": leh[i][1],
+                    "half_step_pct": 100 / (2 * n), "one_pair_pct": 100 / n})  # fmt: skip
+rho_leh = [(cc, sum(t1s[s][i] * M_[s] for s in M_) * cc / (1000 * t1s["Li"][i])) for i, cc in enumerate(t1s["c_M"])]
+w = [1 / (r * e["half_step_pct"] / 100) ** 2 for (_, r), e in zip(rho_leh, leh_err, strict=True)]
+xm = sum(wi * x for wi, (x, _) in zip(w, rho_leh, strict=True)) / sum(w)
+ym = sum(wi * y for wi, (_, y) in zip(w, rho_leh, strict=True)) / sum(w)
+sxx = sum(wi * (x - xm) ** 2 for wi, (x, _) in zip(w, rho_leh, strict=True))
+slope_w = sum(wi * (x - xm) * (y - ym) for wi, (x, y) in zip(w, rho_leh, strict=True)) / sxx
+out["lehnert_implied"] = {"points": leh_err, "slope_weighted_g_cm3_M": (slope_w, 1 / math.sqrt(sxx)),
+                          "slope_experiment_g_cm3_M": lf["p2"]}  # fmt: skip
 out["fig3_crossings_M"] = {"M1 (SC-4)": crossing(own), "Lehnert boxes, implied": crossing(sorted(leh)),
                            "M1 points": own, "Lehnert points": sorted(leh)}  # fmt: skip
 
