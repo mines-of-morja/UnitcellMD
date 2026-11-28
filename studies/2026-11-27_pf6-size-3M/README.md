@@ -30,3 +30,22 @@ baseline is the same protocol, ADR 0017 item 3): 3 ns, first 1 ns skipped, 20 °
 5 % smaller F and P σ shrink it by about 7 %, and the PF₆⁻–solvent contacts shrink by only half as much, so ΔV_φ(× 0.95) ≈ −3 to
 −6 cm³/mol: **part of the excess** (20–35 %). If so, the anion size alone is not the answer, and the excess is mainly weak
 ion–solvent attraction (ζ), which the 3 M map tests.
+
+## Result (2026-11-28)
+
+Queue job j20261127-120139-1c5d (HIP mixed), both runs 3 ns, finished 03:41 CET. Output:
+`docs/research/density-c-T/pf6size3M.json` (`analyze.py`).
+
+| Run (3 M, 20 °C) | ρ (g/cm³) | against the Landesfeind fit | halves | V_φ (cm³/mol) | ΔV_φ |
+|---|---|---|---|---|---|
+| SC-4 base | 1.3365 | −2.01 % | −0.09 % | 72.3 | — |
+| PF₆⁻ σ × 0.95 | 1.3587 | −0.72 % | −0.08 % | 66.9 | **−5.4** |
+| PF₆⁻ σ × 1.05 | 1.3138 | −3.34 % | +0.24 % | 78.0 | +5.7 |
+
+- **Reading (rule fixed before the runs):** × 0.95 removes 5.44 of the 16.24 cm³/mol excess, a fraction of **0.34: the anion's size
+  carries part of the excess.** The prediction (−3 to −6 cm³/mol, 20–35 %, "part") holds. Both runs settled (halves ≤ 0.3 %).
+- The response is linear and symmetric (−5.4 / +5.7 for ∓5 %). Removing the whole excess by the anion's σ alone would take
+  about σ × 0.85, far outside any size a source supports: the size is one contribution, not the fix.
+- **Caveat (Jo §3a):** the excess of 16.2 cm³/mol uses the extrapolated solvent density ρ0 (+3.2 %). V-4 measures ρ0 directly;
+  if ρ0 is lower, the excess shrinks and the fraction carried by the anion grows. The fraction is to be recomputed then.
+- Not judged (rule 3): transport, and whether any size is "right". No parameter is chosen from this map.
