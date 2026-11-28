@@ -109,6 +109,20 @@
    "checked_vor": true,
    "note": "Rounding of the printed parameters is +-0.0065 g/cm3 at 1 M, 20 C (worst case); the points of Fig. S1 scatter by 0.0066 g/cm3 (SD). Markers in Fig. S1 sit at 10-50 C and 0-3 M, the text says 0-50 C and 0.1-3 M. See docs/research/landesfeind-density/README.md."
   },
+  "krachkovskiy2017_ion_pairing_ec_emc": {
+   "quantity": "degree of ion pairing alpha (neutral ion aggregates / total salt) of LiPF6, from PFG-NMR diffusivities combined with conductivity (Eqs. 2 and 5). Printed values: 1 M LiPF6 in EC:EMC 3:7 (v/v), largest alpha 0.67 at 35 degC, lowest at 5 degC, monotonic in between (Fig. 4, only read qualitatively); 1 M LiPF6 in EC:DMC 1:1 (v/v) at 30 degC, 53 % ion pairs and 47 % free ions; alpha 43 % at 0.2 M in EC:DMC 1:1; abstract range 36 % to 67 % over all solutions studied",
+   "value": {
+    "EC_EMC_3_7_1M_35C_alpha": 0.67,
+    "EC_DMC_1_1_1M_30C_alpha": 0.53,
+    "EC_DMC_1_1_0.2M_30C_alpha": 0.43
+   },
+   "source": "S. A. Krachkovskiy, J. D. Bazak, S. Fraser, I. C. Halalay, G. R. Goward, J. Electrochem. Soc. 164, A912 (2017)",
+   "doi": "10.1149/2.1531704jes",
+   "location": "Abstract; Results and Discussion, text next to Fig. 2b and Fig. 4; solvent permittivity estimates (50, 33, 18 for EC:DMC 7:3, EC:DMC 1:1, EC:EMC 3:7) are the authors' estimates from literature data on EC:EMC blends, not measurements",
+   "version_read": "VoR (PDF in the Johannes literature library), 2026-11-28",
+   "checked_vor": false,
+   "note": "Ion pairing, not the composition of the Li+ shell. The two-species picture (free ion or ion pair) is the authors' assumption. Gives no Raman coordination number for EC:EMC; this issue stays open for that quantity. Single reading, second reading outstanding."
+  },
   "marcus2004_single_ion_volumes_pc_25C": {
    "quantity": "standard partial molar volumes of single ions in propylene carbonate at 25 C, TATB/TPTB scale, cm3/mol, uncertainty +-2; and the salt value they derive from",
    "value": {
