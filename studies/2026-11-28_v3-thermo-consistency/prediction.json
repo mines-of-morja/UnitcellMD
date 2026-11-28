@@ -1,0 +1,130 @@
+{
+ "1M": {
+  "atoms": 7036,
+  "molecules": 594,
+  "volume_nm3": 78.55529497356294,
+  "kappa_T_per_bar": 4.4293692556038035e-05,
+  "kappa_T_seeds": [
+   4.551295596931808e-05,
+   4.447755759209403e-05,
+   4.2890564106701994e-05
+  ],
+  "density_g_cm3": 1.1942586498060181,
+  "1fs": {
+   "dT_half_K": 5.394034471586327,
+   "dT_half_seeds_K": [
+    5.381532399687345,
+    5.404275813316497,
+    5.396295201755139
+   ],
+   "T_slow_minus_T_onstep_K (NHC, NVE)": 3.5960229810575512,
+   "T_onstep_minus_T0_K (BAOAB)": -5.394034471586327,
+   "P_atomic_minus_P_molecular_bar": -66.69382694346812,
+   "P_true_minus_P0_bar (MC barostat, NHC)": 3.7541947168767753
+  },
+  "0p5fs": {
+   "dT_half_K": 1.3172524197822595,
+   "dT_half_seeds_K": [
+    1.3186361824160753,
+    1.3175715808222777,
+    1.3155494961084255
+   ],
+   "T_slow_minus_T_onstep_K (NHC, NVE)": 0.8781682798548396,
+   "T_onstep_minus_T0_K (BAOAB)": -1.3172524197822595,
+   "P_atomic_minus_P_molecular_bar": -16.286993601653077,
+   "P_true_minus_P0_bar (MC barostat, NHC)": 0.9167946740402217
+  },
+  "alpha_per_K": 0.0009051516965837522,
+  "rho_0p5_minus_1fs_pct": {
+   "from_T_slow": 0.24600707938617616,
+   "from_MC_term": -0.012567892515589145,
+   "total": 0.23343918687058707,
+   "dT_slow_K": 2.717854701202712
+  },
+  "nhc_target_shift_T_set_K": 289.5539770189424
+ },
+ "emc": {
+  "atoms": 7500,
+  "molecules": 500,
+  "volume_nm3": 83.58490504624216,
+  "kappa_T_per_bar": 6.0868133219563996e-05,
+  "kappa_T_seeds": [
+   5.958950699491929e-05,
+   6.161431614681743e-05,
+   6.140057651695528e-05
+  ],
+  "density_g_cm3": 1.0341007116805077,
+  "1fs": {
+   "dT_half_K": 6.043221184333869,
+   "dT_half_seeds_K": [
+    6.02901931749232,
+    6.047031122166032,
+    6.0536131133432525
+   ],
+   "T_slow_minus_T_onstep_K (NHC, NVE)": 4.028814122889246,
+   "T_onstep_minus_T0_K (BAOAB)": -6.043221184333869,
+   "P_atomic_minus_P_molecular_bar": -74.85611311644163,
+   "P_true_minus_P0_bar (MC barostat, NHC)": 3.327382546345044
+  },
+  "0p5fs": {
+   "dT_half_K": 1.4727939183176506,
+   "dT_half_seeds_K": [
+    1.4682095544981189,
+    1.4765286550869359,
+    1.4736435453678973
+   ],
+   "T_slow_minus_T_onstep_K (NHC, NVE)": 0.9818626122117671,
+   "T_onstep_minus_T0_K (BAOAB)": -1.4727939183176506,
+   "P_atomic_minus_P_molecular_bar": -18.243189316418462,
+   "P_true_minus_P0_bar (MC barostat, NHC)": 0.8109166665746417
+  },
+  "alpha_per_K": 0.00107991880291072,
+  "rho_0p5_minus_1fs_pct": {
+   "from_T_slow": 0.3290460227937833,
+   "from_MC_term": -0.015317258041235219,
+   "total": 0.313728764752548,
+   "dT_slow_K": 3.046951510677479
+  }
+ },
+ "water": {
+  "atoms": 1536,
+  "molecules": 512,
+  "volume_nm3": 15.215065130101737,
+  "kappa_T_per_bar": 4.481724805157936e-05,
+  "kappa_T_seeds": [
+   4.50602245723258e-05,
+   4.258954670560413e-05,
+   4.6801972876808155e-05
+  ],
+  "density_g_cm3": 1.006674695805828,
+  "1fs": {
+   "dT_half_K": 9.088424994713668,
+   "dT_half_seeds_K": [
+    9.092697510486145,
+    9.123780316316775,
+    9.048797157338083
+   ],
+   "T_slow_minus_T_onstep_K (NHC, NVE)": 6.0589499964757785,
+   "T_onstep_minus_T0_K (BAOAB)": -9.088424994713668,
+   "P_atomic_minus_P_molecular_bar": -126.59206205763563,
+   "P_true_minus_P0_bar (MC barostat, NHC)": 28.149902758083297
+  },
+  "0p5fs": {
+   "dT_half_K": 2.1794591213081365,
+   "dT_half_seeds_K": [
+    2.1878156558807778,
+    2.175144519642054,
+    2.175417188401578
+   ],
+   "T_slow_minus_T_onstep_K (NHC, NVE)": 1.4529727475387575,
+   "T_onstep_minus_T0_K (BAOAB)": -2.1794591213081365,
+   "P_atomic_minus_P_molecular_bar": -30.35753989246758,
+   "P_true_minus_P0_bar (MC barostat, NHC)": 6.750516438846904
+  }
+ },
+ "water_arms_prediction": {
+  "rho_cpu_atomic_minus_cpu_molecular_pct": 0.5673507846597984,
+  "rho_gpu_mc_minus_cpu_molecular_pct": 0.12616011745368572,
+  "note": "first order in kappa_T; C-rescale atomic holds the on-step atomic pressure at P0, so the true pressure is higher by -(P_atomic - P_molecular); the MC barostat accepts with T0 while the slow modes are at T*; C-rescale molecular uses the centre-of-mass kinetic energy (at T*)"
+ }
+}
