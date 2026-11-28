@@ -1,0 +1,22 @@
+{
+ "u_gas_kjmol": [
+  -56.66578802996351,
+  -56.72461783876511,
+  -56.70365930421506
+ ],
+ "u_gas_mean": -56.698021724314565,
+ "u_gas_se": 0.01721504507941836,
+ "u_liq_per_molecule_kjmol": -104.4494132724872,
+ "u_liq_halves": [
+  -104.47244701936,
+  -104.42637952561441
+ ],
+ "dh_vap_kjmol": 50.23034857777503,
+ "se_kjmol": 0.028756064961787522,
+ "dmc_reference_kjmol": 38.0,
+ "dmc_excess_kjmol": 12.230348577775032,
+ "emc_dh_vap_kjmol": 53.168294771241726,
+ "emc_excess_kjmol": 12.668294771241726,
+ "ratio": 0.9654297439888379,
+ "reading": "shared by the carbonate types"
+}

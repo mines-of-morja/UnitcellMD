@@ -33,3 +33,27 @@ r = (ΔH_vap(DMC) − 38.0) / (ΔH_vap(EMC) − 40.5), both at 1 fs.
 **Prediction (before the runs):** shared (r ≈ 0.7–1). Same types, and a similar density error.
 
     ucmd-analysis/.venv/bin/python studies/2026-11-27_dmc-dhvap-calibration/analyze.py docs/research/emc-literature/dhvap_dmc.json
+
+## Result (2026-11-28)
+
+`dmc_gas_s1`, `s2` ran on soricel-pc (queue job 5e04, engine c2cc427e6a10). `s3` was orphaned at 4.15 ns when soricel went
+offline; the author cancelled 5e04, and `s3` was continued on workstation-cpu from its 4.0 ns checkpoint (job
+j20261128-084626-639b, engine 36b2837d56fd, 16 threads). The repeated rows 4.0–4.15 ns are counted once (last row wins). The
+two engine commits differ, so `s3` is not bitwise one trajectory; statistically it is an ordinary continuation. Output:
+`docs/research/emc-literature/dhvap_dmc.json`.
+
+| | per molecule (kJ/mol) |
+|---|---|
+| ⟨U_gas⟩, 3 seeds | −56.70 ± 0.02 (−56.67, −56.72, −56.70) |
+| ⟨U_liq⟩/N, 0.25–0.5 ns (halves −104.47, −104.43) | −104.45 |
+| **ΔH_vap(DMC), model, 1 fs** | **50.23 ± 0.03** |
+| reference (NIST table; not in the ledger) | 38.0 ± 0.2 |
+| excess | **+12.2 (+32 %)** |
+| EMC excess (step 0, against 40.5) | +12.7 (+31 %) |
+
+- **Reading (rule fixed before the runs):** r = 12.23 / 12.67 = **0.97 ≥ 0.6: the over-cohesion is shared by the carbonate types**
+  (LigParGen OPLS-AA, the same LJ types in DMC and EMC). The prediction (r ≈ 0.7–1) holds.
+- DMC has a calorimetric reference; EMC's rests on vapour pressures. That both are about 31–32 % high says the EMC target
+  (40–41) is not the reason for EMC's excess.
+- **For SC-7:** a global correction of the carbonate types (option A) is a correction of the types, not a fix for one molecule,
+  and DMC is its natural held-out test (ρ and ΔH_vap). Not judged here: densities and transport.
